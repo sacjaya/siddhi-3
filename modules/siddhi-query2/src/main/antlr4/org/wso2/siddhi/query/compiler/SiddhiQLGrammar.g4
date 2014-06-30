@@ -16,7 +16,7 @@ definitionStreamFinal
     ;
 
 definitionStream
-    :'define' 'stream' source (definition|likeSource|fromSource)
+    :'define' 'inputStream' source (definition|likeSource|fromSource)
     ;
 
 definitionPoolFinal
@@ -74,10 +74,10 @@ query
     ;
 
 queryInput
-    :standardStream|joinStream|patternStream|sequenceStream
+    :windowedStream|joinStream|patternStream|sequenceStream
     ;
 
-standardStream
+windowedStream
     :'from' source (filter | streamFunction)* window? (filter | streamFunction)*
     ;
 
