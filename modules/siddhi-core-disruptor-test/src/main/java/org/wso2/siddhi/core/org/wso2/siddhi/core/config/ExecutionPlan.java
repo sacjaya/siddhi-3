@@ -1,5 +1,9 @@
 package org.wso2.siddhi.core.org.wso2.siddhi.core.config;
 
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
+
+import java.util.Map;
+
 /**
  * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  * <p/>
@@ -15,5 +19,50 @@ package org.wso2.siddhi.core.org.wso2.siddhi.core.config;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * Container class to store and transfer query and
+ * related stream definitions to siddhi manager.
+ */
 public class ExecutionPlan {
+    private String query;
+    private Map<String, StreamDefinition> streamDefinitionMap;
+
+    /**
+     * Create new execution plan providing necessary params
+     *
+     * @param query               String representation of siddhi query
+     * @param streamDefinitionMap Map containing all the necessary stream definitions for above query
+     */
+    public ExecutionPlan(String query, Map<String, StreamDefinition> streamDefinitionMap) {
+        this.query = query;
+        this.streamDefinitionMap = streamDefinitionMap;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public Map<String, StreamDefinition> getStreamDefinitionMap() {
+        return streamDefinitionMap;
+    }
+
+    public void setStreamDefinitionMap(Map<String, StreamDefinition> streamDefinitionMap) {
+        this.streamDefinitionMap = streamDefinitionMap;
+    }
+
+    /**
+     * Returns stream definition for a given stream ID
+     *
+     * @param streamId
+     * @return Stream definition for the given streamId
+     */
+    public StreamDefinition getStreamDefinition(String streamId) {
+        return streamDefinitionMap.get(streamId);
+    }
+
 }
