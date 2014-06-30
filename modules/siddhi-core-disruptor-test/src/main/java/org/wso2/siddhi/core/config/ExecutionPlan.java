@@ -1,9 +1,3 @@
-package org.wso2.siddhi.core.org.wso2.siddhi.core.config;
-
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
-
-import java.util.Map;
-
 /**
  * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  * <p/>
@@ -19,6 +13,11 @@ import java.util.Map;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.wso2.siddhi.core.config;
+
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import java.util.Map;
+
 
 /**
  * Container class to store and transfer query and
@@ -58,7 +57,7 @@ public class ExecutionPlan {
     /**
      * Returns stream definition for a given stream ID
      *
-     * @param streamId
+     * @param streamId stream ID to fetch corresponding definition
      * @return Stream definition for the given streamId
      */
     public StreamDefinition getStreamDefinition(String streamId) {
