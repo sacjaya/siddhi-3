@@ -21,11 +21,11 @@ import org.wso2.siddhi.core.event.Event;
 
 public class InEvent extends Event implements InStream {
 
-    public InEvent(long timeStamp, Object[] data) {
-        super(timeStamp, data);
+    public InEvent(String streamId, long timeStamp, Object[] data) {
+        super(streamId, timeStamp, data);
     }
 
     public InEvent(Event event) {
-        super(event.getTimeStamp(),event.getData());
+        super(event.getStreamId(),event.getTimeStamp(),event.getData());
     }
 }

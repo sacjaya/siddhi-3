@@ -81,7 +81,7 @@ public class QueryPartitioner {
                 for (PartitionType partitionType : partitionDefinition.getPartitionTypeList()) {
                     Set<String> depencySet;
                     if (partitionType instanceof VariablePartitionType) {
-                        depencySet = ExpressionValidator.getDependency(((VariablePartitionType) partitionType).getVariable());
+                        depencySet = ExpressionValidator.getDependencySet(((VariablePartitionType) partitionType).getVariable());
                         if (depencySet.isEmpty() || depencySet.contains(queryEventSource.getSourceId())) {
                             executorList.add(new VariablePartitionExecutor(ExecutorParser.parseExpression(((VariablePartitionType) partitionType).getVariable(), tempQueryEventSourceList, queryEventSource.getSourceId(), true, siddhiContext)));
                         }

@@ -25,6 +25,7 @@ import org.wso2.siddhi.core.event.StateEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.event.in.InStateEvent;
 import org.wso2.siddhi.core.snapshot.SnapshotObject;
+import org.wso2.siddhi.core.persistence.PersistenceStore;
 import org.wso2.siddhi.core.snapshot.Snapshotable;
 import org.wso2.siddhi.core.query.processor.PreSelectProcessingElement;
 import org.wso2.siddhi.core.query.processor.filter.FilterProcessor;
@@ -191,7 +192,7 @@ public class PatternInnerHandlerProcessor
     }
 
     public String getStreamId() {
-        return state.getWindowedStream().getStreamId();
+        return state.getTransformedStream().getStreamId();
     }
 
     @Override

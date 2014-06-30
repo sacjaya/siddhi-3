@@ -17,7 +17,7 @@
 */
 package org.wso2.siddhi.core.query.statemachine.sequence;
 
-import org.wso2.siddhi.query.api.query.input.WindowedStream;
+import org.wso2.siddhi.query.api.query.input.TransformedStream;
 
 public class CountSequenceState extends SequenceState {
 
@@ -25,9 +25,9 @@ public class CountSequenceState extends SequenceState {
     private int max = -1;
 
 
-    public CountSequenceState(int stateNumber, WindowedStream windowedStream, int minCount,
+    public CountSequenceState(int stateNumber, TransformedStream transformedStream, int minCount,
                               int maxCount) {
-        super(stateNumber, windowedStream);
+        super(stateNumber, transformedStream);
         min = minCount;
         max = maxCount;
     }

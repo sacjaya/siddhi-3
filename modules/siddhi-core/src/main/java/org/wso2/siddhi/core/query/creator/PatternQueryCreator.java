@@ -47,7 +47,7 @@ public class PatternQueryCreator extends QueryCreator {
     protected void updateQueryEventSourceList(List<QueryEventSource> queryEventSourceList) {
         //update outputStreamDefinition as no transformer for pattern
         for (PatternState patternState : patternStateList) {
-            patternState.getWindowedStream().getQueryEventSource().setOutDefinition(patternState.getWindowedStream().getQueryEventSource().getInDefinition());
+            patternState.getTransformedStream().getQueryEventSource().setOutDefinition(patternState.getTransformedStream().getQueryEventSource().getInDefinition());
         }
     }
 

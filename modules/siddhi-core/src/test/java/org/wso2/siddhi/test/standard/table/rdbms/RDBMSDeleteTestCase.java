@@ -189,7 +189,7 @@ public class RDBMSDeleteTestCase {
         siddhiManager.getSiddhiContext().addDataSource(dataSourceName, dataSource);
 
         TableDefinition tableDefinition = QueryFactory.createTableDefinition();
-        tableDefinition.name("cseEventTable").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).with("datasource.name", "cepDataSource").with("table.name", "cepEventTable");
+        tableDefinition.name("cseEventTable").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).from("datasource.name", "cepDataSource").from("table.name", "cepEventTable");
         siddhiManager.defineTable(tableDefinition);
     }
 

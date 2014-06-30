@@ -17,11 +17,12 @@
 */
 package org.wso2.siddhi.core.util.statemachine;
 
-import org.wso2.siddhi.query.api.query.input.WindowedStream;
+import org.wso2.siddhi.query.api.query.input.BasicStream;
+import org.wso2.siddhi.query.api.query.input.TransformedStream;
 
 public class UtilState {
 
-    private WindowedStream windowedStream;
+    private TransformedStream transformedStream;
     private int stateNumber;
 //    private List<Integer> nextStateNumbers = new ArrayList<Integer>();
     private int next = -1;
@@ -29,17 +30,17 @@ public class UtilState {
     private boolean last = false;
     private int nextEvery =-1;
 
-    public UtilState(int stateNumber, WindowedStream windowedStream) {
+    public UtilState(int stateNumber, TransformedStream transformedStream) {
         this.stateNumber = stateNumber;
-        this.windowedStream = windowedStream;
+        this.transformedStream = transformedStream;
     }
 
-    public WindowedStream getWindowedStream() {
-        return windowedStream;
+    public TransformedStream getTransformedStream() {
+        return transformedStream;
     }
 
-    public void setWindowedStream(WindowedStream windowedStream) {
-        this.windowedStream = windowedStream;
+    public void setTransformedStream(BasicStream transformedStream) {
+        this.transformedStream = transformedStream;
     }
 
     public int getStateNumber() {

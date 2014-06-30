@@ -32,22 +32,16 @@ import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.table.EventTable;
 import org.wso2.siddhi.core.util.parser.QueryOutputParser;
-import org.wso2.siddhi.query.api.condition.ConditionValidator;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.definition.partition.PartitionDefinition;
-import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.expression.ExpressionValidator;
 import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.api.query.input.JoinStream;
-import org.wso2.siddhi.query.api.query.input.WindowInputStream;
 import org.wso2.siddhi.query.api.query.input.WindowStream;
-import org.wso2.siddhi.query.api.query.input.handler.Filter;
-import org.wso2.siddhi.query.api.query.input.handler.StreamFunction;
-import org.wso2.siddhi.query.api.query.input.handler.StreamHandler;
-import org.wso2.siddhi.query.api.query.input.handler.Window;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 
 public class QueryManager {
@@ -63,51 +57,14 @@ public class QueryManager {
 
     public QueryManager(Query query, ConcurrentMap<String, AbstractDefinition> streamTableDefinitionMap,
                         ConcurrentMap<String, StreamJunction> streamJunctionMap,
-                        ConcurrentMap<String, EventTable> eventTableMap, SiddhiContext siddhiContext) {
-        if (query.getName() != null) {
-            this.queryId = query.getName();
-        } else if (query.getOutputStream() != null) {
+                        ConcurrentMap<String, EventTable> eventTableMap, ConcurrentMap<String, PartitionDefinition> partitionDefinitionMap, SiddhiContext siddhiContext) {
+        if (query.getOutputStream() != null) {
             this.queryId = query.getOutputStream().getStreamId() + "-" + UUID.randomUUID();
         } else {
             this.queryId = UUID.randomUUID().toString();
         }
-
         this.query = query;
-        QueryValidator.validate(query,streamTableDefinitionMap);
 
-        if (query.getInputStream() instanceof WindowInputStream) {
-
-            WindowInputStream stream = (WindowInputStream) query.getInputStream();
-            AbstractDefinition inputStreamDefinition = streamTableDefinitionMap.get(stream.getStreamId());
-            for (StreamHandler streamHandler : stream.getStreamHandlers()) {
-                if (streamHandler instanceof Filter) {
-                    Filter filter = (Filter) streamHandler;
-                    Map<String, Set<String>> dependencies = ConditionValidator.getDependency(filter.getFilterCondition());
-                    checkAttribute(stream.getStreamId(), stream.getStreamId(), inputStreamDefinition, dependencies);
-                    checkAttribute(stream.getStreamReferenceId(), stream.getStreamId(), inputStreamDefinition, dependencies);
-                    checkAttribute(null, stream.getStreamId(), inputStreamDefinition, dependencies);
-
-                } else if (streamHandler instanceof Window) {
-                    Window window = (Window) streamHandler;
-                    for (Expression expression : window.getParameters()) {
-                        Map<String, Set<String>> dependencies = ExpressionValidator.getDependency(expression);
-                        checkAttribute(stream.getStreamId(), stream.getStreamId(), inputStreamDefinition, dependencies);
-                        checkAttribute(stream.getStreamReferenceId(), stream.getStreamId(), inputStreamDefinition, dependencies);
-                        checkAttribute(null, stream.getStreamId(), inputStreamDefinition, dependencies);
-                    }
-                } else if (streamHandler instanceof StreamFunction) {
-                    StreamFunction streamFunction = (StreamFunction) streamHandler;
-                    for (Expression expression : streamFunction.getParameters()) {
-                        Map<String, Set<String>> dependencies = ExpressionValidator.getDependency(expression);
-                        checkAttribute(stream.getStreamId(), stream.getStreamId(), inputStreamDefinition, dependencies);
-                        checkAttribute(stream.getStreamReferenceId(), stream.getStreamId(), inputStreamDefinition, dependencies);
-                        checkAttribute(null, stream.getStreamId(), inputStreamDefinition, dependencies);
-                    }
-                }
-            }
-        }
-
-        //todo check
         outputRateManager = QueryOutputParser.constructOutputRateManager(query.getOutputRate(), siddhiContext.getScheduledExecutorService(),
                                                                          query.getSelector().getGroupByList().size() != 0,
                                                                          query.getInputStream() instanceof WindowStream||query.getInputStream() instanceof JoinStream);

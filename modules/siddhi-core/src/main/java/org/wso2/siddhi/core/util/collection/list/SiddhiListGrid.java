@@ -64,7 +64,7 @@ public class SiddhiListGrid<T> extends SiddhiList<T> {
 
 
     public Object[] currentState() {
-        List<T> tempList = new LinkedList<T>();
+        java.util.List<T> tempList = new LinkedList<T>();
         for (T t : list) {
             tempList.add(t);
         }
@@ -76,7 +76,7 @@ public class SiddhiListGrid<T> extends SiddhiList<T> {
     }
 
     public void restoreState(Object[] objects) {
-        list.addAll((List<T>) objects[0]);
+        list.addAll((java.util.List<T>) objects[0]);
     }
 
     public int size() {

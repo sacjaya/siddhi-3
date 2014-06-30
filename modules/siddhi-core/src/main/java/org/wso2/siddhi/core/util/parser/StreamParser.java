@@ -240,13 +240,13 @@ public class StreamParser {
 
         for (String streamId : queryStream.getStreamIds()) {
 
-            //    List<StandardStream> streamList = new ArrayList<StandardStream>();
+            //    List<BasicStream> streamList = new ArrayList<BasicStream>();
             List<PatternInnerHandlerProcessor> patternInnerHandlerProcessorList = new ArrayList<PatternInnerHandlerProcessor>();
             for (PatternState state : patternStateList) {
-                if (state.getWindowedStream().getStreamId().equals(streamId)) {
-                    //           streamList.add(state.getWindowedStream());
+                if (state.getTransformedStream().getStreamId().equals(streamId)) {
+                    //           streamList.add(state.getTransformedStream());
 
-                    QueryEventSource queryEventSource = state.getWindowedStream().getQueryEventSource();
+                    QueryEventSource queryEventSource = state.getTransformedStream().getQueryEventSource();
                     FilterProcessor filterProcessor = generateFilerProcessor(queryEventSource, queryEventSourceList, streamTableDefinitionMap, eventTableMap, siddhiContext);
 
                     PatternInnerHandlerProcessor patternInnerHandlerProcessor;
@@ -306,13 +306,13 @@ public class StreamParser {
         Map<Integer, SequenceInnerHandlerProcessor> stateSequenceInnerHandlerProcessorMap = new HashMap<Integer, SequenceInnerHandlerProcessor>();
         for (String streamId : queryStream.getStreamIds()) {
 
-            //    List<StandardStream> streamList = new ArrayList<StandardStream>();
+            //    List<BasicStream> streamList = new ArrayList<BasicStream>();
             List<SequenceInnerHandlerProcessor> sequenceInnerHandlerProcessorList = new ArrayList<SequenceInnerHandlerProcessor>();
             for (SequenceState state : sequenceStateList) {
-                if (state.getWindowedStream().getStreamId().equals(streamId)) {
-                    //           streamList.add(state.getWindowedStream());
+                if (state.getTransformedStream().getStreamId().equals(streamId)) {
+                    //           streamList.add(state.getTransformedStream());
 
-                    QueryEventSource queryEventSource = state.getWindowedStream().getQueryEventSource();
+                    QueryEventSource queryEventSource = state.getTransformedStream().getQueryEventSource();
                     FilterProcessor filterProcessor = generateFilerProcessor(queryEventSource, queryEventSourceList, streamTableDefinitionMap, eventTableMap, siddhiContext);
 
                     //update outputStreamDefinition as no transformer for sequence

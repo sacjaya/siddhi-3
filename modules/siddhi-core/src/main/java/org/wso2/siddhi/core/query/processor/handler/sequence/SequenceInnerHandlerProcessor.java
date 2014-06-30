@@ -198,7 +198,7 @@ public class SequenceInnerHandlerProcessor
 
 
     public String getStreamId() {
-        return state.getWindowedStream().getStreamId();
+        return state.getTransformedStream().getStreamId();
     }
 
     public void addToNextEvents(StateEvent stateEvent) {

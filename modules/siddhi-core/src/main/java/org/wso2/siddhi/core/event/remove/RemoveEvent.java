@@ -23,13 +23,13 @@ public class RemoveEvent extends Event implements RemoveStream {
 
     long expiryTime = 0L;
 
-    public RemoveEvent(long timeStamp, Object[] data, long expiryTime) {
-        super(timeStamp, data);
+    public RemoveEvent(String streamId, long timeStamp, Object[] data, long expiryTime) {
+        super(streamId, timeStamp, data);
         this.expiryTime = expiryTime;
     }
 
     public RemoveEvent(Event event, long expiryTime) {
-        super( event.getTimeStamp(), event.getData());
+        super(event.getStreamId(), event.getTimeStamp(), event.getData());
         this.expiryTime = expiryTime;
     }
 

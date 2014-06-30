@@ -17,11 +17,11 @@
 */
 package org.wso2.siddhi.core.query.statemachine.pattern;
 
-import org.wso2.siddhi.query.api.query.input.WindowedStream;
+import org.wso2.siddhi.query.api.query.input.TransformedStream;
 
 public class OrPatternState extends  LogicPatternState {
 
-    public OrPatternState(int stateNumber, WindowedStream windowedStream) {
-        super(stateNumber, windowedStream);
+    public OrPatternState(int stateNumber, TransformedStream transformedStream) {
+        super(stateNumber, transformedStream);
     }
 }

@@ -39,7 +39,7 @@ public class DefineRDBMSTableTestCase {
         siddhiManager.getSiddhiContext().addDataSource(dataSourceName, dataSource);
         TableDefinition tableDefinition = QueryFactory.createTableDefinition();
         tableDefinition.name("cseEventTable").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT);
-        tableDefinition.with("datasource.name", "cepDataSource").with("table.name", "testTable");
+        tableDefinition.from("datasource.name", "cepDataSource").from("table.name", "testTable");
         siddhiManager.defineTable(tableDefinition);
     }
 
@@ -168,8 +168,8 @@ public class DefineRDBMSTableTestCase {
         siddhiManager.getSiddhiContext().addDataSource(dataSourceName, dataSource);
 
         TableDefinition tableDefinition = QueryFactory.createTableDefinition();
-        tableDefinition.name("cseEventTable").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).with("datasource.name", "cepDataSource");
-        tableDefinition.with("datasource.name", "cepDataSource").with("table.name", "testEventTable");
+        tableDefinition.name("cseEventTable").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).from("datasource.name", "cepDataSource");
+        tableDefinition.from("datasource.name", "cepDataSource").from("table.name", "testEventTable");
 
         siddhiManager.defineTable(tableDefinition);
     }

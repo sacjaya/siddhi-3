@@ -18,11 +18,12 @@
 package org.wso2.siddhi.core.query.statemachine.pattern;
 
 import org.wso2.siddhi.core.query.statemachine.State;
-import org.wso2.siddhi.query.api.query.input.WindowedStream;
+import org.wso2.siddhi.query.api.query.input.BasicStream;
+import org.wso2.siddhi.query.api.query.input.TransformedStream;
 
 public class PatternState implements State {
 
-    private WindowedStream windowedStream;
+    private TransformedStream transformedStream;
     private int stateNumber;
     private PatternState nextState;
     private PatternState nextEveryState;
@@ -30,17 +31,17 @@ public class PatternState implements State {
     private boolean first = false;
     private boolean last = false;
 
-    public PatternState(int stateNumber, WindowedStream windowedStream) {
+    public PatternState(int stateNumber, TransformedStream transformedStream) {
         this.stateNumber = stateNumber;
-        this.windowedStream = windowedStream;
+        this.transformedStream = transformedStream;
     }
 
-    public WindowedStream getWindowedStream() {
-        return windowedStream;
+    public TransformedStream getTransformedStream() {
+        return transformedStream;
     }
 
-    public void setWindowedStream(WindowedStream windowedStream) {
-        this.windowedStream = windowedStream;
+    public void setTransformedStream(BasicStream transformedStream) {
+        this.transformedStream = transformedStream;
     }
 
     public int getStateNumber() {

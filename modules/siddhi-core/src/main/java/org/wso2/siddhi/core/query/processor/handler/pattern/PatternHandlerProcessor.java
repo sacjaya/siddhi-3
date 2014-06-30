@@ -37,7 +37,7 @@ public class PatternHandlerProcessor
 
     static final Logger log = Logger.getLogger(PatternHandlerProcessor.class);
 
-    //  private List<StandardStream> inputStreamList;
+    //  private List<BasicStream> inputStreamList;
     private String streamId;
     private ThreadPoolExecutor threadPoolExecutor;
     private SchedulerSiddhiQueue<StreamEvent> inputQueue;

@@ -17,15 +17,15 @@
 */
 package org.wso2.siddhi.core.query.statemachine.sequence;
 
-import org.wso2.siddhi.query.api.query.input.WindowedStream;
+import org.wso2.siddhi.query.api.query.input.TransformedStream;
 
 public class OrSequenceState extends  SequenceState {
 
     private SequenceState partnerState ;
 
 
-    public OrSequenceState(int stateNumber, WindowedStream windowedStream) {
-        super(stateNumber, windowedStream);
+    public OrSequenceState(int stateNumber, TransformedStream transformedStream) {
+        super(stateNumber, transformedStream);
     }
 
     public SequenceState getPartnerState() {

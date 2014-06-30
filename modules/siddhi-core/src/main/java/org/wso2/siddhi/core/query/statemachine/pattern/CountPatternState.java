@@ -17,7 +17,7 @@
 */
 package org.wso2.siddhi.core.query.statemachine.pattern;
 
-import org.wso2.siddhi.query.api.query.input.WindowedStream;
+import org.wso2.siddhi.query.api.query.input.TransformedStream;
 
 public class CountPatternState extends PatternState {
 
@@ -25,9 +25,9 @@ public class CountPatternState extends PatternState {
     private int max = -1;
 
 
-    public CountPatternState(int stateNumber, WindowedStream windowedStream, int minCount,
+    public CountPatternState(int stateNumber, TransformedStream transformedStream, int minCount,
                              int maxCount) {
-        super(stateNumber, windowedStream);
+        super(stateNumber, transformedStream);
         min = minCount;
         max = maxCount;
     }

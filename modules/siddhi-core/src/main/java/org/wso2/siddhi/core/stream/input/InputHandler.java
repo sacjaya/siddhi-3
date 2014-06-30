@@ -18,6 +18,7 @@
 package org.wso2.siddhi.core.stream.input;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.ListEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.event.in.InEvent;
@@ -36,25 +37,19 @@ public class InputHandler {
     }
 
     public void send(Object[] data) throws InterruptedException {
-        StreamEvent event = new InEvent(streamId, System.currentTimeMillis(), data);
-        threadBarrier.pass();
+        Event event = new InEvent(streamId, System.currentTimeMillis(), data);
         streamJunction.send(event);
     }
 
     public void send(long timeStamp, Object[] data) throws InterruptedException {
-        StreamEvent event = new InEvent(streamId, timeStamp, data);
-        threadBarrier.pass();
+        Event event = new InEvent(streamId, timeStamp, data);
         streamJunction.send(event);
     }
 
-    public void send(StreamEvent event) throws InterruptedException {
-        threadBarrier.pass();
+    public void send(Event event) throws InterruptedException {
         streamJunction.send(event);
     }
-    public void send(ListEvent listEvent) throws InterruptedException {
-        threadBarrier.pass();
-        streamJunction.send(listEvent);
-    }
+
 
     public String getStreamId() {
         return streamId;

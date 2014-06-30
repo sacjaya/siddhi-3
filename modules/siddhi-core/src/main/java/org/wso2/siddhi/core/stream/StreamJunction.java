@@ -17,6 +17,10 @@
 */
 package org.wso2.siddhi.core.stream;
 
+import com.lmax.disruptor.SleepingWaitStrategy;
+import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.dsl.ProducerType;
+import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.tracer.EventMonitorService;
@@ -28,23 +32,24 @@ public class StreamJunction {
     private List<StreamReceiver> streamReceivers = new CopyOnWriteArrayList<StreamReceiver>();
     private String streamId;
     private EventMonitorService eventMonitorService;
+    private Disruptor disruptor;
 
     public StreamJunction(String streamId, EventMonitorService eventMonitorService) {
         this.streamId = streamId;
         this.eventMonitorService = eventMonitorService;
+
     }
 
-    public void send(StreamEvent allEvents) {
-        if (eventMonitorService.isEnableTrace()) {
-            eventMonitorService.trace(allEvents, " on Event Stream");
-        }
-        if (eventMonitorService.isEnableStats()) {
-            eventMonitorService.calculateStats(allEvents);
-        }
+    public void send(Event allEvents) {
+
         for (StreamReceiver handlerProcessor : streamReceivers) {
             handlerProcessor.receive(allEvents);
         }
     }
+
+
+
+
 
     public synchronized void addEventFlow(StreamReceiver streamReceiver) {
         //in reverse order to execute the later states first to overcome to dependencies of count states

@@ -35,7 +35,7 @@ public class SequenceHandlerProcessor
 
     static final Logger log = Logger.getLogger(SequenceInnerHandlerProcessor.class);
 
-    //  private List<StandardStream> inputStreamList;
+    //  private List<BasicStream> inputStreamList;
     private String streamId;
     private ThreadPoolExecutor threadPoolExecutor;
     private SchedulerSiddhiQueue<StreamEvent> inputQueue;

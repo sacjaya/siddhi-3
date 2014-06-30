@@ -17,15 +17,15 @@
 */
 package org.wso2.siddhi.core.util.statemachine;
 
-import org.wso2.siddhi.query.api.query.input.WindowedStream;
+import org.wso2.siddhi.query.api.query.input.TransformedStream;
 
 public class OrUtilState extends UtilState implements LogicUtilState {
 
     private int partner = -1;
 
 
-    public OrUtilState(int stateNumber, WindowedStream windowedStream, int partnerNum) {
-        super(stateNumber, windowedStream);
+    public OrUtilState(int stateNumber, TransformedStream transformedStream, int partnerNum) {
+        super(stateNumber, transformedStream);
         this.partner=partnerNum;
     }
 

@@ -17,11 +17,11 @@
 */
 package org.wso2.siddhi.core.query.statemachine;
 
-import org.wso2.siddhi.query.api.query.input.WindowedStream;
+import org.wso2.siddhi.query.api.query.input.TransformedStream;
 
 public interface State {
 
     public abstract int getStateNumber();
 
-    public  abstract WindowedStream getWindowedStream();
+    public  abstract TransformedStream getTransformedStream();
 }

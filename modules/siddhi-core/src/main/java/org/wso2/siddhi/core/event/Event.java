@@ -22,14 +22,20 @@ import org.wso2.siddhi.core.event.remove.RemoveEvent;
 
 import java.util.Arrays;
 
-public abstract class Event implements StreamEvent, AtomicEvent {
+public class Event implements StreamEvent, AtomicEvent {
 
+    private String streamId;
     private long timeStamp;
     private Object[] data;
 
-    public Event( long timeStamp, Object[] data) {
+    public Event(String streamId, long timeStamp, Object[] data) {
+        this.streamId = streamId;
         this.timeStamp = timeStamp;
         this.data = data;
+    }
+
+    public String getStreamId() {
+        return streamId;
     }
 
     public long getTimeStamp() {
@@ -47,7 +53,8 @@ public abstract class Event implements StreamEvent, AtomicEvent {
     @Override
     public String toString() {
         return "Event{" +
-                "timeStamp=" + timeStamp +
+                "streamId='" + streamId + '\'' +
+                ", timeStamp=" + timeStamp +
                 ", data=" + (data == null ? null : Arrays.asList(data)) +
                 ", type=" + ((this instanceof InStream) ? "new" : ((this instanceof RemoveEvent) ? "remove" : "other"))+
                 '}';

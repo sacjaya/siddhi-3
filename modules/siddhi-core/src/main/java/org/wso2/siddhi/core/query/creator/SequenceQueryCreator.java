@@ -47,7 +47,7 @@ public class SequenceQueryCreator extends QueryCreator {
     protected void updateQueryEventSourceList(List<QueryEventSource> queryEventSourceList) {
         //update outputStreamDefinition as no transformer for sequence
         for (SequenceState sequenceState : sequenceStateList) {
-            sequenceState.getWindowedStream().getQueryEventSource().setOutDefinition(sequenceState.getWindowedStream().getQueryEventSource().getInDefinition());
+            sequenceState.getTransformedStream().getQueryEventSource().setOutDefinition(sequenceState.getTransformedStream().getQueryEventSource().getInDefinition());
         }
     }
 

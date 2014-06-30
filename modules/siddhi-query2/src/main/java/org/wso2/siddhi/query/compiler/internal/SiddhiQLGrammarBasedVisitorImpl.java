@@ -71,7 +71,7 @@ public class SiddhiQLGrammarBasedVisitorImpl extends SiddhiQLGrammarBaseVisitor 
         }
 
         for (int i = 0; i < ctx.parameterName().size(); i++) {
-            tableDefinition.from((String) visit(ctx.parameterName(i)), (String) visit(ctx.parameterValue(i)));
+            tableDefinition.fromParameter((String) visit(ctx.parameterName(i)), (String) visit(ctx.parameterValue(i)));
         }
         return tableDefinition;
     }
@@ -290,7 +290,7 @@ public class SiddhiQLGrammarBasedVisitorImpl extends SiddhiQLGrammarBaseVisitor 
      */
     @Override
     public Object visitObjectType(@NotNull SiddhiQLGrammarParser.ObjectTypeContext ctx) {
-        return null; //todo add Attribute.Type.OBJECT;
+        return Attribute.Type.OBJECT;
     }
 
 

@@ -17,7 +17,7 @@
 */
 package org.wso2.siddhi.core.util.statemachine;
 
-import org.wso2.siddhi.query.api.query.input.WindowedStream;
+import org.wso2.siddhi.query.api.query.input.TransformedStream;
 
 public class CountUtilState extends UtilState {
 
@@ -25,8 +25,8 @@ public class CountUtilState extends UtilState {
     private int max = -1;
 
 
-    public CountUtilState(int stateNumber, WindowedStream windowedStream, int minCount, int maxCount) {
-        super(stateNumber, windowedStream);
+    public CountUtilState(int stateNumber, TransformedStream transformedStream, int minCount, int maxCount) {
+        super(stateNumber, transformedStream);
         min = minCount;
         max = maxCount;
     }

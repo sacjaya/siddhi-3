@@ -84,23 +84,9 @@ public class SiddhiManager {
 
     public SiddhiManager(SiddhiConfiguration siddhiConfiguration) {
 
-        if (siddhiConfiguration.isDistributedProcessing()) {
-            HazelcastInstance hazelcastInstance = Hazelcast.getHazelcastInstanceByName(siddhiConfiguration.getInstanceIdentifier());
-            if (hazelcastInstance == null) {
-                this.siddhiContext = new SiddhiContext(siddhiConfiguration.getQueryPlanIdentifier(), SiddhiContext.ProcessingState.ENABLE_INTERNAL);
-                Config hazelcastConf = new Config();
-                hazelcastConf.setProperty("hazelcast.logging.type", "log4j");
-                hazelcastConf.getGroupConfig().setName(siddhiConfiguration.getQueryPlanIdentifier());
-                hazelcastConf.setInstanceName(siddhiConfiguration.getInstanceIdentifier());
-                hazelcastInstance = Hazelcast.newHazelcastInstance(hazelcastConf);
-            } else {
-                this.siddhiContext = new SiddhiContext(siddhiConfiguration.getQueryPlanIdentifier(), SiddhiContext.ProcessingState.ENABLE_EXTERNAL);
-            }
-            siddhiContext.setHazelcastInstance(hazelcastInstance);
-            siddhiContext.setGlobalIndexGenerator(new GlobalIndexGenerator(siddhiContext));
-        } else {
+
             this.siddhiContext = new SiddhiContext(siddhiConfiguration.getQueryPlanIdentifier(), SiddhiContext.ProcessingState.DISABLED);
-        }
+
 
         this.siddhiContext.setEventBatchSize(siddhiConfiguration.getEventBatchSize());
         this.siddhiContext.setAsyncProcessing(siddhiConfiguration.isAsyncProcessing());
@@ -197,79 +183,79 @@ public class SiddhiManager {
     }
 
 
-    public void defineTable(TableDefinition tableDefinition) {
-        if (!checkEventTableExist(tableDefinition)) {
-            streamTableDefinitionMap.put(tableDefinition.getTableId(), tableDefinition);
-            EventTable eventTable = eventTableMap.get(tableDefinition.getTableId());
-            if (eventTable == null) {
-                if (tableDefinition.getExternalTable() == null) {
-                    eventTable = new InMemoryEventTable(tableDefinition, siddhiContext);
-                    siddhiContext.getSnapshotService().addSnapshotable((InMemoryEventTable) eventTable);
-                } else {
-                    eventTable = new RDBMSEventTable(tableDefinition, siddhiContext);
-                    // load params for table.
-                }
-                eventTableMap.put(tableDefinition.getTableId(), eventTable);
-            }
-        }
-    }
+//    public void defineTable(TableDefinition tableDefinition) {
+//        if (!checkEventTableExist(tableDefinition)) {
+//            streamTableDefinitionMap.put(tableDefinition.getTableId(), tableDefinition);
+//            EventTable eventTable = eventTableMap.get(tableDefinition.getTableId());
+//            if (eventTable == null) {
+//                if (tableDefinition.getExternalTable() == null) {
+//                    eventTable = new InMemoryEventTable(tableDefinition, siddhiContext);
+//                    siddhiContext.getSnapshotService().addSnapshotable((InMemoryEventTable) eventTable);
+//                } else {
+//                    eventTable = new RDBMSEventTable(tableDefinition, siddhiContext);
+//                    // load params for table.
+//                }
+//                eventTableMap.put(tableDefinition.getTableId(), eventTable);
+//            }
+//        }
+//    }
 
 
-    public void defineTable(String tableDefinition) throws SiddhiParserException {
-        defineTable(SiddhiCompiler.parseTableDefinition(tableDefinition));
+//    public void defineTable(String tableDefinition) throws SiddhiParserException {
+//        defineTable(SiddhiCompiler.parseTableDefinition(tableDefinition));
+//
+//    }
+//
+//    public void removeTable(String tableId) {
+//        AbstractDefinition abstractDefinition = streamTableDefinitionMap.get(tableId);
+//        if (abstractDefinition != null && abstractDefinition instanceof TableDefinition) {
+//            streamTableDefinitionMap.remove(tableId);
+//            eventTableMap.remove(tableId);
+//        }
+//    }
+//
+//    private boolean checkEventTableExist(TableDefinition newTableDefinition) {
+//        AbstractDefinition definition = streamTableDefinitionMap.get(newTableDefinition.getTableId());
+//        if (definition != null) {
+//            if (definition instanceof StreamDefinition) {
+//                throw new DifferentDefinitionAlreadyExistException("Stream " + newTableDefinition.getTableId() + " is already defined as " + definition);
+//            } else if (!definition.getAttributeList().equals(newTableDefinition.getAttributeList())) {
+//                throw new DifferentDefinitionAlreadyExistException("Table " + newTableDefinition.getTableId() + " is already defined as " + definition);
+//            } else {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
-    }
+//    public void definePartition(PartitionDefinition partitionDefinition) {
+//        if (!checkEventPartitionExist(partitionDefinition)) {
+//            partitionDefinitionMap.put(partitionDefinition.getPartitionId(), partitionDefinition);
+//        }
+//    }
+//
+//    public void definePartition(String partitionDefinition) throws SiddhiParserException {
+//        definePartition(SiddhiCompiler.parsePartitionDefinition(partitionDefinition));
+//    }
+//
+//    public void removePartition(String partitionId) {
+//        PartitionDefinition partitionDefinition = partitionDefinitionMap.get(partitionId);
+//        if (partitionDefinition != null) {
+//            partitionDefinitionMap.remove(partitionId);
+//        }
+//    }
 
-    public void removeTable(String tableId) {
-        AbstractDefinition abstractDefinition = streamTableDefinitionMap.get(tableId);
-        if (abstractDefinition != null && abstractDefinition instanceof TableDefinition) {
-            streamTableDefinitionMap.remove(tableId);
-            eventTableMap.remove(tableId);
-        }
-    }
-
-    private boolean checkEventTableExist(TableDefinition newTableDefinition) {
-        AbstractDefinition definition = streamTableDefinitionMap.get(newTableDefinition.getTableId());
-        if (definition != null) {
-            if (definition instanceof StreamDefinition) {
-                throw new DifferentDefinitionAlreadyExistException("Stream " + newTableDefinition.getTableId() + " is already defined as " + definition);
-            } else if (!definition.getAttributeList().equals(newTableDefinition.getAttributeList())) {
-                throw new DifferentDefinitionAlreadyExistException("Table " + newTableDefinition.getTableId() + " is already defined as " + definition);
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void definePartition(PartitionDefinition partitionDefinition) {
-        if (!checkEventPartitionExist(partitionDefinition)) {
-            partitionDefinitionMap.put(partitionDefinition.getPartitionId(), partitionDefinition);
-        }
-    }
-
-    public void definePartition(String partitionDefinition) throws SiddhiParserException {
-        definePartition(SiddhiCompiler.parsePartitionDefinition(partitionDefinition));
-    }
-
-    public void removePartition(String partitionId) {
-        PartitionDefinition partitionDefinition = partitionDefinitionMap.get(partitionId);
-        if (partitionDefinition != null) {
-            partitionDefinitionMap.remove(partitionId);
-        }
-    }
-
-    private boolean checkEventPartitionExist(PartitionDefinition partitionDefinition) {
-        PartitionDefinition definition = partitionDefinitionMap.get(partitionDefinition.getPartitionId());
-        if (definition != null) {
-            if (!definition.getPartitionTypeList().equals(partitionDefinition.getPartitionTypeList())) {
-                throw new DifferentDefinitionAlreadyExistException("Partition " + partitionDefinition.getPartitionId() + " is already defined as " + definition);
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
+//    private boolean checkEventPartitionExist(PartitionDefinition partitionDefinition) {
+//        PartitionDefinition definition = partitionDefinitionMap.get(partitionDefinition.getPartitionId());
+//        if (definition != null) {
+//            if (!definition.getPartitionTypeList().equals(partitionDefinition.getPartitionTypeList())) {
+//                throw new DifferentDefinitionAlreadyExistException("Partition " + partitionDefinition.getPartitionId() + " is already defined as " + definition);
+//            } else {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     public String addQuery(String query) throws SiddhiParserException {
         return addQuery(SiddhiCompiler.parseQuery(query));
@@ -286,7 +272,7 @@ public class SiddhiManager {
 //    }
 
     public String addQuery(Query query) {
-        QueryManager queryManager = new QueryManager(query, streamTableDefinitionMap, streamJunctionMap, eventTableMap, siddhiContext);
+        QueryManager queryManager = new QueryManager(query, streamTableDefinitionMap, streamJunctionMap, eventTableMap, partitionDefinitionMap, siddhiContext);
         OutputCallback outputCallback = queryManager.getOutputCallback();
         if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
             defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
@@ -296,25 +282,25 @@ public class SiddhiManager {
 
     }
 
-    public ExecutionPlanReference addExecutionPlan(String executionPlan) throws SiddhiParserException {
-        List<ExecutionPlan> executionPlanList = SiddhiCompiler.parse(executionPlan);
-        ExecutionPlanReference executionPlanReference = new ExecutionPlanReference();
-        for (ExecutionPlan plan : executionPlanList) {
-            if (plan instanceof Query) {
-                executionPlanReference.addQueryReference(addQuery((Query) plan));
-            } else if (plan instanceof StreamDefinition) {
-                executionPlanReference.addInputHandler(defineStream((StreamDefinition) plan));
-            } else if (plan instanceof TableDefinition) {
-                defineTable((TableDefinition) plan);
-            } else if (plan instanceof PartitionDefinition) {
-                definePartition((PartitionDefinition) plan);
-            } else {
-                throw new OperationNotSupportedException(plan.getClass().getName() + " is not supported as an execution plan element ");
-            }
-        }
-
-        return executionPlanReference;
-    }
+//    public ExecutionPlanReference addExecutionPlan(String executionPlan) throws SiddhiParserException {
+//        List<ExecutionPlan> executionPlanList = SiddhiCompiler.parse(executionPlan);
+//        ExecutionPlanReference executionPlanReference = new ExecutionPlanReference();
+//        for (ExecutionPlan plan : executionPlanList) {
+//            if (plan instanceof Query) {
+//                executionPlanReference.addQueryReference(addQuery((Query) plan));
+//            } else if (plan instanceof StreamDefinition) {
+//                executionPlanReference.addInputHandler(defineStream((StreamDefinition) plan));
+//            } else if (plan instanceof TableDefinition) {
+//                defineTable((TableDefinition) plan);
+//            } else if (plan instanceof PartitionDefinition) {
+//                definePartition((PartitionDefinition) plan);
+//            } else {
+//                throw new OperationNotSupportedException(plan.getClass().getName() + " is not supported as an execution plan element ");
+//            }
+//        }
+//
+//        return executionPlanReference;
+//    }
 
     public void removeQuery(String queryId) {
         QueryManager queryManager = queryProcessorMap.remove(queryId);

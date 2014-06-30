@@ -68,6 +68,20 @@ public class FilterTestCase {
 
         String queryReference = siddhiManager.addQuery(query);
 
+        Query query1 = QueryFactory.createQuery();
+
+        query1.from(QueryFactory.inputStream("cseEventStream"));
+        query1.select(
+                QueryFactory.outputSelector().
+                        select("symbol", Expression.variable("symbol")).
+                        select("price", Expression.variable("price")).
+                        select("volume", Expression.variable("volume"))
+        );
+        query1.insertInto("StockQuoteTwo");
+
+        String queryReference1 = siddhiManager.addQuery(query1);
+
+
         siddhiManager.addCallback(queryReference, new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
