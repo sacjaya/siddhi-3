@@ -23,25 +23,21 @@ import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
-import org.wso2.siddhi.core.exception.OperationNotSupportedException;
-import org.wso2.siddhi.core.exception.QueryNotExistException;
 import org.wso2.siddhi.core.snapshot.SnapshotService;
-import org.wso2.siddhi.core.stream.StreamJunction;
-import org.wso2.siddhi.core.stream.input.InputHandler;
-import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.core.util.SiddhiThreadFactory;
-import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.definition.TableDefinition;
-import org.wso2.siddhi.query.api.definition.partition.PartitionDefinition;
-import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+
+/*import org.wso2.siddhi.core.stream.StreamJunction;
+import org.wso2.siddhi.core.stream.input.InputHandler;
+import org.wso2.siddhi.core.stream.output.StreamCallback;*/
 
 public class SiddhiManager {
     static final Logger log = Logger.getLogger(SiddhiManager.class);
@@ -53,8 +49,6 @@ public class SiddhiManager {
     private ConcurrentMap<String, QueryManager> queryProcessorMap = new ConcurrentHashMap<String, QueryManager>();
 
 
-
-
     public SiddhiManager() {
         this(new SiddhiConfiguration());
     }
@@ -62,9 +56,7 @@ public class SiddhiManager {
     public SiddhiManager(SiddhiConfiguration siddhiConfiguration) {
 
 
-       this.siddhiContext = new SiddhiContext(siddhiConfiguration.getExecutionPlanIdentifier(), SiddhiContext.ProcessingState.DISABLED);
-
-
+        this.siddhiContext = new SiddhiContext(siddhiConfiguration.getExecutionPlanIdentifier(), SiddhiContext.ProcessingState.DISABLED);
         this.siddhiContext.setEventBatchSize(siddhiConfiguration.getEventBatchSize());
         this.siddhiContext.setSiddhiExtensions(siddhiConfiguration.getSiddhiExtensions());
         this.siddhiContext.setThreadPoolExecutor(new ThreadPoolExecutor(siddhiConfiguration.getThreadExecutorCorePoolSize(),
@@ -75,11 +67,10 @@ public class SiddhiManager {
                 new SiddhiThreadFactory("Executor")));
         this.siddhiContext.setScheduledExecutorService(Executors.newScheduledThreadPool(siddhiConfiguration.getThreadSchedulerCorePoolSize(), new SiddhiThreadFactory("Scheduler")));
         this.siddhiContext.setSnapshotService(new SnapshotService(siddhiContext));
-   }
+    }
 
 
-
-    public InputHandler defineStream(StreamDefinition streamDefinition) {
+    public void defineStream(StreamDefinition streamDefinition) {
         if (!checkEventStreamExist(streamDefinition)) {
             streamTableDefinitionMap.put(streamDefinition.getStreamId(), streamDefinition);
             StreamJunction streamJunction = streamJunctionMap.get(streamDefinition.getStreamId());
@@ -89,16 +80,12 @@ public class SiddhiManager {
             }
             InputHandler inputHandler = new InputHandler(streamDefinition.getStreamId(), streamJunction, siddhiContext);
             inputHandlerMap.put(streamDefinition.getStreamId(), inputHandler);
-            return inputHandler;
-        } else {
-            return inputHandlerMap.get(streamDefinition.getStreamId());
         }
 
     }
 
-    public InputHandler defineStream(String streamDefinition) throws SiddhiParserException {
-        return defineStream(SiddhiCompiler.parseStreamDefinition(streamDefinition));
-
+    public void defineStream(String streamDefinition) throws SiddhiParserException {
+        defineStream(SiddhiCompiler.parseStreamDefinition(streamDefinition));
     }
 
     public void removeStream(String streamId) {
@@ -147,8 +134,6 @@ public class SiddhiManager {
 //            queryManager.removeQuery(streamJunctionMap, streamTableDefinitionMap);
 //        }
     }
-
-
 
 
 //    public Query getQuery(String queryReference) {
