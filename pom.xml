@@ -13,7 +13,7 @@
 
     <modules>
         <module>modules/siddhi-api</module>
-        <module>modules/siddhi-query</module>
+        <!--<module>modules/siddhi-query</module>-->
         <module>modules/siddhi-core</module>
         <!--<module>modules/siddhi-extensions</module>-->
         <!--<module>modules/siddhi-distribution</module>-->
