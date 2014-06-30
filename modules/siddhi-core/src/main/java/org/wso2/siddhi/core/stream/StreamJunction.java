@@ -34,6 +34,7 @@ import java.util.concurrent.Executors;
 
 public class StreamJunction {
     private List<StreamReceiver> streamReceivers = new CopyOnWriteArrayList<StreamReceiver>();
+    private StreamHandler streamHandler;
     private static  SiddhiEventFactory factory = new SiddhiEventFactory();
     private int bufferSize = 1024;
     private String streamId;
@@ -45,10 +46,13 @@ public class StreamJunction {
         this.eventMonitorService = eventMonitorService;
         Executor executor = Executors.newCachedThreadPool();
         this.disruptor = new Disruptor<Event>(factory, bufferSize, executor, ProducerType.SINGLE,new SleepingWaitStrategy());
+
+
     }
 
-    public void send(Event allEvents) {
-        disruptor.publishEvent(new SiddhiEventPublishTranslator(allEvents));
+    public void send(StreamEvent allEvents) {
+        Event allEvent= (Event) allEvents;
+        disruptor.publishEvent(new SiddhiEventPublishTranslator(allEvent));
 //        for (StreamReceiver handlerProcessor : streamReceivers) {
 //            handlerProcessor.receive(allEvents);
 //        }
@@ -61,6 +65,10 @@ public class StreamJunction {
     public synchronized void addEventFlow(StreamReceiver streamReceiver) {
         //in reverse order to execute the later states first to overcome to dependencies of count states
         streamReceivers.add(0, streamReceiver);
+        disruptor.handleEventsWith(new StreamHandler(streamReceiver));
+        disruptor.start();
+
+
     }
 
     public synchronized void removeEventFlow(HandlerProcessor queryStreamProcessor) {
