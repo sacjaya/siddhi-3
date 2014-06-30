@@ -19,6 +19,7 @@
 package org.wso2.siddhi.core.config;
 
 import org.wso2.siddhi.core.snapshot.SnapshotService;
+import org.wso2.siddhi.core.snapshot.ThreadBarrier;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -35,6 +36,8 @@ public class SiddhiContext {
     private String executionPlanIdentifier;
     private List<Class> siddhiExtensions;
     private ConcurrentHashMap<String, DataSource> siddhiDataSources;
+
+    private ThreadBarrier threadBarrier;
 
 
     public enum ProcessingState {ENABLE_INTERNAL,ENABLE_EXTERNAL,DISABLED}
@@ -94,6 +97,14 @@ public class SiddhiContext {
 
     public void addDataSource(String name, DataSource dataSource) {
         siddhiDataSources.put(name, dataSource);
+    }
+
+    public void setThreadBarrier(ThreadBarrier threadBarrier) {
+        this.threadBarrier = threadBarrier;
+    }
+
+    public ThreadBarrier getThreadBarrier() {
+        return threadBarrier;
     }
 
  }

@@ -22,4 +22,6 @@ public interface Snapshotable {
     public SnapshotObject snapshot();
 
     public void restore(SnapshotObject snapshotObject);
+
+    public String getElementId();
 }
