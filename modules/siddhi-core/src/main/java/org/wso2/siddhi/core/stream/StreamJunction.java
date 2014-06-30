@@ -21,15 +21,21 @@ import com.lmax.disruptor.SleepingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.event.SiddhiEventFactory;
+import org.wso2.siddhi.core.event.SiddhiEventPublishTranslator;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.tracer.EventMonitorService;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class StreamJunction {
     private List<StreamReceiver> streamReceivers = new CopyOnWriteArrayList<StreamReceiver>();
+    private static  SiddhiEventFactory factory = new SiddhiEventFactory();
+    private int bufferSize = 1024;
     private String streamId;
     private EventMonitorService eventMonitorService;
     private Disruptor disruptor;
@@ -37,14 +43,15 @@ public class StreamJunction {
     public StreamJunction(String streamId, EventMonitorService eventMonitorService) {
         this.streamId = streamId;
         this.eventMonitorService = eventMonitorService;
-
+        Executor executor = Executors.newCachedThreadPool();
+        this.disruptor = new Disruptor<Event>(factory, bufferSize, executor, ProducerType.SINGLE,new SleepingWaitStrategy());
     }
 
     public void send(Event allEvents) {
-
-        for (StreamReceiver handlerProcessor : streamReceivers) {
-            handlerProcessor.receive(allEvents);
-        }
+        disruptor.publishEvent(new SiddhiEventPublishTranslator(allEvents));
+//        for (StreamReceiver handlerProcessor : streamReceivers) {
+//            handlerProcessor.receive(allEvents);
+//        }
     }
 
 

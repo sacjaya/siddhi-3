@@ -38,12 +38,24 @@ public class Event implements StreamEvent, AtomicEvent {
         return streamId;
     }
 
+    public void setStreamId(String streamId){
+        this.streamId = streamId;
+    }
+
     public long getTimeStamp() {
         return timeStamp;
     }
 
+    public void setTimeStamp(long timeStamp){
+        this.timeStamp = timeStamp;
+    }
+
     public Object[] getData() {
         return data;
+    }
+
+    public void setData(Object[] data){
+        this.data = data;
     }
 
     public Object getData(int i) {
