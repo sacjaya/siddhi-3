@@ -103,4 +103,7 @@ public class ExecutionPlan {
     }
 
 
+    public List<Query> getQueryList() {
+        return queryList;
+    }
 }
