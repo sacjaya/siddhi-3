@@ -23,7 +23,7 @@ import java.util.Map;
  * Container class to store and transfer query and
  * related stream definitions to siddhi manager.
  */
-public class ExecutionPlan {
+public class ExecutionPlan implements org.wso2.siddhi.query.api.ExecutionPlan {
     private String query;
     private Map<String, StreamDefinition> streamDefinitionMap;
 
