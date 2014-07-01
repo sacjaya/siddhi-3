@@ -16,6 +16,8 @@
 package org.wso2.siddhi.core.config;
 
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.query.Query;
+
 import java.util.Map;
 
 
@@ -24,7 +26,7 @@ import java.util.Map;
  * related stream definitions to siddhi manager.
  */
 public class ExecutionPlan implements org.wso2.siddhi.query.api.ExecutionPlan {
-    private String query;
+    private Query query;
     private Map<String, StreamDefinition> streamDefinitionMap;
 
     /**
@@ -33,16 +35,16 @@ public class ExecutionPlan implements org.wso2.siddhi.query.api.ExecutionPlan {
      * @param query               String representation of siddhi query
      * @param streamDefinitionMap Map containing all the necessary stream definitions for above query
      */
-    public ExecutionPlan(String query, Map<String, StreamDefinition> streamDefinitionMap) {
+    public ExecutionPlan(Query query, Map<String, StreamDefinition> streamDefinitionMap) {
         this.query = query;
         this.streamDefinitionMap = streamDefinitionMap;
     }
 
-    public String getQuery() {
+    public Query getQuery() {
         return query;
     }
 
-    public void setQuery(String query) {
+    public void setQuery(Query query) {
         this.query = query;
     }
 
