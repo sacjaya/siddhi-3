@@ -61,4 +61,15 @@ public class Event implements StreamEvent{
         return new Event[]{this};
     }
 
+    public void setData(Object[] data) {
+        this.data =data;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public void setStreamId(String streamId) {
+        this.streamId = streamId;
+    }
 }

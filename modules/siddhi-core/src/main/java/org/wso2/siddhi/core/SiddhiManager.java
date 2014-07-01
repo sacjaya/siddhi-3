@@ -24,6 +24,8 @@ import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
 import org.wso2.siddhi.core.snapshot.SnapshotService;
+import org.wso2.siddhi.core.stream.StreamJunction;
+import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.util.SiddhiThreadFactory;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
