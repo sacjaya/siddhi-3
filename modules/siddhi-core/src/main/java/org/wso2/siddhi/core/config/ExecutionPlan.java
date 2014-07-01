@@ -15,9 +15,12 @@
  */
 package org.wso2.siddhi.core.config;
 
+import org.wso2.siddhi.core.stream.StreamReceiver;
+import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.query.Query;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -25,27 +28,40 @@ import java.util.Map;
  * Container class to store and transfer query and
  * related stream definitions to siddhi manager.
  */
-public class ExecutionPlan implements org.wso2.siddhi.query.api.ExecutionPlan {
-    private Query query;
+public class ExecutionPlan {
+    private List<Query> queryList;
     private Map<String, StreamDefinition> streamDefinitionMap;
+    private List<InputHandler> inputHandlerList;
+    private List<StreamReceiver> streamRecieverList;
+    private String name;
+
 
     /**
-     * Create new execution plan providing necessary params
+     * Class to contain configuration related to a query plan
      *
-     * @param query               String representation of siddhi query
-     * @param streamDefinitionMap Map containing all the necessary stream definitions for above query
+     * @param name name of the execution plan
      */
-    public ExecutionPlan(Query query, Map<String, StreamDefinition> streamDefinitionMap) {
-        this.query = query;
-        this.streamDefinitionMap = streamDefinitionMap;
+    public ExecutionPlan(String name) {
+        this.name = name;
     }
 
-    public Query getQuery() {
-        return query;
+    /**
+     * Returns query object for given query name
+     *
+     * @param queryName name of the query
+     * @return query object with the given query name. null if not found.
+     */
+    public Query getQuery(String queryName) {
+        for (Query query : queryList) {
+            if (query.getName().equals(queryName)) {
+                return query;
+            }
+        }
+        return null;
     }
 
-    public void setQuery(Query query) {
-        this.query = query;
+    public void addQuery(Query query) {
+        queryList.add(query);
     }
 
     public Map<String, StreamDefinition> getStreamDefinitionMap() {
@@ -54,6 +70,10 @@ public class ExecutionPlan implements org.wso2.siddhi.query.api.ExecutionPlan {
 
     public void setStreamDefinitionMap(Map<String, StreamDefinition> streamDefinitionMap) {
         this.streamDefinitionMap = streamDefinitionMap;
+    }
+
+    public void addStreamDefinition(String streamId, StreamDefinition definition) {
+        streamDefinitionMap.put(streamId, definition);
     }
 
     /**
@@ -65,5 +85,22 @@ public class ExecutionPlan implements org.wso2.siddhi.query.api.ExecutionPlan {
     public StreamDefinition getStreamDefinition(String streamId) {
         return streamDefinitionMap.get(streamId);
     }
+
+    public void addInputHandler(InputHandler inputHandler) {
+        inputHandlerList.add(inputHandler);
+    }
+
+    public List<InputHandler> getInputHandlerList() {
+        return inputHandlerList;
+    }
+
+    public void addStreamReciever(StreamReceiver receiver) {
+        streamRecieverList.add(receiver);
+    }
+
+    public List<StreamReceiver> getStreamRecieverList() {
+        return streamRecieverList;
+    }
+
 
 }
