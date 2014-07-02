@@ -23,8 +23,16 @@ import org.wso2.siddhi.core.event.Event;
 
 public class SiddhiEventFactory implements EventFactory<Event>
 {
+
+//    int dataSize;
+//
+//    SiddhiEventFactory(int dataSize){
+//        this.dataSize = dataSize;
+//    }
+
+
     public Event newInstance()
     {
-        return new Event("", 0,null);
+        return new Event();
     }
 }

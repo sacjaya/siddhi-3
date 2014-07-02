@@ -21,19 +21,21 @@ import java.util.Arrays;
 
 public class Event implements StreamEvent{
 
-    private String streamId;
-    private long timeStamp;
-    private Object[] data;
+     private long timeStamp = -1;
+    private Object[] data = new Object[1];
 
-    public Event(String streamId, long timeStamp, Object[] data) {
-        this.streamId = streamId;
+    public Event( long timeStamp, Object[] data) {
         this.timeStamp = timeStamp;
         this.data = data;
     }
 
-    public String getStreamId() {
-        return streamId;
+    public Event(){
     }
+
+    public Event(int dataSize){
+        this.data = new Object[dataSize];
+    }
+
 
     public long getTimeStamp() {
         return timeStamp;
@@ -50,8 +52,7 @@ public class Event implements StreamEvent{
     @Override
     public String toString() {
         return "Event{" +
-                "streamId='" + streamId + '\'' +
-                ", timeStamp=" + timeStamp +
+                " timeStamp=" + timeStamp +
                 ", data=" + (data == null ? null : Arrays.asList(data)) +
                 '}';
     }
@@ -69,7 +70,5 @@ public class Event implements StreamEvent{
         this.timeStamp = timeStamp;
     }
 
-    public void setStreamId(String streamId) {
-        this.streamId = streamId;
-    }
+
 }

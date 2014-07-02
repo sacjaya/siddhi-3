@@ -26,19 +26,14 @@ import org.wso2.siddhi.core.event.disruptor.util.SiddhiEventFactory;
 import org.wso2.siddhi.core.event.disruptor.util.SiddhiEventPublishTranslator;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class StreamJunction {
-    private ConcurrentMap<StreamReceiver,Disruptor> disruptorReceiversMap = new ConcurrentHashMap<StreamReceiver, Disruptor>();
+    private List<Disruptor> disruptorList = new CopyOnWriteArrayList<Disruptor>();
     private ThreadPoolExecutor threadPoolExecutor;
-    private static  SiddhiEventFactory factory = new SiddhiEventFactory();
+    private SiddhiEventFactory factory = new SiddhiEventFactory();
     private int bufferSize = 1024;
 
     private String streamId;
@@ -50,7 +45,7 @@ public class StreamJunction {
 
     public void send(StreamEvent allEvents) {
         Event event = (Event) allEvents;
-       for (Disruptor disruptor : disruptorReceiversMap.values()) {
+       for (Disruptor disruptor : disruptorList) {
            disruptor.publishEvent(new SiddhiEventPublishTranslator(event));
        }
     }
@@ -59,11 +54,11 @@ public class StreamJunction {
         Disruptor disruptor = new Disruptor<Event>(factory, bufferSize, threadPoolExecutor, ProducerType.SINGLE,new SleepingWaitStrategy());
         disruptor.handleEventsWith(new StreamHandler(streamReceiver));
         disruptor.start();
-        disruptorReceiversMap.put(streamReceiver,disruptor);
+        disruptorList.add(disruptor);
     }
 
     public synchronized void removeEventFlow(HandlerProcessor queryStreamProcessor) {
-        disruptorReceiversMap.remove(queryStreamProcessor).shutdown();
+//        disruptorReceiversMap.remove(queryStreamProcessor).shutdown();
     }
 
     public String getStreamId() {

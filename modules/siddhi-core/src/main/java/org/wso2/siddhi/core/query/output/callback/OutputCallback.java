@@ -15,24 +15,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.wso2.siddhi.core.query.output.callback;
 
-package org.wso2.siddhi.core.event.disruptor.util;
+import org.wso2.siddhi.core.event.StreamEvent;
 
-import com.lmax.disruptor.EventTranslator;
-import org.wso2.siddhi.core.event.Event;
+public interface OutputCallback {
 
-public class SiddhiEventPublishTranslator implements EventTranslator<Event> {
-    private long timeStamp;
-    private Object[] data;
+    void send(StreamEvent streamEvent);
 
-
-    public SiddhiEventPublishTranslator(Event event) {
-        this.timeStamp = event.getTimeStamp();
-        this.data = event.getData();
-    }
-
-    public void translateTo(Event event, long sequence) {
-        event.setData(data);
-        event.setTimeStamp(timeStamp);
-    }
 }

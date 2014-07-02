@@ -33,7 +33,6 @@ public class StreamHandler implements EventHandler<Event> {
 
     {
         streamReceiver.receive(event);
-
-
     }
+
 }

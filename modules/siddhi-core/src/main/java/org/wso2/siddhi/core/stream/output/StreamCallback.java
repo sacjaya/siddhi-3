@@ -22,64 +22,24 @@ import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.stream.StreamReceiver;
-import org.wso2.siddhi.core.tracer.EventMonitorService;
-import org.wso2.siddhi.core.util.collection.queue.scheduler.SchedulerElement;
-import org.wso2.siddhi.core.util.collection.queue.scheduler.SchedulerSiddhiQueue;
+
 
 import java.util.concurrent.ThreadPoolExecutor;
 
-public abstract class StreamCallback implements Runnable, StreamReceiver, SchedulerElement {
+public abstract class StreamCallback implements  StreamReceiver {
 
-    private SchedulerSiddhiQueue<StreamEvent> inputQueue;
-    private ThreadPoolExecutor threadPoolExecutor;
     private String streamId;
-    private SiddhiContext siddhiContext;
     static final Logger log = Logger.getLogger(StreamCallback.class);
-    private EventMonitorService eventMonitorService;
 
 
-    public void setSiddhiContext(SiddhiContext context) {
-        this.siddhiContext = context;
-        this.threadPoolExecutor = context.getThreadPoolExecutor();
-        this.eventMonitorService = context.getEventMonitorService();
-        this.inputQueue = new SchedulerSiddhiQueue<StreamEvent>(this);
-
-    }
 
     public void receive(StreamEvent streamEvent) {
-        if (siddhiContext.isAsyncProcessing()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Adding to streamId callback " + streamEvent);
-            }
-            inputQueue.put(streamEvent);
-        } else {
-            send(streamEvent);
-        }
+                send(streamEvent);
     }
 
-    @Override
-    public void run() {
-        try {
-            int eventCounter = 0;
-            while (true) {
-                StreamEvent event = inputQueue.poll();
-                if (event == null) {
-                    break;
-                } else if (siddhiContext.getEventBatchSize() > 0 && eventCounter > siddhiContext.getEventBatchSize()) {
-                    threadPoolExecutor.execute(this);
-                    break;
-                }
-                send(event);
-            }
-        } catch (Throwable t) {
-            log.error(t.getMessage(), t);
-        }
-    }
 
     private void send(StreamEvent event) {
-        if (eventMonitorService.isEnableTrace()) {
-            eventMonitorService.trace(event, " on Stream Callback");
-        }
+
         receive(event.toArray());
     }
 
@@ -93,13 +53,4 @@ public abstract class StreamCallback implements Runnable, StreamReceiver, Schedu
         return streamId;
     }
 
-    @Override
-    public void schedule() {
-        threadPoolExecutor.execute(this);
-    }
-
-    @Override
-    public void scheduleNow() {
-        threadPoolExecutor.execute(this);
-    }
 }
