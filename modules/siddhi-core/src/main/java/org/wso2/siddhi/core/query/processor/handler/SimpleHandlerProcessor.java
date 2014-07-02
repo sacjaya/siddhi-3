@@ -17,12 +17,13 @@
  */
 package org.wso2.siddhi.core.query.processor.handler;
 
+import com.lmax.disruptor.dsl.Disruptor;
 import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.*;
 
 import org.wso2.siddhi.core.query.selector.QuerySelector;
-import org.wso2.siddhi.query.api.query.QueryEventSource;
+
 
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -30,38 +31,38 @@ public class SimpleHandlerProcessor implements HandlerProcessor{
 
     static final Logger log = Logger.getLogger(SimpleHandlerProcessor.class);
 
-    private QueryEventSource queryEventSource;
-    private ThreadPoolExecutor threadPoolExecutor;
-    private SiddhiContext context;
-
+    private Disruptor disruptor;
     private QuerySelector next;
 
 
     public SimpleHandlerProcessor(QuerySelector querySelector){
-                      next = querySelector;
+         next = querySelector;
     }
 
     @Override
     public void receive(StreamEvent streamEvent) {
-
-
-                processHandler(streamEvent);
-
-
+              processHandler(streamEvent);
     }
 
 
 
     protected void processHandler(StreamEvent streamEvent) {
        if (streamEvent != null) {
-
-                next.process(streamEvent);
-
+              next.process(streamEvent);
         }
     }
 
     public String getStreamId() {
-        return queryEventSource.getSourceId();
+        return null;
+    }
+
+    @Override
+    public Disruptor getDisruptor() {
+        return disruptor;
+    }
+
+    public void setDisruptor(Disruptor disruptor){
+         this.disruptor = disruptor;
     }
 
 
