@@ -57,7 +57,7 @@ public class Compare extends Condition {
 //                if (!(dataType.equalsIgnoreCase(String.class.getSimpleName()) || dataType.equalsIgnoreCase(Integer.class.getSimpleName())
 //                      || dataType.equalsIgnoreCase(Double.class.getSimpleName()) || dataType.equalsIgnoreCase(Boolean.class.getSimpleName())
 //                      || dataType.equalsIgnoreCase(Long.class.getSimpleName()) || dataType.equalsIgnoreCase(Float.class.getSimpleName()))) {
-//                    throw new MalformedAttributeException("\"" + dataType + "\" is not a valid attribute data type");
+//                    throw new UnsupportedAttributeTypeException("\"" + dataType + "\" is not a valid attribute data type");
 //                }
 //            }
 //

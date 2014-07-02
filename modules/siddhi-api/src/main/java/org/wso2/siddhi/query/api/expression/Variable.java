@@ -81,12 +81,12 @@ public class Variable extends Expression {
 //            if (occurrences == 1) {
 //                streamId = inputStreamName;
 //            } else if (occurrences > 1) {
-//                throw new MalformedAttributeException("Attribute \"" + getAttributeName() + "\" exists in more than one inputstream.Specify the input stream");
+//                throw new UnsupportedAttributeTypeException("Attribute \"" + getAttributeName() + "\" exists in more than one inputstream.Specify the input stream");
 //            } else if (occurrences == 0) {
 //                if (null != queryEventSourceList && queryEventSourceList.size() == 1) {
-//                    throw new MalformedAttributeException("Attribute \"" + getAttributeName() + "\" does not exist in " + queryEventSourceList.get(0).getSourceId());
+//                    throw new UnsupportedAttributeTypeException("Attribute \"" + getAttributeName() + "\" does not exist in " + queryEventSourceList.get(0).getSourceId());
 //                } else {
-//                    throw new MalformedAttributeException("Attribute \"" + getAttributeName() + "\" does not exist");
+//                    throw new UnsupportedAttributeTypeException("Attribute \"" + getAttributeName() + "\" does not exist");
 //                }
 //            }
 //
@@ -111,7 +111,7 @@ public class Variable extends Expression {
 //            }
 //        }
 //        if (!isValid) {
-//            throw new MalformedAttributeException("Attribute \"" + getAttributeName() + "\" does not exist in " + streamId);
+//            throw new UnsupportedAttributeTypeException("Attribute \"" + getAttributeName() + "\" does not exist in " + streamId);
 //        }
 //    }
 

@@ -17,7 +17,7 @@
 */
 package org.wso2.siddhi.query.api.query.output;
 
-import org.wso2.siddhi.query.api.exception.MalformedAttributeException;
+import org.wso2.siddhi.query.api.exception.UnsupportedAttributeTypeException;
 import org.wso2.siddhi.query.api.expression.constant.Constant;
 import org.wso2.siddhi.query.api.expression.constant.IntConstant;
 import org.wso2.siddhi.query.api.expression.constant.LongConstant;
@@ -35,7 +35,7 @@ public abstract class Output {
         } else if (events instanceof IntConstant) {
             return new EventOutputRate(((IntConstant) events).getValue());
         }
-        throw new MalformedAttributeException("Unsupported output event rate type, output event rate only supports int");
+        throw new UnsupportedAttributeTypeException("Unsupported output event rate type, output event rate only supports int");
     }
 
     public static TimeOutputRate perTimePeriod(TimeConstant timeConstant) {
