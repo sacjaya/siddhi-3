@@ -27,7 +27,6 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.expression.ExpressionExtension;
 import org.wso2.siddhi.query.api.extension.Extension;
-import org.wso2.siddhi.query.api.query.QueryEventSource;
 import org.wso2.siddhi.query.api.query.input.handler.Filter;
 import org.wso2.siddhi.query.api.query.selection.Selector;
 import org.wso2.siddhi.query.api.query.selection.attribute.ComplexAttribute;
@@ -56,21 +55,14 @@ public class QuerySelector {
                          OutputManager outputManager) {
         this.outputStreamId = outputStreamId;
         outputStreamDefinition = new StreamDefinition();
-        outputStreamDefinition.name(outputStreamId);
+        outputStreamDefinition.id(outputStreamId);
 
         this.outputManager = outputManager;
 
     }
 
-
-
-
-
-
-
     public void process(StreamEvent streamEvent) {
-
-              outputManager.send(streamEvent.getTimeStamp(), streamEvent, null);
+        outputManager.send(streamEvent.getTimeStamp(), streamEvent, null);
 
     }
 
