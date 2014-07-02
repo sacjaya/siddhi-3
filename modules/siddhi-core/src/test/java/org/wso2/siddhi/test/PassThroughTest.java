@@ -50,7 +50,7 @@ public class PassThroughTest {
 
         log.info("stream callback test");
         SiddhiManager siddhiManager = new SiddhiManager();
-        InputHandler inputHandler = siddhiManager.defineStream(QueryFactory.createStreamDefinition().name("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
+        InputHandler inputHandler = siddhiManager.defineStream(QueryFactory.streamDefinition().id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
 
         siddhiManager.addCallback("cseEventStream", new StreamCallback() {
             @Override
@@ -74,7 +74,7 @@ public class PassThroughTest {
         log.info("Pass through query");
         SiddhiManager siddhiManager = new SiddhiManager();
 
-        siddhiManager.defineStream(QueryFactory.createStreamDefinition().name("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
+        siddhiManager.defineStream(QueryFactory.streamDefinition().id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
 
         Query query = new Query();
         query.from(QueryFactory.inputStream("cseEventStream"));
@@ -97,6 +97,13 @@ public class PassThroughTest {
         Assert.assertEquals(2, count);
         siddhiManager.shutdown();
 
+
+        siddhiManager.addCallback("StockQuote", new StreamCallback() {
+            @Override
+            public void receive(Event[] events) {
+                System.out.println("*******************^^^^^^^^^**********************");
+            }
+        });
     }
 
 }
