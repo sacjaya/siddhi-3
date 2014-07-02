@@ -57,8 +57,8 @@ public class PassThroughQueryTestCase {
         );
         query.insertInto("OutStockStream");
 
-    } 
-    
+    }
+
     @Test
     public void testQuery3() {
         Query query = QueryFactory.query();
@@ -71,8 +71,8 @@ public class PassThroughQueryTestCase {
         );
         query.insertInto("OutStockStream");
 
-    } 
-    
+    }
+
     @Test
     public void testQuery4() {
         Query query = QueryFactory.query();
@@ -89,7 +89,7 @@ public class PassThroughQueryTestCase {
         query.insertInto("OutStockStream");
 
     }
-    
+
     @Test
     public void testQuery5() {
         Query query = QueryFactory.query();
