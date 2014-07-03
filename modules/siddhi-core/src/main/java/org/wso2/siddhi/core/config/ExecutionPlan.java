@@ -45,21 +45,6 @@ public class ExecutionPlan {
         this.name = name;
     }
 
-    /**
-     * Returns query object for given query name
-     *
-     * @param queryName name of the query
-     * @return query object with the given query name. null if not found.
-     */
-    public Query getQuery(String queryName) {
-        for (Query query : queryList) {
-            if (query.getName().equals(queryName)) {
-                return query;
-            }
-        }
-        return null;
-    }
-
     public void addQuery(Query query) {
         queryList.add(query);
     }

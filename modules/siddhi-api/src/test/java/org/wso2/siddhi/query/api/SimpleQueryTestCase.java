@@ -32,9 +32,9 @@ public class SimpleQueryTestCase {
 
     @Test
     public void testCreatingFilterQuery() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("StockStream").
+                Query.inputStream("StockStream").
                         filter(
                                 Condition.and(
                                         Condition.compare(
@@ -50,7 +50,7 @@ public class SimpleQueryTestCase {
                         )
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", "avg", Expression.variable("symbol")).
                         groupBy("symbol").
@@ -61,13 +61,15 @@ public class SimpleQueryTestCase {
         );
         query.insertInto("OutStockStream");
 
+        ExecutionPlan.executionPlan().addQuery(query);
+
     }
 
     @Test
     public void testQuery1() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("StockStream").
+                Query.inputStream("StockStream").
                         filter(
                                 Condition.and(
                                         Condition.compare(
@@ -83,7 +85,7 @@ public class SimpleQueryTestCase {
                         ).window("length", Expression.value(50))
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", "avg", Expression.variable("symbol")).
                         groupBy("symbol").
@@ -98,9 +100,9 @@ public class SimpleQueryTestCase {
 
     @Test
     public void testQuery2() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("StockStream").
+                Query.inputStream("StockStream").
                         filter(Condition.and(
                                 Condition.compare(
                                         Expression.add(Expression.value(7), Expression.value(9.5)),
@@ -122,7 +124,7 @@ public class SimpleQueryTestCase {
                         )
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", "avg", Expression.variable("symbol")).
                         groupBy("symbol").
@@ -137,9 +139,9 @@ public class SimpleQueryTestCase {
 
     @Test
     public void testQuery3() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("StockStream").
+                Query.inputStream("StockStream").
                         filter(
                                 Condition.and(
                                         Condition.compare(
@@ -165,7 +167,7 @@ public class SimpleQueryTestCase {
                         )
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", "avg", Expression.variable("symbol")).
                         groupBy("symbol").
@@ -180,9 +182,9 @@ public class SimpleQueryTestCase {
 
     @Test(expected = AttributeAlreadyExistException.class)
     public void testCreatingFilterQueryWithDuplicateOutputAttribute() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("StockStream").
+                Query.inputStream("StockStream").
                         filter(Condition.and(Condition.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
                                                 Condition.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
@@ -194,7 +196,7 @@ public class SimpleQueryTestCase {
                         ).window("lengthBatch", Expression.value(50))
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", "avg", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
@@ -215,10 +217,10 @@ public class SimpleQueryTestCase {
 
     @Test
     public void testCreatingNestedFilterQuery() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.query().
-                        from(QueryFactory.inputStream("StockStream").
+                Query.query().
+                        from(Query.inputStream("StockStream").
                                 filter(
                                         Condition.compare(
                                                 Expression.variable("StockStream", "price"),
@@ -226,14 +228,14 @@ public class SimpleQueryTestCase {
                                                 Expression.value(20))
                                 )).
                         select(
-                                QueryFactory.outputSelector().
+                                Query.outputSelector().
                                         select("symbol", Expression.variable("symbol")).
                                         select("avgPrice", "avg", Expression.variable("symbol"))
                         ).
                         returnStream()
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", Expression.variable("avgPrice"))
         );
@@ -246,9 +248,9 @@ public class SimpleQueryTestCase {
 
     @Test
     public void testCreatingReturnFilterQuery() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("StockStream").
+                Query.inputStream("StockStream").
                         filter(Condition.and(Condition.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
                                                 Condition.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
@@ -260,7 +262,7 @@ public class SimpleQueryTestCase {
                         ).window("lengthBatch", Expression.value(50))
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", "avg", Expression.variable("symbol"))
         );
@@ -271,9 +273,9 @@ public class SimpleQueryTestCase {
 
     @Test
     public void testCreatingReturnFilterQueryWithExtension() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("StockStream").
+                Query.inputStream("StockStream").
                         filter(Condition.and(Condition.compare(Expression.extension("ext", "FooBarCond", Expression.value(7), Expression.value(9.5)),
                                                 Condition.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
@@ -284,7 +286,7 @@ public class SimpleQueryTestCase {
                         ).function("ext", "Foo", Expression.value(67), Expression.value(89)).window("ext", "lengthFirst10", Expression.value(50))
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", "ext", "avg", Expression.variable("symbol"))
         );
@@ -294,9 +296,9 @@ public class SimpleQueryTestCase {
 
     @Test
     public void testCreatingReturnFilterQueryWithFunction() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("StockStream").
+                Query.inputStream("StockStream").
                         filter(Condition.and(Condition.compare(Expression.function("FooBarCond", Expression.value(7), Expression.value(9.5)),
                                                 Condition.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
@@ -307,7 +309,7 @@ public class SimpleQueryTestCase {
                         ).function("ext", "Foo", Expression.value(67), Expression.value(89)).window("ext", "lengthFirst10", Expression.value(50))
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", "ext", "avg", Expression.variable("symbol"))
         );

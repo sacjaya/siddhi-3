@@ -22,7 +22,7 @@ import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.definition.TableDefinition;
-import org.wso2.siddhi.query.api.definition.partition.PartitionDefinition;
+import org.wso2.siddhi.query.api.partition.PartitionDefinition;
 import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 

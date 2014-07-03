@@ -27,27 +27,27 @@ public class OutputRateTestCase {
 
     @Test
     public void testCreatingQuery() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("cseEventStream").
+                Query.inputStream("cseEventStream").
                         filter(Condition.and(Condition.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
-                                                               Condition.Operator.GREATER_THAN,
-                                                               Expression.variable("price")),
-                                             Condition.compare(Expression.value(100),
-                                                               Condition.Operator.GREATER_THAN_EQUAL,
-                                                               Expression.variable("volume")
-                                             )
-                        )
+                                                Condition.Operator.GREATER_THAN,
+                                                Expression.variable("price")),
+                                        Condition.compare(Expression.value(100),
+                                                Condition.Operator.GREATER_THAN_EQUAL,
+                                                Expression.variable("volume")
+                                        )
+                                )
                         ).window("lengthBatch", Expression.value(50))
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", "avg", Expression.variable("symbol")).
                         groupBy("symbol").
                         having(Condition.compare(Expression.variable("avgPrice"),
-                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                 Expression.value(50)
+                                Condition.Operator.GREATER_THAN_EQUAL,
+                                Expression.value(50)
                         ))
         );
 
@@ -58,27 +58,27 @@ public class OutputRateTestCase {
 
     @Test
     public void testCreatingQuery1() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("cseEventStream").
+                Query.inputStream("cseEventStream").
                         filter(Condition.and(Condition.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
-                                                               Condition.Operator.GREATER_THAN,
-                                                               Expression.variable("price")),
-                                             Condition.compare(Expression.value(100),
-                                                               Condition.Operator.GREATER_THAN_EQUAL,
-                                                               Expression.variable("volume")
-                                             )
-                        )
+                                                Condition.Operator.GREATER_THAN,
+                                                Expression.variable("price")),
+                                        Condition.compare(Expression.value(100),
+                                                Condition.Operator.GREATER_THAN_EQUAL,
+                                                Expression.variable("volume")
+                                        )
+                                )
                         ).window("lengthBatch", Expression.value(50))
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", "avg", Expression.variable("symbol")).
                         groupBy("symbol").
                         having(Condition.compare(Expression.variable("avgPrice"),
-                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                 Expression.value(50)
+                                Condition.Operator.GREATER_THAN_EQUAL,
+                                Expression.value(50)
                         ))
         );
 
@@ -89,27 +89,27 @@ public class OutputRateTestCase {
 
     @Test
     public void testCreatingQuery2() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("cseEventStream").
+                Query.inputStream("cseEventStream").
                         filter(Condition.and(Condition.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
-                                                               Condition.Operator.GREATER_THAN,
-                                                               Expression.variable("price")),
-                                             Condition.compare(Expression.value(100),
-                                                               Condition.Operator.GREATER_THAN_EQUAL,
-                                                               Expression.variable("volume")
-                                             )
-                        )
+                                                Condition.Operator.GREATER_THAN,
+                                                Expression.variable("price")),
+                                        Condition.compare(Expression.value(100),
+                                                Condition.Operator.GREATER_THAN_EQUAL,
+                                                Expression.variable("volume")
+                                        )
+                                )
                         ).window("lengthBatch", Expression.value(50))
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", "avg", Expression.variable("symbol")).
                         groupBy("symbol").
                         having(Condition.compare(Expression.variable("avgPrice"),
-                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                 Expression.value(50)
+                                Condition.Operator.GREATER_THAN_EQUAL,
+                                Expression.value(50)
                         ))
         );
 
@@ -120,27 +120,27 @@ public class OutputRateTestCase {
 
     @Test
     public void testCreatingQuery3() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("cseEventStream").
+                Query.inputStream("cseEventStream").
                         filter(Condition.and(Condition.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
-                                                               Condition.Operator.GREATER_THAN,
-                                                               Expression.variable("price")),
-                                             Condition.compare(Expression.value(100),
-                                                               Condition.Operator.GREATER_THAN_EQUAL,
-                                                               Expression.variable("volume")
-                                             )
-                        )
+                                                Condition.Operator.GREATER_THAN,
+                                                Expression.variable("price")),
+                                        Condition.compare(Expression.value(100),
+                                                Condition.Operator.GREATER_THAN_EQUAL,
+                                                Expression.variable("volume")
+                                        )
+                                )
                         ).window("lengthBatch", Expression.value(50))
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", "avg", Expression.variable("symbol")).
                         groupBy("symbol").
                         having(Condition.compare(Expression.variable("avgPrice"),
-                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                 Expression.value(50)
+                                Condition.Operator.GREATER_THAN_EQUAL,
+                                Expression.value(50)
                         ))
         );
 

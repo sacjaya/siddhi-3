@@ -16,11 +16,13 @@
  */
 package org.wso2.siddhi.query.api.query;
 
-import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.condition.Condition;
-import org.wso2.siddhi.query.api.query.input.AnonymousInputStream;
-import org.wso2.siddhi.query.api.query.input.InputStream;
-import org.wso2.siddhi.query.api.query.input.SingleInputStream;
+import org.wso2.siddhi.query.api.expression.constant.Constant;
+import org.wso2.siddhi.query.api.query.input.*;
+import org.wso2.siddhi.query.api.query.input.pattern.PatternInputStream;
+import org.wso2.siddhi.query.api.query.input.pattern.element.PatternElement;
+import org.wso2.siddhi.query.api.query.input.sequence.SequenceInputStream;
+import org.wso2.siddhi.query.api.query.input.sequence.element.SequenceElement;
 import org.wso2.siddhi.query.api.query.output.OutputRate;
 import org.wso2.siddhi.query.api.query.output.stream.DeleteStream;
 import org.wso2.siddhi.query.api.query.output.stream.InsertIntoStream;
@@ -28,24 +30,20 @@ import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
 import org.wso2.siddhi.query.api.query.output.stream.UpdateStream;
 import org.wso2.siddhi.query.api.query.selection.Selector;
 
-public class Query implements ExecutionPlan {
+public class Query {
 
-    private String name;
-    private String summery;
     private InputStream inputStream;
     private Selector selector = new Selector();
     private OutputStream outputStream;
-    private String partitionId;
     private OutputRate outputRate;
 
-    public Query name(String name) {
-        this.name = name;
-        return this;
+    public static Query query() {
+        return new Query();
     }
 
-    public Query summery(String summery) {
-        this.summery = summery;
-        return this;
+    public  Query property(String key, String value) {
+       //todo handel
+       return this;
     }
 
     public Query from(InputStream inputStream) {
@@ -72,10 +70,6 @@ public class Query implements ExecutionPlan {
     public Query insertInto(String outputStreamId) {
         this.outputStream = new InsertIntoStream(outputStreamId);
         return this;
-    }
-
-    public void partitionBy(String partitionId) {
-        this.partitionId = partitionId;
     }
 
     public SingleInputStream returnStream() {
@@ -114,20 +108,64 @@ public class Query implements ExecutionPlan {
         return selector;
     }
 
-    public String getPartitionId() {
-        return partitionId;
-    }
-
     public OutputRate getOutputRate() {
         return outputRate;
     }
 
-    public String getName() {
-        return name;
+    public static StandardInputStream inputStream(String streamId) {
+        return new StandardInputStream(streamId, streamId);
     }
 
-    public String getSummery() {
-        return summery;
+    public static StandardInputStream inputStream(String streamReferenceId, String streamId) {
+        return new StandardInputStream(streamReferenceId, streamId);
     }
 
+    public static Selector outputSelector() {
+        return new Selector();
+    }
+
+    public static InputStream joinInputStream(SingleInputStream leftStream, JoinInputStream.Type type,
+                                              SingleInputStream rightStream,
+                                              Condition onCompare,
+                                              Constant within) {
+        return new JoinInputStream(leftStream, type, rightStream, onCompare, within, JoinInputStream.EventTrigger.ALL);
+    }
+
+    public static InputStream joinInputStream(SingleInputStream leftStream, JoinInputStream.Type type,
+                                              SingleInputStream rightStream,
+                                              Condition onCompare, Constant within,
+                                              JoinInputStream.EventTrigger trigger) {
+        return new JoinInputStream(leftStream, type, rightStream, onCompare, within, trigger);
+    }
+
+    public static InputStream joinInputStream(SingleInputStream leftStream, JoinInputStream.Type type,
+                                              SingleInputStream rightStream, Constant within) {
+        return new JoinInputStream(leftStream, type, rightStream, null, within, JoinInputStream.EventTrigger.ALL);
+    }
+
+    public static InputStream joinInputStream(SingleInputStream leftStream, JoinInputStream.Type type,
+                                              SingleInputStream rightStream, Condition onCompare) {
+        return new JoinInputStream(leftStream, type, rightStream, onCompare, null, JoinInputStream.EventTrigger.ALL);
+    }
+
+    public static InputStream joinInputStream(SingleInputStream leftStream, JoinInputStream.Type type,
+                                              SingleInputStream rightStream) {
+        return new JoinInputStream(leftStream, type, rightStream, null, null, JoinInputStream.EventTrigger.ALL);
+    }
+
+    public static PatternInputStream patternInputStream(PatternElement patternElement) {
+        return new PatternInputStream(patternElement, null);
+    }
+
+    public static PatternInputStream patternInputStream(PatternElement patternElement, Constant within) {
+        return new PatternInputStream(patternElement, within);
+    }
+
+    public static SequenceInputStream sequenceInputStream(SequenceElement sequenceElement) {
+        return new SequenceInputStream(sequenceElement, null);
+    }
+
+    public static SequenceInputStream sequenceInputStream(SequenceElement sequenceElement, Constant within) {
+        return new SequenceInputStream(sequenceElement, within);
+    }
 }

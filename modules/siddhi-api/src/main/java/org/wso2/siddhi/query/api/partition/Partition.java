@@ -16,44 +16,35 @@
  * under the License.
  */
 
-package org.wso2.siddhi.query.api.definition.partition;
+package org.wso2.siddhi.query.api.partition;
 
-import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.condition.Condition;
-import org.wso2.siddhi.query.api.expression.Variable;
+import org.wso2.siddhi.query.api.expression.Expression;
+import org.wso2.siddhi.query.api.query.Query;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@linkplain PartitionDefinition} class is used to represent the definition of
+ * {@linkplain Partition} class is used to represent the definition of
  * a partition for a Siddhi instance. The partition definition consists of a
  * partition ID and a list of partition types that belong to a given definition
  * instance.
  */
-public class PartitionDefinition implements ExecutionPlan {
+public class Partition {
 
-    private String partitionId;
     private List<PartitionType> partitionTypeList = new ArrayList<PartitionType>();
+    private Query query;
 
-    public PartitionDefinition name(String name) {
-        this.partitionId = name;
-        return this;
-    }
-
-    public PartitionDefinition partitionBy(Variable variable) {
-        this.partitionTypeList.add(new VariablePartitionType(variable));
-        return this;
-    }
-
-    public PartitionDefinition partitionBy(Condition condition, String label) {
-        this.partitionTypeList.add(new RangePartitionType(condition, label));
-        return this;
-    }
-
-    public String getPartitionId() {
-        return partitionId;
-    }
+//    public Partition partitionBy(Variable variable) {
+//        this.partitionTypeList.add(new VariablePartitionType(variable));
+//        return this;
+//    }
+//
+//    public Partition partitionBy(Condition condition, String label) {
+//        this.partitionTypeList.add(new RangePartitionType(condition, label));
+//        return this;
+//    }
 
     public void addPartitionType(PartitionType partitionType) {
         this.partitionTypeList.add(partitionType);
@@ -65,10 +56,9 @@ public class PartitionDefinition implements ExecutionPlan {
 
     @Override
     public String toString() {
-        return "PartitionDefinition{" +
-               "partitionId='" + partitionId + '\'' +
-               ", partitionTypeList=" + partitionTypeList +
-               '}';
+        return "Partition{" +
+                "partitionTypeList=" + partitionTypeList +
+                '}';
     }
 
     @Override
@@ -80,11 +70,8 @@ public class PartitionDefinition implements ExecutionPlan {
             return false;
         }
 
-        PartitionDefinition that = (PartitionDefinition) o;
+        Partition that = (Partition) o;
 
-        if (partitionId != null ? !partitionId.equals(that.partitionId) : that.partitionId != null) {
-            return false;
-        }
         if (partitionTypeList != null ? !partitionTypeList.equals(that.partitionTypeList) : that.partitionTypeList != null) {
             return false;
         }
@@ -92,10 +79,27 @@ public class PartitionDefinition implements ExecutionPlan {
         return true;
     }
 
-    @Override
-    public int hashCode() {
-        int result = partitionId != null ? partitionId.hashCode() : 0;
-        result = 31 * result + (partitionTypeList != null ? partitionTypeList.hashCode() : 0);
-        return result;
+    public static Partition partition() {
+        return new Partition();
     }
+
+    public Partition with(String streamId, Expression expression) {
+        new VariablePartitionType(streamId,expression);
+        //todo handle with
+        return this;
+    }
+
+    public Partition with(String streamId, Condition ...conditions) {
+         new RangePartitionType(streamId,conditions);
+        //todo handle with
+        return this;
+    }
+
+    public Partition addQuery(Query query) {
+        //todo handle with
+        this.query = query;
+        return this;
+    }
+
+
 }

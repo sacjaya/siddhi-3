@@ -23,9 +23,12 @@ public class TableDefinition extends AbstractDefinition {
 
     private ExternalTable externalTable = null;
 
-    public TableDefinition id(String streamId) {
-        id = streamId;
-        return this;
+    protected TableDefinition(String id) {
+        super(id);
+    }
+
+    public static TableDefinition id(String id) {
+       return new TableDefinition(id);
     }
 
     public TableDefinition attribute(String attributeName, Attribute.Type type) {
@@ -59,7 +62,6 @@ public class TableDefinition extends AbstractDefinition {
         externalTable.parameter(paramName, paramValue);
         return this;
     }
-
 
     public class ExternalTable {
 

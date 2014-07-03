@@ -17,5 +17,45 @@
 */
 package org.wso2.siddhi.query.api;
 
-public interface ExecutionPlan {
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.definition.TableDefinition;
+import org.wso2.siddhi.query.api.query.Query;
+
+public class ExecutionPlan {
+    private String name;
+
+    //todo manage the variables
+    private StreamDefinition streamDefinition;
+    private TableDefinition tableDefinition;
+    private Query query;
+
+    public ExecutionPlan(String name) {
+        this.name = name;
+    }
+
+    public ExecutionPlan() {
+    }
+
+    public static ExecutionPlan executionPlan(String name) {
+        return new ExecutionPlan(name);
+    }
+
+    public static ExecutionPlan executionPlan() {
+        return new ExecutionPlan();
+    }
+
+    public ExecutionPlan defineStream(StreamDefinition streamDefinition) {
+        this.streamDefinition = streamDefinition;
+        return this;
+    }
+
+    public ExecutionPlan defineTable(TableDefinition tableDefinition) {
+        this.tableDefinition = tableDefinition;
+        return this;
+    }
+
+    public ExecutionPlan addQuery(Query query) {
+        this.query = query;
+        return this;
+    }
 }

@@ -27,9 +27,9 @@ public class TableQueryTestCase {
 
     @Test
     public void testCreatingDeleteQuery() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("cseEventStream").
+                Query.inputStream("cseEventStream").
                         filter(
                                 Condition.and(
                                         Condition.compare(
@@ -54,9 +54,9 @@ public class TableQueryTestCase {
 
     @Test
     public void testCreatingDeleteByTypeQuery() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("cseEventStream").
+                Query.inputStream("cseEventStream").
                         filter(Condition.and(Condition.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
                                                 Condition.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
@@ -78,9 +78,9 @@ public class TableQueryTestCase {
 
     @Test
     public void testCreatingUpdateByQuery() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("cseEventStream").
+                Query.inputStream("cseEventStream").
                         filter(Condition.and(Condition.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
                                                 Condition.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
@@ -92,7 +92,7 @@ public class TableQueryTestCase {
                         ).window("lengthBatch", Expression.value(50))
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price"))
         );
@@ -104,9 +104,9 @@ public class TableQueryTestCase {
 
     @Test
     public void testCreatingUpdateByTypeQuery() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("cseEventStream").
+                Query.inputStream("cseEventStream").
                         filter(Condition.and(Condition.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
                                                 Condition.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
@@ -118,7 +118,7 @@ public class TableQueryTestCase {
                         ).window("lengthBatch", Expression.value(50))
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price"))
         );
@@ -133,9 +133,9 @@ public class TableQueryTestCase {
 
     @Test
     public void testCreatingInQuery() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.inputStream("cseEventStream").
+                Query.inputStream("cseEventStream").
                         filter(
                                 Condition.and(
                                         Condition.compare(
@@ -152,7 +152,7 @@ public class TableQueryTestCase {
                         ).window("lengthBatch", Expression.value(50))
         );
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", "avg", Expression.variable("symbol")).
                         groupBy("symbol").

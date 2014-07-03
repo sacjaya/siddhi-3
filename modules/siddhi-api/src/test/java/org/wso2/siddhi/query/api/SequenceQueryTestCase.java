@@ -33,16 +33,16 @@ public class SequenceQueryTestCase {
 
     @Test
     public void testCreatingFilterPatternQuery() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.sequenceInputStream(
-                        Sequence.next(QueryFactory.inputStream("e1", "Stream1"),
-                                QueryFactory.inputStream("e2", "Stream1")),
+                Query.sequenceInputStream(
+                        Sequence.next(Query.inputStream("e1", "Stream1"),
+                                Query.inputStream("e2", "Stream1")),
                         Expression.value(2000)
                 ));
         query.insertInto("OutputStream");
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("e1", "symbol")).
                         select("avgPrice", "avg", Expression.variable("e2", 0, "price")).
                         groupBy("e1", "symbol").

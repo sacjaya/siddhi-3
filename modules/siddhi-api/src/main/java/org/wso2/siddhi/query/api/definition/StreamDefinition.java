@@ -18,9 +18,15 @@ package org.wso2.siddhi.query.api.definition;
 
 public class StreamDefinition extends AbstractDefinition {
 
-    public StreamDefinition id(String streamId) {
-        id = streamId;
-        return this;
+    public StreamDefinition() {
+    }
+
+    public StreamDefinition(String streamId) {
+        super(streamId);
+    }
+
+    public static StreamDefinition id(String streamId) {
+        return new StreamDefinition(streamId);
     }
 
     public StreamDefinition attribute(String attributeName, Attribute.Type type) {
