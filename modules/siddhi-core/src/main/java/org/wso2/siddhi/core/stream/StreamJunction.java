@@ -28,14 +28,18 @@ import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class StreamJunction {
-    private List<Disruptor> disruptorList = new CopyOnWriteArrayList<Disruptor>();
+    private List<StreamReceiver> streamReceivers = new CopyOnWriteArrayList<StreamReceiver>();
     private ThreadPoolExecutor threadPoolExecutor;
     private SiddhiEventFactory factory = new SiddhiEventFactory();
     private int bufferSize = 1024;
+    private boolean distruptorEnabled= false;
 
+    Executor executor =     Executors.newCachedThreadPool();
     private String streamId;
 
     public StreamJunction(String streamId, ThreadPoolExecutor threadPoolExecutor) {
@@ -43,22 +47,35 @@ public class StreamJunction {
         this.threadPoolExecutor = threadPoolExecutor;
     }
 
+
     public void send(StreamEvent allEvents) {
-        Event event = (Event) allEvents;
-       for (Disruptor disruptor : disruptorList) {
-           disruptor.publishEvent(new SiddhiEventPublishTranslator(event));
+       Event event = (Event) allEvents;
+       for (StreamReceiver streamReceiver : streamReceivers) {
+           if (distruptorEnabled) {
+           streamReceiver.getDisruptor().publishEvent(new SiddhiEventPublishTranslator(event));
+           } else {
+               streamReceiver.receive(allEvents);
+           }
+
        }
     }
 
     public synchronized void addEventFlow(StreamReceiver streamReceiver) {
-        Disruptor disruptor = new Disruptor<Event>(factory, bufferSize, threadPoolExecutor, ProducerType.SINGLE,new SleepingWaitStrategy());
+        if(distruptorEnabled) {
+        Disruptor disruptor = new Disruptor<Event>(factory, bufferSize, executor, ProducerType.SINGLE,new SleepingWaitStrategy());
+        streamReceiver.setDisruptor(disruptor);
         disruptor.handleEventsWith(new StreamHandler(streamReceiver));
         disruptor.start();
-        disruptorList.add(disruptor);
+        }
+        //in reverse order to execute the later states first to overcome to dependencies of count states
+        streamReceivers.add(0, streamReceiver);
     }
 
     public synchronized void removeEventFlow(HandlerProcessor queryStreamProcessor) {
-//        disruptorReceiversMap.remove(queryStreamProcessor).shutdown();
+        streamReceivers.remove(queryStreamProcessor);
+        if(distruptorEnabled){
+        queryStreamProcessor.getDisruptor().shutdown();
+        }
     }
 
     public String getStreamId() {

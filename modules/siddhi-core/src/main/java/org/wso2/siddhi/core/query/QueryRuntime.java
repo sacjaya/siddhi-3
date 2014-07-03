@@ -24,12 +24,13 @@ import org.wso2.siddhi.core.query.output.OutputManager;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
-import org.wso2.siddhi.core.query.processor.handler.SimpleHandlerProcessor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.stream.StreamJunction;
+import org.wso2.siddhi.core.util.parser.QueryOutputParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.query.Query;
+import org.wso2.siddhi.query.api.query.input.StandardInputStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,20 +49,53 @@ public class QueryRuntime {
 
 
 
-    public QueryRuntime(Query query,ConcurrentMap<String,StreamJunction> streamJunctionMap) {
-        outputManager = new OutputManager();
-        QuerySelector querySelector = new QuerySelector(query.getOutputStream().getStreamId(),outputManager);
-        this.queryId = query.getOutputStream().getStreamId() + "-" + UUID.randomUUID();
-        handlerProcessors.add(new SimpleHandlerProcessor(querySelector)) ;
+    public QueryRuntime(Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap,ConcurrentMap<String, StreamJunction> streamJunctionMap, SiddhiContext siddhiContext) {
+        if (query.getOutputStream() != null) {
+            this.queryId = query.getOutputStream().getStreamId() + "-" + UUID.randomUUID();
+        } else {
+            this.queryId = UUID.randomUUID().toString();
+        }
+        this.query = query;
+        outputManager = QueryOutputParser.constructOutputRateManager();
+        AbstractDefinition streamID = streamDefinitionMap.get(((StandardInputStream) query.getInputStream()).getStreamId());
+        QuerySelector querySelector = new QuerySelector(query.getOutputStream().getStreamId(), query.getSelector(),streamID,outputManager);
 
-        for (HandlerProcessor handlerProcessor : handlerProcessors) {
-                streamJunctionMap.get(query.getInputStream().getStreamIds().get(0)).addEventFlow(handlerProcessor);
+
+        if (query.getOutputStream() != null) {
+             outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), streamJunctionMap, siddhiContext, querySelector.getOutputStreamDefinition());
+             outputManager.setOutputCallback(outputCallback);
+
 
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //TODO: add the correct processor
+        QueryPartitioner queryPartitioner = new QueryPartitioner(querySelector);
+        handlerProcessors = queryPartitioner.getHandleProcessors();
+
+
+        for (HandlerProcessor handlerProcessor : handlerProcessors) {
+            //TODO: getStreamID
+            streamJunctionMap.get(query.getInputStream().getStreamIds().get(0)).addEventFlow(handlerProcessor);
+
+        }
+
     }
 
+
     public OutputCallback getOutputCallback() {
-        return null;
+        return outputCallback;
     }
 
     public String getQueryId() {
@@ -72,7 +106,7 @@ public class QueryRuntime {
         outputManager.addQueryCallback(callback);
     }
 
-    public void removeQuery(ConcurrentMap<String,StreamJunction> streamJunctionMap, ConcurrentMap<String,AbstractDefinition> streamDefinitionMap) {
+    public void removeQuery(ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap) {
         for (HandlerProcessor queryStreamProcessor : handlerProcessors) {
             StreamJunction junction = streamJunctionMap.get(queryStreamProcessor.getStreamId());
             if (junction != null) {

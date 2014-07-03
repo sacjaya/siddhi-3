@@ -76,6 +76,7 @@ public class PassThroughTest {
 
         siddhiManager.defineStream(QueryFactory.streamDefinition().id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
 
+
         Query query = new Query();
         query.from(QueryFactory.inputStream("cseEventStream"));
         query.insertInto("StockQuote");
@@ -90,20 +91,30 @@ public class PassThroughTest {
             }
 
         });
-        InputHandler inputHandler = siddhiManager.getInputHandler("cseEventStream");
-        inputHandler.send(new Object[]{"IBM", 75.6f, 100});
-        inputHandler.send(new Object[]{"WSO2", 75.6f, 100});
-        Thread.sleep(100);
-        Assert.assertEquals(2, count);
-        siddhiManager.shutdown();
 
 
         siddhiManager.addCallback("StockQuote", new StreamCallback() {
             @Override
             public void receive(Event[] events) {
-                System.out.println("*******************^^^^^^^^^**********************");
+                 count++;
+
             }
         });
+
+
+
+
+
+
+        InputHandler inputHandler = siddhiManager.getInputHandler("cseEventStream");
+        inputHandler.send(new Object[]{"IBM", 75.6f, 100});
+        inputHandler.send(new Object[]{"WSO2", 75.6f, 100});
+        Thread.sleep(1000);
+        Assert.assertEquals(4, count);
+        siddhiManager.shutdown();
+
+
+
     }
 
 }

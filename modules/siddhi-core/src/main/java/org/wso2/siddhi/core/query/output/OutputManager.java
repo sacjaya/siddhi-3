@@ -30,7 +30,6 @@ public class OutputManager {
     protected OutputCallback outputCallback = null;
     private boolean hasCallBack = false;
 
-//    public abstract void send(long timeStamp, StreamEvent currentEvent, StreamEvent expiredEvent, String groupByKey);
 
     public void send(long timeStamp, StreamEvent currentEvent, StreamEvent expiredEvent){
         sendToCallBacks(timeStamp, currentEvent, expiredEvent, currentEvent != null ? currentEvent : expiredEvent);

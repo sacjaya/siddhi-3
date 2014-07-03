@@ -127,7 +127,8 @@ public class SiddhiManager {
 
 
     public String addQuery(Query query) {
-        QueryRuntime queryRuntime = new QueryRuntime(query, streamJunctionMap);
+        QueryRuntime queryRuntime = new QueryRuntime(query, streamDefinitionMap,streamJunctionMap,siddhiContext);
+
         OutputCallback outputCallback = queryRuntime.getOutputCallback();
         if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
             defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());

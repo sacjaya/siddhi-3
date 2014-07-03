@@ -20,18 +20,15 @@ package org.wso2.siddhi.core.stream.input;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.StreamEvent;
-import org.wso2.siddhi.core.snapshot.ThreadBarrier;
 import org.wso2.siddhi.core.stream.StreamJunction;
 
 public class InputHandler {
     private String streamId;
     private StreamJunction streamJunction;
-    private final ThreadBarrier threadBarrier;
 
     public InputHandler(String streamId, StreamJunction streamJunction,SiddhiContext siddhiContext) {
         this.streamId = streamId;
         this.streamJunction = streamJunction;
-        this.threadBarrier =siddhiContext.getThreadBarrier();
     }
 
     public void send(Object[] data) throws InterruptedException {

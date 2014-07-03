@@ -15,22 +15,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.wso2.siddhi.core.query.selector.processor;
 
-package org.wso2.siddhi.core.stream;
+import org.wso2.siddhi.query.api.definition.Attribute;
 
-import com.lmax.disruptor.EventHandler;
-import org.wso2.siddhi.core.event.Event;
+public interface AttributeProcessor {
 
-public class StreamHandler implements EventHandler<Event> {
+    public Attribute.Type getOutputType();
 
-    private StreamReceiver streamReceiver;
+    void lock();
 
-    public StreamHandler(StreamReceiver streamReceiver) {
-        this.streamReceiver = streamReceiver;
-    }
-
-    public void onEvent(Event event, long sequence, boolean endOfBatch) {
-        streamReceiver.receive(event);
-    }
-
+    void unlock();
 }
