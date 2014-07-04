@@ -15,11 +15,17 @@
  */
 package org.wso2.siddhi.core.config;
 
+import org.wso2.siddhi.core.exception.CreateExecutionPlanException;
+import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
+import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.StreamReceiver;
 import org.wso2.siddhi.core.stream.input.InputHandler;
+import org.wso2.siddhi.core.util.validate.StreamValidator;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.query.Query;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +52,9 @@ public class ExecutionPlan {
     }
 
     public void addQuery(Query query) {
+        if (queryList == null) {
+            queryList = new ArrayList<Query>();
+        }
         queryList.add(query);
     }
 
@@ -57,8 +66,19 @@ public class ExecutionPlan {
         this.streamDefinitionMap = streamDefinitionMap;
     }
 
-    public void addStreamDefinition(String streamId, StreamDefinition definition) {
-        streamDefinitionMap.put(streamId, definition);
+    public void addStreamDefinition(StreamDefinition definition) throws CreateExecutionPlanException {
+        if (definition == null) {
+            throw new CreateExecutionPlanException("Stream definition should not be null");
+        }
+        if (streamDefinitionMap == null) {
+            streamDefinitionMap = new HashMap<String, StreamDefinition>();
+        }
+        try {
+            StreamValidator.validate(streamDefinitionMap, definition);
+        } catch (DifferentDefinitionAlreadyExistException e) {
+            throw new CreateExecutionPlanException(e.getMessage());
+        }
+
     }
 
     /**
