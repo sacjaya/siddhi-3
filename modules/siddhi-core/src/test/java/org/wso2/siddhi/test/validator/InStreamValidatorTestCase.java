@@ -18,8 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.wso2.siddhi.core.config.ExecutionPlan;
 import org.wso2.siddhi.core.exception.ValidatorException;
-import org.wso2.siddhi.core.util.validate.InStreamValidator;
-import org.wso2.siddhi.core.util.validate.QueryValidator;
+/*import org.wso2.siddhi.core.util.validate.InStreamValidator;
+import org.wso2.siddhi.core.util.validate.QueryValidator;*/
 import org.wso2.siddhi.core.util.validate.StreamValidator;
 import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.Attribute;
