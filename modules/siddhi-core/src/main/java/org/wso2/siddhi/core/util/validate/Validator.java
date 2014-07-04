@@ -10,39 +10,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.siddhi.core.query.validate;
+package org.wso2.siddhi.core.util.validate;
 
 import org.wso2.siddhi.core.config.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.query.Query;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Validator {
     private Map<String,String> renameHandlerMap;    //To handle stream renaming
-    private Map<String,StreamDefinition> streamDefinitionMap;
+    private Map<String, StreamDefinition> streamDefinitionMap;//TODO:validation context
     private ExecutionPlan executionPlan;
+    //TODO: validate stream definition 1.attri name, duplicate SD
 
-    public Validator(ExecutionPlan executionPlan){
-        this.executionPlan = executionPlan;
-        this.streamDefinitionMap = executionPlan.getStreamDefinitionMap();
-        this.renameHandlerMap = new HashMap<String, String>(streamDefinitionMap.size());
-        populateRenameHandlerMap();     //populates the rename handler map with default configs.
-    }
-
-    private void populateRenameHandlerMap() {
+    /*private void populateRenameHandlerMap() {
         for(String key:streamDefinitionMap.keySet()){
             renameHandlerMap.put(key,key);
         }
-    }
+    }*/
 
-    public Boolean validate(){
-        for(Query query: executionPlan.getQueryList()) {
+    public static void validate(ExecutionPlan executionPlan) {//TODO:void,execution plan validation context,make stream validator then query validator.
+        ValidationContext validationContext = new ValidationContext();
+        validationContext.setExecutionPlan(executionPlan);
+        validationContext.addStreamDefinitionMap(executionPlan.getStreamDefinitionMap());
+
+        //StreamValidator.validate(validationContext.getStreamDefinitionMap(), definition);
+
+        /*for(Query query: executionPlan.getQueryList()) {
             InStreamValidator inValidator = new InStreamValidator(streamDefinitionMap,renameHandlerMap);
             Boolean inStream = inValidator.validate(query.getInputStream());
-        }
-
-        return false;
+        }*/
     }
 }
