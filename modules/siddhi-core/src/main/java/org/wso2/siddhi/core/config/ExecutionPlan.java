@@ -17,6 +17,7 @@ package org.wso2.siddhi.core.config;
 
 import org.wso2.siddhi.core.exception.CreateExecutionPlanException;
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
+import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.StreamReceiver;
 import org.wso2.siddhi.core.stream.input.InputHandler;
@@ -75,7 +76,7 @@ public class ExecutionPlan {
         }
         try {
             StreamValidator.validate(streamDefinitionMap, definition);
-        } catch (DifferentDefinitionAlreadyExistException e) {
+        } catch (ValidatorException e) {
             throw new CreateExecutionPlanException(e.getMessage());
         }
 
