@@ -77,4 +77,9 @@ public class StreamJunction {
     public String getStreamId() {
         return streamId;
     }
+
+    public void setDisruptorEnabled(boolean enabled) {
+        distruptorEnabled = enabled;
+    }
+
 }

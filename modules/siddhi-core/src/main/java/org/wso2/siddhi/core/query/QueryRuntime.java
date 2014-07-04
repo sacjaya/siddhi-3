@@ -58,9 +58,8 @@ public class QueryRuntime {
         this.query = query;
         outputRateManager = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
         QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap, streamJunctionMap, outputRateManager, siddhiContext);
-        outputStreamDefinition = queryCreator.getOutputStreamDefinition();
-
-        if (query.getOutputStream() != null) {
+       outputStreamDefinition = queryCreator.getOutputStreamDefinition();
+       if (query.getOutputStream() != null) {
             outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), streamJunctionMap, siddhiContext, queryCreator.getOutputStreamDefinition());
             outputRateManager.setOutputCallback(outputCallback);
         }

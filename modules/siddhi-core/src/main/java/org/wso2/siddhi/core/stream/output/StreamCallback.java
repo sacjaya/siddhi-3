@@ -18,7 +18,6 @@
 package org.wso2.siddhi.core.stream.output;
 
 import com.lmax.disruptor.dsl.Disruptor;
-import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.stream.StreamReceiver;
@@ -26,7 +25,6 @@ import org.wso2.siddhi.core.stream.StreamReceiver;
 public abstract class StreamCallback implements StreamReceiver {
 
     private String streamId;
-    static final Logger log = Logger.getLogger(StreamCallback.class);
     private Disruptor disruptor;
 
 

@@ -19,7 +19,6 @@ package org.wso2.siddhi.core.executor.expression;
 
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.StreamEvent;
-import org.wso2.siddhi.core.query.QueryEventSource;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
@@ -39,7 +38,6 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
 
 
     public VariableExpressionExecutor(String streamIdOfVariable, String attributeName, int position,
-                                      Map<InputStream,QueryEventSource> queryEventSourceMap,
                                       String currentStreamReference, boolean processInDefinition) {
         this.attributeName = attributeName;
         if (streamIdOfVariable != null) {
@@ -49,16 +47,16 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
         }
         AbstractDefinition definition = null;
         int queryEventSourcePosition = 0;
-        for (QueryEventSource queryEventSource: queryEventSourceMap.values()) {
-            String referenceSourceId = queryEventSource.getReferenceSourceId();
-            if (referenceSourceId != null && referenceSourceId.equals(streamReference)) {
-                definition = updateAttributeData(position, processInDefinition, queryEventSourcePosition, queryEventSource);
-                queryEventSourcePosition++;
-                if (definition != null) {
-                    break;
-                }
-            }
-        }
+//        for (QueryEventSource queryEventSource: queryEventSourceMap.values()) {
+//            String referenceSourceId = queryEventSource.getReferenceSourceId();
+//            if (referenceSourceId != null && referenceSourceId.equals(streamReference)) {
+//                definition = updateAttributeData(position, processInDefinition, queryEventSourcePosition, queryEventSource);
+//                queryEventSourcePosition++;
+//                if (definition != null) {
+//                    break;
+//                }
+//            }
+//        }
 //        if (definition == null) {
 //            for (int i = 0; i < queryEventStreamListSize; i++) {
 //                QueryEventSource queryEventSource = queryEventSourceMap.get(i);
@@ -85,21 +83,21 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
 
 
 
-    private AbstractDefinition updateAttributeData(int position, boolean processInDefinition, int i, QueryEventSource queryEventSource) {
-        AbstractDefinition definition;
-        if (processInDefinition) {
-            definition = queryEventSource.getInDefinition();
-        } else {
-            definition = queryEventSource.getOutDefinition();
-        }
-        streamPosition = i;
-        if (position > -1) { //for known positions
-            innerStreamPosition = position;
-        } else if (position == SiddhiConstants.PREV) {
-            innerStreamPosition = SiddhiConstants.PREV;
-        }
-        return definition;
-    }
+//    private AbstractDefinition updateAttributeData(int position, boolean processInDefinition, int i, QueryEventSource queryEventSource) {
+//        AbstractDefinition definition;
+//        if (processInDefinition) {
+//            definition = queryEventSource.getInDefinition();
+//        } else {
+//            definition = queryEventSource.getOutDefinition();
+//        }
+//        streamPosition = i;
+//        if (position > -1) { //for known positions
+//            innerStreamPosition = position;
+//        } else if (position == SiddhiConstants.PREV) {
+//            innerStreamPosition = SiddhiConstants.PREV;
+//        }
+//        return definition;
+//    }
 
     @Override
     public Object execute(StreamEvent event) {

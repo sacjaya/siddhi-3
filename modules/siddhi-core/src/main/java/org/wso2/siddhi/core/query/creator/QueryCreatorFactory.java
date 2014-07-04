@@ -37,8 +37,9 @@ public class QueryCreatorFactory {
             queryCreator.init();
             return queryCreator;
         }  //TODO: for other streams (make QueryCreator abstract)
-        else {
-            throw new QueryCreationException("Unsupported input stream found, " + query.getInputStream().getClass().getName());
-        }
+//        else {
+//         /   throw new QueryCreationException("Unsupported input stream found, " + query.getInputStream().getClass().getName());
+//        }
+        return null;
     }
 }

@@ -21,7 +21,6 @@ import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.OperationNotSupportedException;
 import org.wso2.siddhi.core.executor.expression.ExpressionExecutor;
 import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
-import org.wso2.siddhi.core.query.QueryEventSource;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.expression.*;
 import org.wso2.siddhi.query.api.expression.constant.*;
@@ -35,14 +34,13 @@ public class ExecutorParser {
 
 
     public static ExpressionExecutor parseExpression(Expression expression,
-                                                     Map<InputStream,QueryEventSource> queryEventSourceList,
                                                      String currentStreamReference,
                                                      boolean processInStreamDefinition
                                                      ) {
         if (expression instanceof Constant) {
              //TODO
         } else if (expression instanceof Variable) {
-            return new VariableExpressionExecutor(((Variable) expression).getStreamId(), ((Variable) expression).getAttributeName(), ((Variable) expression).getPosition(), queryEventSourceList, currentStreamReference, processInStreamDefinition);
+            return new VariableExpressionExecutor(((Variable) expression).getStreamId(), ((Variable) expression).getAttributeName(), ((Variable) expression).getPosition(),  currentStreamReference, processInStreamDefinition);
         }  //TODO else if parts
         throw new UnsupportedOperationException(expression.toString() + " not supported!");
 
