@@ -30,6 +30,7 @@ import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.query.api.QueryFactory;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.query.Query;
 
 public class PassThroughTest {
@@ -102,17 +103,12 @@ public class PassThroughTest {
         });
 
 
-
-
-
-
         InputHandler inputHandler = siddhiManager.getInputHandler("cseEventStream");
         inputHandler.send(new Object[]{"IBM", 75.6f, 100});
         inputHandler.send(new Object[]{"WSO2", 75.6f, 100});
         Thread.sleep(1000);
         Assert.assertEquals(4, count);
         siddhiManager.shutdown();
-
 
 
     }
