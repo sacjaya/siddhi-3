@@ -27,24 +27,20 @@ public class DefineTableTestCase {
 
     @Test
     public void testCreatingTableDefinition() {
-        TableDefinition tableDefinition = QueryFactory.tableDefinition();
-        tableDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT);
+        ExecutionPlan.executionPlan().defineTable(TableDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT));
 
     }
 
     @Test(expected = AttributeAlreadyExistException.class)
     public void testCreatingStreamWithDuplicateAttribute() {
-        TableDefinition tableDefinition = QueryFactory.tableDefinition();
-        tableDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("symbol", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT);
+        TableDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("symbol", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT);
 
     }
 
 
     @Test
     public void testCreatingSQLTableDefinition() {
-        TableDefinition tableDefinition = QueryFactory.tableDefinition();
-        tableDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).with("datasource.id", "cepDataSource");
-
+        TableDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).with("datasource.id", "cepDataSource");
     }
 
 

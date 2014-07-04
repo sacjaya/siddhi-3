@@ -17,6 +17,7 @@
 package org.wso2.siddhi.query.api;
 
 import org.junit.Test;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.exception.AttributeAlreadyExistException;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
@@ -26,19 +27,19 @@ public class DefineStreamTestCase {
 
     @Test
     public void testCreatingStreamDefinition() {
-        QueryFactory.streamDefinition().id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT);
+        ExecutionPlan.executionPlan("Test").defineStream(StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT));
 
     }
 
     @Test(expected = AttributeAlreadyExistException.class)
     public void testCreatingStreamWithDuplicateAttribute() {
-        QueryFactory.streamDefinition().id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("symbol", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT);
+        StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("symbol", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT);
 
     }
 
     @Test
     public void testCreatingStreamDefinition2() {
-        QueryFactory.streamDefinition().id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).attribute("data", Attribute.Type.OBJECT);
+        StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).attribute("data", Attribute.Type.OBJECT);
     }
 
 }

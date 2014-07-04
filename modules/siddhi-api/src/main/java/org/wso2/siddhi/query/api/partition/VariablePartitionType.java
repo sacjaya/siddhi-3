@@ -16,15 +16,16 @@
  * under the License.
  */
 
-package org.wso2.siddhi.query.api.definition.partition;
+package org.wso2.siddhi.query.api.partition;
 
+import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.expression.Variable;
 
 public class VariablePartitionType implements PartitionType {
     private Variable variable;
 
-    public VariablePartitionType(Variable variable) {
-        this.variable = variable;
+    public VariablePartitionType(String streamId, Expression expression) {
+
     }
 
     public Variable getVariable() {

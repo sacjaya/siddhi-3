@@ -36,7 +36,7 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  pression.constant,org.wso2.siddhi.query.api.extension,org.wso2.siddhi.q
  uery.api.exception";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api;
  uses:="org.wso2.siddhi.query.api.query,org.wso2.siddhi.query.api.condit
- ion,org.wso2.siddhi.query.api.definition.partition,org.wso2.siddhi.quer
+ ion,org.wso2.siddhi.query.api.partition,org.wso2.siddhi.quer
  y.api.query.input.sequence.element,org.wso2.siddhi.query.api.query.inpu
  t.sequence,org.wso2.siddhi.query.api.query.selection,org.wso2.siddhi.qu
  ery.api.definition,org.wso2.siddhi.query.api.query.input.pattern.elemen
@@ -54,8 +54,7 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  rg.wso2.siddhi.core.query,org.wso2.siddhi.core.util.collection.queue.sc
  heduler,org.wso2.siddhi.core.query.processor.handler,org.wso2.siddhi.co
  re.query.processor,org.wso2.siddhi.core.query.selector,org.wso2.siddhi.
- query.api.query.input";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.a
- pi.definition.partition;uses:="org.wso2.siddhi.query.api,org.wso2.siddh
+ query.api.query.input";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.partition;uses:="org.wso2.siddhi.query.api,org.wso2.siddh
  i.query.api.condition,org.wso2.siddhi.query.api.expression";version="3.
  0.0.SNAPSHOT",org.wso2.siddhi.core.executor.expression.minus;uses:="org
  .wso2.siddhi.query.api.definition,org.wso2.siddhi.core.event,org.wso2.s
@@ -187,7 +186,7 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  uses:="org.wso2.siddhi.core.event.in,org.wso2.siddhi.core.event.remove"
  ;version="3.0.0.SNAPSHOT",org.wso2.siddhi.core;uses:="org.wso2.siddhi.c
  ore.extension,org.wso2.siddhi.query.compiler,org.wso2.siddhi.core.util,
- org.wso2.siddhi.query.api.definition.partition,org.wso2.siddhi.core.con
+ org.wso2.siddhi.query.api.partition,org.wso2.siddhi.core.con
  fig,org.wso2.siddhi.core.snapshot,org.wso2.siddhi.core.tracer,org.wso2.
  siddhi.core.stream.input,org.wso2.siddhi.core.table,org.wso2.siddhi.cor
  e.stream.output,org.wso2.siddhi.core.persistence,org.wso2.siddhi.query.

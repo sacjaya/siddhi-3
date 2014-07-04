@@ -28,63 +28,64 @@ public class JoinQueryTestCase {
 
     @Test
     public void testCreatingJoinQuery() {
-        Query query = QueryFactory.query();
-        query.from(
-                QueryFactory.joinInputStream(
-                        QueryFactory.inputStream("cseEventStream").
-                                window("lengthBatch", Expression.value(50)),
-                        JoinInputStream.Type.JOIN,
-                        QueryFactory.inputStream("cseEventStream").
-                                filter(Condition.and(
-                                                Condition.compare(
-                                                        Expression.add(Expression.value(7), Expression.value(9.5)),
-                                                        Condition.Operator.GREATER_THAN,
-                                                        Expression.variable("cseEventStream", "price")),
-                                                Condition.compare(Expression.value(100),
-                                                        Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.variable("cseEventStream", "volume")
+        Query.query().
+                property("name", "Query1").property("summery", "Test Query").
+                from(
+                        Query.joinInputStream(
+                                Query.inputStream("cseEventStream").
+                                        window("lengthBatch", Expression.value(50)),
+                                JoinInputStream.Type.JOIN,
+                                Query.inputStream("cseEventStream").
+                                        filter(Condition.and(
+                                                        Condition.compare(
+                                                                Expression.add(Expression.value(7), Expression.value(9.5)),
+                                                                Condition.Operator.GREATER_THAN,
+                                                                Expression.variable("cseEventStream", "price")),
+                                                        Condition.compare(Expression.value(100),
+                                                                Condition.Operator.GREATER_THAN_EQUAL,
+                                                                Expression.variable("cseEventStream", "volume")
+                                                        )
                                                 )
-                                        )
-                                ).window("lengthBatch", Expression.value(50)),
-                        Condition.compare(
-                                Expression.variable("cseEventStream", "price"),
-                                Condition.Operator.EQUAL,
-                                Expression.variable("cseEventStream", "price"))
-                )
-        );
-        query.select(
-                QueryFactory.outputSelector().
-                        select("symbol", Expression.variable("cseEventStream", "symbol")).
-                        select("", null, Expression.variable("cseEventStream", "symbol")).
-                        groupBy("cseEventStream", "symbol").
-                        having(
+                                        ).window("lengthBatch", Expression.value(50)),
                                 Condition.compare(
-                                        Expression.add(Expression.value(7), Expression.value(9.5)),
-                                        Condition.Operator.GREATER_THAN,
-                                        Expression.variable(null, "price"))
+                                        Expression.variable("cseEventStream", "price"),
+                                        Condition.Operator.EQUAL,
+                                        Expression.variable("cseEventStream", "price"))
                         )
-        );
-        query.insertInto("StockQuote", OutputStream.OutputEventsFor.EXPIRED_EVENTS);
+                ).
+                select(
+                        Query.outputSelector().
+                                select("symbol", Expression.variable("cseEventStream", "symbol")).
+                                select("", null, Expression.variable("cseEventStream", "symbol")).
+                                groupBy("cseEventStream", "symbol").
+                                having(
+                                        Condition.compare(
+                                                Expression.add(Expression.value(7), Expression.value(9.5)),
+                                                Condition.Operator.GREATER_THAN,
+                                                Expression.variable(null, "price"))
+                                )
+                ).
+                insertInto("StockQuote", OutputStream.OutputEventsFor.EXPIRED_EVENTS);
 
     }
 
     @Test
     public void testCreatingUnidirectionalJoinQuery() {
-        Query query = QueryFactory.query();
-        query.from(
-                QueryFactory.joinInputStream(
-                        QueryFactory.inputStream("t", "TickEvent"),
-                        JoinInputStream.Type.JOIN,
-                        QueryFactory.inputStream("n", "NewsEvent").
-                                window("unique", Expression.variable("symbol")),
-                        Condition.compare(
-                                Expression.variable("t", "symbol"),
-                                Condition.Operator.EQUAL,
-                                Expression.variable("n", "symbol")),
-                        null,
-                        JoinInputStream.EventTrigger.LEFT
-                )
-        );
-        query.insertInto("JoinInputStream");
+        Query.query().
+                from(
+                        Query.joinInputStream(
+                                Query.inputStream("t", "TickEvent"),
+                                JoinInputStream.Type.JOIN,
+                                Query.inputStream("n", "NewsEvent").
+                                        window("unique", Expression.variable("symbol")),
+                                Condition.compare(
+                                        Expression.variable("t", "symbol"),
+                                        Condition.Operator.EQUAL,
+                                        Expression.variable("n", "symbol")),
+                                null,
+                                JoinInputStream.EventTrigger.LEFT
+                        )
+                ).
+                insertInto("JoinInputStream");
     }
 }

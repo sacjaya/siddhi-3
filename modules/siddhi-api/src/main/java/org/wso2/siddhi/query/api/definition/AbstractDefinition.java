@@ -16,17 +16,23 @@
  */
 package org.wso2.siddhi.query.api.definition;
 
-import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.exception.AttributeAlreadyExistException;
 import org.wso2.siddhi.query.api.exception.AttributeNotExistException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractDefinition implements ExecutionPlan {
+public abstract class AbstractDefinition {
 
     protected String id;
     protected List<Attribute> attributeList = new ArrayList<Attribute>();
+
+    protected AbstractDefinition() {
+    }
+
+    protected AbstractDefinition(String id) {
+        this.id = id;
+    }
 
     protected void checkAttribute(String attributeName) {
         for (Attribute attribute : attributeList) {

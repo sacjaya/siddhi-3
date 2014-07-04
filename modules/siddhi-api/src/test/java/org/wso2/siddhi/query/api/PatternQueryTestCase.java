@@ -34,17 +34,17 @@ public class PatternQueryTestCase {
 
     @Test
     public void testCreatingFilterPatternQuery() {
-        Query query = QueryFactory.query();
+        Query query = Query.query();
         query.from(
-                QueryFactory.patternInputStream(
+                Query.patternInputStream(
                         Pattern.followedBy(
-                                QueryFactory.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                         Condition.Operator.GREATER_THAN_EQUAL,
                                         Expression.value(30))),
-                                Pattern.followedBy(QueryFactory.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                Pattern.followedBy(Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
                                                 Expression.value(20))),
-                                        QueryFactory.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
+                                        Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
                                                 Expression.variable("e1", "price")))
                                 )
@@ -55,7 +55,7 @@ public class PatternQueryTestCase {
         );
         query.insertInto("OutputStream");
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("symbol", Expression.variable("e1", "symbol")).
                         select("avgPrice", "avg", Expression.variable("e2", "price")).
                         groupBy("e1", "symbol").
@@ -78,13 +78,13 @@ public class PatternQueryTestCase {
 
     @Test
     public void testCreatingPatternQuery() {
-        Query query = QueryFactory.query();
-        query.from(QueryFactory.patternInputStream(
-                Pattern.followedBy(QueryFactory.inputStream("e1", "Stream1"),
-                        QueryFactory.inputStream("e1", "Stream1"))
+        Query query = Query.query();
+        query.from(Query.patternInputStream(
+                Pattern.followedBy(Query.inputStream("e1", "Stream1"),
+                        Query.inputStream("e1", "Stream1"))
         ));
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("action", Expression.variable("a1", "action")).
                         select("priceA", Expression.variable("b1", "price")).
                         select("priceB", Expression.variable("b2", "price"))
@@ -96,15 +96,15 @@ public class PatternQueryTestCase {
 
     @Test
     public void testCreatingPatternQuery1() {
-        Query query = QueryFactory.query();
-        query.from(QueryFactory.patternInputStream(
-                Pattern.followedBy(QueryFactory.inputStream("e1", "Stream1"),
-                        Pattern.followedBy(QueryFactory.inputStream("e1", "Stream1"),
-                                QueryFactory.inputStream("e1", "Stream1"))
+        Query query = Query.query();
+        query.from(Query.patternInputStream(
+                Pattern.followedBy(Query.inputStream("e1", "Stream1"),
+                        Pattern.followedBy(Query.inputStream("e1", "Stream1"),
+                                Query.inputStream("e1", "Stream1"))
                 )
         ));
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("action", Expression.variable("a1", "action")).
                         select("priceA", Expression.variable("b1", "price")).
                         select("priceB", Expression.variable("b2", "price"))
@@ -116,17 +116,17 @@ public class PatternQueryTestCase {
 
     @Test
     public void testCreatingPatternQuery2() {
-        Query query = QueryFactory.query();
-        query.from(QueryFactory.patternInputStream(
-                Pattern.followedBy(QueryFactory.inputStream("e1", "Stream1"),
+        Query query = Query.query();
+        query.from(Query.patternInputStream(
+                Pattern.followedBy(Query.inputStream("e1", "Stream1"),
                         Pattern.every(
-                                Pattern.followedBy(QueryFactory.inputStream("e1", "Stream1"),
-                                        QueryFactory.inputStream("e1", "Stream1"))
+                                Pattern.followedBy(Query.inputStream("e1", "Stream1"),
+                                        Query.inputStream("e1", "Stream1"))
                         )
                 )
         ));
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("action", Expression.variable("a1", "action")).
                         select("priceA", Expression.variable("b1", "price")).
                         select("priceB", Expression.variable("b2", "price"))
@@ -138,17 +138,17 @@ public class PatternQueryTestCase {
 
     @Test
     public void testCreatingPatternQuery3() {
-        Query query = QueryFactory.query();
-        query.from(QueryFactory.patternInputStream(
+        Query query = Query.query();
+        query.from(Query.patternInputStream(
                 Pattern.followedBy(Pattern.every(
-                                Pattern.followedBy(QueryFactory.inputStream("e1", "Stream1"),
-                                        QueryFactory.inputStream("e1", "Stream1"))
+                                Pattern.followedBy(Query.inputStream("e1", "Stream1"),
+                                        Query.inputStream("e1", "Stream1"))
                         ),
-                        QueryFactory.inputStream("e1", "Stream1")
+                        Query.inputStream("e1", "Stream1")
                 )
         ));
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("action", Expression.variable("a1", "action")).
                         select("priceA", Expression.variable("b1", "price")).
                         select("priceB", Expression.variable("b2", "price"))
@@ -160,18 +160,18 @@ public class PatternQueryTestCase {
 
     @Test
     public void testCreatingPatternQuery4() {
-        Query query = QueryFactory.query();
-        query.from(QueryFactory.patternInputStream(
-                Pattern.followedBy(Pattern.logical(QueryFactory.inputStream("e1", "Stream1"),
+        Query query = Query.query();
+        query.from(Query.patternInputStream(
+                Pattern.followedBy(Pattern.logical(Query.inputStream("e1", "Stream1"),
                                 LogicalElement.Type.AND,
-                                QueryFactory.inputStream("e1", "Stream1")),
-                        Pattern.logical(QueryFactory.inputStream("e1", "Stream1"),
+                                Query.inputStream("e1", "Stream1")),
+                        Pattern.logical(Query.inputStream("e1", "Stream1"),
                                 LogicalElement.Type.AND,
-                                QueryFactory.inputStream("e1", "Stream1"))
+                                Query.inputStream("e1", "Stream1"))
                 )
         ));
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("action", Expression.variable("a1", "action")).
                         select("priceA", Expression.variable("b1", "price")).
                         select("priceB", Expression.variable("b2", "price"))
@@ -183,16 +183,16 @@ public class PatternQueryTestCase {
 
     @Test
     public void testCreatingPatternQuery5() {
-        Query query = QueryFactory.query();
-        query.from(QueryFactory.patternInputStream(
-                Pattern.followedBy(Pattern.logical(QueryFactory.inputStream("e1", "Stream1"),
+        Query query = Query.query();
+        query.from(Query.patternInputStream(
+                Pattern.followedBy(Pattern.logical(Query.inputStream("e1", "Stream1"),
                                 LogicalElement.Type.AND,
-                                QueryFactory.inputStream("e1", "Stream1")),
-                        Pattern.count(QueryFactory.inputStream("e1", "Stream1"), 0, 7)
+                                Query.inputStream("e1", "Stream1")),
+                        Pattern.count(Query.inputStream("e1", "Stream1"), 0, 7)
                 )
         ));
         query.select(
-                QueryFactory.outputSelector().
+                Query.outputSelector().
                         select("action", Expression.variable("a1", "action")).
                         select("priceA", Expression.variable("b1", "price")).
                         select("priceB", Expression.variable("b2", "price"))

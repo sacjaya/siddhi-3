@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.siddhi.query.api.definition.partition;
+package org.wso2.siddhi.query.api.partition;
 
 import org.wso2.siddhi.query.api.condition.Condition;
 
@@ -25,7 +25,7 @@ public class RangePartitionType implements PartitionType {
     private Condition condition;
     private String label;
 
-    public RangePartitionType(Condition condition, String label) {
+    public RangePartitionType(String stringId, Condition[] conditions) {
         this.condition = condition;
         this.label = label;
     }

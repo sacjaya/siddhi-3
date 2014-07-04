@@ -27,7 +27,6 @@ import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
-import org.wso2.siddhi.query.api.QueryFactory;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
@@ -51,7 +50,7 @@ public class PassThroughTest {
 
         log.info("stream callback test");
         SiddhiManager siddhiManager = new SiddhiManager();
-        InputHandler inputHandler = siddhiManager.defineStream(QueryFactory.streamDefinition().id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
+        InputHandler inputHandler = siddhiManager.defineStream(StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
 
         siddhiManager.addCallback("cseEventStream", new StreamCallback() {
             @Override
@@ -75,11 +74,11 @@ public class PassThroughTest {
         log.info("Pass through query");
         SiddhiManager siddhiManager = new SiddhiManager();
 
-        siddhiManager.defineStream(QueryFactory.streamDefinition().id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
+        siddhiManager.defineStream(StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
 
 
         Query query = new Query();
-        query.from(QueryFactory.inputStream("cseEventStream"));
+        query.from(Query.inputStream("cseEventStream"));
         query.insertInto("StockQuote");
 
         String queryReference = siddhiManager.addQuery(query);
