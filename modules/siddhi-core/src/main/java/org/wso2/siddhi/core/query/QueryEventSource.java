@@ -17,20 +17,11 @@
  */
 package org.wso2.siddhi.core.query;
 
-import org.wso2.siddhi.core.exception.EventStreamNotExistException;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.definition.TableDefinition;
 import org.wso2.siddhi.query.api.query.input.BasicStream;
-import org.wso2.siddhi.query.api.query.input.InputStream;
-import org.wso2.siddhi.query.api.query.input.JoinInputStream;
-import org.wso2.siddhi.query.api.query.input.WindowInputStream;
 import org.wso2.siddhi.query.api.query.input.handler.Filter;
 import org.wso2.siddhi.query.api.query.input.handler.Window;
-
-import javax.sql.rowset.Joinable;
-import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 
 
 public class QueryEventSource {

@@ -16,15 +16,15 @@
  */
 package org.wso2.siddhi.query.api.query.input.sequence.element;
 
-import org.wso2.siddhi.query.api.query.input.StandardInputStream;
+import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 
 public class RegexElement implements SequenceElement {
 
-    private StandardInputStream standardStream;
+    private BasicSingleInputStream standardStream;
     private int minCount = -1;
     private int maxCount = -1;
 
-    public RegexElement(StandardInputStream standardStream, int minCount, int maxCount) {
+    public RegexElement(BasicSingleInputStream standardStream, int minCount, int maxCount) {
         this.standardStream = standardStream;
 //        standardStream.setCounterStream(true);
         this.minCount = minCount;
@@ -39,7 +39,7 @@ public class RegexElement implements SequenceElement {
         return maxCount;
     }
 
-    public StandardInputStream getStandardStream() {
+    public BasicSingleInputStream getStandardStream() {
         return standardStream;
     }
 }

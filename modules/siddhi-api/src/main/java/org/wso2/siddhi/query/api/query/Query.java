@@ -112,12 +112,12 @@ public class Query {
         return outputRate;
     }
 
-    public static StandardInputStream inputStream(String streamId) {
-        return new StandardInputStream(streamId, streamId);
+    public static BasicSingleInputStream inputStream(String streamId) {
+        return new BasicSingleInputStream(streamId, streamId);
     }
 
-    public static StandardInputStream inputStream(String streamReferenceId, String streamId) {
-        return new StandardInputStream(streamReferenceId, streamId);
+    public static BasicSingleInputStream inputStream(String streamReferenceId, String streamId) {
+        return new BasicSingleInputStream(streamReferenceId, streamId);
     }
 
     public static Selector outputSelector() {

@@ -16,23 +16,23 @@
  */
 package org.wso2.siddhi.query.api.query.input.sequence.element;
 
-import org.wso2.siddhi.query.api.query.input.StandardInputStream;
+import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 
 public class OrElement implements SequenceElement {
-    StandardInputStream standardStream1;
-    StandardInputStream standardStream2;
+    BasicSingleInputStream standardStream1;
+    BasicSingleInputStream standardStream2;
 
-    public OrElement(StandardInputStream standardStream1,
-                     StandardInputStream standardStream2) {
+    public OrElement(BasicSingleInputStream standardStream1,
+                     BasicSingleInputStream standardStream2) {
         this.standardStream1 = standardStream1;
         this.standardStream2 = standardStream2;
     }
 
-    public StandardInputStream getStandardStream1() {
+    public BasicSingleInputStream getStandardStream1() {
         return standardStream1;
     }
 
-    public StandardInputStream getStandardStream2() {
+    public BasicSingleInputStream getStandardStream2() {
         return standardStream2;
     }
 }

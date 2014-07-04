@@ -16,7 +16,7 @@
  */
 package org.wso2.siddhi.query.api.query.input.sequence;
 
-import org.wso2.siddhi.query.api.query.input.StandardInputStream;
+import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 import org.wso2.siddhi.query.api.query.input.sequence.element.NextElement;
 import org.wso2.siddhi.query.api.query.input.sequence.element.OrElement;
 import org.wso2.siddhi.query.api.query.input.sequence.element.RegexElement;
@@ -26,12 +26,12 @@ import org.wso2.siddhi.query.api.utils.SiddhiConstants;
 public class Sequence {
 
 
-    public static SequenceElement or(StandardInputStream standardStream1,
-                                     StandardInputStream standardStream2) {
+    public static SequenceElement or(BasicSingleInputStream standardStream1,
+                                     BasicSingleInputStream standardStream2) {
         return new OrElement(standardStream1, standardStream2);
     }
 
-//    public static SequenceElement count(StandardInputStream singleStream, int min, int max) {
+//    public static SequenceElement count(BasicSingleInputStream singleStream, int min, int max) {
 //        singleStream.setCounterStream(true);
 //        return new RegexElement(singleStream, min, max);
 //    }
@@ -41,16 +41,16 @@ public class Sequence {
         return new NextElement(sequenceElement, nextSequenceElement);
     }
 
-    public static SequenceElement zeroOrMany(StandardInputStream standardStream) {
+    public static SequenceElement zeroOrMany(BasicSingleInputStream standardStream) {
         return new RegexElement(standardStream, 0, SiddhiConstants.UNLIMITED);
     }
 
-    public static SequenceElement zeroOrOne(StandardInputStream standardStream) {
+    public static SequenceElement zeroOrOne(BasicSingleInputStream standardStream) {
         return new RegexElement(standardStream, 0, 1);
 
     }
 
-    public static SequenceElement oneOrMany(StandardInputStream standardStream) {
+    public static SequenceElement oneOrMany(BasicSingleInputStream standardStream) {
         return new RegexElement(standardStream, 1, SiddhiConstants.UNLIMITED);
 
     }

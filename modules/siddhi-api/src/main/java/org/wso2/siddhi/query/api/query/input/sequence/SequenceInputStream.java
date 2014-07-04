@@ -17,8 +17,8 @@
 package org.wso2.siddhi.query.api.query.input.sequence;
 
 import org.wso2.siddhi.query.api.expression.constant.Constant;
+import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 import org.wso2.siddhi.query.api.query.input.InputStream;
-import org.wso2.siddhi.query.api.query.input.StandardInputStream;
 import org.wso2.siddhi.query.api.query.input.sequence.element.NextElement;
 import org.wso2.siddhi.query.api.query.input.sequence.element.OrElement;
 import org.wso2.siddhi.query.api.query.input.sequence.element.RegexElement;
@@ -59,8 +59,8 @@ public class SequenceInputStream implements InputStream, SequenceElement {
                                              HashSet<String> streamIds) {
         if (sequenceElement instanceof SequenceInputStream) {
             streamIds.addAll(((SequenceInputStream) sequenceElement).getStreamIds());
-        } else if (sequenceElement instanceof StandardInputStream) {
-            streamIds.addAll(((StandardInputStream) sequenceElement).getStreamIds());
+        } else if (sequenceElement instanceof BasicSingleInputStream) {
+            streamIds.addAll(((BasicSingleInputStream) sequenceElement).getStreamIds());
         } else if (sequenceElement instanceof OrElement) {
             collectStreamIds(((OrElement) sequenceElement).getStandardStream1(), streamIds);
             collectStreamIds(((OrElement) sequenceElement).getStandardStream2(), streamIds);
@@ -78,9 +78,9 @@ public class SequenceInputStream implements InputStream, SequenceElement {
 //                                                           List<QueryEventSource> queryEventSources) {
 //
 //
-//        if (sequenceElement instanceof StandardInputStream) {
+//        if (sequenceElement instanceof BasicSingleInputStream) {
 //            //todo fix
-//            //   ((StandardInputStream) sequenceElement).constructQueryEventSourceList(streamTableDefinitionMap, queryEventSources);
+//            //   ((BasicSingleInputStream) sequenceElement).constructQueryEventSourceList(streamTableDefinitionMap, queryEventSources);
 //        } else if (sequenceElement instanceof OrElement) {
 //            constructEventStreamList(((OrElement) sequenceElement).getStandardStream1(), streamTableDefinitionMap, queryEventSources);
 //            constructEventStreamList(((OrElement) sequenceElement).getStandardStream2(), streamTableDefinitionMap, queryEventSources);

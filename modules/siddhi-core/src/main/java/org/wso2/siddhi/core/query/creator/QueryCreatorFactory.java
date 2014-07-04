@@ -23,7 +23,7 @@ import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.input.StandardInputStream;
+import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 
 import java.util.concurrent.ConcurrentMap;
 
@@ -32,7 +32,7 @@ public class QueryCreatorFactory {
     public static QueryCreator constructQueryCreator(String queryId, Query query, ConcurrentMap<String, AbstractDefinition> streamTableDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap,
                                                      OutputRateManager outputRateManager,
                                                      SiddhiContext siddhiContext) {
-        if (query.getInputStream() instanceof StandardInputStream) {
+        if (query.getInputStream() instanceof BasicSingleInputStream) {
             QueryCreator queryCreator = new QueryCreator(queryId, query, streamTableDefinitionMap,  outputRateManager, siddhiContext);
             queryCreator.init();
             return queryCreator;
