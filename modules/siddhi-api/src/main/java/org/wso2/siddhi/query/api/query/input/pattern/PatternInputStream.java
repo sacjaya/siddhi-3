@@ -18,7 +18,7 @@ package org.wso2.siddhi.query.api.query.input.pattern;
 
 import org.wso2.siddhi.query.api.expression.constant.Constant;
 import org.wso2.siddhi.query.api.query.input.InputStream;
-import org.wso2.siddhi.query.api.query.input.StandardInputStream;
+import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 import org.wso2.siddhi.query.api.query.input.pattern.element.CountElement;
 import org.wso2.siddhi.query.api.query.input.pattern.element.FollowedByElement;
 import org.wso2.siddhi.query.api.query.input.pattern.element.LogicalElement;
@@ -64,8 +64,8 @@ public class PatternInputStream implements InputStream, PatternElement {
                                              HashSet<String> streamIds) {
         if (patternElement instanceof PatternInputStream) {
             streamIds.addAll(((PatternInputStream) patternElement).getStreamIds());
-        } else if (patternElement instanceof StandardInputStream) {
-            streamIds.addAll(((StandardInputStream) patternElement).getStreamIds());
+        } else if (patternElement instanceof BasicSingleInputStream) {
+            streamIds.addAll(((BasicSingleInputStream) patternElement).getStreamIds());
         } else if (patternElement instanceof LogicalElement) {
             collectStreamIds(((LogicalElement) patternElement).getStandardStream1(), streamIds);
             collectStreamIds(((LogicalElement) patternElement).getStandardStream1(), streamIds);
@@ -83,9 +83,9 @@ public class PatternInputStream implements InputStream, PatternElement {
 //                                                           List<QueryEventSource> queryEventSources) {
 //
 //
-//        if (patternElement instanceof StandardInputStream) {
+//        if (patternElement instanceof BasicSingleInputStream) {
 //            // todo fix
-//            // ((StandardInputStream) patternElement).constructQueryEventSourceList(streamTableDefinitionMap, queryEventSources);
+//            // ((BasicSingleInputStream) patternElement).constructQueryEventSourceList(streamTableDefinitionMap, queryEventSources);
 //        } else if (patternElement instanceof LogicalElement) {
 //            constructEventStreamList(((LogicalElement) patternElement).getStandardStream1(), streamTableDefinitionMap, queryEventSources);
 //            constructEventStreamList(((LogicalElement) patternElement).getStandardStream2(), streamTableDefinitionMap, queryEventSources);

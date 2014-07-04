@@ -28,15 +28,11 @@ import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.expression.ExpressionValidator;
 import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.api.query.input.*;
-import org.wso2.siddhi.query.api.query.selection.attribute.ComplexAttribute;
 import org.wso2.siddhi.query.api.query.selection.attribute.OutputAttribute;
-import org.wso2.siddhi.query.api.query.selection.attribute.OutputAttributeExtension;
 import org.wso2.siddhi.query.api.query.selection.attribute.SimpleAttribute;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +64,7 @@ public class QueryCreator {
 //          updateQueryEventSourceList(queryEventSourceList);
 //        validateOutput(queryEventSourceList, query);
 //        populateSelection(query);
-        if (inputStream instanceof StandardInputStream) {
+        if (inputStream instanceof BasicSingleInputStream) {
             querySelector = constructQuerySelector(outputRateManager);
 
         } else {
@@ -113,11 +109,11 @@ public class QueryCreator {
         List<OutputAttribute> attributeList = query.getSelector().getSelectionList();
         InputStream queryInputStream = query.getInputStream();
         if (attributeList.size() == 0) {
-            if (queryInputStream instanceof StandardInputStream) {
-                StandardInputStream standardInputStream = ((StandardInputStream) queryInputStream);
+            if (queryInputStream instanceof BasicSingleInputStream) {
+                BasicSingleInputStream standardInputStream = ((BasicSingleInputStream) queryInputStream);
                 standardInputStream.setDefinition(streamDefinitionMap.get(standardInputStream.getStreamId()));
-                for (Attribute attribute : ((StandardInputStream) queryInputStream).getDefinition().getAttributeList()) {
-                    attributeList.add(new SimpleAttribute(attribute.getName(), Expression.variable(((StandardInputStream) queryInputStream).getStreamReferenceId(), attribute.getName())));
+                for (Attribute attribute : ((BasicSingleInputStream) queryInputStream).getDefinition().getAttributeList()) {
+                    attributeList.add(new SimpleAttribute(attribute.getName(), Expression.variable(((BasicSingleInputStream) queryInputStream).getStreamReferenceId(), attribute.getName())));
                 }
             } else {
                 //TODO
@@ -155,9 +151,9 @@ public class QueryCreator {
             queryEventSources = constructQueryEventSourceList(joinInputStream.getLeftInputStream(), streamDefinitionMap, queryEventSources);
             return constructQueryEventSourceList(joinInputStream.getRightInputStream(), streamDefinitionMap, queryEventSources);
 
-        } else if (inputStream instanceof WindowInputStream) {
+        } else if (inputStream instanceof SingleInputStream) {
 
-            WindowInputStream windowStream = (WindowInputStream) inputStream;
+            SingleInputStream windowStream = (SingleInputStream) inputStream;
             definition = streamDefinitionMap.get(windowStream.getStreamId());
             if (definition == null) {
                 throw new EventStreamNotExistException("Stream definition not exist! No steam defined with stream ID: " + windowStream.getStreamId());
@@ -167,9 +163,9 @@ public class QueryCreator {
                     streamDefinition, null, null);
             queryEventSources.put(inputStream, queryEventSource);
 
-        } else if (inputStream instanceof StandardInputStream) {
+        } else if (inputStream instanceof BasicSingleInputStream) {
 
-            StandardInputStream standardInputStream = (StandardInputStream) inputStream;
+            BasicSingleInputStream standardInputStream = (BasicSingleInputStream) inputStream;
             definition = streamDefinitionMap.get(standardInputStream.getStreamId());
             if (definition == null) {
                 throw new EventStreamNotExistException("Definition not exist! No stream/table defined with stream ID: " + standardInputStream.getStreamId());

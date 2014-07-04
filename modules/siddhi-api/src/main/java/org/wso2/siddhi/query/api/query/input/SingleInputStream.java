@@ -16,18 +16,111 @@
  */
 package org.wso2.siddhi.query.api.query.input;
 
+import org.wso2.siddhi.query.api.condition.Condition;
+import org.wso2.siddhi.query.api.definition.AbstractDefinition;
+import org.wso2.siddhi.query.api.expression.Expression;
+import org.wso2.siddhi.query.api.query.input.handler.Filter;
+import org.wso2.siddhi.query.api.query.input.handler.StreamFunction;
 import org.wso2.siddhi.query.api.query.input.handler.StreamHandler;
+import org.wso2.siddhi.query.api.query.input.handler.Window;
+import org.wso2.siddhi.query.api.utils.StreamUsage;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface SingleInputStream extends InputStream {
+public class SingleInputStream implements InputStream{
 
-    public String getStreamId();
+    protected String streamId;
+    protected AbstractDefinition definition;
+    protected String streamReferenceId;
 
-    public String getStreamReferenceId();
+    protected List<StreamHandler> streamHandlers = new ArrayList<StreamHandler>();
 
-    public WindowInputStream as(String streamReferenceId);
+    protected int windowPosition = -1;
 
-    public List<StreamHandler> getStreamHandlers();
+    protected SingleInputStream(String streamId) {
+        this(streamId, streamId);
+    }
 
+    public SingleInputStream(String streamId, String streamReferenceId) {
+        this.streamId = streamId;
+        this.streamReferenceId = streamReferenceId;
+    }
+
+    public SingleInputStream(BasicSingleInputStream standardStream, Window window) {
+        streamId = standardStream.getStreamId();
+        definition = standardStream.getDefinition();
+        streamReferenceId = standardStream.getStreamReferenceId();
+        streamHandlers = standardStream.getStreamHandlers();
+        windowPosition = standardStream.getStreamHandlers().size();
+        streamHandlers.add(window);
+    }
+
+    public AbstractDefinition getDefinition() {
+        return definition;
+    }
+
+    public void setDefinition(AbstractDefinition definition) {
+        this.definition = definition;
+    }
+
+    public String getStreamId() {
+        return streamId;
+    }
+
+    public String getStreamReferenceId() {
+        return streamReferenceId;
+    }
+
+    public List<String> getStreamIds() {
+        List<String> streamIds = new ArrayList<String>();
+        streamIds.add(streamId);
+        return streamIds;
+    }
+
+    public List<StreamUsage> getStreamUsages() {
+        List<StreamUsage> streamUsages = new ArrayList<StreamUsage>();
+        streamUsages.add(new StreamUsage(streamId));
+        return streamUsages;
+    }
+
+
+    public SingleInputStream as(String streamReferenceId) {
+        this.streamReferenceId = streamReferenceId;
+        return this;
+    }
+
+    public List<StreamHandler> getStreamHandlers() {
+        return streamHandlers;
+    }
+
+    public void setStreamHandlers(List<StreamHandler> streamHandlers) {
+        this.streamHandlers = streamHandlers;
+    }
+
+    public SingleInputStream filter(Condition filterCondition) {
+        streamHandlers.add(new Filter(filterCondition));
+        return this;
+    }
+
+    public SingleInputStream filter(Filter filter) {
+        streamHandlers.add(filter);
+        return this;
+    }
+
+    public SingleInputStream function(String name, Expression... parameters) {
+        streamHandlers.add(new StreamFunction(name, parameters));
+        return this;
+    }
+
+    public SingleInputStream function(String extensionName, String functionName,
+                                 Expression... parameters) {
+        streamHandlers.add(new StreamFunction(extensionName, functionName, parameters));
+        return this;
+    }
+
+    public SingleInputStream function(StreamFunction streamFunction) {
+        streamHandlers.add(streamFunction);
+        return this;
+    }
 }

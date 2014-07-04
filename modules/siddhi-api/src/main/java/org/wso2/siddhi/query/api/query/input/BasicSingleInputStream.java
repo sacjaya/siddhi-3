@@ -28,15 +28,15 @@ import org.wso2.siddhi.query.api.query.input.sequence.element.SequenceElement;
 
 import java.util.List;
 
-public class StandardInputStream extends WindowInputStream implements PatternElement,SequenceElement {
+public class BasicSingleInputStream extends SingleInputStream implements PatternElement,SequenceElement {
 
 //    protected boolean isCounterStream = false;
 
-    protected StandardInputStream(String streamId) {
+    protected BasicSingleInputStream(String streamId) {
         this(streamId, streamId);
     }
 
-    public StandardInputStream(String streamId, String streamReferenceId) {
+    public BasicSingleInputStream(String streamId, String streamReferenceId) {
         super(streamId, streamReferenceId);
         this.streamId = streamId;
         this.streamReferenceId = streamReferenceId;
@@ -58,7 +58,7 @@ public class StandardInputStream extends WindowInputStream implements PatternEle
         return streamReferenceId;
     }
 
-    public WindowInputStream as(String streamReferenceId) {
+    public SingleInputStream as(String streamReferenceId) {
         this.streamReferenceId = streamReferenceId;
         return this;
     }
@@ -106,40 +106,40 @@ public class StandardInputStream extends WindowInputStream implements PatternEle
 //        return queryEventSource;
 //    }
 
-    public StandardInputStream filter(Condition filterCondition) {
+    public BasicSingleInputStream filter(Condition filterCondition) {
         streamHandlers.add(new Filter(filterCondition));
         return this;
     }
 
-    public StandardInputStream filter(Filter filter) {
+    public BasicSingleInputStream filter(Filter filter) {
         streamHandlers.add(filter);
         return this;
     }
 
-    public WindowInputStream window(String name, Expression... parameters) {
-        return new WindowInputStream(this, new Window(name, parameters));
+    public SingleInputStream window(String name, Expression... parameters) {
+        return new SingleInputStream(this, new Window(name, parameters));
     }
 
-    public WindowInputStream window(String namespace, String function, Expression... parameters) {
-        return new WindowInputStream(this, new Window(namespace, function, parameters));
+    public SingleInputStream window(String namespace, String function, Expression... parameters) {
+        return new SingleInputStream(this, new Window(namespace, function, parameters));
     }
 
-    public WindowInputStream window(Window window) {
-        return new WindowInputStream(this, window);
+    public SingleInputStream window(Window window) {
+        return new SingleInputStream(this, window);
     }
 
-    public StandardInputStream function(String name, Expression... parameters) {
+    public BasicSingleInputStream function(String name, Expression... parameters) {
         streamHandlers.add(new StreamFunction(name, parameters));
         return this;
     }
 
-    public StandardInputStream function(String extensionName, String functionName,
+    public BasicSingleInputStream function(String extensionName, String functionName,
                                  Expression... parameters) {
         streamHandlers.add(new StreamFunction(extensionName, functionName, parameters));
         return this;
     }
 
-    public StandardInputStream function(StreamFunction streamFunction) {
+    public BasicSingleInputStream function(StreamFunction streamFunction) {
         streamHandlers.add(streamFunction);
         return this;
     }

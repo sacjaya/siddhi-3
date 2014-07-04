@@ -16,25 +16,25 @@
  */
 package org.wso2.siddhi.query.api.query.input.pattern.element;
 
-import org.wso2.siddhi.query.api.query.input.StandardInputStream;
+import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 
 public class LogicalElement implements PatternElement {
-    StandardInputStream standardStream1;
+    BasicSingleInputStream standardStream1;
     Type type;
-    StandardInputStream standardStream2;
+    BasicSingleInputStream standardStream2;
 
-    public LogicalElement(StandardInputStream standardStream1, Type type,
-                          StandardInputStream standardStream2) {
+    public LogicalElement(BasicSingleInputStream standardStream1, Type type,
+                          BasicSingleInputStream standardStream2) {
         this.standardStream1 = standardStream1;
         this.type = type;
         this.standardStream2 = standardStream2;
     }
 
-    public StandardInputStream getStandardStream1() {
+    public BasicSingleInputStream getStandardStream1() {
         return standardStream1;
     }
 
-    public StandardInputStream getStandardStream2() {
+    public BasicSingleInputStream getStandardStream2() {
         return standardStream2;
     }
 

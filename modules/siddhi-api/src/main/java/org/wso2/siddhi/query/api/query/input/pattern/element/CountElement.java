@@ -16,15 +16,15 @@
  */
 package org.wso2.siddhi.query.api.query.input.pattern.element;
 
-import org.wso2.siddhi.query.api.query.input.StandardInputStream;
+import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 
 public class CountElement implements PatternElement {
 
-    private StandardInputStream standardStream;
+    private BasicSingleInputStream standardStream;
     private int minCount = -1;
     private int maxCount = -1;
 
-    public CountElement(StandardInputStream standardStream, int minCount, int maxCount) {
+    public CountElement(BasicSingleInputStream standardStream, int minCount, int maxCount) {
         this.standardStream = standardStream;
 //        standardStream.setCounterStream(true);
         this.minCount = minCount;
@@ -39,7 +39,7 @@ public class CountElement implements PatternElement {
         return maxCount;
     }
 
-    public StandardInputStream getStandardStream() {
+    public BasicSingleInputStream getStandardStream() {
         return standardStream;
     }
 }
