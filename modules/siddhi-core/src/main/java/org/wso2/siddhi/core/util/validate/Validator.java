@@ -30,9 +30,9 @@ public class Validator {
     }*/
 
     public static void validate(ExecutionPlan executionPlan) {//TODO:void,execution plan validation context,make stream validator then query validator.
-        ValidationContext validationContext = new ValidationContext();
+        /*ValidationContext validationContext = new ValidationContext();
         validationContext.setExecutionPlan(executionPlan);
-        validationContext.addStreamDefinitionMap(executionPlan.getStreamDefinitionMap());
+        validationContext.addStreamDefinitionMap(executionPlan.getStreamDefinitionMap());*/
 
         //StreamValidator.validate(validationContext.getStreamDefinitionMap(), definition);
 
