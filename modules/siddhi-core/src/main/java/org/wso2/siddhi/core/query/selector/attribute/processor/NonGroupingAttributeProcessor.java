@@ -15,15 +15,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.siddhi.core.query.selector.processor;
 
-import org.wso2.siddhi.query.api.definition.Attribute;
+package org.wso2.siddhi.core.query.selector.attribute.processor;
 
-public interface AttributeProcessor {
+import org.wso2.siddhi.core.event.StreamEvent;
 
-    public Attribute.Type getOutputType();
+public interface NonGroupingAttributeProcessor extends AttributeProcessor {
 
-    void lock();
+    public Object process(StreamEvent event);
 
-    void unlock();
 }

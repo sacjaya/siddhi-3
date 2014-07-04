@@ -23,8 +23,6 @@ import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
-import java.util.concurrent.ThreadPoolExecutor;
-
 public abstract class QueryCallback {
 
     private SiddhiContext siddhiContext;

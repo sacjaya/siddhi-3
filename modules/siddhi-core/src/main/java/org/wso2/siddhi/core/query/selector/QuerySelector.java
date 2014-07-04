@@ -21,31 +21,23 @@ import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.*;
 
-import org.wso2.siddhi.core.exception.QueryCreationException;
-import org.wso2.siddhi.core.query.output.OutputManager;
-
-import org.wso2.siddhi.core.query.selector.processor.AttributeProcessor;
-
-import org.wso2.siddhi.core.query.selector.processor.PassThroughAttributeProcessor;
+import org.wso2.siddhi.core.query.QueryEventSource;
+import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
+import org.wso2.siddhi.core.query.selector.attribute.processor.AttributeProcessor;
+import org.wso2.siddhi.core.query.selector.attribute.processor.NonGroupingAttributeProcessor;
+import org.wso2.siddhi.core.query.selector.attribute.processor.PassThroughAttributeProcessor;
+import org.wso2.siddhi.core.util.parser.ExecutorParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
-import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.expression.ExpressionExtension;
-import org.wso2.siddhi.query.api.extension.Extension;
-import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.input.handler.Filter;
+import org.wso2.siddhi.query.api.query.input.InputStream;
 import org.wso2.siddhi.query.api.query.selection.Selector;
-import org.wso2.siddhi.query.api.query.selection.attribute.ComplexAttribute;
 import org.wso2.siddhi.query.api.query.selection.attribute.OutputAttribute;
-import org.wso2.siddhi.query.api.query.selection.attribute.OutputAttributeExtension;
 import org.wso2.siddhi.query.api.query.selection.attribute.SimpleAttribute;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Map;
+
 
 public class QuerySelector {
 
@@ -53,34 +45,48 @@ public class QuerySelector {
 
 
     private String outputStreamId;
-    private AbstractDefinition inputStreamDefinition;
     private StreamDefinition outputStreamDefinition;
     private Selector selector;
-    private List<AttributeProcessor> attributeProcessorList;
-    private final OutputManager outputManager;
+    private final OutputRateManager outputRateManager;
+    private int outputSize;
+    private ArrayList<AttributeProcessor> attributeProcessorList;
 
-    public QuerySelector(String outputStreamId, Selector selector, AbstractDefinition inStreamDefinition,
-                         OutputManager outputManager) {
+    public QuerySelector(String outputStreamId, Selector selector,
+                         OutputRateManager outputRateManager, Map<InputStream,QueryEventSource> queryEventSourceList, SiddhiContext siddhiContext, boolean currentOn, boolean expiredOn) {
         this.outputStreamId = outputStreamId;
+        attributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
+
         outputStreamDefinition = new StreamDefinition();
         outputStreamDefinition.id(outputStreamId);
         this.selector = selector;
-        this.inputStreamDefinition = inStreamDefinition;
-        this.outputManager = outputManager;
-//        outputStreamDefinition.attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
-
+        outputSize = selector.getSelectionList().size();
+        this.outputRateManager = outputRateManager;
+//        populateOutputAttributes(queryEventSourceList); //TODO
 
     }
 
+
+    //TODO: for selectors
     public void process(StreamEvent streamEvent) {
-        outputManager.send(streamEvent.getTimeStamp(), streamEvent, null);
-
+        outputRateManager.send(streamEvent.getTimeStamp(), streamEvent, null);
     }
 
-    private void populateOutputAttributes() {
+    private Object processOutputAttributeGenerator(StreamEvent streamEvent,AttributeProcessor attributeProcessor) {
+        if (attributeProcessor instanceof NonGroupingAttributeProcessor) {
+            return ((NonGroupingAttributeProcessor) attributeProcessor).process(streamEvent);
+        } else {
+            //TODO
+            return null;
+        }
+    }
+
+    private void populateOutputAttributes(Map<InputStream,QueryEventSource> queryEventSourceList) {
         for (OutputAttribute outputAttribute : selector.getSelectionList()) {
             if (outputAttribute instanceof SimpleAttribute) {
-                PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(((SimpleAttribute) outputAttribute).getExpression(),inputStreamDefinition);
+
+            PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(((SimpleAttribute) outputAttribute).getExpression(), queryEventSourceList, null, false));
+
+
                 outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
             } else {
                 //TODO : for complex attributes

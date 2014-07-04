@@ -15,12 +15,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.siddhi.core.query.selector.processor;
+package org.wso2.siddhi.core.query.output.rateLimit;
 
 import org.wso2.siddhi.core.event.StreamEvent;
 
-public interface NonGroupingAttributeProcessor extends AttributeProcessor {
+public class PassThroughOutputRateManager extends OutputRateManager {
 
-    public Object process(StreamEvent event);
 
+    @Override
+    public void send(long timeStamp, StreamEvent currentEvent, StreamEvent expiredEvent) {
+        sendToCallBacks(timeStamp, currentEvent, expiredEvent, currentEvent != null ? currentEvent : expiredEvent);
+
+    }
 }

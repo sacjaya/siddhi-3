@@ -20,17 +20,18 @@ package org.wso2.siddhi.core.query;
 
 import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.query.output.OutputManager;
+import org.wso2.siddhi.core.query.creator.QueryCreator;
+import org.wso2.siddhi.core.query.creator.QueryCreatorFactory;
+import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
-import org.wso2.siddhi.core.query.selector.QuerySelector;
+import org.wso2.siddhi.core.query.processor.handler.SimpleHandlerProcessor;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.util.parser.QueryOutputParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.input.StandardInputStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,52 +46,31 @@ public class QueryRuntime {
     private StreamDefinition outputStreamDefinition;
     private List<QueryCallback> queryCallbackList = new ArrayList<QueryCallback>();
     private OutputCallback outputCallback = null;
-    private OutputManager outputManager;
+    private OutputRateManager outputRateManager;
 
 
-
-    public QueryRuntime(Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap,ConcurrentMap<String, StreamJunction> streamJunctionMap, SiddhiContext siddhiContext) {
+    public QueryRuntime(Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap, SiddhiContext siddhiContext) {
         if (query.getOutputStream() != null) {
             this.queryId = query.getOutputStream().getStreamId() + "-" + UUID.randomUUID();
         } else {
             this.queryId = UUID.randomUUID().toString();
         }
         this.query = query;
-        outputManager = QueryOutputParser.constructOutputRateManager();
-        AbstractDefinition streamID = streamDefinitionMap.get(((StandardInputStream) query.getInputStream()).getStreamId());
-        QuerySelector querySelector = new QuerySelector(query.getOutputStream().getStreamId(), query.getSelector(),streamID,outputManager);
-
+        outputRateManager = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
+        QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap, streamJunctionMap, outputRateManager, siddhiContext);
+        outputStreamDefinition = queryCreator.getOutputStreamDefinition();
 
         if (query.getOutputStream() != null) {
-             outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), streamJunctionMap, siddhiContext, querySelector.getOutputStreamDefinition());
-             outputManager.setOutputCallback(outputCallback);
-
-
+            outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), streamJunctionMap, siddhiContext, queryCreator.getOutputStreamDefinition());
+            outputRateManager.setOutputCallback(outputCallback);
         }
-
-
-
-
-
-
-
-
-
-
-
 
 
         //TODO: add the correct processor
-        QueryPartitioner queryPartitioner = new QueryPartitioner(querySelector);
-        handlerProcessors = queryPartitioner.getHandleProcessors();
+        SimpleHandlerProcessor simpleHandlerProcessor = new SimpleHandlerProcessor();
+        simpleHandlerProcessor.setNext(queryCreator.querySelector);
 
-
-        for (HandlerProcessor handlerProcessor : handlerProcessors) {
-            //TODO: getStreamID
-            streamJunctionMap.get(query.getInputStream().getStreamIds().get(0)).addEventFlow(handlerProcessor);
-
-        }
-
+        streamJunctionMap.get(query.getInputStream().getStreamIds().get(0)).addEventFlow(simpleHandlerProcessor);
     }
 
 
@@ -103,7 +83,7 @@ public class QueryRuntime {
     }
 
     public void addCallback(QueryCallback callback) {
-        outputManager.addQueryCallback(callback);
+        outputRateManager.addQueryCallback(callback);
     }
 
     public void removeQuery(ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap) {
@@ -120,8 +100,6 @@ public class QueryRuntime {
         return query;
     }
 
-
-    //TODO : set outputstream definition
     public StreamDefinition getOutputStreamDefinition() {
         return outputStreamDefinition;
     }

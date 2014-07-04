@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.siddhi.core.query.output;
+package org.wso2.siddhi.core.query.output.rateLimit;
 
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
@@ -25,15 +25,13 @@ import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OutputManager {
+public abstract class OutputRateManager {
     protected List<QueryCallback> queryCallbacks = new ArrayList<QueryCallback>();
     protected OutputCallback outputCallback = null;
     private boolean hasCallBack = false;
 
 
-    public void send(long timeStamp, StreamEvent currentEvent, StreamEvent expiredEvent){
-        sendToCallBacks(timeStamp, currentEvent, expiredEvent, currentEvent != null ? currentEvent : expiredEvent);
-    }
+    public abstract void send(long timeStamp, StreamEvent currentEvent, StreamEvent expiredEvent);
 
 
     protected void sendToCallBacks(long timeStamp, StreamEvent currentEvent, StreamEvent expiredEvent,

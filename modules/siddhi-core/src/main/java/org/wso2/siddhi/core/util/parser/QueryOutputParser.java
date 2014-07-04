@@ -18,66 +18,69 @@
 package org.wso2.siddhi.core.util.parser;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.exception.EventStreamNotExistException;
 import org.wso2.siddhi.core.exception.QueryCreationException;
-import org.wso2.siddhi.core.query.output.OutputManager;
+import org.wso2.siddhi.core.query.QueryEventSource;
+import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.output.callback.InsertIntoStreamCallback;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
+import org.wso2.siddhi.core.query.output.rateLimit.PassThroughOutputRateManager;
+import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.stream.StreamJunction;
+import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.query.input.InputStream;
+import org.wso2.siddhi.query.api.query.output.OutputRate;
 import org.wso2.siddhi.query.api.query.output.stream.DeleteStream;
 import org.wso2.siddhi.query.api.query.output.stream.InsertIntoStream;
 import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
 import org.wso2.siddhi.query.api.query.output.stream.UpdateStream;
+import org.wso2.siddhi.query.api.query.selection.Selector;
 
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class QueryOutputParser {
 
 
+    public static QuerySelector constructQuerySelector(OutputStream outStream, Selector selector, OutputRateManager outputRateManager,
+                                                       Map<InputStream,QueryEventSource> queryEventSourceList, SiddhiContext siddhiContext) {
+        boolean currentOn = false;
+        boolean expiredOn = false;
+        String id = null;
 
-    //TODO: add method
-//    public static QuerySelector constructQuerySelector(OutStream outStream, Selector selector, OutputRateManager outputRateManager, List<QueryEventSource> queryEventSourceList,
-//                                                       ConcurrentMap<String, EventTable> eventTableMap,
-//                                                       SiddhiContext siddhiContext) {
-//        boolean currentOn = false;
-//        boolean expiredOn = false;
-//        String id = null;
-//
-//        if (outStream != null) {
-//            if (outStream.getOutputEventsFor() == OutStream.OutputEventsFor.CURRENT_EVENTS || outStream.getOutputEventsFor() == OutStream.OutputEventsFor.ALL_EVENTS) {
-//                currentOn = true;
-//            }
-//            if (outStream.getOutputEventsFor() == OutStream.OutputEventsFor.EXPIRED_EVENTS || outStream.getOutputEventsFor() == OutStream.OutputEventsFor.ALL_EVENTS) {
-//                expiredOn = true;
-//            }
-//
-//            id = outStream.getStreamId();
-//        } else {
-//            currentOn = true;
-//            expiredOn = true;
-//        }
-//
-//        return new QuerySelector(id, selector, outputRateManager, queryEventSourceList, eventTableMap, siddhiContext, currentOn, expiredOn);
-//    }
+        if (outStream != null) {
+            if (outStream.getOutputEventsFor() == OutputStream.OutputEventsFor.CURRENT_EVENTS || outStream.getOutputEventsFor() == OutputStream.OutputEventsFor.ALL_EVENTS) {
+                currentOn = true;
+            }
+            if (outStream.getOutputEventsFor() == OutputStream.OutputEventsFor.EXPIRED_EVENTS || outStream.getOutputEventsFor() == OutputStream.OutputEventsFor.ALL_EVENTS) {
+                expiredOn = true;
+            }
 
-    public static OutputCallback constructOutputCallback(OutputStream outStream, ConcurrentMap<String, StreamJunction> streamJunctionMap,SiddhiContext siddhiContext,
+            id = outStream.getStreamId();
+        } else {
+            currentOn = true;
+            expiredOn = true;
+        }
+
+        return new QuerySelector(id, selector, outputRateManager, queryEventSourceList,siddhiContext, currentOn, expiredOn);
+
+
+    }
+
+    public static OutputCallback constructOutputCallback(OutputStream outStream, ConcurrentMap<String, StreamJunction> streamJunctionMap, SiddhiContext siddhiContext,
                                                          StreamDefinition outputStreamDefinition) {
         String id = outStream.getStreamId();
 //        Construct CallBack
         if (outStream instanceof InsertIntoStream) {
 
-                StreamJunction outputStreamJunction = streamJunctionMap.get(id);
-                if (outputStreamJunction == null) {
-                    outputStreamJunction = new StreamJunction(id,siddhiContext.getThreadPoolExecutor());
-                    streamJunctionMap.putIfAbsent(id, outputStreamJunction);
-                }
-                return new InsertIntoStreamCallback(outputStreamJunction, outputStreamDefinition);
+            StreamJunction outputStreamJunction = streamJunctionMap.get(id);
+            if (outputStreamJunction == null) {
+                outputStreamJunction = new StreamJunction(id, siddhiContext.getThreadPoolExecutor());
+                streamJunctionMap.putIfAbsent(id, outputStreamJunction);
+            }
+            return new InsertIntoStreamCallback(outputStreamJunction, outputStreamDefinition);
 
         } else if (outStream instanceof DeleteStream) {
             return null;
@@ -90,8 +93,13 @@ public class QueryOutputParser {
     }
 
 
-    //TODO: logic
-    public static OutputManager constructOutputRateManager() {
-        return new OutputManager();
+    public static OutputRateManager constructOutputRateManager(OutputRate outputRate) {
+        if (outputRate == null) {
+            return new PassThroughOutputRateManager();
+        }
+        //TODO: else
+
+
+        return null;
     }
 }
