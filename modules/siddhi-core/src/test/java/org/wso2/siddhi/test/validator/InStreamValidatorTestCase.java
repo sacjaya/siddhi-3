@@ -107,7 +107,7 @@ public class InStreamValidatorTestCase {
         StreamValidator.validate(definitionMap, testDefinition);
     }
 
-    @Test
+    /*@Test
     public void inStreamValidatorTest() throws ValidatorException {
         InStreamValidator.validate(query.getInputStream(), definitionMap.get("OutStockStream"));
     }
@@ -116,5 +116,5 @@ public class InStreamValidatorTestCase {
     public void QueryValidatorTestCase() throws ValidatorException {
         QueryValidator queryValidator = new QueryValidator(streamDefinitionList);
         queryValidator.validate(query, streamDefinitionList);
-    }
+    }*/
 }
