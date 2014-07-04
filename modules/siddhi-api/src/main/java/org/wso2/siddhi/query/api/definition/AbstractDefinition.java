@@ -52,7 +52,7 @@ public abstract class AbstractDefinition {
                 return attribute.getType();
             }
         }
-        throw new AttributeNotExistException("Cannot find attribute type as " + attributeName + " does not exist in "+id);
+        throw new AttributeNotExistException("Cannot find attribute type as " + attributeName + " does not exist in " + id);
     }
 
     public int getAttributePosition(String attributeName) {
@@ -62,7 +62,7 @@ public abstract class AbstractDefinition {
                 return i;
             }
         }
-        throw new AttributeNotExistException("Cannot get attribute position as " + attributeName + " does not exist in "+id);
+        throw new AttributeNotExistException("Cannot get attribute position as " + attributeName + " does not exist in " + id);
     }
 
 
@@ -77,5 +77,19 @@ public abstract class AbstractDefinition {
 
     public String getId() {
         return id;
+    }
+
+    public boolean equals(Object obj) {
+        AbstractDefinition temp = (AbstractDefinition) obj;
+        if (!(temp.getId().equals(this.getId()))) {
+            return false;
+        }
+        for (Attribute attribute : attributeList) {
+            if (!temp.getAttributeList().contains(attribute)) {
+                return false;
+            }
+
+        }
+        return true;
     }
 }
