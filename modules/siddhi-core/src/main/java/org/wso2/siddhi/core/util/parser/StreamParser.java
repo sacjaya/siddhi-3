@@ -19,7 +19,6 @@ package org.wso2.siddhi.core.util.parser;
 
 import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.query.QueryEventSource;
 
 public class StreamParser {
 
@@ -29,12 +28,12 @@ public class StreamParser {
 
 
 
-    public static void updateQueryEventSourceOutDefinition(QueryEventSource queryEventSource,
-                                                           SiddhiContext siddhiContext) {
-       queryEventSource.setOutDefinition(queryEventSource.getInDefinition());
-
-
-
-    }
+//    public static void updateQueryEventSourceOutDefinition(QueryEventSource queryEventSource,
+//                                                           SiddhiContext siddhiContext) {
+//       queryEventSource.setOutDefinition(queryEventSource.getInDefinition());
+//
+//
+//
+//    }
 
 }
