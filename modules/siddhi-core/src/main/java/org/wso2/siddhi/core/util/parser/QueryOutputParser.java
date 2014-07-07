@@ -36,15 +36,13 @@ import org.wso2.siddhi.query.api.query.output.stream.UpdateStream;
 import org.wso2.siddhi.query.api.query.selection.Selector;
 
 
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 public class QueryOutputParser {
 
 
-    public static QuerySelector constructQuerySelector(OutputStream outStream, Selector selector, OutputRateManager outputRateManager
-                                                       , SiddhiContext siddhiContext) {
+    public static QuerySelector constructQuerySelector(InputStream inputStream, OutputStream outStream, AbstractDefinition outputStreamDefinition, Selector selector, OutputRateManager outputRateManager
+            , SiddhiContext siddhiContext) {
         boolean currentOn = false;
         boolean expiredOn = false;
         String id = null;
@@ -63,7 +61,7 @@ public class QueryOutputParser {
             expiredOn = true;
         }
 
-        return new QuerySelector(id, selector, outputRateManager, siddhiContext, currentOn, expiredOn);
+        return new QuerySelector(id, outputStreamDefinition,selector, outputRateManager, siddhiContext, currentOn, expiredOn,inputStream);
 
 
     }

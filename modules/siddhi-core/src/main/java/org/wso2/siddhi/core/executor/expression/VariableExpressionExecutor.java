@@ -22,11 +22,13 @@ import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
+import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 import org.wso2.siddhi.query.api.query.input.InputStream;
 import org.wso2.siddhi.query.api.utils.SiddhiConstants;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 public class VariableExpressionExecutor implements ExpressionExecutor {
     Attribute.Type type;
@@ -38,7 +40,7 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
 
 
     public VariableExpressionExecutor(String streamIdOfVariable, String attributeName, int position,
-                                      String currentStreamReference, boolean processInDefinition) {
+                                      String currentStreamReference, boolean processInDefinition, InputStream inputStream) {
         this.attributeName = attributeName;
         if (streamIdOfVariable != null) {
             streamReference = streamIdOfVariable;
@@ -46,58 +48,27 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
             streamReference = currentStreamReference;
         }
         AbstractDefinition definition = null;
-        int queryEventSourcePosition = 0;
-//        for (QueryEventSource queryEventSource: queryEventSourceMap.values()) {
-//            String referenceSourceId = queryEventSource.getReferenceSourceId();
-//            if (referenceSourceId != null && referenceSourceId.equals(streamReference)) {
-//                definition = updateAttributeData(position, processInDefinition, queryEventSourcePosition, queryEventSource);
-//                queryEventSourcePosition++;
-//                if (definition != null) {
-//                    break;
-//                }
-//            }
-//        }
-//        if (definition == null) {
-//            for (int i = 0; i < queryEventStreamListSize; i++) {
-//                QueryEventSource queryEventSource = queryEventSourceMap.get(i);
-//                String sourceId = queryEventSource.getSourceId();
-//                if (sourceId != null && sourceId.equals(streamReference)) {
-//                    definition = updateAttributeData(position, processInDefinition, i, queryEventSource);
-//                    if (definition != null) {
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//        if (definition == null) {
-//            if (processInDefinition) {
-//                definition = queryEventSourceMap.get(0).getInDefinition();
-//            } else {
-//                definition = queryEventSourceMap.get(0).getOutDefinition();
-//            }
-//        }
-        type = definition.getAttributeType(attributeName);
-        attributePosition = definition.getAttributePosition(attributeName);
+        if(inputStream instanceof BasicSingleInputStream) {
+            String referenceSourceId = ((BasicSingleInputStream)inputStream).getStreamReferenceId();
+            if (referenceSourceId != null && referenceSourceId.equals(streamReference)) {
+                definition = ((BasicSingleInputStream)inputStream).getDefinition();
+              }
+        }
+
+        if(definition!=null){
+       type = definition.getAttributeType(attributeName);
+       attributePosition = definition.getAttributePosition(attributeName);
+        }
+
+
+        //TODO: below lines of code for testing purpose
+//        type = Attribute.Type.INT;
+//        attributePosition = 2;
 
     }
 
 
 
-//    private AbstractDefinition updateAttributeData(int position, boolean processInDefinition, int i, QueryEventSource queryEventSource) {
-//        AbstractDefinition definition;
-//        if (processInDefinition) {
-//            definition = queryEventSource.getInDefinition();
-//        } else {
-//            definition = queryEventSource.getOutDefinition();
-//        }
-//        streamPosition = i;
-//        if (position > -1) { //for known positions
-//            innerStreamPosition = position;
-//        } else if (position == SiddhiConstants.PREV) {
-//            innerStreamPosition = SiddhiConstants.PREV;
-//        }
-//        return definition;
-//    }
 
     @Override
     public Object execute(StreamEvent event) {
