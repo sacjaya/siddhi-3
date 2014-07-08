@@ -18,6 +18,9 @@
 
 package org.wso2.siddhi.core;
 
+
+import org.apache.log4j.Logger;
+import org.wso2.siddhi.core.config.ExecutionPlan;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
@@ -26,6 +29,7 @@ import org.wso2.siddhi.core.query.QueryRuntime;
 import org.wso2.siddhi.core.query.output.callback.InsertIntoStreamCallback;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
+import org.wso2.siddhi.core.util.validate.Validator;
 import org.wso2.siddhi.core.snapshot.SnapshotService;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.input.InputHandler;
@@ -44,6 +48,7 @@ import java.util.concurrent.*;
 
 
 public class SiddhiManager {
+    static final Logger log = Logger.getLogger(SiddhiManager.class);
 
     private SiddhiContext siddhiContext;
     private ConcurrentMap<String, StreamJunction> streamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains definition
@@ -72,6 +77,16 @@ public class SiddhiManager {
         this.siddhiContext.setSnapshotService(new SnapshotService(siddhiContext));
     }
 
+    /*public Boolean addExecutionPlan(ExecutionPlan executionPlan){
+        Validator validator = new Validator(executionPlan);
+        Boolean validated = validator.validate();
+        if(!validated){
+            return false;
+        }else{
+            //Do further processing
+            return false;
+        }
+    }*/
 
     public InputHandler defineStream(StreamDefinition streamDefinition) {
         if (!checkEventStreamExist(streamDefinition)) {
