@@ -13,11 +13,16 @@
 package org.wso2.siddhi.core.util.validate;
 
 import org.wso2.siddhi.core.exception.ValidatorException;
+import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.expression.Variable;
 import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.api.query.input.*;
 import org.wso2.siddhi.query.api.query.input.pattern.PatternInputStream;
+import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
 import org.wso2.siddhi.query.api.query.selection.Selector;
+import org.wso2.siddhi.query.api.query.selection.attribute.OutputAttribute;
+import org.wso2.siddhi.query.api.query.selection.attribute.SimpleAttribute;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,6 +90,7 @@ public class QueryValidator {
         throw new ValidatorException("No stream definition found for stream ID: " + id);
     }*/
 
+
     public static void validate(Query query, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
         Map<String, String> renameHandlerMap = new HashMap<String, String>();        //<StreamReferenceId,StreamId>
         for (String key : streamDefinitionMap.keySet()) {
@@ -92,7 +98,32 @@ public class QueryValidator {
         }
         List<StreamDefinition> definitionList = getRelevantDefinitions(query.getInputStream().getStreamIds(), streamDefinitionMap); //To streamID being null in some cases
         validateInStream(query.getInputStream(), streamDefinitionMap, renameHandlerMap);
-        validateSelector(query.getSelector(), definitionList, renameHandlerMap);
+        validateSelector(query.getSelector(), definitionList, renameHandlerMap); //TODO: handle infer streams. check implementation level
+        validateOutStream(query.getOutputStream(), query.getSelector(), streamDefinitionMap);
+    }
+
+    private static void validateOutStream(OutputStream outputStream, Selector selector, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
+        StreamDefinition definition = new StreamDefinition(outputStream.getStreamId());         //TODO:check whether we need to move implementation into out stream validator.
+        for (OutputAttribute attribute : selector.getSelectionList()) {
+            if (attribute instanceof SimpleAttribute) {                                          //TODO: handle complex attributes
+                StreamDefinition sourceDefinition = streamDefinitionMap.get(((Variable) ((SimpleAttribute) attribute).getExpression()).getStreamId());
+                String name = ((Variable) ((SimpleAttribute) attribute).getExpression()).getAttributeName();
+                Attribute.Type type = null;
+                for (Attribute attribute1 : sourceDefinition.getAttributeList()) {
+                    if (attribute1.getName().equals(name)) {
+                        type = attribute1.getType();
+                    }
+                }
+                if (type != null) {
+                    definition.attribute(attribute.getRename(), type);
+                } else {
+                    throw new ValidatorException("Attribute " + name + " was not found in stream definition " + sourceDefinition.getStreamId());
+                }
+
+            }
+        }
+        StreamValidator.validate(streamDefinitionMap, definition);
+        streamDefinitionMap.put(definition.getStreamId(), definition);
     }
 
     private static void validateSelector(Selector selector, List<StreamDefinition> streamDefinitionList, Map<String, String> renameHandlerMap) throws ValidatorException {
