@@ -18,20 +18,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.wso2.siddhi.core.config.ExecutionPlan;
 import org.wso2.siddhi.core.exception.ValidatorException;
-/*import org.wso2.siddhi.core.util.validate.InStreamValidator;
-import org.wso2.siddhi.core.util.validate.QueryValidator;*/
+import org.wso2.siddhi.core.util.validate.InStreamValidator;
+import org.wso2.siddhi.core.util.validate.QueryValidator;
+import org.wso2.siddhi.core.util.validate.SelectorValidator;
 import org.wso2.siddhi.core.util.validate.StreamValidator;
 import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.query.Query;
+import org.wso2.siddhi.query.api.query.selection.Selector;
 import org.wso2.siddhi.test.PassThroughTest;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InStreamValidatorTestCase {
     static final Logger log = Logger.getLogger(PassThroughTest.class);
@@ -42,11 +41,13 @@ public class InStreamValidatorTestCase {
     private ExecutionPlan executionPlan;
     private Query query;
 
+    private StreamDefinition testDefinition1;
+    private StreamDefinition testDefinition2;
 
     @Before
     public void init() {
-        StreamDefinition testDefinition1 = StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT);
-        StreamDefinition testDefinition2 = StreamDefinition.id("OutStockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT);
+        testDefinition1 = StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT);
+        testDefinition2 = StreamDefinition.id("OutStockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT);
 
         definitionMap = new HashMap<String, StreamDefinition>(2);
         definitionMap.put(testDefinition1.getStreamId(), testDefinition1);
@@ -107,14 +108,33 @@ public class InStreamValidatorTestCase {
         StreamValidator.validate(definitionMap, testDefinition);
     }
 
-    /*@Test
+    @Test
     public void inStreamValidatorTest() throws ValidatorException {
-        InStreamValidator.validate(query.getInputStream(), definitionMap.get("OutStockStream"));
+        InStreamValidator.validate(query.getInputStream(), new ArrayList<StreamDefinition>(Arrays.asList(testDefinition1)));
+    }
+
+    @Test
+    public void SelectorValidatorTest() throws ValidatorException {
+        Map<String, String> sampleRenameMap = new HashMap<String, String>();
+        sampleRenameMap.put(testDefinition1.getStreamId(), testDefinition1.getStreamId());
+        sampleRenameMap.put(testDefinition2.getStreamId(), testDefinition2.getStreamId());
+        SelectorValidator.validate(query.getSelector(), new ArrayList<StreamDefinition>(Arrays.asList(testDefinition1)), sampleRenameMap);
+        query.getSelector();
+    }
+
+    @Test(expected = ValidatorException.class)
+    public void SelectorValidatorInvalidTest() throws ValidatorException {
+        Selector selector = Query.outputSelector().
+                select("symbol", Expression.variable("symbol1")).
+                select("price", Expression.variable("price"));
+        Map<String, String> sampleRenameMap = new HashMap<String, String>();
+        sampleRenameMap.put(testDefinition1.getStreamId(), testDefinition1.getStreamId());
+        sampleRenameMap.put(testDefinition2.getStreamId(), testDefinition2.getStreamId());
+        SelectorValidator.validate(selector, new ArrayList<StreamDefinition>(Arrays.asList(testDefinition1)), sampleRenameMap);
     }
 
     @Test
     public void QueryValidatorTestCase() throws ValidatorException {
-        QueryValidator queryValidator = new QueryValidator(streamDefinitionList);
-        queryValidator.validate(query, streamDefinitionList);
-    }*/
+        QueryValidator.validate(query, definitionMap);
+    }
 }
