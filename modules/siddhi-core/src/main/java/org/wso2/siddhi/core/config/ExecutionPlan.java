@@ -21,6 +21,7 @@ import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.StreamReceiver;
 import org.wso2.siddhi.core.stream.input.InputHandler;
+import org.wso2.siddhi.core.util.validate.QueryValidator;
 import org.wso2.siddhi.core.util.validate.StreamValidator;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.query.Query;
@@ -52,10 +53,11 @@ public class ExecutionPlan {
         this.name = name;
     }
 
-    public void addQuery(Query query) {
+    public void addQuery(Query query) throws ValidatorException {
         if (queryList == null) {
             queryList = new ArrayList<Query>();
         }
+        QueryValidator.validate(query, streamDefinitionMap);
         queryList.add(query);
     }
 
