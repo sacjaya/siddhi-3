@@ -47,7 +47,7 @@ public class InStreamValidatorTestCase {
     @Before
     public void init() {
         testDefinition1 = StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT);
-        testDefinition2 = StreamDefinition.id("OutStockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT);
+        testDefinition2 = StreamDefinition.id("OutStockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT);
 
         definitionMap = new HashMap<String, StreamDefinition>(2);
         definitionMap.put(testDefinition1.getStreamId(), testDefinition1);
