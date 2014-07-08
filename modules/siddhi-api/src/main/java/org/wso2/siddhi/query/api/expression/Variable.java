@@ -54,6 +54,10 @@ public class Variable extends Expression {
         return position;
     }
 
+    public void setStreamId(String streamId) {
+        this.streamId = streamId;
+    }
+
 //    @Override
 //    protected void validate(List<QueryEventSource> queryEventSourceList, String streamReferenceId,
 //                            boolean processInStreamDefinition) {
