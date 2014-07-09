@@ -22,7 +22,6 @@ import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.core.util.parser.QueryOutputParser;
-import org.wso2.siddhi.core.util.parser.StreamParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.query.Query;
@@ -30,7 +29,7 @@ import org.wso2.siddhi.query.api.query.input.*;
 
 import java.util.concurrent.ConcurrentMap;
 
-public class QueryCreator {
+public abstract class QueryCreator {
 
     protected final ConcurrentMap<String, AbstractDefinition> streamDefinitionMap;
     protected OutputRateManager outputRateManager;
@@ -73,11 +72,5 @@ public class QueryCreator {
         return outputStreamDefinition;
     }
 
-    public QueryPartComposite constructQuery() {
-        QueryPartComposite queryPartComposite = StreamParser.parseSingleStream(query.getInputStream(),  streamDefinitionMap,  siddhiContext);
-        QuerySelector querySelector = constructQuerySelector(outputRateManager);
-        queryPartComposite.setQuerySelector(querySelector);
-        return queryPartComposite;
-
-    }
+    public abstract QueryPartComposite constructQuery() ;
 }

@@ -18,8 +18,6 @@
 
 package org.wso2.siddhi.core;
 
-
-import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
@@ -47,8 +45,6 @@ import java.util.concurrent.*;
 
 
 public class SiddhiManager {
-    static final Logger log = Logger.getLogger(SiddhiManager.class);
-
     private SiddhiContext siddhiContext;
     private ConcurrentMap<String, StreamJunction> streamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains definition
     private ConcurrentMap<String, AbstractDefinition> streamDefinitionMap = new ConcurrentHashMap<String, AbstractDefinition>(); //contains stream definition
@@ -184,7 +180,6 @@ public class SiddhiManager {
             throw new QueryNotExistException("No query fund for " + queryReference);
         }
         callback.setStreamDefinition(queryRuntime.getOutputStreamDefinition());
-        callback.setSiddhiContext(siddhiContext);
         queryRuntime.addCallback(callback);
 
     }

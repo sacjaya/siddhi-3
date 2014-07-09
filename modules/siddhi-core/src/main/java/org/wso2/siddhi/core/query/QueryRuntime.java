@@ -18,7 +18,6 @@
 
 package org.wso2.siddhi.core.query;
 
-import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.query.creator.QueryCreator;
 import org.wso2.siddhi.core.query.creator.QueryCreatorFactory;
@@ -39,13 +38,10 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 
 public class QueryRuntime {
-    static final Logger log = Logger.getLogger(QueryRuntime.class);
     private String queryId;
     private Query query;
     private List<HandlerProcessor> handlerProcessors = new ArrayList<HandlerProcessor>();
-    private ArrayList<QuerySelector> querySelectorList = new ArrayList<QuerySelector>();
     private StreamDefinition outputStreamDefinition;
-    private List<QueryCallback> queryCallbackList = new ArrayList<QueryCallback>();
     private OutputCallback outputCallback = null;
     private OutputRateManager outputRateManager;
 
@@ -58,13 +54,15 @@ public class QueryRuntime {
 
         outputRateManager = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
 
-        QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap, streamJunctionMap, outputRateManager, siddhiContext);
+        QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap, outputRateManager, siddhiContext);
         outputStreamDefinition = queryCreator.getOutputStreamDefinition();
        if (query.getOutputStream() != null) {
             outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), streamJunctionMap, siddhiContext, queryCreator.getOutputStreamDefinition());
             outputRateManager.setOutputCallback(outputCallback);
         }
 
+        ArrayList<QuerySelector> querySelectorList = new ArrayList<QuerySelector>();
+        List<QueryCallback> queryCallbackList = new ArrayList<QueryCallback>();
         QueryPartitioner queryPartitioner = new QueryPartitioner(queryCreator, queryCallbackList, outputCallback, querySelectorList, siddhiContext);
 
         handlerProcessors = queryPartitioner.constructPartition();

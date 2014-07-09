@@ -18,7 +18,6 @@
 package org.wso2.siddhi.core.query.processor.handler;
 
 import com.lmax.disruptor.dsl.Disruptor;
-import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.*;
 
 import org.wso2.siddhi.core.query.processor.PreSelectProcessingElement;
@@ -33,13 +32,10 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
     private Disruptor disruptor;
     private QuerySelector next;
     private FilterProcessor filterProcessor;
-    private SiddhiContext context;
     private InputStream inputStream ;
 
-    public SimpleHandlerProcessor(FilterProcessor filterProcessor,
-                                  SiddhiContext siddhiContext,InputStream inputStream) {
+    public SimpleHandlerProcessor(FilterProcessor filterProcessor,InputStream inputStream) {
         this.filterProcessor = filterProcessor;
-        this.context = siddhiContext;
         this.inputStream = inputStream;
     }
 
@@ -59,7 +55,7 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
        if(inputStream instanceof BasicSingleInputStream){
            return ((BasicSingleInputStream) inputStream).getStreamId();
        }  else {
-           //TODO
+           //TODO: else
        }
         return null;
     }

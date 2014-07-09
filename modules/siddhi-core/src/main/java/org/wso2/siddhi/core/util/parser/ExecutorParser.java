@@ -95,7 +95,7 @@ public class ExecutorParser {
                         parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, processInDefinition, siddhiContext,inputStream));
             }
         } else {
-           //TODO
+           //TODO: else
         }
         throw new OperationNotSupportedException(condition + " not supported !");
     }

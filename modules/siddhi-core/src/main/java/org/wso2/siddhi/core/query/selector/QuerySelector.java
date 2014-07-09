@@ -17,11 +17,8 @@
  */
 package org.wso2.siddhi.core.query.selector;
 
-import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.*;
-
-import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.selector.attribute.processor.AttributeProcessor;
 import org.wso2.siddhi.core.query.selector.attribute.processor.NonGroupingAttributeProcessor;
@@ -29,21 +26,12 @@ import org.wso2.siddhi.core.query.selector.attribute.processor.PassThroughAttrib
 import org.wso2.siddhi.core.util.parser.ExecutorParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.expression.ExpressionExtension;
-import org.wso2.siddhi.query.api.extension.Extension;
 import org.wso2.siddhi.query.api.query.input.InputStream;
 import org.wso2.siddhi.query.api.query.selection.Selector;
-import org.wso2.siddhi.query.api.query.selection.attribute.ComplexAttribute;
 import org.wso2.siddhi.query.api.query.selection.attribute.OutputAttribute;
-import org.wso2.siddhi.query.api.query.selection.attribute.OutputAttributeExtension;
 import org.wso2.siddhi.query.api.query.selection.attribute.SimpleAttribute;
 
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentMap;
-
 
 public class QuerySelector {
 
@@ -63,20 +51,15 @@ public class QuerySelector {
         this.outputStreamId = outputStreamId;
         this.currentOn = currentOn;
         this.expiredOn = expiredOn;
+        this.selector = selector;
 
+        outputSize = selector.getSelectionList().size();
         this.inputStream = inputStream;
         attributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
         this.outputStreamDefinition = (StreamDefinition) outputStreamDefinition;
 
-        //TODO  below line of code for testing purpose
-//        this.outputStreamDefinition = new StreamDefinition("StockQuote");
-
-
-
-        this.selector = selector;
-
         populateOutputAttributes(siddhiContext);
-        outputSize = selector.getSelectionList().size();
+
         this.outputRateManager = outputRateManager;
 
     }
@@ -84,22 +67,15 @@ public class QuerySelector {
 
 
     public void process(StreamEvent streamEvent) {
-         Object[] data = new Object[outputSize];
+        Object[] data = new Object[outputSize];
         for (int i = 0; i < outputSize; i++) {
             AttributeProcessor attributeProcessor = attributeProcessorList.get(i);
             data[i] = processOutputAttributeGenerator(streamEvent, attributeProcessor);
         }
 
-
-        StreamEvent event = null;
-                event = new Event(streamEvent.getTimeStamp(), data);
-                outputRateManager.send(event.getTimeStamp(), event, null);
-
-
-
-
-
-
+        StreamEvent event;
+        event = new Event(streamEvent.getTimeStamp(), data);
+        outputRateManager.send(event.getTimeStamp(), event, null);
 
     }
 
@@ -107,7 +83,7 @@ public class QuerySelector {
         if (attributeProcessor instanceof NonGroupingAttributeProcessor) {
             return ((NonGroupingAttributeProcessor) attributeProcessor).process(streamEvent);
         } else {
-            //TODO
+            //TODO: else
             return null;
         }
     }
@@ -122,9 +98,9 @@ public class QuerySelector {
             if (outputAttribute instanceof SimpleAttribute) {
                 PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(((SimpleAttribute) outputAttribute).getExpression(),  null, false, siddhiContext,inputStream));
                 attributeProcessorList.add(attributeGenerator);
-                outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
+//                outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
             } else {
-                //TODO
+                //TODO: else
             }
         }
 

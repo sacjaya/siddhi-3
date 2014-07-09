@@ -24,14 +24,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
+import org.wso2.siddhi.core.util.validate.QueryValidator;
+import org.wso2.siddhi.core.util.validate.StreamValidator;
 import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.query.Query;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PassThroughTestCase {
     static final Logger log = Logger.getLogger(PassThroughTestCase.class);
@@ -50,6 +56,7 @@ public class PassThroughTestCase {
     public void streamCallbackTest() throws InterruptedException {
 
         log.info("stream callback test");
+
         SiddhiManager siddhiManager = new SiddhiManager();
         InputHandler inputHandler = siddhiManager.defineStream(StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
 
@@ -71,12 +78,11 @@ public class PassThroughTestCase {
 
 
     @Test
-    public void testPassThroughQuery() throws InterruptedException {
+    public void testPassThroughQuery() throws InterruptedException, ValidatorException {
         log.info("Pass through query");
         SiddhiManager siddhiManager = new SiddhiManager();
 
-        siddhiManager.defineStream(StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
-
+        StreamDefinition streamDefinition =  StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
 
         Query query = new Query();
         query.from(Query.inputStream("cseEventStream"));
@@ -87,6 +93,16 @@ public class PassThroughTestCase {
                         select("volume", Expression.variable("volume"))
         ) ;
         query.insertInto("StockQuote");
+
+        Map<String, StreamDefinition> streamDefinitionMap = new HashMap<String, StreamDefinition>();
+        streamDefinitionMap.put("cseEventStream",streamDefinition);
+        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        QueryValidator.validate(query,streamDefinitionMap);
+        for(StreamDefinition streamDef: streamDefinitionMap.values()){
+            siddhiManager.defineStream(streamDef);
+
+        }
+
 
         String queryReference = siddhiManager.addQuery(query);
 
@@ -121,11 +137,12 @@ public class PassThroughTestCase {
 
 
     @Test
-    public void testPassThroughSelectorQuery() throws InterruptedException {
+    public void testPassThroughSelectorQuery() throws InterruptedException, ValidatorException {
         log.info("Pass through query");
         SiddhiManager siddhiManager = new SiddhiManager();
 
-        siddhiManager.defineStream(StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
+        StreamDefinition streamDefinition =  StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
+        siddhiManager.defineStream(streamDefinition);
 
 
         Query query = new Query();
@@ -135,6 +152,15 @@ public class PassThroughTestCase {
                         select("volume", Expression.variable("volume"))
         ) ;
         query.insertInto("StockQuote");
+
+        Map<String, StreamDefinition> streamDefinitionMap = new HashMap<String, StreamDefinition>();
+        streamDefinitionMap.put("cseEventStream",streamDefinition);
+        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        QueryValidator.validate(query,streamDefinitionMap);
+        for(StreamDefinition streamDef: streamDefinitionMap.values()){
+            siddhiManager.defineStream(streamDef);
+
+        }
 
         String queryReference = siddhiManager.addQuery(query);
 
@@ -168,11 +194,12 @@ public class PassThroughTestCase {
 
 
     @Test
-    public void testSimpleFilterQuery() throws InterruptedException {
+    public void testSimpleFilterQuery() throws InterruptedException, ValidatorException {
         log.info("Pass through query");
         SiddhiManager siddhiManager = new SiddhiManager();
 
-        siddhiManager.defineStream(StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
+        StreamDefinition streamDefinition =  StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
+        siddhiManager.defineStream(streamDefinition);
 
 
         Query query = new Query();
@@ -187,6 +214,16 @@ public class PassThroughTestCase {
                         select("volume", Expression.variable("volume"))
         ) ;
         query.insertInto("StockQuote");
+
+
+        Map<String, StreamDefinition> streamDefinitionMap = new HashMap<String, StreamDefinition>();
+        streamDefinitionMap.put("cseEventStream",streamDefinition);
+        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        QueryValidator.validate(query,streamDefinitionMap);
+        for(StreamDefinition streamDef: streamDefinitionMap.values()){
+            siddhiManager.defineStream(streamDef);
+
+        }
 
         String queryReference = siddhiManager.addQuery(query);
 
@@ -209,11 +246,12 @@ public class PassThroughTestCase {
     }
 
     @Test
-    public void testSimpleFilterQueryTwo() throws InterruptedException {
+    public void testSimpleFilterQueryTwo() throws InterruptedException, ValidatorException {
         log.info("Pass through query");
         SiddhiManager siddhiManager = new SiddhiManager();
 
-        siddhiManager.defineStream(StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
+        StreamDefinition streamDefinition =  StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
+        siddhiManager.defineStream(streamDefinition);
 
 
         Query query = new Query();
@@ -234,7 +272,14 @@ public class PassThroughTestCase {
         ) ;
         query.insertInto("StockQuote");
 
-        String queryReference = siddhiManager.addQuery(query);
+        Map<String, StreamDefinition> streamDefinitionMap = new HashMap<String, StreamDefinition>();
+        streamDefinitionMap.put("cseEventStream",streamDefinition);
+        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        QueryValidator.validate(query,streamDefinitionMap);
+        for(StreamDefinition streamDef: streamDefinitionMap.values()){
+            siddhiManager.defineStream(streamDef);
+
+        }String queryReference = siddhiManager.addQuery(query);
 
         siddhiManager.addCallback(queryReference, new QueryCallback() {
             @Override
@@ -252,6 +297,8 @@ public class PassThroughTestCase {
         Thread.sleep(1000);
         Assert.assertEquals(1, count);
     }
+
+
 
 
 
