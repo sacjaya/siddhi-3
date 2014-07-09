@@ -54,10 +54,16 @@ public class QuerySelector {
     private int outputSize;
     private ArrayList<AttributeProcessor> attributeProcessorList;
     private InputStream inputStream;
+    public boolean currentOn = false;
+    public boolean expiredOn = false;
+
 
     public QuerySelector(String outputStreamId, AbstractDefinition outputStreamDefinition, Selector selector,
                          OutputRateManager outputRateManager, SiddhiContext siddhiContext, boolean currentOn, boolean expiredOn,InputStream inputStream) {
         this.outputStreamId = outputStreamId;
+        this.currentOn = currentOn;
+        this.expiredOn = expiredOn;
+
         this.inputStream = inputStream;
         attributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
         this.outputStreamDefinition = (StreamDefinition) outputStreamDefinition;

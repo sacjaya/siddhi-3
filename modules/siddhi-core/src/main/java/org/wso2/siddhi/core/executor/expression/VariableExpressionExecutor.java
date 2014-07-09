@@ -62,13 +62,17 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
 
 
         //TODO: below lines of code for testing purpose
-//        type = Attribute.Type.INT;
-//        attributePosition = 2;
+//        if(attributeName.equals("symbol"))
+//        { type = Attribute.Type.STRING;
+//        attributePosition = 0;   }
+//        else if(attributeName.equals("price"))
+//        { type = Attribute.Type.FLOAT;
+//            attributePosition = 1;   }
+//        else if(attributeName.equals("volume"))
+//        { type = Attribute.Type.INT;
+//            attributePosition = 2;   }
 
     }
-
-
-
 
     @Override
     public Object execute(StreamEvent event) {
@@ -88,5 +92,24 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
     }
 
 
-
+    public String constructFilterQuery(StreamEvent newEvent, int level) {
+        Object obj = execute(newEvent);
+        if (obj == null) {
+            StringBuilder sb = new StringBuilder();
+            if (streamPosition >= 0 && level == 0) {
+                sb.append("event").append(streamPosition).append(".");
+            }
+            if (innerStreamPosition >= 0) {
+                sb.append("event").append(innerStreamPosition).append(".");
+            }
+            if (attributePosition >= 0) {
+                sb.append("data").append(attributePosition);
+            }
+            return sb.toString();
+        } else if (obj instanceof String) {
+            return "'" + obj.toString() + "'";
+        } else {
+            return obj.toString();
+        }
+    }
 }

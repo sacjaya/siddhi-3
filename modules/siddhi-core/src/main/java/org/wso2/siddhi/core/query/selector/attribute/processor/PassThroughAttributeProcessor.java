@@ -19,14 +19,10 @@ package org.wso2.siddhi.core.query.selector.attribute.processor;
 
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.executor.expression.ExpressionExecutor;
-import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.expression.Variable;
 
 public class PassThroughAttributeProcessor implements NonGroupingAttributeProcessor{
     private ExpressionExecutor expressionExecutor;
-    private Attribute.Type outputType;
 
     public PassThroughAttributeProcessor(ExpressionExecutor expressionExecutor) {
         this.expressionExecutor=expressionExecutor;
@@ -35,14 +31,6 @@ public class PassThroughAttributeProcessor implements NonGroupingAttributeProces
     public Attribute.Type getOutputType() {
         return expressionExecutor.getReturnType();
     }
-
-    @Override
-    public void lock() {
-    }
-
-    @Override
-    public void unlock() {
-   }
 
     @Override
     public Object process(StreamEvent event) {

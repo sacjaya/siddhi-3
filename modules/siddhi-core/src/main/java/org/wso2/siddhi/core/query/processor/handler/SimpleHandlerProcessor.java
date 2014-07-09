@@ -18,15 +18,30 @@
 package org.wso2.siddhi.core.query.processor.handler;
 
 import com.lmax.disruptor.dsl.Disruptor;
+import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.*;
 
+import org.wso2.siddhi.core.query.processor.PreSelectProcessingElement;
+import org.wso2.siddhi.core.query.processor.filter.FilterProcessor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
+import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
+import org.wso2.siddhi.query.api.query.input.InputStream;
 
 
-public class SimpleHandlerProcessor implements HandlerProcessor{
+public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProcessingElement{
 
     private Disruptor disruptor;
     private QuerySelector next;
+    private FilterProcessor filterProcessor;
+    private SiddhiContext context;
+    private InputStream inputStream ;
+
+    public SimpleHandlerProcessor(FilterProcessor filterProcessor,
+                                  SiddhiContext siddhiContext,InputStream inputStream) {
+        this.filterProcessor = filterProcessor;
+        this.context = siddhiContext;
+        this.inputStream = inputStream;
+    }
 
     @Override
     public void receive(StreamEvent streamEvent) {
@@ -34,12 +49,18 @@ public class SimpleHandlerProcessor implements HandlerProcessor{
     }
 
     protected void processHandler(StreamEvent streamEvent) {
+        streamEvent = filterProcessor.process(streamEvent);
        if (streamEvent != null) {
               next.process(streamEvent);
         }
     }
 
     public String getStreamId() {
+       if(inputStream instanceof BasicSingleInputStream){
+           return ((BasicSingleInputStream) inputStream).getStreamId();
+       }  else {
+           //TODO
+       }
         return null;
     }
 

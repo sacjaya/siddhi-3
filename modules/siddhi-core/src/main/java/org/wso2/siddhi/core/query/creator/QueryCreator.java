@@ -18,27 +18,16 @@
 package org.wso2.siddhi.core.query.creator;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.exception.EventStreamNotExistException;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
+import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.core.util.parser.QueryOutputParser;
 import org.wso2.siddhi.core.util.parser.StreamParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
-import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.expression.ExpressionValidator;
 import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.api.query.input.*;
-import org.wso2.siddhi.query.api.query.selection.attribute.ComplexAttribute;
-import org.wso2.siddhi.query.api.query.selection.attribute.OutputAttribute;
-import org.wso2.siddhi.query.api.query.selection.attribute.OutputAttributeExtension;
-import org.wso2.siddhi.query.api.query.selection.attribute.SimpleAttribute;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 public class QueryCreator {
@@ -84,5 +73,11 @@ public class QueryCreator {
         return outputStreamDefinition;
     }
 
+    public QueryPartComposite constructQuery() {
+        QueryPartComposite queryPartComposite = StreamParser.parseSingleStream(query.getInputStream(),  streamDefinitionMap,  siddhiContext);
+        QuerySelector querySelector = constructQuerySelector(outputRateManager);
+        queryPartComposite.setQuerySelector(querySelector);
+        return queryPartComposite;
 
+    }
 }

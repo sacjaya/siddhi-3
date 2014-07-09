@@ -20,7 +20,6 @@ package org.wso2.siddhi.core;
 
 
 import org.apache.log4j.Logger;
-import org.wso2.siddhi.core.config.ExecutionPlan;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
@@ -29,8 +28,8 @@ import org.wso2.siddhi.core.query.QueryRuntime;
 import org.wso2.siddhi.core.query.output.callback.InsertIntoStreamCallback;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
-import org.wso2.siddhi.core.util.validate.Validator;
 import org.wso2.siddhi.core.snapshot.SnapshotService;
+import org.wso2.siddhi.core.snapshot.ThreadBarrier;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
@@ -67,6 +66,7 @@ public class SiddhiManager {
         this.siddhiContext = new SiddhiContext(siddhiConfiguration.getExecutionPlanIdentifier(), SiddhiContext.ProcessingState.DISABLED);
         this.siddhiContext.setEventBatchSize(siddhiConfiguration.getEventBatchSize());
         this.siddhiContext.setSiddhiExtensions(siddhiConfiguration.getSiddhiExtensions());
+        this.siddhiContext.setThreadBarrier(new ThreadBarrier());
         this.siddhiContext.setThreadPoolExecutor(new ThreadPoolExecutor(siddhiConfiguration.getThreadExecutorCorePoolSize(),
                 siddhiConfiguration.getThreadExecutorMaxPoolSize(),
                 50,
