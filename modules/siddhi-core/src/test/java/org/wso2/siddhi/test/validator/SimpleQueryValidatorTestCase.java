@@ -27,12 +27,14 @@ import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.query.Query;
+import org.wso2.siddhi.query.api.query.input.JoinInputStream;
+import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
 import org.wso2.siddhi.query.api.query.selection.Selector;
 import org.wso2.siddhi.test.PassThroughTest;
 
 import java.util.*;
 
-public class InStreamValidatorTestCase {
+public class SimpleQueryValidatorTestCase {
     static final Logger log = Logger.getLogger(PassThroughTest.class);
     private Map<String, StreamDefinition> definitionMap;
     private Map<String, String> renameMap;
@@ -43,15 +45,18 @@ public class InStreamValidatorTestCase {
 
     private StreamDefinition testDefinition1;
     private StreamDefinition testDefinition2;
+    private StreamDefinition testDefinition3;
 
     @Before
     public void init() {
         testDefinition1 = StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT);
         testDefinition2 = StreamDefinition.id("OutStockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT);
+        testDefinition3 = StreamDefinition.id("TwitterStream").attribute("symbol", Attribute.Type.STRING).attribute("wordCount", Attribute.Type.INT);
 
         definitionMap = new HashMap<String, StreamDefinition>(2);
         definitionMap.put(testDefinition1.getStreamId(), testDefinition1);
         definitionMap.put(testDefinition2.getStreamId(), testDefinition2);
+        definitionMap.put(testDefinition3.getStreamId(), testDefinition3);
 
         streamDefinitionList = new ArrayList<StreamDefinition>();
         streamDefinitionList.add(testDefinition1);
@@ -59,30 +64,47 @@ public class InStreamValidatorTestCase {
         renameMap = new HashMap<String, String>(2);
         renameMap.put(testDefinition1.getStreamId(), testDefinition1.getStreamId());
         renameMap.put(testDefinition2.getStreamId(), testDefinition2.getStreamId());
+        renameMap.put(testDefinition3.getStreamId(), testDefinition3.getStreamId());
 
         query = new Query();
-        query.from(
-                Query.inputStream("StockStream").
-                        filter(
-                                Condition.and(
-                                        Condition.compare(
-                                                Expression.add(Expression.value(7), Expression.value(9.5)),
-                                                Condition.Operator.GREATER_THAN,
-                                                Expression.variable("price")),
-                                        Condition.compare(
-                                                Expression.value(100),
-                                                Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.variable("volume")
-                                        )
-                                )
+
+        query.
+                property("name", "Query1").property("summary", "Test Query").
+                from(
+                        Query.joinInputStream(
+                                Query.inputStream("StockStream").
+                                        window("lengthBatch", Expression.value(50)),
+                                JoinInputStream.Type.JOIN,
+                                Query.inputStream("TwitterStream").
+                                        filter(
+                                                Condition.compare(
+                                                        Expression.value(50),
+                                                        Condition.Operator.GREATER_THAN,
+                                                        Expression.variable("TwitterStream", "wordCount")
+                                                )
+
+
+                                        ).window("lengthBatch", Expression.value(50)),
+                                Condition.compare(
+                                        Expression.variable("StockStream", "symbol"),
+                                        Condition.Operator.EQUAL,
+                                        Expression.variable("TwitterStream", "symbol"))
                         )
-        );
-        query.select(
-                Query.outputSelector().
-                        select("symbol", Expression.variable("symbol")).
-                        select("price", Expression.variable("price"))
-        );
-        query.insertInto("OutStockStream");
+                ).
+                select(
+                        Query.outputSelector().
+                                select("symbol", Expression.variable("StockStream", "symbol")).
+                                select("price", Expression.variable("StockStream", "price")).
+                                groupBy("StockStream", "symbol").
+                                having(
+                                        Condition.compare(
+                                                Expression.value(50),
+                                                Condition.Operator.GREATER_THAN,
+                                                Expression.variable(null, "price"))
+                                )
+                ).
+                insertInto("OutStockStream", OutputStream.OutputEventsFor.EXPIRED_EVENTS);
+
 
         /*executionPlan = new ExecutionPlan("testExecutionPlan");
         executionPlan.setStreamDefinitionMap(definitionMap);
