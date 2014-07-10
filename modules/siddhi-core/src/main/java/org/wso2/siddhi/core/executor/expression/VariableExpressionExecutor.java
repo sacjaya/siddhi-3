@@ -24,11 +24,6 @@ import org.wso2.siddhi.query.api.definition.Attribute;
 
 import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 import org.wso2.siddhi.query.api.query.input.InputStream;
-import org.wso2.siddhi.query.api.utils.SiddhiConstants;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
 public class VariableExpressionExecutor implements ExpressionExecutor {
     Attribute.Type type;
@@ -49,11 +44,8 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
         }
         AbstractDefinition definition = null;
         if(inputStream instanceof BasicSingleInputStream) {
-            String referenceSourceId = ((BasicSingleInputStream)inputStream).getStreamReferenceId();
-            if (referenceSourceId != null && referenceSourceId.equals(streamReference)) {
-                definition = ((BasicSingleInputStream)inputStream).getDefinition();
-              }
-        }
+            definition = getDefinition(inputStream);
+        } //TODO : else
 
         if(definition!=null){
        type = definition.getAttributeType(attributeName);
@@ -62,13 +54,33 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
 
 
         //TODO: below lines of code for testing purpose
-//        type = Attribute.Type.INT;
-//        attributePosition = 2;
+//        if (attributeName.equals("symbol")) {
+//            type = Attribute.Type.STRING;
+//            attributePosition = 0;
+//        } else if (attributeName.equals("price")) {
+//            type = Attribute.Type.FLOAT;
+//            attributePosition = 1;
+//        } else if (attributeName.equals("volume")) {
+//            type = Attribute.Type.INT;
+//            attributePosition = 2;
+//        } else if (attributeName.equals("tweet")) {
+//            type = Attribute.Type.STRING;
+//            attributePosition = 1;
+//        }
 
     }
 
 
-
+    private AbstractDefinition getDefinition(InputStream inputStream){
+        AbstractDefinition definition = null;
+        if(inputStream instanceof BasicSingleInputStream) {
+            String referenceSourceId = ((BasicSingleInputStream)inputStream).getStreamReferenceId();
+            if (referenceSourceId != null && referenceSourceId.equals(streamReference)) {
+                definition = ((BasicSingleInputStream)inputStream).getDefinition();
+            }
+        } //TODO: else
+        return definition;
+    }
 
     @Override
     public Object execute(StreamEvent event) {
@@ -77,7 +89,7 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
                 return ((Event) event).getData()[attributePosition];
             }
             else {
-                //TODO:
+                //TODO: else
                 return null;
             }
 
@@ -88,5 +100,24 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
     }
 
 
-
+    public String constructFilterQuery(StreamEvent newEvent, int level) {
+        Object obj = execute(newEvent);
+        if (obj == null) {
+            StringBuilder sb = new StringBuilder();
+            if (streamPosition >= 0 && level == 0) {
+                sb.append("event").append(streamPosition).append(".");
+            }
+            if (innerStreamPosition >= 0) {
+                sb.append("event").append(innerStreamPosition).append(".");
+            }
+            if (attributePosition >= 0) {
+                sb.append("data").append(attributePosition);
+            }
+            return sb.toString();
+        } else if (obj instanceof String) {
+            return "'" + obj.toString() + "'";
+        } else {
+            return obj.toString();
+        }
+    }
 }

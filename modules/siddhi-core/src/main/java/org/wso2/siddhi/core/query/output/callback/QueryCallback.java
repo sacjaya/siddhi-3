@@ -17,23 +17,14 @@
  */
 package org.wso2.siddhi.core.query.output.callback;
 
-import org.apache.log4j.Logger;
-import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 public abstract class QueryCallback {
 
-    private SiddhiContext siddhiContext;
     private StreamDefinition streamDefinition;
-    static final Logger log = Logger.getLogger(QueryCallback.class);
 
-
-    public void setSiddhiContext(SiddhiContext context) {
-        this.siddhiContext = context;
-
-    }
 
     public StreamDefinition getStreamDefinition() {
         return streamDefinition;

@@ -23,7 +23,4 @@ public interface AttributeProcessor {
 
     public Attribute.Type getOutputType();
 
-    void lock();
-
-    void unlock();
 }

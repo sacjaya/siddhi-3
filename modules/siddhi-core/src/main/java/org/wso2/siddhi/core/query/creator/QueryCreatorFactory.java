@@ -20,7 +20,6 @@ package org.wso2.siddhi.core.query.creator;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
-import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
@@ -29,17 +28,15 @@ import java.util.concurrent.ConcurrentMap;
 
 public class QueryCreatorFactory {
 
-    public static QueryCreator constructQueryCreator(String queryId, Query query, ConcurrentMap<String, AbstractDefinition> streamTableDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap,
+    public static QueryCreator constructQueryCreator(String queryId, Query query, ConcurrentMap<String, AbstractDefinition> streamTableDefinitionMap,
                                                      OutputRateManager outputRateManager,
                                                      SiddhiContext siddhiContext) {
         if (query.getInputStream() instanceof BasicSingleInputStream) {
-            QueryCreator queryCreator = new QueryCreator(queryId, query, streamTableDefinitionMap,  outputRateManager, siddhiContext);
-            queryCreator.init();
-            return queryCreator;
-        }  //TODO: for other streams (make QueryCreator abstract)
-//        else {
-//         /   throw new QueryCreationException("Unsupported input stream found, " + query.getInputStream().getClass().getName());
-//        }
-        return null;
+            return new BasicQueryCreator(queryId, query, streamTableDefinitionMap, outputRateManager, siddhiContext);
+        } //TODO: for other streams
+        else {
+            throw new QueryCreationException("Unsupported input stream found, " + query.getInputStream().getClass().getName());
+        }
+
     }
 }
