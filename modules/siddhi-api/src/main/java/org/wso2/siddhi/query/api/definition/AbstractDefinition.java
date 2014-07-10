@@ -79,6 +79,10 @@ public abstract class AbstractDefinition {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public boolean equals(Object obj) {
         AbstractDefinition temp = (AbstractDefinition) obj;
         if (!(temp.getId().equals(this.getId()))) {
