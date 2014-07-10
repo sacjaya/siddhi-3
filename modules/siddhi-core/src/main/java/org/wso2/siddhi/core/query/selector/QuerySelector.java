@@ -98,7 +98,9 @@ public class QuerySelector {
             if (outputAttribute instanceof SimpleAttribute) {
                 PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(((SimpleAttribute) outputAttribute).getExpression(),  null, false, siddhiContext,inputStream));
                 attributeProcessorList.add(attributeGenerator);
-//                outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
+                if(outputStreamDefinition.getAttributeList().isEmpty()){
+                outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
+                }
             } else {
                 //TODO: else
             }

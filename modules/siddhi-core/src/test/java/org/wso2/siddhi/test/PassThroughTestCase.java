@@ -43,7 +43,7 @@ public class PassThroughTestCase {
     static final Logger log = Logger.getLogger(PassThroughTestCase.class);
     private int count;
     private boolean eventArrived;
-
+    Map<String, StreamDefinition> streamDefinitionMap = new HashMap<String, StreamDefinition>();
 
     @Before
     public void init() {
@@ -94,7 +94,7 @@ public class PassThroughTestCase {
         ) ;
         query.insertInto("StockQuote");
 
-        Map<String, StreamDefinition> streamDefinitionMap = new HashMap<String, StreamDefinition>();
+
         streamDefinitionMap.put("cseEventStream",streamDefinition);
         StreamValidator.validate(streamDefinitionMap, streamDefinition);
         QueryValidator.validate(query,streamDefinitionMap);
@@ -153,7 +153,6 @@ public class PassThroughTestCase {
         ) ;
         query.insertInto("StockQuote");
 
-        Map<String, StreamDefinition> streamDefinitionMap = new HashMap<String, StreamDefinition>();
         streamDefinitionMap.put("cseEventStream",streamDefinition);
         StreamValidator.validate(streamDefinitionMap, streamDefinition);
         QueryValidator.validate(query,streamDefinitionMap);
@@ -215,8 +214,6 @@ public class PassThroughTestCase {
         ) ;
         query.insertInto("StockQuote");
 
-
-        Map<String, StreamDefinition> streamDefinitionMap = new HashMap<String, StreamDefinition>();
         streamDefinitionMap.put("cseEventStream",streamDefinition);
         StreamValidator.validate(streamDefinitionMap, streamDefinition);
         QueryValidator.validate(query,streamDefinitionMap);
@@ -272,7 +269,6 @@ public class PassThroughTestCase {
         ) ;
         query.insertInto("StockQuote");
 
-        Map<String, StreamDefinition> streamDefinitionMap = new HashMap<String, StreamDefinition>();
         streamDefinitionMap.put("cseEventStream",streamDefinition);
         StreamValidator.validate(streamDefinitionMap, streamDefinition);
         QueryValidator.validate(query,streamDefinitionMap);
