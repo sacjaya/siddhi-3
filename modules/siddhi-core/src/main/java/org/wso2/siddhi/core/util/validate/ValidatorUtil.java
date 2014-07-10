@@ -12,11 +12,13 @@
  */
 package org.wso2.siddhi.core.util.validate;
 
+import org.wso2.siddhi.core.exception.OperationNotSupportedException;
 import org.wso2.siddhi.core.exception.ValidatorException;
+import org.wso2.siddhi.core.util.Constants;
 import org.wso2.siddhi.query.api.condition.*;
+import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.expression.Variable;
+import org.wso2.siddhi.query.api.expression.*;
 import org.wso2.siddhi.query.api.expression.constant.Constant;
 
 import java.util.List;
@@ -71,13 +73,28 @@ public class ValidatorUtil {
      * @param renameMap
      * @throws ValidatorException
      */
-    private static void validateCompareExpression(Expression expression, List<StreamDefinition> definitionList, Map<String, String> renameMap) throws ValidatorException {
+    public static void validateCompareExpression(Expression expression, List<StreamDefinition> definitionList, Map<String, String> renameMap) throws ValidatorException {
         if (expression instanceof Variable) {
             handleVariable((Variable) expression, definitionList, renameMap);
         } else if (expression instanceof Constant) {
             //Do nothing
+        } else if (expression instanceof Add) { //TODO: query feasibility of adding supper class to below classes
+            validateCompareExpression(((Add) expression).getLeftValue(), definitionList, renameMap);
+            validateCompareExpression(((Add) expression).getRightValue(), definitionList, renameMap);
+        } else if (expression instanceof Divide) {
+            validateCompareExpression(((Divide) expression).getLeftValue(), definitionList, renameMap);
+            validateCompareExpression(((Divide) expression).getRightValue(), definitionList, renameMap);
+        } else if (expression instanceof Minus) {
+            validateCompareExpression(((Minus) expression).getLeftValue(), definitionList, renameMap);
+            validateCompareExpression(((Minus) expression).getRightValue(), definitionList, renameMap);
+        } else if (expression instanceof Mod) {
+            validateCompareExpression(((Mod) expression).getLeftValue(), definitionList, renameMap);
+            validateCompareExpression(((Mod) expression).getRightValue(), definitionList, renameMap);
+        } else if (expression instanceof Multiply) {
+            validateCompareExpression(((Multiply) expression).getLeftValue(), definitionList, renameMap);
+            validateCompareExpression(((Multiply) expression).getRightValue(), definitionList, renameMap);
         } else {
-            //TODO: Handle general expressions including add,sum
+            //TODO: time and other. Please discuss
         }
     }
 
@@ -128,12 +145,16 @@ public class ValidatorUtil {
                 }
             }
         }
-        for (int i = 0; i < attributeNameArray.length; i++) {           //iterate through attribute list
-            if (attributeNameArray[i].equals(attributeName)) {
-                return;
+        if (attributeNameArray != null) {
+            for (int i = 0; i < attributeNameArray.length; i++) {           //iterate through attribute list
+                if (attributeNameArray[i].equals(attributeName)) {
+                    return;
+                }
             }
+            throw new ValidatorException("Stream definition " + streamId + " does not contain an attribute named " + attributeName);
+        } else {
+            throw new ValidatorException("No stream definition found for stream ID " + streamId);
         }
-        throw new ValidatorException("Stream definition " + streamId + " does not contain an attribute named " + attributeName);
     }
 
 
@@ -164,5 +185,41 @@ public class ValidatorUtil {
             validateCondition(((OrCondition) condition).getRightCondition(), definitionList, renameMap);
         }
 
+    }
+
+    public static Attribute.Type getAggregatorReturnType(String attributeName, Attribute.Type type) throws OperationNotSupportedException {
+        if (attributeName.equals(Constants.AVG)) {
+            if (type.equals(Attribute.Type.DOUBLE) || type.equals(Attribute.Type.LONG) || type.equals(Attribute.Type.INT)) {
+                return Attribute.Type.DOUBLE;
+            } else if (type.equals(Attribute.Type.LONG)) {
+                return Attribute.Type.LONG;
+            }
+        } else if (attributeName.equals(Constants.SUM)) {
+            if (type.equals(Attribute.Type.DOUBLE) || type.equals(Attribute.Type.FLOAT)) {
+                return Attribute.Type.DOUBLE;
+            } else if (type.equals(Attribute.Type.LONG) || type.equals(Attribute.Type.INT)) {
+                return Attribute.Type.LONG;
+            }
+        } else if (attributeName.equals(Constants.MAX) || attributeName.equals(Constants.MIN)) {
+            return type;
+        } else if (attributeName.equals(Constants.COUNT)) {
+            return Attribute.Type.LONG;
+        } else {
+            throw new OperationNotSupportedException("Aggregate function " + attributeName + " is not recognized");
+        }
+        return null;
+    }
+
+    public static Attribute.Type getAttributeType(String attributeName, StreamDefinition definition) throws ValidatorException {
+        Attribute.Type type = null;
+        for (Attribute attribute1 : definition.getAttributeList()) {
+            if (attribute1.getName().equals(attributeName)) {
+                type = attribute1.getType();
+            }
+        }
+        if (type == null) {
+            throw new ValidatorException("Attribute " + attributeName + " was not found in stream definition " + definition.getStreamId());
+        }
+        return type;
     }
 }
