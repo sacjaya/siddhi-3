@@ -1774,4 +1774,57 @@ public class FilterTestCase {
 
     }
 
+    //Contains condition
+
+    @Test
+    public void testFilterQuery44() throws InterruptedException, ValidatorException {
+        log.info("Filter test44");
+        SiddhiManager siddhiManager = new SiddhiManager();
+
+        StreamDefinition streamDefinition =  StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
+        siddhiManager.defineStream(streamDefinition);
+
+
+        Query query = new Query();
+        query.from(Query.inputStream("cseEventStream").
+                filter(Condition.compare(Expression.variable("symbol"),
+                        Condition.Operator.CONTAINS,
+                        Expression.value("IBM"))
+                )
+        );
+        query.select(
+                query.outputSelector().
+                        select("volume", Expression.variable("volume"))
+        ) ;
+        query.insertInto("StockQuote");
+
+        streamDefinitionMap.put("cseEventStream",streamDefinition);
+        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        QueryValidator.validate(query,streamDefinitionMap);
+        for(StreamDefinition streamDef: streamDefinitionMap.values()){
+            siddhiManager.defineStream(streamDef);
+
+        }
+
+        String queryReference = siddhiManager.addQuery(query);
+
+        siddhiManager.addCallback(queryReference, new QueryCallback() {
+            @Override
+            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+                Assert.assertEquals(60, inEvents[0].getData(0));
+                count++;
+            }
+
+        });
+
+
+        InputHandler inputHandler = siddhiManager.getInputHandler("cseEventStream");
+        inputHandler.send(new Object[]{"IBM", 50.6f, 60});
+        inputHandler.send(new Object[]{"WSO2", 75.6f, 100});
+        Thread.sleep(1000);
+        Assert.assertEquals(1, count);
+        siddhiManager.shutdown();
+    }
+
+
 }
