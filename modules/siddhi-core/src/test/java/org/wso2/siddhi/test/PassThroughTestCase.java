@@ -137,8 +137,8 @@ public class PassThroughTestCase {
 
 
     @Test
-    public void testPassThroughSelectorQuery() throws InterruptedException, ValidatorException {
-        log.info("Pass through query");
+    public void testPassThroughQuery2() throws InterruptedException, ValidatorException {
+        log.info("Pass through query 2");
         SiddhiManager siddhiManager = new SiddhiManager();
 
         StreamDefinition streamDefinition =  StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
@@ -190,13 +190,5 @@ public class PassThroughTestCase {
         siddhiManager.shutdown();
 
     }
-
-
-
-
-
-
-
-
 
 }
