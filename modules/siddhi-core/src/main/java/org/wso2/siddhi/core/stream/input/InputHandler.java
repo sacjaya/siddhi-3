@@ -43,10 +43,12 @@ public class InputHandler {
 
     public void send(long timeStamp, Object[] data) throws InterruptedException {
         StreamEvent event = new Event(timeStamp, data);
+        threadBarrier.pass();
         streamJunction.send(event);
     }
 
     public void send(StreamEvent event) throws InterruptedException {
+        threadBarrier.pass();
         streamJunction.send(event);
     }
 

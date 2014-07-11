@@ -1567,13 +1567,13 @@ public class FilterTestCase {
 
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 Assert.assertTrue("155.5".equals(inEvents[0].getData()[1].toString()));
-                Assert.assertTrue("150.0".equals(inEvents[0].getData()[2].toString()));
+                Assert.assertTrue("150".equals(inEvents[0].getData()[2].toString()));
                 Assert.assertTrue("9".equals(inEvents[0].getData()[3].toString()));
             }
 
         });
         InputHandler inputHandler = siddhiManager.getInputHandler("cseEventStream");
-        inputHandler.send(new Object[]{"WSO2", 55.5f, 100d, 5});
+        inputHandler.send(new Object[]{"WSO2", 55.5f, 100, 5});
 
         Thread.sleep(100);
 
@@ -1616,13 +1616,13 @@ public class FilterTestCase {
 
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 Assert.assertTrue("35.5".equals(inEvents[0].getData()[1].toString()));
-                Assert.assertTrue("50.0".equals(inEvents[0].getData()[2].toString()));
+                Assert.assertTrue("50".equals(inEvents[0].getData()[2].toString()));
                 Assert.assertTrue("1".equals(inEvents[0].getData()[3].toString()));
             }
 
         });
         InputHandler inputHandler = siddhiManager.getInputHandler("cseEventStream");
-        inputHandler.send(new Object[]{"WSO2", 55.5f, 100d, 5});
+        inputHandler.send(new Object[]{"WSO2", 55.5f, 100, 5});
 
         Thread.sleep(100);
 
@@ -1759,14 +1759,14 @@ public class FilterTestCase {
 
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 Assert.assertTrue("1.5".equals(inEvents[0].getData()[1].toString()));
-                Assert.assertTrue("1.0".equals(inEvents[0].getData()[2].toString()));
+                Assert.assertTrue("1".equals(inEvents[0].getData()[2].toString()));
                 Assert.assertTrue("1".equals(inEvents[0].getData()[3].toString()));
                 Assert.assertTrue("1".equals(inEvents[0].getData()[4].toString()));
             }
 
         });
         InputHandler inputHandler = siddhiManager.getInputHandler("cseEventStream");
-        inputHandler.send(new Object[]{"WSO2", 55.5f, 101d, 5, 7l});
+        inputHandler.send(new Object[]{"WSO2", 55.5f, 101, 5, 7l});
 
         Thread.sleep(100);
 

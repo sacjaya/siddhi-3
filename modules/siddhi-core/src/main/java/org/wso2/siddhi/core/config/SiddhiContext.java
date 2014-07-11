@@ -36,7 +36,6 @@ public class SiddhiContext {
     private String executionPlanIdentifier;
     private List<Class> siddhiExtensions;
     private ConcurrentHashMap<String, DataSource> siddhiDataSources;
-
     private ThreadBarrier threadBarrier;
 
 
