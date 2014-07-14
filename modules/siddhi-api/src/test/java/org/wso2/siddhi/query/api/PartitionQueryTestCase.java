@@ -37,14 +37,18 @@ public class PartitionQueryTestCase {
                 with("StockStream", Expression.variable("symbol")).
                 with("StockStream1", Expression.variable("symbol")).
                 with("StockStream2",
-                        Condition.compare(
-                                Expression.value(7),
-                                Condition.Operator.GREATER_THAN,
-                                Expression.variable("price")),
-                        Condition.compare(
-                                Expression.value(9.5),
-                                Condition.Operator.LESS_THAN,
-                                Expression.variable("price1"))
+                        Partition.range("LessValue",
+                                Condition.compare(
+                                        Expression.value(7),
+                                        Condition.Operator.GREATER_THAN,
+                                        Expression.variable("price"))
+                        ),
+                        Partition.range("HighValue",
+                                Condition.compare(
+                                        Expression.value(9.5),
+                                        Condition.Operator.LESS_THAN,
+                                        Expression.variable("price1"))
+                        )
                 );
 
         Query query = Query.query();

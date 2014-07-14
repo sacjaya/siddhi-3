@@ -22,59 +22,60 @@ import org.wso2.siddhi.query.api.condition.Condition;
 
 public class RangePartitionType implements PartitionType {
 
-    private Condition condition;
-    private String label;
+    private final String streamId;
+    private final RangePartitionProperty[] rangePartitionProperties;
 
-    public RangePartitionType(String stringId, Condition[] conditions) {
-        this.condition = condition;
-        this.label = label;
+    public RangePartitionType(String streamId, RangePartitionProperty[] rangePartitionProperties) {
+
+        this.streamId = streamId;
+        this.rangePartitionProperties = rangePartitionProperties;
     }
 
-    public Condition getCondition() {
-        return condition;
+    public String getStreamId() {
+        return streamId;
     }
 
-    public String getLabel() {
-        return label;
+    public RangePartitionProperty[] getRangePartitionProperties() {
+        return rangePartitionProperties;
     }
 
-    public String getPartitionKey() {
-        return label;
-    }
 
-    @Override
-    public String toString() {
-        return "RangePartitionType{" +
-               "condition=" + condition +
-               ", label='" + label + '\'' +
-               '}';
-    }
+    public static class RangePartitionProperty  {
+        private final String partitionKey;
+        private final Condition condition;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+        public RangePartitionProperty(String partitionKey, Condition condition) {
+
+            this.partitionKey = partitionKey;
+            this.condition = condition;
+        }
+
+        public String getPartitionKey() {
+            return partitionKey;
+        }
+
+        public Condition getCondition() {
+            return condition;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            RangePartitionProperty that = (RangePartitionProperty) o;
+
+            if (!condition.equals(that.condition)) return false;
+            if (!partitionKey.equals(that.partitionKey)) return false;
+
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
+
+        @Override
+        public int hashCode() {
+            int result = partitionKey.hashCode();
+            result = 31 * result + condition.hashCode();
+            return result;
         }
-
-        RangePartitionType that = (RangePartitionType) o;
-
-        if (condition != null ? !condition.equals(that.condition) : that.condition != null) {
-            return false;
-        }
-        if (label != null ? !label.equals(that.label) : that.label != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = condition != null ? condition.hashCode() : 0;
-        result = 31 * result + (label != null ? label.hashCode() : 0);
-        return result;
     }
 }

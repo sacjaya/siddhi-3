@@ -12,7 +12,6 @@
  */
 package org.wso2.siddhi.test.validator;
 
-import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,12 +29,11 @@ import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.api.query.input.JoinInputStream;
 import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
 import org.wso2.siddhi.query.api.query.selection.Selector;
-import org.wso2.siddhi.test.PassThroughTest;
 
 import java.util.*;
 
 public class SimpleQueryValidatorTestCase {
-    static final Logger log = Logger.getLogger(PassThroughTest.class);
+    static final Logger log = Logger.getLogger(SimpleQueryValidatorTestCase.class);
     private Map<String, StreamDefinition> definitionMap;
     private Map<String, String> renameMap;
     private List<StreamDefinition> streamDefinitionList;

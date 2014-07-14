@@ -37,7 +37,7 @@ public class Partition {
     private Query query;
 
 //    public Partition partitionBy(Variable variable) {
-//        this.partitionTypeList.add(new VariablePartitionType(variable));
+//        this.partitionTypeList.add(new ValuePartitionType(variable));
 //        return this;
 //    }
 //
@@ -84,13 +84,15 @@ public class Partition {
     }
 
     public Partition with(String streamId, Expression expression) {
-        new VariablePartitionType(streamId,expression);
+        ValuePartitionType valuePartitionType = new ValuePartitionType(streamId, expression);
+        partitionTypeList.add(valuePartitionType);
         //todo handle with
         return this;
     }
 
-    public Partition with(String streamId, Condition ...conditions) {
-         new RangePartitionType(streamId,conditions);
+    public Partition with(String streamId, RangePartitionType.RangePartitionProperty... rangePartitionProperties) {
+        RangePartitionType rangePartitionType = new RangePartitionType(streamId, rangePartitionProperties);
+        partitionTypeList.add(rangePartitionType);
         //todo handle with
         return this;
     }
@@ -102,4 +104,7 @@ public class Partition {
     }
 
 
+    public static RangePartitionType.RangePartitionProperty range(String partitionKey, Condition condition) {
+        return new RangePartitionType.RangePartitionProperty(partitionKey, condition);
+    }
 }

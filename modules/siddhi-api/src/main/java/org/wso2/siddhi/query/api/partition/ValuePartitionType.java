@@ -19,46 +19,41 @@
 package org.wso2.siddhi.query.api.partition;
 
 import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.expression.Variable;
 
-public class VariablePartitionType implements PartitionType {
-    private Variable variable;
+public class ValuePartitionType implements PartitionType {
+    private Expression expression;
+    private String streamId;
 
-    public VariablePartitionType(String streamId, Expression expression) {
-
+    public ValuePartitionType(String streamId, Expression expression) {
+        this.streamId = streamId;
+        this.expression = expression;
     }
 
-    public Variable getVariable() {
-        return variable;
+    public Expression getExpression() {
+        return expression;
     }
 
-    @Override
-    public String toString() {
-        return "VariablePartitionType{" +
-               "variable=" + variable +
-               '}';
+    public String getStreamId() {
+        return streamId;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        VariablePartitionType that = (VariablePartitionType) o;
+        ValuePartitionType that = (ValuePartitionType) o;
 
-        if (variable != null ? !variable.equals(that.variable) : that.variable != null) {
-            return false;
-        }
+        if (!expression.equals(that.expression)) return false;
+        if (!streamId.equals(that.streamId)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return variable != null ? variable.hashCode() : 0;
+        int result = expression.hashCode();
+        result = 31 * result + streamId.hashCode();
+        return result;
     }
 }
