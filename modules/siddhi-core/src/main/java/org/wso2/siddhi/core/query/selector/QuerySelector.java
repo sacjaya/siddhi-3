@@ -52,15 +52,15 @@ public class QuerySelector {
         this.currentOn = currentOn;
         this.expiredOn = expiredOn;
         this.selector = selector;
-
         outputSize = selector.getSelectionList().size();
         this.inputStream = inputStream;
-        attributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
         this.outputStreamDefinition = (StreamDefinition) outputStreamDefinition;
-
-        populateOutputAttributes(siddhiContext);
-
         this.outputRateManager = outputRateManager;
+
+        attributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
+        populateAttributeProcessorList(siddhiContext);
+
+
 
     }
 
@@ -93,14 +93,11 @@ public class QuerySelector {
           return outputStreamDefinition;
       }
 
-    private void populateOutputAttributes(SiddhiContext siddhiContext) {
+    private void populateAttributeProcessorList(SiddhiContext siddhiContext) {
         for (OutputAttribute outputAttribute : selector.getSelectionList()) {
             if (outputAttribute instanceof SimpleAttribute) {
                 PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(((SimpleAttribute) outputAttribute).getExpression(),  null, false, siddhiContext,inputStream));
                 attributeProcessorList.add(attributeGenerator);
-                if(outputStreamDefinition.getAttributeList().isEmpty()){
-                outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
-                }
             } else {
                 //TODO: else
             }

@@ -17,7 +17,6 @@
  */
 package org.wso2.siddhi.core.util.parser;
 
-import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.query.processor.filter.FilterProcessor;
 import org.wso2.siddhi.core.query.processor.filter.PassthruFilterProcessor;
@@ -33,7 +32,6 @@ import java.util.List;
 
 public class StreamParser {
 
-    static final Logger log = Logger.getLogger(StreamParser.class);
 
     public static QueryPartComposite parseSingleStream(InputStream queryStream, SiddhiContext siddhiContext) {
         QueryPartComposite queryPartComposite = new QueryPartComposite();

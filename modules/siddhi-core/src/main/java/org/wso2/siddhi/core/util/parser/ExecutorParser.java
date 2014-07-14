@@ -118,7 +118,7 @@ public class ExecutorParser {
                 return new ConstantExpressionExecutor(((DoubleConstant) expression).getValue(), Attribute.Type.DOUBLE);
             }
         } else if (expression instanceof Variable) {
-            return new VariableExpressionExecutor(((Variable) expression).getStreamId(), ((Variable) expression).getAttributeName(), ((Variable) expression).getPosition(),  currentStreamReference, processInStreamDefinition,inputStream);
+            return new VariableExpressionExecutor(((Variable) expression).getStreamId(), ((Variable) expression).getAttributeName(), currentStreamReference, inputStream);
         }  else if (expression instanceof Multiply) {
             ExpressionExecutor left = parseExpression(((Multiply) expression).getLeftValue(),  currentStreamReference, processInStreamDefinition, siddhiContext,inputStream);
             ExpressionExecutor right = parseExpression(((Multiply) expression).getRightValue(),  currentStreamReference, processInStreamDefinition, siddhiContext,inputStream);

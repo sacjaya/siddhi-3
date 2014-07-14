@@ -34,8 +34,8 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
     String streamReference;
 
 
-    public VariableExpressionExecutor(String streamIdOfVariable, String attributeName, int position,
-                                      String currentStreamReference, boolean processInDefinition, InputStream inputStream) {
+    public VariableExpressionExecutor(String streamIdOfVariable, String attributeName,
+                                      String currentStreamReference, InputStream inputStream) {
         this.attributeName = attributeName;
         if (streamIdOfVariable != null) {
             streamReference = streamIdOfVariable;
@@ -48,8 +48,8 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
         } //TODO : else
 
         if(definition!=null){
-       type = definition.getAttributeType(attributeName);
-       attributePosition = definition.getAttributePosition(attributeName);
+            type = definition.getAttributeType(attributeName);
+            attributePosition = definition.getAttributePosition(attributeName);
         }
 
 
@@ -66,9 +66,18 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
 //        } else if (attributeName.equals("tweet")) {
 //            type = Attribute.Type.STRING;
 //            attributePosition = 1;
+//        }    else if (attributeName.equals("validity")) {
+//            type = Attribute.Type.BOOL;
+//            attributePosition = 3;
+//        }  else if (attributeName.equals("quantity")) {
+//            type = Attribute.Type.INT;
+//            attributePosition = 3;
+//        } else if (attributeName.equals("awards")) {
+//            type = Attribute.Type.LONG;
+//            attributePosition = 4;
 //        }
 
-    }
+        }
 
 
     private AbstractDefinition getDefinition(InputStream inputStream){

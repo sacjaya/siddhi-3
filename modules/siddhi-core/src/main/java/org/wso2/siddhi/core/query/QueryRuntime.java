@@ -51,25 +51,22 @@ public class QueryRuntime {
             this.queryId = query.getOutputStream().getStreamId() + "-" + UUID.randomUUID();
         }
         this.query = query;
-
         outputRateManager = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
-
         QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap, outputRateManager, siddhiContext);
         outputStreamDefinition = queryCreator.getOutputStreamDefinition();
-       if (query.getOutputStream() != null) {
+
+        if (query.getOutputStream() != null) {
             outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), streamJunctionMap, siddhiContext, outputStreamDefinition);
             outputRateManager.setOutputCallback(outputCallback);
         }
 
         ArrayList<QuerySelector> querySelectorList = new ArrayList<QuerySelector>();
-        List<QueryCallback> queryCallbackList = new ArrayList<QueryCallback>();
-        QueryPartitioner queryPartitioner = new QueryPartitioner(queryCreator, queryCallbackList, outputCallback, querySelectorList, siddhiContext);
 
+        QueryPartitioner queryPartitioner = new QueryPartitioner(queryCreator, querySelectorList, siddhiContext);
         handlerProcessors = queryPartitioner.constructPartition();
 
-
         for (HandlerProcessor handlerProcessor : handlerProcessors) {
-              streamJunctionMap.get(handlerProcessor.getStreamId()).addEventFlow(handlerProcessor);
+            streamJunctionMap.get(handlerProcessor.getStreamId()).addEventFlow(handlerProcessor);
         }
 
     }

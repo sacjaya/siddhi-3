@@ -19,55 +19,31 @@ package org.wso2.siddhi.core.query;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.query.creator.QueryCreator;
-import org.wso2.siddhi.core.query.output.callback.OutputCallback;
-import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.query.processor.PreSelectProcessingElement;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class QueryPartitioner {
     private final QueryCreator queryCreator;
-    private List<QueryCallback> queryCallbackList;
     private List<QuerySelector> querySelectorList;
-    private ConcurrentHashMap<String, List<HandlerProcessor>> partitionMap = new ConcurrentHashMap<String, List<HandlerProcessor>>();
-    private OutputCallback outputCallback = null;
 
-
-    public QueryPartitioner(QueryCreator queryCreator, List<QueryCallback> queryCallbackList, OutputCallback outputCallback, List<QuerySelector> querySelectorList,
+    public QueryPartitioner(QueryCreator queryCreator, List<QuerySelector> querySelectorList,
                             SiddhiContext siddhiContext) {
         this.queryCreator = queryCreator;
-        this.queryCallbackList = queryCallbackList;
-        this.outputCallback = outputCallback;
         this.querySelectorList = querySelectorList;
 
     }
 
-
-    public HandlerProcessor newPartition(int handlerId, String partitionKey) {
-
-        List<HandlerProcessor> handlerProcessorList = partitionMap.get(partitionKey);
-        if (handlerProcessorList == null) {
-            handlerProcessorList = constructPartition();
-            partitionMap.put(partitionKey, handlerProcessorList);
-        }
-        return handlerProcessorList.get(handlerId);
-
-    }
-
     public List<HandlerProcessor> constructPartition() {
-
         QueryPartComposite queryPartComposite = queryCreator.constructQuery();
         querySelectorList.add(queryPartComposite.getQuerySelector());
         for (PreSelectProcessingElement preSelectProcessingElement : queryPartComposite.getPreSelectProcessingElementList()) {
             preSelectProcessingElement.setNext(queryPartComposite.getQuerySelector());
         }
-
         return queryPartComposite.getHandlerProcessorList();
     }
-
 
 }
