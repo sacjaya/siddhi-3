@@ -14,6 +14,7 @@ package org.wso2.siddhi.core.util;
 
 public class Constants {
     public final static String SELECTOR_STREAM = "selectorStream";
+    public final static String DEFAULT_STREAM = "$DEFAULT_STREAM";
     public static final String AVG = "avg";
     public static final String SUM = "sum";
     public static final String MAX = "max";
