@@ -21,78 +21,38 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.*;
 import org.wso2.siddhi.query.api.expression.constant.Constant;
 
-import java.util.List;
 import java.util.Map;
 
 public class ValidatorUtil {
-    /*private StreamDefinition streamDefinition;
-    private Map<String, StreamDefinition> streamDefinitionMap;
-    private String streamId;*/
-
-    /*public ValidatorUtil(Map<String, StreamDefinition> streamDefinitionMap) {
-        this.streamDefinitionMap = streamDefinitionMap;
-    }*/
-
-    /*public Boolean validateCondition(Condition condition, String streamId) {
-        this.streamId = streamId;
-        return validateCondition(condition);
-    }*/
-
-    /*public Boolean validateCondition(Condition condition) {
-
-        if (condition == null) {
-            return false;
-        } else {
-            if (condition instanceof Compare) {
-                return handleCompareCondition((Compare) condition, definitionList);
-            } else if (condition instanceof AndCondition) {
-                Boolean left = validateCondition(((AndCondition) condition).getLeftCondition());
-                Boolean right = validateCondition(((AndCondition) condition).getRightCondition());
-                return (left && right);
-            } else if (condition instanceof BooleanCondition) {
-                //TODO: validate BooleanCondition
-            } else if (condition instanceof InCondition) {
-                //TODO: validate InCondition
-            } else if (condition instanceof NotCondition) {
-                //TODO: validate NotCondition
-            } else if (condition instanceof OrCondition) {
-                Boolean left = validateCondition(((OrCondition) condition).getLeftCondition());
-                Boolean right = validateCondition(((OrCondition) condition).getRightCondition());
-                return (left && right);
-            }
-            return false;
-        }
-
-    }*/
 
     /**
      * Method to validate compare expression
      *
      * @param expression
-     * @param definitionList
-     * @param renameMap
+     * @param streamDefinitionMap
+     * @param defaultDefinition
      * @throws ValidatorException
      */
-    public static void validateCompareExpression(Expression expression, List<StreamDefinition> definitionList, Map<String, String> renameMap) throws ValidatorException {
+    public static void validateCompareExpression(Expression expression, Map<String, StreamDefinition> streamDefinitionMap, String defaultDefinition) throws ValidatorException {
         if (expression instanceof Variable) {
-            handleVariable((Variable) expression, definitionList, renameMap);
+            handleVariable((Variable) expression, streamDefinitionMap, defaultDefinition);
         } else if (expression instanceof Constant) {
             //Do nothing
         } else if (expression instanceof Add) { //TODO: query feasibility of adding supper class to below classes
-            validateCompareExpression(((Add) expression).getLeftValue(), definitionList, renameMap);
-            validateCompareExpression(((Add) expression).getRightValue(), definitionList, renameMap);
+            validateCompareExpression(((Add) expression).getLeftValue(), streamDefinitionMap, defaultDefinition);
+            validateCompareExpression(((Add) expression).getRightValue(), streamDefinitionMap, defaultDefinition);
         } else if (expression instanceof Divide) {
-            validateCompareExpression(((Divide) expression).getLeftValue(), definitionList, renameMap);
-            validateCompareExpression(((Divide) expression).getRightValue(), definitionList, renameMap);
+            validateCompareExpression(((Divide) expression).getLeftValue(), streamDefinitionMap, defaultDefinition);
+            validateCompareExpression(((Divide) expression).getRightValue(), streamDefinitionMap, defaultDefinition);
         } else if (expression instanceof Minus) {
-            validateCompareExpression(((Minus) expression).getLeftValue(), definitionList, renameMap);
-            validateCompareExpression(((Minus) expression).getRightValue(), definitionList, renameMap);
+            validateCompareExpression(((Minus) expression).getLeftValue(), streamDefinitionMap, defaultDefinition);
+            validateCompareExpression(((Minus) expression).getRightValue(), streamDefinitionMap, defaultDefinition);
         } else if (expression instanceof Mod) {
-            validateCompareExpression(((Mod) expression).getLeftValue(), definitionList, renameMap);
-            validateCompareExpression(((Mod) expression).getRightValue(), definitionList, renameMap);
+            validateCompareExpression(((Mod) expression).getLeftValue(), streamDefinitionMap, defaultDefinition);
+            validateCompareExpression(((Mod) expression).getRightValue(), streamDefinitionMap, defaultDefinition);
         } else if (expression instanceof Multiply) {
-            validateCompareExpression(((Multiply) expression).getLeftValue(), definitionList, renameMap);
-            validateCompareExpression(((Multiply) expression).getRightValue(), definitionList, renameMap);
+            validateCompareExpression(((Multiply) expression).getLeftValue(), streamDefinitionMap, defaultDefinition);
+            validateCompareExpression(((Multiply) expression).getRightValue(), streamDefinitionMap, defaultDefinition);
         } else {
             //TODO: time and other. Please discuss
         }
@@ -102,48 +62,38 @@ public class ValidatorUtil {
      * Method to validate single variables
      *
      * @param variable
-     * @param definitionList
-     * @param renameMap
+     * @param streamDefinitionMap
      * @throws ValidatorException
      */
-    public static void handleVariable(Variable variable, List<StreamDefinition> definitionList, Map<String, String> renameMap) throws ValidatorException {
+    public static void handleVariable(Variable variable, Map<String, StreamDefinition> streamDefinitionMap, String defaultDefinition) throws ValidatorException {
         String attributeName = variable.getAttributeName();
         String streamId = variable.getStreamId();
         String[] attributeNameArray = null;
         if (streamId == null) {
-            if (definitionList.size() > 0) {
-                streamId = definitionList.get(0).getStreamId();
-                attributeNameArray = definitionList.get(0).getAttributeNameArray();
-                variable.setStreamId(streamId);
-            } else {        //Check for duplicates and existence of attribute
+            if (defaultDefinition != null) {
+                attributeNameArray = streamDefinitionMap.get(defaultDefinition).getAttributeNameArray();
+            } else {
+                //Check for duplicates and existence of attribute
                 int count = 0;
-                for (StreamDefinition definition : definitionList) {
-                    attributeNameArray = definition.getAttributeNameArray();
+                String id = null;
+                for (Map.Entry<String, StreamDefinition> entry : streamDefinitionMap.entrySet()) {
+                    attributeNameArray = entry.getValue().getAttributeNameArray();
                     for (int i = 0; i < attributeNameArray.length; i++) {           //iterate through attribute list
                         if (attributeNameArray[i].equals(attributeName)) {
                             count++;
+                            id = entry.getKey();
                         }
                     }
                 }
                 if (count == 1) {
+                    variable.setStreamId(id);
                     return;
                 } else {
                     throw new ValidatorException("Could not find an attribute named " + attributeName);
                 }
-
-
             }
-            //streamId = definitionList.get(0).getStreamId();
-            //attributeNameArray = definitionList.get(0).getAttributeNameArray();
         } else {
-            for (StreamDefinition definition : definitionList) {
-                if (renameMap != null) {
-                    streamId = renameMap.get(streamId);                         //handling renaming
-                }
-                if (definition.getStreamId().equals(streamId)) {
-                    attributeNameArray = definition.getAttributeNameArray();    //TODO: check whether stream definition existance is checked in down stream
-                }
-            }
+            attributeNameArray = streamDefinitionMap.get(streamId).getAttributeNameArray();
         }
         if (attributeNameArray != null) {
             for (int i = 0; i < attributeNameArray.length; i++) {           //iterate through attribute list
@@ -152,8 +102,6 @@ public class ValidatorUtil {
                 }
             }
             throw new ValidatorException("Stream definition " + streamId + " does not contain an attribute named " + attributeName);
-        } else {
-            throw new ValidatorException("No stream definition found for stream ID " + streamId);
         }
     }
 
@@ -162,18 +110,18 @@ public class ValidatorUtil {
      * Method to validate siddhi conditions
      *
      * @param condition
-     * @param definitionList
-     * @param renameMap
+     * @param streamDefinitionMap
+     * @param defaultDefinition
      * @throws ValidatorException
      */
-    public static void validateCondition(Condition condition, List<StreamDefinition> definitionList, Map<String, String> renameMap) throws ValidatorException {
+    public static void validateCondition(Condition condition, Map<String, StreamDefinition> streamDefinitionMap, String defaultDefinition) throws ValidatorException {
 
         if (condition instanceof Compare) {
-            validateCompareExpression(((Compare) condition).getLeftExpression(), definitionList, renameMap);
-            validateCompareExpression(((Compare) condition).getRightExpression(), definitionList, renameMap);
+            validateCompareExpression(((Compare) condition).getLeftExpression(), streamDefinitionMap, defaultDefinition);
+            validateCompareExpression(((Compare) condition).getRightExpression(), streamDefinitionMap, defaultDefinition);
         } else if (condition instanceof AndCondition) {
-            validateCondition(((AndCondition) condition).getLeftCondition(), definitionList, renameMap);
-            validateCondition(((AndCondition) condition).getRightCondition(), definitionList, renameMap);
+            validateCondition(((AndCondition) condition).getLeftCondition(), streamDefinitionMap, defaultDefinition);
+            validateCondition(((AndCondition) condition).getRightCondition(), streamDefinitionMap, defaultDefinition);
         } else if (condition instanceof BooleanCondition) {
             //TODO: validate BooleanCondition
         } else if (condition instanceof InCondition) {
@@ -181,12 +129,20 @@ public class ValidatorUtil {
         } else if (condition instanceof NotCondition) {
             //TODO: validate NotCondition
         } else if (condition instanceof OrCondition) {
-            validateCondition(((OrCondition) condition).getLeftCondition(), definitionList, renameMap);
-            validateCondition(((OrCondition) condition).getRightCondition(), definitionList, renameMap);
+            validateCondition(((OrCondition) condition).getLeftCondition(), streamDefinitionMap, defaultDefinition);
+            validateCondition(((OrCondition) condition).getRightCondition(), streamDefinitionMap, defaultDefinition);
         }
 
     }
 
+    /**
+     * Method to get return type of a given attribute. Used in generation output stream from selector
+     *
+     * @param attributeName
+     * @param type
+     * @return Type of aggregate function
+     * @throws OperationNotSupportedException
+     */
     public static Attribute.Type getAggregatorReturnType(String attributeName, Attribute.Type type) throws OperationNotSupportedException {
         if (attributeName.equals(Constants.AVG)) {
             if (type.equals(Attribute.Type.DOUBLE) || type.equals(Attribute.Type.LONG) || type.equals(Attribute.Type.INT)) {
@@ -210,6 +166,14 @@ public class ValidatorUtil {
         return null;
     }
 
+    /**
+     * Method to get attribute type of a given simple attribute
+     *
+     * @param attributeName
+     * @param definition
+     * @return
+     * @throws ValidatorException
+     */
     public static Attribute.Type getAttributeType(String attributeName, StreamDefinition definition) throws ValidatorException {
         Attribute.Type type = null;
         for (Attribute attribute1 : definition.getAttributeList()) {
