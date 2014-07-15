@@ -20,26 +20,32 @@ import org.wso2.siddhi.query.api.query.input.handler.Filter;
 import org.wso2.siddhi.query.api.query.input.handler.StreamHandler;
 import org.wso2.siddhi.query.api.query.input.handler.Window;
 
-import java.util.List;
+import java.util.Map;
 
 public class InStreamValidator {
 
     /**
      * Validate a given input stream. Complex streams should be handled at upper layer
-     *
      * @param inputStream
-     * @param definitionList
-     * @throws ValidatorException
+     * @param streamDefinitionMap  @throws ValidatorException
+     * @param tempDefinitionMap
      */
-    public static void validate(InputStream inputStream, List<StreamDefinition> definitionList) throws ValidatorException {
+    public static void validate(InputStream inputStream, Map<String, StreamDefinition> streamDefinitionMap, Map<String, StreamDefinition> tempDefinitionMap) throws ValidatorException {
         if (inputStream instanceof BasicSingleInputStream || inputStream instanceof SingleInputStream) {
+            tempDefinitionMap.put(((SingleInputStream) inputStream).getStreamId(), streamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));
+            String defaultDefinition = ((SingleInputStream) inputStream).getStreamId();
             for (StreamHandler handler : ((SingleInputStream) inputStream).getStreamHandlers()) {
                 if (handler instanceof Filter) {
                     Condition condition = ((Filter) handler).getFilterCondition();
-                    ValidatorUtil.validateCondition(condition, definitionList, null);
+                    ValidatorUtil.validateCondition(condition, tempDefinitionMap, defaultDefinition);
                 } else if (handler instanceof Window) {
                     //TODO: validate window handler
                 }
+            }
+
+            if (!(((SingleInputStream) inputStream).getStreamReferenceId().equals(((SingleInputStream) inputStream).getStreamId()))) { //if ref id is provided
+                StreamDefinition temp = tempDefinitionMap.remove(((SingleInputStream) inputStream).getStreamId());                  //remove original definition from temp map
+                tempDefinitionMap.put(((SingleInputStream) inputStream).getStreamReferenceId(), temp);
             }
         }
     }
