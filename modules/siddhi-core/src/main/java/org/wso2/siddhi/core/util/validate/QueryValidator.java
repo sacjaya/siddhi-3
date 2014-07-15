@@ -13,7 +13,6 @@
 package org.wso2.siddhi.core.util.validate;
 
 import org.wso2.siddhi.core.exception.ValidatorException;
-import org.wso2.siddhi.core.util.Constants;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
@@ -21,6 +20,8 @@ import org.wso2.siddhi.query.api.query.input.InputStream;
 import org.wso2.siddhi.query.api.query.input.JoinInputStream;
 import org.wso2.siddhi.query.api.query.input.SingleInputStream;
 import org.wso2.siddhi.query.api.query.input.pattern.PatternInputStream;
+import org.wso2.siddhi.query.api.query.input.pattern.element.FollowedByElement;
+import org.wso2.siddhi.query.api.query.input.pattern.element.PatternElement;
 import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
 import org.wso2.siddhi.query.api.query.selection.Selector;
 
@@ -34,58 +35,67 @@ import java.util.Map;
  */
 public class QueryValidator {
 
-    private Map<String, String> streamIdMap;
-    private Query query;
-    private List<StreamDefinition> definitionList;
-
-    //Testing implementation
-    private static void validateInStream(InputStream inputStream, Map<String, StreamDefinition> definitionMap, Map<String, String> renameHandlerMap) throws ValidatorException {//TODO:Handle renaming
+    private static Map<String, StreamDefinition> validateInStream(InputStream inputStream, Map<String, StreamDefinition> definitionMap) throws ValidatorException {//TODO:Handle renaming
+        Map<String, StreamDefinition> tempDefinitionMap = new HashMap<String, StreamDefinition>();
         if (inputStream instanceof BasicSingleInputStream || inputStream instanceof SingleInputStream) {
-            InStreamValidator.validate(inputStream, getRelevantDefinitions(inputStream.getStreamIds(), definitionMap));   // left/right streams can't have multiple stream IDs
-            if (!(((SingleInputStream) inputStream).getStreamReferenceId().equals(((SingleInputStream) inputStream).getStreamId()))) {
-                renameHandlerMap.remove(((SingleInputStream) inputStream).getStreamId());
-                renameHandlerMap.put(((SingleInputStream) inputStream).getStreamReferenceId(), ((SingleInputStream) inputStream).getStreamId());
-            }
+            InStreamValidator.validate(inputStream, definitionMap, tempDefinitionMap);
+
         } else if (inputStream instanceof JoinInputStream) {
             InputStream leftStream = ((JoinInputStream) inputStream).getLeftInputStream();
             InputStream rightStream = ((JoinInputStream) inputStream).getRightInputStream();
-            validateInStream(leftStream, definitionMap, renameHandlerMap);
-            validateInStream(rightStream, definitionMap, renameHandlerMap);
-            ValidatorUtil.validateCondition(((JoinInputStream) inputStream).getOnCompare(), getRelevantDefinitions(inputStream.getStreamIds(), definitionMap), null);
+            InStreamValidator.validate(leftStream, definitionMap, tempDefinitionMap);
+            InStreamValidator.validate(rightStream, definitionMap, tempDefinitionMap);
+            ValidatorUtil.validateCondition(((JoinInputStream) inputStream).getOnCompare(), tempDefinitionMap, null);
+
         } else if (inputStream instanceof PatternInputStream) {
-            //TODO: iterate through pattern and call validateInStream recursively
+            handlePatternElement(((PatternInputStream) inputStream).getPatternElement(), definitionMap, tempDefinitionMap);
+        }
+        return tempDefinitionMap;
+    }
+
+    private static void handlePatternElement(PatternElement patternElement, Map<String, StreamDefinition> definitionMap, Map<String, StreamDefinition> tempDefinitionMap) throws ValidatorException {
+        if (patternElement instanceof FollowedByElement) {
+            handlePatternElement(((FollowedByElement) patternElement).getPatternElement(), definitionMap, tempDefinitionMap);
+            handlePatternElement(((FollowedByElement) patternElement).getFollowedByPatternElement(), definitionMap, tempDefinitionMap);
+        } else if (patternElement instanceof BasicSingleInputStream) {
+            InStreamValidator.validate((BasicSingleInputStream) patternElement, definitionMap, tempDefinitionMap);
         }
     }
 
 
     public static void validate(Query query, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
-        Map<String, String> renameHandlerMap = new HashMap<String, String>();        //<StreamReferenceId,StreamId>
-        for (String key : streamDefinitionMap.keySet()) {
-            renameHandlerMap.put(key, key);
-        }
-        List<StreamDefinition> definitionList = getRelevantDefinitions(query.getInputStream().getStreamIds(), streamDefinitionMap); //To streamID being null in some cases
-        validateInStream(query.getInputStream(), streamDefinitionMap, renameHandlerMap);
-        validateSelector(query.getSelector(), definitionList, renameHandlerMap); //TODO: handle infer streams. check implementation level
-        validateOutStream(query.getOutputStream(), definitionList, streamDefinitionMap);
+        Map<String, StreamDefinition> tempDefinition = validateInStream(query.getInputStream(), streamDefinitionMap);
+        validateSelector(query.getSelector(), tempDefinition);
+        validateOutStream(query.getOutputStream(), tempDefinition, streamDefinitionMap);
     }
 
-    private static void validateOutStream(OutputStream outputStream, List<StreamDefinition> definitionList, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
-        for (StreamDefinition definition : definitionList) {
-            if (definition.getStreamId().equals(Constants.SELECTOR_STREAM)) {
-                definition.setId(outputStream.getStreamId());
-                StreamValidator.validate(streamDefinitionMap, definition);
-                streamDefinitionMap.put(definition.getStreamId(), definition);
+    private static void getRelevantDefinitionMap(Map<String, Object> relevantDefinitionMap, List<String> streamIds, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
+        for (String streamId : streamIds) {
+            if (streamDefinitionMap.get(streamId) != null) {
+                relevantDefinitionMap.put(streamId, streamDefinitionMap.get(streamId));
+            } else {
+                throw new ValidatorException("No stream definition found for stream ID " + streamId);
             }
         }
     }
 
-    private static void validateSelector(Selector selector, List<StreamDefinition> streamDefinitionList, Map<String, String> renameHandlerMap) throws ValidatorException {
-        SelectorValidator.validate(selector, streamDefinitionList, renameHandlerMap);
+    private static void validateOutStream(OutputStream outputStream, Map<String, StreamDefinition> relevantDefinitionMap, Map<String, StreamDefinition> definitionMap) throws ValidatorException {
+        StreamDefinition definition = relevantDefinitionMap.get(null);
+        definition.setId(outputStream.getStreamId());
+        StreamValidator.validate(definitionMap, definition);
+        definitionMap.put(definition.getStreamId(), definition);
     }
 
-    private static List<StreamDefinition> getRelevantDefinitions(List<String> streamIds, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
+    private static void validateSelector(Selector selector, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
+        SelectorValidator.validate(selector, streamDefinitionMap);
+    }
+
+    private static List<StreamDefinition> getRelevantDefinitions(List<String> streamIds, Map<String, StreamDefinition> streamDefinitionMap, Map<String, String> renameHandlerMap) throws ValidatorException {
         ArrayList<StreamDefinition> result = new ArrayList<StreamDefinition>(streamIds.size());
         for (String streamId : streamIds) {
+            if (renameHandlerMap.get(streamId) != null) {
+                streamId = renameHandlerMap.get(streamId);                         //handling renaming
+            }
             if (streamDefinitionMap.get(streamId) != null) {
                 result.add(streamDefinitionMap.get(streamId));
             } else {
@@ -94,37 +104,4 @@ public class QueryValidator {
         }
         return result;
     }
-
-    /*public void validate(Query query, List<StreamDefinition> definitionList) throws ValidatorException {
-        this.query = query; //TODO: check if assignment is really necessary
-        validateInStream(query.getInputStream(), definitionList, streamIdMap);//TODO:only forward relevant streams
-    }*/
-
-    /*private static void validateInStream(InputStream inputStream, List<StreamDefinition> definitionList) throws ValidatorException {//TODO:Handle renaming
-        if (inputStream instanceof BasicSingleInputStream || inputStream instanceof SingleInputStream) {
-            InStreamValidator.validate(inputStream, definitionList);   // left/right streams can't have multiple stream IDs
-            if (!(((SingleInputStream) inputStream).getStreamReferenceId().equals(((SingleInputStream) inputStream).getStreamId()))) {
-                this.streamIdMap.put(((SingleInputStream) inputStream).getStreamReferenceId(), ((SingleInputStream) inputStream).getStreamId());
-            }
-        } else if (inputStream instanceof JoinInputStream) {
-            InputStream leftStream = ((JoinInputStream) inputStream).getLeftInputStream();
-            InputStream rightStream = ((JoinInputStream) inputStream).getRightInputStream();
-            InStreamValidator.validate(leftStream, getDefinitionFor(leftStream.getStreamIds().get(0)));
-            InStreamValidator.validate(rightStream, getDefinitionFor(rightStream.getStreamIds().get(0)));
-        } else if (inputStream instanceof PatternInputStream) {
-            //TODO: iterate through pattern and call validateInStream recursively
-        }
-    }*/
-
-    /*private StreamDefinition getDefinitionFor(String id) throws ValidatorException {
-        if (streamIdMap.containsKey(id)) {
-            id = streamIdMap.get(id);
-        }
-        for (StreamDefinition definition : definitionList) {
-            if (definition.getStreamId().equals(id)) {
-                return definition;
-            }
-        }
-        throw new ValidatorException("No stream definition found for stream ID: " + id);
-    }*/
 }
