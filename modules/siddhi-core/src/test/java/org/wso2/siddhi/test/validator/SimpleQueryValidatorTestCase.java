@@ -92,7 +92,7 @@ public class SimpleQueryValidatorTestCase {
                 select(
                         Query.outputSelector().
                                 select("symbol", Expression.variable("StockStream", "symbol")).
-                                select("price", Expression.variable("StockStream", "price")).
+                                select("price", Expression.variable(null, "price")).
                                 groupBy("StockStream", "symbol").
                                 having(
                                         Condition.compare(
@@ -130,15 +130,16 @@ public class SimpleQueryValidatorTestCase {
 
     @Test
     public void inStreamValidatorTest() throws ValidatorException {
-        InStreamValidator.validate(query.getInputStream(), new ArrayList<StreamDefinition>(Arrays.asList(testDefinition1)));
+        Map<String, StreamDefinition> sampleRenameMap = new HashMap<String, StreamDefinition>();
+        InStreamValidator.validate(query.getInputStream(), definitionMap, sampleRenameMap);
     }
 
     @Test
     public void SelectorValidatorTest() throws ValidatorException {
-        Map<String, String> sampleRenameMap = new HashMap<String, String>();
-        sampleRenameMap.put(testDefinition1.getStreamId(), testDefinition1.getStreamId());
-        sampleRenameMap.put(testDefinition2.getStreamId(), testDefinition2.getStreamId());
-        SelectorValidator.validate(query.getSelector(), new ArrayList<StreamDefinition>(Arrays.asList(testDefinition1)), sampleRenameMap);
+        Map<String, StreamDefinition> sampleRenameMap = new HashMap<String, StreamDefinition>();
+        sampleRenameMap.put(testDefinition1.getStreamId(), testDefinition1);
+        sampleRenameMap.put(testDefinition2.getStreamId(), testDefinition2);
+        SelectorValidator.validate(query.getSelector(), sampleRenameMap);
         query.getSelector();
     }
 
@@ -147,10 +148,9 @@ public class SimpleQueryValidatorTestCase {
         Selector selector = Query.outputSelector().
                 select("symbol", Expression.variable("symbol1")).
                 select("price", Expression.variable("price"));
-        Map<String, String> sampleRenameMap = new HashMap<String, String>();
-        sampleRenameMap.put(testDefinition1.getStreamId(), testDefinition1.getStreamId());
-        sampleRenameMap.put(testDefinition2.getStreamId(), testDefinition2.getStreamId());
-        SelectorValidator.validate(selector, new ArrayList<StreamDefinition>(Arrays.asList(testDefinition1)), sampleRenameMap);
+        Map<String, StreamDefinition> sampleRenameMap = new HashMap<String, StreamDefinition>();
+        sampleRenameMap.put("testDef", testDefinition1);
+        SelectorValidator.validate(selector, sampleRenameMap);
     }
 
     @Test
