@@ -19,7 +19,7 @@ import org.wso2.siddhi.query.api.condition.*;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.*;
-import org.wso2.siddhi.query.api.expression.constant.Constant;
+import org.wso2.siddhi.query.api.expression.constant.*;
 
 import java.util.Map;
 
@@ -28,9 +28,9 @@ public class ValidatorUtil {
     /**
      * Method to validate compare expression
      *
-     * @param expression
-     * @param streamDefinitionMap
-     * @param defaultDefinition
+     * @param expression Expression to be validate
+     * @param streamDefinitionMap Map containing relevant definitions
+     * @param defaultDefinition Default definition for the input stream
      * @throws ValidatorException
      */
     public static void validateCompareExpression(Expression expression, Map<String, StreamDefinition> streamDefinitionMap, String defaultDefinition) throws ValidatorException {
@@ -61,8 +61,8 @@ public class ValidatorUtil {
     /**
      * Method to validate single variables
      *
-     * @param variable
-     * @param streamDefinitionMap
+     * @param variable Siddhi variable to be validated
+     * @param streamDefinitionMap Map with relevant definitions
      * @throws ValidatorException
      */
     public static void handleVariable(Variable variable, Map<String, StreamDefinition> streamDefinitionMap, String defaultDefinition) throws ValidatorException {
@@ -78,8 +78,8 @@ public class ValidatorUtil {
                 String id = null;
                 for (Map.Entry<String, StreamDefinition> entry : streamDefinitionMap.entrySet()) {
                     attributeNameArray = entry.getValue().getAttributeNameArray();
-                    for (int i = 0; i < attributeNameArray.length; i++) {           //iterate through attribute list
-                        if (attributeNameArray[i].equals(attributeName)) {
+                    for (String anAttributeNameArray : attributeNameArray) {           //iterate through attribute list
+                        if (anAttributeNameArray.equals(attributeName)) {
                             count++;
                             id = entry.getKey();
                         }
@@ -96,8 +96,8 @@ public class ValidatorUtil {
             attributeNameArray = streamDefinitionMap.get(streamId).getAttributeNameArray();
         }
         if (attributeNameArray != null) {
-            for (int i = 0; i < attributeNameArray.length; i++) {           //iterate through attribute list
-                if (attributeNameArray[i].equals(attributeName)) {
+            for (String resultAttributeName : attributeNameArray) {           //iterate through attribute list
+                if (attributeName.equals(resultAttributeName)) {
                     return;
                 }
             }
@@ -166,24 +166,64 @@ public class ValidatorUtil {
         return null;
     }
 
-    /**
-     * Method to get attribute type of a given simple attribute
-     *
-     * @param attributeName
-     * @param definition
-     * @return
-     * @throws ValidatorException
-     */
-    public static Attribute.Type getAttributeType(String attributeName, StreamDefinition definition) throws ValidatorException {
-        Attribute.Type type = null;
-        for (Attribute attribute1 : definition.getAttributeList()) {
-            if (attribute1.getName().equals(attributeName)) {
-                type = attribute1.getType();
+    public static Attribute.Type getExpressionReturnType(Expression expression, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
+        if (expression instanceof Variable) {
+            return streamDefinitionMap.get(((Variable) expression).getStreamId()).getAttributeType(((Variable) expression).getAttributeName());
+        } else if (expression instanceof Constant) {
+            if (expression instanceof BoolConstant) {
+                return Attribute.Type.BOOL;
+            } else if (expression instanceof StringConstant) {
+                return Attribute.Type.STRING;
+            } else if (expression instanceof IntConstant) {
+                return Attribute.Type.INT;
+            } else if (expression instanceof LongConstant) {
+                return Attribute.Type.FLOAT;
+            } else if (expression instanceof FloatConstant) {
+                return Attribute.Type.FLOAT;
+            } else if (expression instanceof DoubleConstant) {
+                return Attribute.Type.DOUBLE;
+            } else {
+                throw new ValidatorException("Siddhi constant of type " + expression.getClass().getName() + " is not supported in Siddhi");
             }
+        } else if (expression instanceof Add) { //TODO: query feasibility of adding supper class to below classes
+            Attribute.Type left = getExpressionReturnType(((Add) expression).getLeftValue(), streamDefinitionMap);
+            Attribute.Type right = getExpressionReturnType(((Add) expression).getRightValue(), streamDefinitionMap);
+            return getArithmaticOperationReturnType(left, right);
+        } else if (expression instanceof Divide) {
+            Attribute.Type left = getExpressionReturnType(((Divide) expression).getLeftValue(), streamDefinitionMap);
+            Attribute.Type right = getExpressionReturnType(((Divide) expression).getRightValue(), streamDefinitionMap);
+            return getArithmaticOperationReturnType(left, right);
+        } else if (expression instanceof Minus) {
+            Attribute.Type left = getExpressionReturnType(((Minus) expression).getLeftValue(), streamDefinitionMap);
+            Attribute.Type right = getExpressionReturnType(((Minus) expression).getRightValue(), streamDefinitionMap);
+            return getArithmaticOperationReturnType(left, right);
+        } else if (expression instanceof Mod) {
+            Attribute.Type left = getExpressionReturnType(((Mod) expression).getLeftValue(), streamDefinitionMap);
+            Attribute.Type right = getExpressionReturnType(((Mod) expression).getRightValue(), streamDefinitionMap);
+            return getArithmaticOperationReturnType(left, right);
+        } else if (expression instanceof Multiply) {
+            Attribute.Type left = getExpressionReturnType(((Multiply) expression).getLeftValue(), streamDefinitionMap);
+            Attribute.Type right = getExpressionReturnType(((Multiply) expression).getRightValue(), streamDefinitionMap);
+            return getArithmaticOperationReturnType(left, right);
+        } else {
+            return null;
+            //TODO: time and other. Please discuss
         }
-        if (type == null) {
-            throw new ValidatorException("Attribute " + attributeName + " was not found in stream definition " + definition.getStreamId());
+
+    }
+
+    private static Attribute.Type getArithmaticOperationReturnType(Attribute.Type left, Attribute.Type right) throws ValidatorException {
+        if (left == Attribute.Type.DOUBLE || right == Attribute.Type.DOUBLE) {
+            return Attribute.Type.DOUBLE;
+        } else if (left == Attribute.Type.FLOAT || right == Attribute.Type.FLOAT) {
+            return Attribute.Type.FLOAT;
+        } else if (left == Attribute.Type.LONG || right == Attribute.Type.LONG) {
+            return Attribute.Type.LONG;
+        } else if (left == Attribute.Type.INT || right == Attribute.Type.INT) {
+            return Attribute.Type.INT;
+        } else {
+            throw new ValidatorException("Given arithmetic operation between " + left.toString() + " and " + right.toString() + " data types can not be performed");
         }
-        return type;
+
     }
 }
