@@ -103,6 +103,9 @@ public class Partition {
         return this;
     }
 
+    public Query getQuery(){
+        return query;
+    }
 
     public static RangePartitionType.RangePartitionProperty range(String partitionKey, Condition condition) {
         return new RangePartitionType.RangePartitionProperty(partitionKey, condition);
