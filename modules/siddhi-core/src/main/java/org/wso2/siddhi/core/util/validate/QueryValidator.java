@@ -31,10 +31,31 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class to validate a single siddhi query.
+ * Static utility class to validate a single siddhi query.
  */
 public class QueryValidator {
 
+    /**
+     * Publicly exposed validate method to validate a given query.
+     *
+     * @param query               Query to be validated
+     * @param streamDefinitionMap Map of stream definitions user provided alongside with query
+     * @throws ValidatorException
+     */
+    public static void validate(Query query, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
+        Map<String, StreamDefinition> tempDefinition = validateInStream(query.getInputStream(), streamDefinitionMap);       //Map to store definitions related to the given query
+        validateSelector(query.getSelector(), tempDefinition);
+        validateOutStream(query.getOutputStream(), tempDefinition, streamDefinitionMap);
+    }
+
+    /**
+     * Method to validate input stream of the query.
+     *
+     * @param inputStream   input stream subjected to validation
+     * @param definitionMap Map containing all stream definitions of execution plan
+     * @return Map containing stream definition relevant to this query.
+     * @throws ValidatorException
+     */
     private static Map<String, StreamDefinition> validateInStream(InputStream inputStream, Map<String, StreamDefinition> definitionMap) throws ValidatorException {//TODO:Handle renaming
         Map<String, StreamDefinition> tempDefinitionMap = new HashMap<String, StreamDefinition>();
         if (inputStream instanceof BasicSingleInputStream || inputStream instanceof SingleInputStream) {
@@ -45,14 +66,22 @@ public class QueryValidator {
             InputStream rightStream = ((JoinInputStream) inputStream).getRightInputStream();
             InStreamValidator.validate(leftStream, definitionMap, tempDefinitionMap);
             InStreamValidator.validate(rightStream, definitionMap, tempDefinitionMap);
-            ValidatorUtil.validateCondition(((JoinInputStream) inputStream).getOnCompare(), tempDefinitionMap, null);
-
+            if (((JoinInputStream) inputStream).getOnCompare() != null) {
+                ValidatorUtil.validateCondition(((JoinInputStream) inputStream).getOnCompare(), tempDefinitionMap, null);
+            }
         } else if (inputStream instanceof PatternInputStream) {
             handlePatternElement(((PatternInputStream) inputStream).getPatternElement(), definitionMap, tempDefinitionMap);
         }
         return tempDefinitionMap;
     }
 
+    /**
+     * Method to handle patterns input stream. Will decompose pattern stream recursively
+     * @param patternElement pattern element to be handled
+     * @param definitionMap full definition map
+     * @param tempDefinitionMap relevant definition map
+     * @throws ValidatorException
+     */
     private static void handlePatternElement(PatternElement patternElement, Map<String, StreamDefinition> definitionMap, Map<String, StreamDefinition> tempDefinitionMap) throws ValidatorException {
         if (patternElement instanceof FollowedByElement) {
             handlePatternElement(((FollowedByElement) patternElement).getPatternElement(), definitionMap, tempDefinitionMap);
@@ -60,13 +89,6 @@ public class QueryValidator {
         } else if (patternElement instanceof BasicSingleInputStream) {
             InStreamValidator.validate((BasicSingleInputStream) patternElement, definitionMap, tempDefinitionMap);
         }
-    }
-
-
-    public static void validate(Query query, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
-        Map<String, StreamDefinition> tempDefinition = validateInStream(query.getInputStream(), streamDefinitionMap);
-        validateSelector(query.getSelector(), tempDefinition);
-        validateOutStream(query.getOutputStream(), tempDefinition, streamDefinitionMap);
     }
 
     private static void getRelevantDefinitionMap(Map<String, Object> relevantDefinitionMap, List<String> streamIds, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
@@ -79,6 +101,13 @@ public class QueryValidator {
         }
     }
 
+    /**
+     * Method to validate out stream of the query
+     * @param outputStream out stream to be validated
+     * @param relevantDefinitionMap Map of relevant definitions
+     * @param definitionMap Full definition map
+     * @throws ValidatorException
+     */
     private static void validateOutStream(OutputStream outputStream, Map<String, StreamDefinition> relevantDefinitionMap, Map<String, StreamDefinition> definitionMap) throws ValidatorException {
         StreamDefinition definition = relevantDefinitionMap.get(null);
         definition.setId(outputStream.getStreamId());
@@ -86,6 +115,12 @@ public class QueryValidator {
         definitionMap.put(definition.getStreamId(), definition);
     }
 
+    /**
+     * Method to validate selector of the query
+     * @param selector selector to be validated
+     * @param streamDefinitionMap relevant definition map
+     * @throws ValidatorException
+     */
     private static void validateSelector(Selector selector, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
         SelectorValidator.validate(selector, streamDefinitionMap);
     }
