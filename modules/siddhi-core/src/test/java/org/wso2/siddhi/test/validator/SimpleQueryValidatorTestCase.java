@@ -124,7 +124,7 @@ public class SimpleQueryValidatorTestCase {
 
     @Test
     public void streamDefinitionValidatorWithSameStreamTest() throws ValidatorException {
-        StreamDefinition testDefinition = StreamDefinition.id("OutStockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT);
+        StreamDefinition testDefinition = StreamDefinition.id("OutStockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT);
         StreamValidator.validate(definitionMap, testDefinition);
     }
 
@@ -138,7 +138,7 @@ public class SimpleQueryValidatorTestCase {
     public void SelectorValidatorTest() throws ValidatorException {
         Map<String, StreamDefinition> sampleRenameMap = new HashMap<String, StreamDefinition>();
         sampleRenameMap.put(testDefinition1.getStreamId(), testDefinition1);
-        sampleRenameMap.put(testDefinition2.getStreamId(), testDefinition2);
+        sampleRenameMap.put(testDefinition3.getStreamId(), testDefinition3);
         SelectorValidator.validate(query.getSelector(), sampleRenameMap);
         query.getSelector();
     }
