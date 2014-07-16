@@ -31,7 +31,7 @@ public class SelectorValidator {
     /**
      * Method to validate selector for given set of stream definitions     *
      *
-     * @param selector :       Selector to validate
+     * @param selector            :       Selector to validate
      * @param streamDefinitionMap :      Map to handle renaming
      * @throws ValidatorException Thrown if not validated
      */
@@ -39,17 +39,13 @@ public class SelectorValidator {
         StreamDefinition temp = new StreamDefinition();        //inferred stream
         for (OutputAttribute attribute : selector.getSelectionList()) {
             if (attribute instanceof SimpleAttribute) {
-                if (((SimpleAttribute) attribute).getExpression() instanceof Variable) {
-                    ValidatorUtil.handleVariable((Variable) ((SimpleAttribute) attribute).getExpression(), streamDefinitionMap, null);
-                    StreamDefinition source = streamDefinitionMap.get(((Variable) ((SimpleAttribute) attribute).getExpression()).getStreamId());
-                    String name = ((Variable) ((SimpleAttribute) attribute).getExpression()).getAttributeName();
-                    temp.attribute(attribute.getRename(), ValidatorUtil.getAttributeType(name, source));
-                }//TODO: handle else
+                ValidatorUtil.validateCompareExpression(((SimpleAttribute) attribute).getExpression(), streamDefinitionMap, null);
+                Attribute.Type returnType = ValidatorUtil.getExpressionReturnType(((SimpleAttribute) attribute).getExpression(), streamDefinitionMap);
+                temp.attribute(attribute.getRename(), returnType);
             } else if (attribute instanceof ComplexAttribute) {          //TODO:check if we need to validate attribute names
                 for (Expression expression : ((ComplexAttribute) attribute).getExpressions()) {
                     ValidatorUtil.validateCompareExpression(expression, streamDefinitionMap, null);
-                    //Assuming aggregator complex attributes will not get a expression list
-                    Attribute.Type type = ValidatorUtil.getAttributeType(((Variable) expression).getAttributeName(), streamDefinitionMap.get(((Variable) expression).getStreamId()));
+                    Attribute.Type type = ValidatorUtil.getExpressionReturnType(expression, streamDefinitionMap);
                     Attribute.Type result;
                     try {
                         result = ValidatorUtil.getAggregatorReturnType(((ComplexAttribute) attribute).getAttributeName(), type);
