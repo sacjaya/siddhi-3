@@ -15,8 +15,10 @@ package org.wso2.siddhi.core.util.validate;
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.query.input.*;
 import org.wso2.siddhi.query.api.query.input.handler.Filter;
+import org.wso2.siddhi.query.api.query.input.handler.StreamFunction;
 import org.wso2.siddhi.query.api.query.input.handler.StreamHandler;
 import org.wso2.siddhi.query.api.query.input.handler.Window;
 
@@ -39,7 +41,11 @@ public class InStreamValidator {
                     Condition condition = ((Filter) handler).getFilterCondition();
                     ValidatorUtil.validateCondition(condition, tempDefinitionMap, defaultDefinition);
                 } else if (handler instanceof Window) {
-                    //TODO: validate window handler
+                    for (Expression expression : ((Window) handler).getParameters()) {
+                        ValidatorUtil.validateCompareExpression(expression, tempDefinitionMap, defaultDefinition);
+                    }
+                } else if (handler instanceof StreamFunction) {
+                    //TODO: handle. get output attr names and types and set them in temp map
                 }
             }
             ((SingleInputStream) inputStream).setDefinition(streamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));  //set the definition
