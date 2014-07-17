@@ -33,7 +33,7 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
     private final String streamId;
     private QueryPartitioner queryPartitioner;
     private int disruptorsSize = 5;
-    private List<Disruptor> disruptorList;
+    private Disruptor[] disruptors;
     private final int handlerId;
     private List<PartitionExecutor> partitionExecutors;
     private ConcurrentHashMap<String, HandlerProcessor> partitionedHandlerMap = new ConcurrentHashMap<String, HandlerProcessor>();
@@ -55,8 +55,8 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
     }
 
 
-    public void setDisruptorList(List<Disruptor> disruptorList) {
-        this.disruptorList = disruptorList;
+    public void setDisruptors(Disruptor[] disruptors) {
+        this.disruptors = disruptors;
     }
 
     private void send(String key, StreamEvent event) {
@@ -76,8 +76,8 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
     }
 
 
-    public List<Disruptor> getDisruptorList() {
-        return disruptorList;
+    public Disruptor[] getDisruptors() {
+        return disruptors;
     }
 
     public int getDisruptorsSize(){

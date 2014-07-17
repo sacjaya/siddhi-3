@@ -35,7 +35,6 @@ import java.util.ArrayList;
 
 public class QuerySelector {
 
-    private String outputStreamId;
     private StreamDefinition outputStreamDefinition;
     private Selector selector;
     private final OutputRateManager outputRateManager;
@@ -46,15 +45,15 @@ public class QuerySelector {
     public boolean expiredOn = false;
 
 
-    public QuerySelector(String outputStreamId, AbstractDefinition outputStreamDefinition, Selector selector,
+    public QuerySelector(String outputStreamId, Selector selector,
                          OutputRateManager outputRateManager, SiddhiContext siddhiContext, boolean currentOn, boolean expiredOn,InputStream inputStream) {
-        this.outputStreamId = outputStreamId;
         this.currentOn = currentOn;
         this.expiredOn = expiredOn;
         this.selector = selector;
         outputSize = selector.getSelectionList().size();
         this.inputStream = inputStream;
-        this.outputStreamDefinition = (StreamDefinition) outputStreamDefinition;
+        this.outputStreamDefinition = new StreamDefinition();
+        this.outputStreamDefinition.setId(outputStreamId);
         this.outputRateManager = outputRateManager;
 
         attributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
@@ -98,6 +97,7 @@ public class QuerySelector {
             if (outputAttribute instanceof SimpleAttribute) {
                 PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(((SimpleAttribute) outputAttribute).getExpression(),  null, false, siddhiContext,inputStream));
                 attributeProcessorList.add(attributeGenerator);
+                outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
             } else {
                 //TODO: else
             }

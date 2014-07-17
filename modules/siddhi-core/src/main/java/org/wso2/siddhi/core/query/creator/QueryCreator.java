@@ -64,7 +64,7 @@ public abstract class QueryCreator {
 
 
     protected QuerySelector constructQuerySelector(OutputRateManager outputRateManager) {
-        return QueryOutputParser.constructQuerySelector(query.getInputStream(),query.getOutputStream(), streamDefinitionMap.get(query.getOutputStream().getStreamId()),query.getSelector(), outputRateManager,siddhiContext);
+        return QueryOutputParser.constructQuerySelector(query.getInputStream(),query.getOutputStream(), query.getSelector(), outputRateManager,siddhiContext);
     }
 
 

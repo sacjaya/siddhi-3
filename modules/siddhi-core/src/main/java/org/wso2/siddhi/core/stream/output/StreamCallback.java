@@ -27,7 +27,7 @@ import java.util.List;
 public abstract class StreamCallback implements StreamReceiver {
 
     private String streamId;
-    private List<Disruptor> disruptorList;
+    private Disruptor[] disruptors;
 
 
     public void receive(StreamEvent streamEvent) {
@@ -49,12 +49,12 @@ public abstract class StreamCallback implements StreamReceiver {
         return streamId;
     }
 
-    public void setDisruptorList(List<Disruptor> disruptorList) {
-        this.disruptorList = disruptorList;
+    public void setDisruptors(Disruptor[] disruptors) {
+        this.disruptors = disruptors;
     }
 
-    public List<Disruptor> getDisruptorList() {
-        return disruptorList;
+    public Disruptor[] getDisruptors() {
+        return disruptors;
     }
 
 }

@@ -31,7 +31,7 @@ import java.util.List;
 
 public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProcessingElement{
 
-    private List<Disruptor> disruptorList;
+    private Disruptor[] disruptors;
     private QuerySelector next;
     private FilterProcessor filterProcessor;
     private InputStream inputStream ;
@@ -47,8 +47,8 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
     }
 
     @Override
-    public void setDisruptorList(List<Disruptor> disruptorList) {
-        this.disruptorList = disruptorList;
+    public void setDisruptors(Disruptor[] disruptors) {
+        this.disruptors = disruptors;
     }
 
     protected void processHandler(StreamEvent streamEvent) {
@@ -68,8 +68,8 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
     }
 
     @Override
-    public List<Disruptor> getDisruptorList() {
-        return disruptorList;
+    public Disruptor[] getDisruptors() {
+        return disruptors;
     }
 
     public void setNext(QuerySelector querySelector) {

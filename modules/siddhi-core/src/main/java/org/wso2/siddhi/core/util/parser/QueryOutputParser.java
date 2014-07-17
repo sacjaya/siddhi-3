@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentMap;
 public class QueryOutputParser {
 
 
-    public static QuerySelector constructQuerySelector(InputStream inputStream, OutputStream outStream, AbstractDefinition outputStreamDefinition, Selector selector, OutputRateManager outputRateManager
+    public static QuerySelector constructQuerySelector(InputStream inputStream, OutputStream outStream, Selector selector, OutputRateManager outputRateManager
             , SiddhiContext siddhiContext) {
         boolean currentOn = false;
         boolean expiredOn = false;
@@ -61,7 +61,7 @@ public class QueryOutputParser {
             expiredOn = true;
         }
 
-        return new QuerySelector(id, outputStreamDefinition,selector, outputRateManager, siddhiContext, currentOn, expiredOn,inputStream);
+        return new QuerySelector(id,selector, outputRateManager, siddhiContext, currentOn, expiredOn,inputStream);
 
 
     }
