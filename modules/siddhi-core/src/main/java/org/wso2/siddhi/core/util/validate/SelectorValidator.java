@@ -37,35 +37,43 @@ public class SelectorValidator {
      */
     public static void validate(Selector selector, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
         StreamDefinition temp = new StreamDefinition();        //inferred stream
-        for (OutputAttribute attribute : selector.getSelectionList()) {
-            if (attribute instanceof SimpleAttribute) {
-                ValidatorUtil.validateCompareExpression(((SimpleAttribute) attribute).getExpression(), streamDefinitionMap, null);
-                Attribute.Type returnType = ValidatorUtil.getExpressionReturnType(((SimpleAttribute) attribute).getExpression(), streamDefinitionMap);
-                temp.attribute(attribute.getRename(), returnType);
-            } else if (attribute instanceof ComplexAttribute) {          //TODO:check if we need to validate attribute names
-                for (Expression expression : ((ComplexAttribute) attribute).getExpressions()) {
-                    ValidatorUtil.validateCompareExpression(expression, streamDefinitionMap, null);
-                    Attribute.Type type = ValidatorUtil.getExpressionReturnType(expression, streamDefinitionMap);
-                    Attribute.Type result;
-                    try {
-                        result = ValidatorUtil.getAggregatorReturnType(((ComplexAttribute) attribute).getAttributeName(), type);
-                    } catch (OperationNotSupportedException e) {
-                        throw new ValidatorException(e.getMessage());
+        if (selector.getSelectionList().size() > 0) {
+            for (OutputAttribute attribute : selector.getSelectionList()) {
+                if (attribute instanceof SimpleAttribute) {
+                    ValidatorUtil.validateCompareExpression(((SimpleAttribute) attribute).getExpression(), streamDefinitionMap, null);
+                    Attribute.Type returnType = ValidatorUtil.getExpressionReturnType(((SimpleAttribute) attribute).getExpression(), streamDefinitionMap);
+                    temp.attribute(attribute.getRename(), returnType);
+                } else if (attribute instanceof ComplexAttribute) {          //TODO:check if we need to validate attribute names
+                    for (Expression expression : ((ComplexAttribute) attribute).getExpressions()) {
+                        ValidatorUtil.validateCompareExpression(expression, streamDefinitionMap, null);
+                        Attribute.Type type = ValidatorUtil.getExpressionReturnType(expression, streamDefinitionMap);
+                        Attribute.Type result;
+                        try {
+                            result = ValidatorUtil.getAggregatorReturnType(((ComplexAttribute) attribute).getAttributeName(), type);
+                        } catch (OperationNotSupportedException e) {
+                            throw new ValidatorException(e.getMessage());
+                        }
+                        temp.attribute(attribute.getRename(), result);
                     }
-                    temp.attribute(attribute.getRename(), result);
                 }
             }
-        }
-        if (selector.getGroupByList() != null) {                        //Handle group by
-            for (Variable var : selector.getGroupByList()) {
-                ValidatorUtil.handleVariable(var, streamDefinitionMap, null);
+            if (selector.getGroupByList() != null) {                        //Handle group by
+                for (Variable var : selector.getGroupByList()) {
+                    ValidatorUtil.handleVariable(var, streamDefinitionMap, null);
+                }
             }
-        }
-
-        if (selector.getHavingCondition() != null) {                    //Handle having condition. send only the inferred stream
-            Map<String, StreamDefinition> tempMap = new HashMap<String, StreamDefinition>(1);
-            tempMap.put(null, temp);                                     //putting with null id to avoid conflicts
-            ValidatorUtil.validateCondition(selector.getHavingCondition(), tempMap, null);
+            if (selector.getHavingCondition() != null) {                    //Handle having condition. send only the inferred stream
+                Map<String, StreamDefinition> tempMap = new HashMap<String, StreamDefinition>(1);
+                tempMap.put(null, temp);                                     //putting with null id to avoid conflicts
+                ValidatorUtil.validateCondition(selector.getHavingCondition(), tempMap, null);
+            }
+        } else {
+            for (StreamDefinition definition : streamDefinitionMap.values()) {
+                for (Attribute attribute : definition.getAttributeList()) {
+                    temp.attribute(attribute.getName(), attribute.getType());
+                    selector.select(attribute.getName(), new Variable(definition.getStreamId(), attribute.getName())); //TODO:discuss for join
+                }
+            }
         }
         streamDefinitionMap.put(null, temp);
     }
