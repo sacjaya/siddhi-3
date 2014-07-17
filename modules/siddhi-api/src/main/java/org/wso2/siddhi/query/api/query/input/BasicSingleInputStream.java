@@ -19,6 +19,7 @@ package org.wso2.siddhi.query.api.query.input;
 import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
+import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
 import org.wso2.siddhi.query.api.query.input.handler.Filter;
 import org.wso2.siddhi.query.api.query.input.handler.StreamFunction;
 import org.wso2.siddhi.query.api.query.input.handler.StreamHandler;
@@ -151,4 +152,10 @@ public class BasicSingleInputStream extends SingleInputStream implements Pattern
 //    public boolean isCounterStream() {
 //        return isCounterStream;
 //    }
+
+    @Override
+    public TimeConstant getWithin() {
+        //TODO
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

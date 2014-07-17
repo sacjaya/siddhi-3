@@ -18,6 +18,7 @@ package org.wso2.siddhi.query.api.query;
 
 import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.expression.constant.Constant;
+import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
 import org.wso2.siddhi.query.api.query.input.*;
 import org.wso2.siddhi.query.api.query.input.pattern.PatternInputStream;
 import org.wso2.siddhi.query.api.query.input.pattern.element.PatternElement;
@@ -157,7 +158,7 @@ public class Query {
         return new PatternInputStream(patternElement, null);
     }
 
-    public static PatternInputStream patternInputStream(PatternElement patternElement, Constant within) {
+    public static PatternInputStream patternInputStream(PatternElement patternElement, TimeConstant within) {
         return new PatternInputStream(patternElement, within);
     }
 
