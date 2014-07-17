@@ -25,6 +25,7 @@ import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
 import org.wso2.siddhi.core.exception.OperationNotSupportedException;
 import org.wso2.siddhi.core.exception.QueryNotExistException;
 import org.wso2.siddhi.core.query.ExecutionRuntime;
+import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.snapshot.SnapshotService;
 import org.wso2.siddhi.core.snapshot.ThreadBarrier;
@@ -33,6 +34,8 @@ import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.core.util.ExecutionPlanReference;
 import org.wso2.siddhi.core.util.SiddhiThreadFactory;
+import org.wso2.siddhi.core.util.validate.QueryValidator;
+import org.wso2.siddhi.core.util.validate.StreamValidator;
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -43,7 +46,9 @@ import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 
 
@@ -78,20 +83,30 @@ public class SiddhiManager {
         this.siddhiContext.setSnapshotService(new SnapshotService(siddhiContext));
     }
 
-    /*public Boolean addExecutionPlan(ExecutionPlan executionPlan){
-        Validator validator = new Validator(executionPlan);
-        Boolean validated = validator.validate();
-        if(!validated){
-            return false;
-        }else{
-            //Do further processing
-            return false;
+    public void validateExecutionPlan(ExecutionPlan executionPlan) throws ValidatorException {
+        Map<String, StreamDefinition> tempMap = new HashMap<String, StreamDefinition>();
+        if (executionPlan.getStreamDefinitionMap() != null) {
+            for (StreamDefinition definition : executionPlan.getStreamDefinitionMap().values()) {
+                StreamValidator.validate(tempMap, definition);
+            }
+            if (executionPlan.getQueryList() != null) {
+                for (Query query : executionPlan.getQueryList()) {
+                    QueryValidator.validate(query, tempMap);
+                }
+            }
         }
-    }*/
+    }
 
     public ExecutionPlanReference addExecutionPlan(ExecutionPlan executionPlan) throws SiddhiParserException {
         ExecutionPlanReference executionPlanReference = new ExecutionPlanReference();
         ExecutionPlanRuntime executionPlanRuntime = new ExecutionPlanRuntime(siddhiContext);
+
+        for(StreamDefinition streamDefinition:executionPlan.getStreamDefinitionMap().values())  {
+            executionPlanRuntime.defineStream(streamDefinition);
+        }
+        for(Partition partition:executionPlan.getPartitionList())  {
+            executionPlanRuntime.definePartition(partition);
+        }
 
         //TODO: foreach
 //        executionPlanRuntime.defineStream(streamDefinition);
