@@ -18,23 +18,26 @@
 
 package org.wso2.siddhi.core;
 
+import org.wso2.siddhi.core.config.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
+import org.wso2.siddhi.core.exception.OperationNotSupportedException;
 import org.wso2.siddhi.core.exception.QueryNotExistException;
-import org.wso2.siddhi.core.query.QueryRuntime;
-import org.wso2.siddhi.core.query.output.callback.InsertIntoStreamCallback;
-import org.wso2.siddhi.core.query.output.callback.OutputCallback;
+import org.wso2.siddhi.core.query.ExecutionRuntime;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.snapshot.SnapshotService;
 import org.wso2.siddhi.core.snapshot.ThreadBarrier;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
+import org.wso2.siddhi.core.util.ExecutionPlanReference;
 import org.wso2.siddhi.core.util.SiddhiThreadFactory;
+import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.definition.TableDefinition;
+import org.wso2.siddhi.query.api.partition.Partition;
 import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
@@ -49,7 +52,9 @@ public class SiddhiManager {
     private ConcurrentMap<String, StreamJunction> streamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains definition
     private ConcurrentMap<String, AbstractDefinition> streamDefinitionMap = new ConcurrentHashMap<String, AbstractDefinition>(); //contains stream definition
     private ConcurrentMap<String, InputHandler> inputHandlerMap = new ConcurrentHashMap<String, InputHandler>();
-    private ConcurrentMap<String, QueryRuntime> queryProcessorMap = new ConcurrentHashMap<String, QueryRuntime>();
+    private ConcurrentMap<String, ExecutionRuntime> queryProcessorMap = new ConcurrentHashMap<String, ExecutionRuntime>();
+    private List<Partition> partitionList = new ArrayList<Partition>();
+
 
 
     public SiddhiManager() {
@@ -83,6 +88,23 @@ public class SiddhiManager {
             return false;
         }
     }*/
+
+    public ExecutionPlanReference addExecutionPlan(ExecutionPlan executionPlan) throws SiddhiParserException {
+        ExecutionPlanReference executionPlanReference = new ExecutionPlanReference();
+        ExecutionPlanRuntime executionPlanRuntime = new ExecutionPlanRuntime(siddhiContext);
+
+        //TODO: foreach
+//        executionPlanRuntime.defineStream(streamDefinition);
+//        executionPlanRuntime.definePartition(partition);
+//        executionPlanRuntime.addQuery(Query);
+
+
+
+
+
+
+        return executionPlanReference;
+    }
 
     public InputHandler defineStream(StreamDefinition streamDefinition) {
         if (!checkEventStreamExist(streamDefinition)) {
@@ -135,17 +157,26 @@ public class SiddhiManager {
 
 
     public String addQuery(Query query) {
-        QueryRuntime queryRuntime = new QueryRuntime(query, streamDefinitionMap, streamJunctionMap, siddhiContext);
-        queryProcessorMap.put(queryRuntime.getQueryId(), queryRuntime);
-        return queryRuntime.getQueryId();
+        ExecutionRuntime executionRuntime = new ExecutionRuntime(query, streamDefinitionMap, streamJunctionMap, null,siddhiContext);
+        queryProcessorMap.put(executionRuntime.getQueryId(), executionRuntime);
+        return executionRuntime.getQueryId();
 
 
     }
 
+    public String addQuery(Query query, Partition partition) {
+        ExecutionRuntime executionRuntime = new ExecutionRuntime(query, streamDefinitionMap, streamJunctionMap, partition,siddhiContext);
+        queryProcessorMap.put(executionRuntime.getQueryId(), executionRuntime);
+        return executionRuntime.getQueryId();
+
+
+    }
+
+
     public void removeQuery(String queryId) {
-        QueryRuntime queryRuntime = queryProcessorMap.remove(queryId);
-        if (queryRuntime != null) {
-            queryRuntime.removeQuery(streamJunctionMap, streamDefinitionMap);
+        ExecutionRuntime executionRuntime = queryProcessorMap.remove(queryId);
+        if (executionRuntime != null) {
+            executionRuntime.removeQuery(streamJunctionMap, streamDefinitionMap);
         }
     }
 
@@ -170,12 +201,12 @@ public class SiddhiManager {
     }
 
     public void addCallback(String queryReference, QueryCallback callback) {
-        QueryRuntime queryRuntime = queryProcessorMap.get(queryReference);
-        if (queryRuntime == null) {
+        ExecutionRuntime executionRuntime = queryProcessorMap.get(queryReference);
+        if (executionRuntime == null) {
             throw new QueryNotExistException("No query fund for " + queryReference);
         }
-        callback.setStreamDefinition(queryRuntime.getOutputStreamDefinition());
-        queryRuntime.addCallback(callback);
+        callback.setStreamDefinition(executionRuntime.getOutputStreamDefinition());
+        executionRuntime.addCallback(callback);
 
     }
 
@@ -217,5 +248,16 @@ public class SiddhiManager {
     public SiddhiContext getSiddhiContext() {
         return siddhiContext;
     }
+
+    public void definePartition(Partition partition) {
+        partitionList.add(partition);
+        //TODO: for a lis of queries
+        Query query = partition.getQuery();
+        if(query !=null){
+            addQuery(query,partition);
+        }
+
+    }
+
 
 }
