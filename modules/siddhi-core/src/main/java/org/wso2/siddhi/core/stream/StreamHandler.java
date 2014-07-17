@@ -30,7 +30,8 @@ public class StreamHandler implements EventHandler<Event> {
     }
 
     public void onEvent(Event event, long sequence, boolean endOfBatch) {
-        streamReceiver.receive(event);
+       streamReceiver.receive(event);
+
     }
 
 }

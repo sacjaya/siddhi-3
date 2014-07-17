@@ -48,7 +48,7 @@ public abstract class QueryCreator {
     }
 
     protected void init() {
-        InputStream inputStream = query.getInputStream();
+        InputStream inputStream = getInputStream();
         if (inputStream instanceof BasicSingleInputStream) {
             querySelector = constructQuerySelector(outputRateManager);
 
@@ -70,6 +70,10 @@ public abstract class QueryCreator {
 
     public StreamDefinition getOutputStreamDefinition() {
         return outputStreamDefinition;
+    }
+
+    public InputStream getInputStream() {
+        return query.getInputStream();
     }
 
     public abstract QueryPartComposite constructQuery() ;

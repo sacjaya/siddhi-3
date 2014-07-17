@@ -51,33 +51,7 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
             type = definition.getAttributeType(attributeName);
             attributePosition = definition.getAttributePosition(attributeName);
         }
-
-
-        //TODO: below lines of code for testing purpose
-//        if (attributeName.equals("symbol")) {
-//            type = Attribute.Type.STRING;
-//            attributePosition = 0;
-//        } else if (attributeName.equals("price")) {
-//            type = Attribute.Type.FLOAT;
-//            attributePosition = 1;
-//        } else if (attributeName.equals("volume")) {
-//            type = Attribute.Type.INT;
-//            attributePosition = 2;
-//        } else if (attributeName.equals("tweet")) {
-//            type = Attribute.Type.STRING;
-//            attributePosition = 1;
-//        }    else if (attributeName.equals("validity")) {
-//            type = Attribute.Type.BOOL;
-//            attributePosition = 3;
-//        }  else if (attributeName.equals("quantity")) {
-//            type = Attribute.Type.INT;
-//            attributePosition = 3;
-//        } else if (attributeName.equals("awards")) {
-//            type = Attribute.Type.LONG;
-//            attributePosition = 4;
-//        }
-
-        }
+    }
 
 
     private AbstractDefinition getDefinition(InputStream inputStream){

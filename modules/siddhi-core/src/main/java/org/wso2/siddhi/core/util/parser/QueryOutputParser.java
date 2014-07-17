@@ -69,9 +69,8 @@ public class QueryOutputParser {
     public static OutputCallback constructOutputCallback(OutputStream outStream, ConcurrentMap<String, StreamJunction> streamJunctionMap, SiddhiContext siddhiContext,
                                                          StreamDefinition outputStreamDefinition) {
         String id = outStream.getStreamId();
-//        Construct CallBack
+        //Construct CallBack
         if (outStream instanceof InsertIntoStream) {
-
             StreamJunction outputStreamJunction = streamJunctionMap.get(id);
             if (outputStreamJunction == null) {
                 outputStreamJunction = new StreamJunction(id, siddhiContext.getThreadPoolExecutor());
@@ -80,10 +79,11 @@ public class QueryOutputParser {
             return new InsertIntoStreamCallback(outputStreamJunction, outputStreamDefinition);
 
         } else if (outStream instanceof DeleteStream) {
+            //TODO: else
             return null;
         } else if (outStream instanceof UpdateStream) {
+            //TODO: else
             return null;
-
         } else {
             throw new QueryCreationException(outStream.getClass().getName() + " not supported");
         }

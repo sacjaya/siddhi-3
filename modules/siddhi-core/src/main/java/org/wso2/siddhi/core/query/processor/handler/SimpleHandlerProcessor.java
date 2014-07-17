@@ -26,10 +26,12 @@ import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 import org.wso2.siddhi.query.api.query.input.InputStream;
 
+import java.util.List;
+
 
 public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProcessingElement{
 
-    private Disruptor disruptor;
+    private List<Disruptor> disruptorList;
     private QuerySelector next;
     private FilterProcessor filterProcessor;
     private InputStream inputStream ;
@@ -42,6 +44,11 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
     @Override
     public void receive(StreamEvent streamEvent) {
               processHandler(streamEvent);
+    }
+
+    @Override
+    public void setDisruptorList(List<Disruptor> disruptorList) {
+        this.disruptorList = disruptorList;
     }
 
     protected void processHandler(StreamEvent streamEvent) {
@@ -61,12 +68,8 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
     }
 
     @Override
-    public Disruptor getDisruptor() {
-        return disruptor;
-    }
-
-    public void setDisruptor(Disruptor disruptor){
-         this.disruptor = disruptor;
+    public List<Disruptor> getDisruptorList() {
+        return disruptorList;
     }
 
     public void setNext(QuerySelector querySelector) {

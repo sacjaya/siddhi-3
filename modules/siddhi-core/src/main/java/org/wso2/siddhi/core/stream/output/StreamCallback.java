@@ -22,10 +22,12 @@ import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.stream.StreamReceiver;
 
+import java.util.List;
+
 public abstract class StreamCallback implements StreamReceiver {
 
     private String streamId;
-    private Disruptor disruptor;
+    private List<Disruptor> disruptorList;
 
 
     public void receive(StreamEvent streamEvent) {
@@ -34,7 +36,7 @@ public abstract class StreamCallback implements StreamReceiver {
 
 
     private void send(StreamEvent event) {
-        receive(event.toArray());
+       receive(event.toArray());
     }
 
     public abstract void receive(Event[] events);
@@ -47,12 +49,12 @@ public abstract class StreamCallback implements StreamReceiver {
         return streamId;
     }
 
-    public void setDisruptor(Disruptor disruptor) {
-        this.disruptor = disruptor;
+    public void setDisruptorList(List<Disruptor> disruptorList) {
+        this.disruptorList = disruptorList;
     }
 
-    public Disruptor getDisruptor() {
-        return disruptor;
+    public List<Disruptor> getDisruptorList() {
+        return disruptorList;
     }
 
 }

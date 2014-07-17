@@ -18,23 +18,63 @@
 package org.wso2.siddhi.core.query;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
+import org.wso2.siddhi.core.partition.executor.ValuePartitionExecutor;
 import org.wso2.siddhi.core.query.creator.QueryCreator;
 import org.wso2.siddhi.core.query.processor.PreSelectProcessingElement;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.util.QueryPartComposite;
+import org.wso2.siddhi.core.util.parser.ExecutorParser;
+import org.wso2.siddhi.query.api.condition.ConditionValidator;
+import org.wso2.siddhi.query.api.expression.ExpressionValidator;
+import org.wso2.siddhi.query.api.partition.Partition;
+import org.wso2.siddhi.query.api.partition.PartitionType;
+import org.wso2.siddhi.query.api.partition.RangePartitionType;
+import org.wso2.siddhi.query.api.partition.ValuePartitionType;
+import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
+import org.wso2.siddhi.query.api.query.input.InputStream;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class QueryPartitioner {
     private final QueryCreator queryCreator;
+    private List<List<PartitionExecutor>> partitionExecutors = new ArrayList<List<PartitionExecutor>>();
+    private ConcurrentHashMap<String, List<HandlerProcessor>> partitionMap = new ConcurrentHashMap<String, List<HandlerProcessor>>();
     private List<QuerySelector> querySelectorList;
 
-    public QueryPartitioner(QueryCreator queryCreator, List<QuerySelector> querySelectorList,
+    public QueryPartitioner(Partition partition, QueryCreator queryCreator, List<QuerySelector> querySelectorList,
                             SiddhiContext siddhiContext) {
         this.queryCreator = queryCreator;
         this.querySelectorList = querySelectorList;
 
+        if (partition != null) {
+
+            InputStream inputStream = queryCreator.getInputStream();
+            if(inputStream instanceof BasicSingleInputStream){
+
+                ArrayList<PartitionExecutor> executorList = new ArrayList<PartitionExecutor>();
+                partitionExecutors.add(executorList);
+
+                for (PartitionType partitionType : partition.getPartitionTypeList()) {   ((ValuePartitionType) partitionType).getStreamId() ;
+                    Map<String, Set<String>> dependencyMap;
+                    if (partitionType instanceof ValuePartitionType) {
+                        dependencyMap = ExpressionValidator.getDependency(((ValuePartitionType) partitionType).getExpression());
+                        if (dependencyMap.isEmpty() ||  ((ValuePartitionType) partitionType).getStreamId().equals(((BasicSingleInputStream) inputStream).getStreamId())) {
+                            executorList.add(new ValuePartitionExecutor(ExecutorParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(), true, siddhiContext, inputStream)));
+                        }
+                    } else {
+                          //TODO: range partitioning
+//                        dependencyMap = ConditionValidator.getDependency(((RangePartitionType) partitionType).ggetCondition());
+//                        if (dependencyMap.isEmpty() || dependencyMap.contains(queryEventSource.getSourceId())) {
+//                            executorList.add(new RangePartitionExecutor(ExecutorParser.parseCondition(((RangePartitionType) partitionType).getCondition(), tempQueryEventSourceList, queryEventSource.getSourceId(), eventTableMap, true, siddhiContext), ((RangePartitionType) partitionType).getPartitionKey()));
+//                        }
+                    }
+                }
+            }
+            //TODO: else
+        }
     }
 
     public List<HandlerProcessor> constructPartition() {
@@ -46,4 +86,17 @@ public class QueryPartitioner {
         return queryPartComposite.getHandlerProcessorList();
     }
 
+    public List<List<PartitionExecutor>> getPartitionExecutors() {
+        return partitionExecutors;
+    }
+
+    public HandlerProcessor newPartition(int handlerId, String partitionKey) {
+        List<HandlerProcessor> handlerProcessorList = partitionMap.get(partitionKey);
+        if (handlerProcessorList == null) {
+            handlerProcessorList = constructPartition();
+            partitionMap.put(partitionKey, handlerProcessorList);
+        }
+        return handlerProcessorList.get(handlerId);
+
+    }
 }

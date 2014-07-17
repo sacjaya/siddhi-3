@@ -25,6 +25,7 @@ import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.event.disruptor.util.SiddhiEventFactory;
 import org.wso2.siddhi.core.event.disruptor.util.SiddhiEventPublishTranslator;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
+import org.wso2.siddhi.core.query.processor.handler.PartitionHandlerProcessor;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -45,10 +46,20 @@ public class StreamJunction {
 
 
     public void send(StreamEvent allEvents) {
+
         Event event = (Event) allEvents;
         for (StreamReceiver streamReceiver : streamReceivers) {
             if (distruptorEnabled) {
-                streamReceiver.getDisruptor().publishEvent(new SiddhiEventPublishTranslator(event));
+                if(streamReceiver instanceof PartitionHandlerProcessor){
+
+                    for(String key:((PartitionHandlerProcessor) streamReceiver).getPartitionKeys(event)){
+                        int disruptorNo =Math.abs(key.hashCode())%((PartitionHandlerProcessor) streamReceiver).getDisruptorsSize();
+                        streamReceiver.getDisruptorList().get(disruptorNo).publishEvent(new SiddhiEventPublishTranslator(event));
+                    }
+
+                } else {
+                    streamReceiver.getDisruptorList().get(0).publishEvent(new SiddhiEventPublishTranslator(event));
+                }
             } else {
                 streamReceiver.receive(allEvents);
             }
@@ -58,10 +69,29 @@ public class StreamJunction {
 
     public synchronized void addEventFlow(StreamReceiver streamReceiver) {
         if (distruptorEnabled) {
-            Disruptor<Event> disruptor = new Disruptor<Event>(factory, bufferSize, threadPoolExecutor, ProducerType.SINGLE, new SleepingWaitStrategy());
-            streamReceiver.setDisruptor(disruptor);
-            disruptor.handleEventsWith(new StreamHandler(streamReceiver));
-            disruptor.start();
+
+            if(streamReceiver instanceof PartitionHandlerProcessor){
+               List<Disruptor> disruptorList= new CopyOnWriteArrayList<Disruptor>();
+               for (int i=0;i<((PartitionHandlerProcessor) streamReceiver).getDisruptorsSize();i++) {
+                    Disruptor<Event> disruptor = new Disruptor<Event>(factory, bufferSize, threadPoolExecutor, ProducerType.SINGLE, new SleepingWaitStrategy());
+                    disruptorList.add(disruptor);
+                    disruptor.handleEventsWith(new StreamHandler(streamReceiver));
+                    disruptor.start();
+               }
+               streamReceiver.setDisruptorList(disruptorList);
+
+
+
+            } else{
+
+                Disruptor<Event> disruptor = new Disruptor<Event>(factory, bufferSize, threadPoolExecutor, ProducerType.SINGLE, new SleepingWaitStrategy());
+                List<Disruptor> disruptorList= new CopyOnWriteArrayList<Disruptor>();
+                disruptorList.add(disruptor);
+                streamReceiver.setDisruptorList(disruptorList);
+                disruptor.handleEventsWith(new StreamHandler(streamReceiver));
+                disruptor.start();
+            }
+
         }
         //in reverse order to execute the later states first to overcome to dependencies of count states
         streamReceivers.add(0, streamReceiver);
@@ -70,7 +100,9 @@ public class StreamJunction {
     public synchronized void removeEventFlow(HandlerProcessor queryStreamProcessor) {
         streamReceivers.remove(queryStreamProcessor);
         if (distruptorEnabled) {
-            queryStreamProcessor.getDisruptor().shutdown();
+            for(Disruptor disruptor: queryStreamProcessor.getDisruptorList()){
+                    disruptor.shutdown();
+            }
         }
     }
 
