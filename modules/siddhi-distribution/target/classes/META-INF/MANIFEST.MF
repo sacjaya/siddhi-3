@@ -211,7 +211,7 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  iddhi.query.api.query.input.handler;uses:="org.wso2.siddhi.query.api.co
  ndition,org.wso2.siddhi.query.api.extension,org.wso2.siddhi.query.api.e
  xpression";version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.query.output.r
- atelimit.time;uses:="org.wso2.siddhi.core.event,org.wso2.siddhi.core.qu
+ atelimit.within;uses:="org.wso2.siddhi.core.event,org.wso2.siddhi.core.qu
  ery.output.ratelimit,org.wso2.siddhi.core.event.in";version="3.0.0.SNAP
  SHOT",org.wso2.siddhi.core.query.selector.attribute.handler.min;uses:="
  org.wso2.siddhi.query.api.definition,org.wso2.siddhi.core.query.selecto

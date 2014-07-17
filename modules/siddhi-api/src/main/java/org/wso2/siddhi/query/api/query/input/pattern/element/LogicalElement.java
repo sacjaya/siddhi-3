@@ -16,18 +16,28 @@
  */
 package org.wso2.siddhi.query.api.query.input.pattern.element;
 
+import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
 import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 
+
 public class LogicalElement implements PatternElement {
-    BasicSingleInputStream standardStream1;
-    Type type;
-    BasicSingleInputStream standardStream2;
+    protected BasicSingleInputStream standardStream1;
+    protected Type type;
+    protected BasicSingleInputStream standardStream2;
+    protected TimeConstant within;
 
     public LogicalElement(BasicSingleInputStream standardStream1, Type type,
                           BasicSingleInputStream standardStream2) {
         this.standardStream1 = standardStream1;
         this.type = type;
         this.standardStream2 = standardStream2;
+    }
+
+    public LogicalElement(BasicSingleInputStream standardStream1, Type type, BasicSingleInputStream standardStream2, TimeConstant within) {
+        this.standardStream1 = standardStream1;
+        this.type = type;
+        this.standardStream2 = standardStream2;
+        this.within = within;
     }
 
     public BasicSingleInputStream getStandardStream1() {
@@ -42,7 +52,13 @@ public class LogicalElement implements PatternElement {
         return type;
     }
 
-    public enum Type {
-        AND, OR
+    @Override
+    public TimeConstant getWithin() {
+        return within;
     }
+
+    public enum Type {
+        AND, OR, NOT
+    }
+
 }

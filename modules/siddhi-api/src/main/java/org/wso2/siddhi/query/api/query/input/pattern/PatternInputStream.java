@@ -16,9 +16,9 @@
  */
 package org.wso2.siddhi.query.api.query.input.pattern;
 
-import org.wso2.siddhi.query.api.expression.constant.Constant;
-import org.wso2.siddhi.query.api.query.input.InputStream;
+import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
 import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
+import org.wso2.siddhi.query.api.query.input.InputStream;
 import org.wso2.siddhi.query.api.query.input.pattern.element.CountElement;
 import org.wso2.siddhi.query.api.query.input.pattern.element.FollowedByElement;
 import org.wso2.siddhi.query.api.query.input.pattern.element.LogicalElement;
@@ -32,12 +32,16 @@ public class PatternInputStream implements InputStream, PatternElement {
 
     private PatternElement patternElement;
     private List<String> streamIdList;
-    private Constant within;
+    private TimeConstant within;
 
-    public PatternInputStream(PatternElement patternElement, Constant within) {
+    public PatternInputStream(PatternElement patternElement, TimeConstant within) {
         this.patternElement = patternElement;
         this.streamIdList = new ArrayList<String>(collectStreamIds(patternElement, new HashSet<String>()));
         this.within = within;
+    }
+
+    public PatternInputStream(PatternElement patternElement) {
+        this(patternElement, null);
     }
 
     @Override
@@ -52,7 +56,7 @@ public class PatternInputStream implements InputStream, PatternElement {
 //        return constructEventStreamList(patternElement, streamTableDefinitionMap, queryEventSources);
 //    }
 
-    public Constant getWithin() {
+    public TimeConstant getWithin() {
         return within;
     }
 

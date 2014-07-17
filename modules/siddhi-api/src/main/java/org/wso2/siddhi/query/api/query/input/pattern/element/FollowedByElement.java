@@ -17,16 +17,26 @@
 */
 package org.wso2.siddhi.query.api.query.input.pattern.element;
 
+import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
+
 public class FollowedByElement implements PatternElement {
     private PatternElement patternElement;
     private PatternElement followedByPatternElement;
+    private TimeConstant within;
 
 
     public FollowedByElement(PatternElement patternElement,
-                             PatternElement followedByPatternElement) {
+                             PatternElement followedByPatternElement, TimeConstant within) {
         this.patternElement = patternElement;
         this.followedByPatternElement = followedByPatternElement;
+        this.within = within;
     }
+
+    public FollowedByElement(PatternElement patternElement,
+                             PatternElement followedByPatternElement) {
+        this(patternElement, followedByPatternElement, null);
+    }
+
 
     public PatternElement getPatternElement() {
         return patternElement;
@@ -34,5 +44,10 @@ public class FollowedByElement implements PatternElement {
 
     public PatternElement getFollowedByPatternElement() {
         return followedByPatternElement;
+    }
+
+    @Override
+    public TimeConstant getWithin() {
+        return within;
     }
 }

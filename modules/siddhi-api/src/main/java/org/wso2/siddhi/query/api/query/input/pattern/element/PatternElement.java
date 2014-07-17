@@ -17,5 +17,9 @@
 */
 package org.wso2.siddhi.query.api.query.input.pattern.element;
 
+import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
+
 public interface PatternElement {
+
+    public TimeConstant getWithin();
 }
