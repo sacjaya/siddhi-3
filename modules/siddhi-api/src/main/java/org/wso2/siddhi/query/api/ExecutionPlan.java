@@ -19,15 +19,21 @@ package org.wso2.siddhi.query.api;
 
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.definition.TableDefinition;
+import org.wso2.siddhi.query.api.exception.CreateExecutionPlanException;
 import org.wso2.siddhi.query.api.query.Query;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ExecutionPlan {
     private String name;
 
     //todo manage the variables
-    private StreamDefinition streamDefinition;
+    private List<Query> queryList;
+    private Map<String, StreamDefinition> streamDefinitionMap;
     private TableDefinition tableDefinition;
-    private Query query;
 
     public ExecutionPlan(String name) {
         this.name = name;
@@ -44,8 +50,14 @@ public class ExecutionPlan {
         return new ExecutionPlan();
     }
 
-    public ExecutionPlan defineStream(StreamDefinition streamDefinition) {
-        this.streamDefinition = streamDefinition;
+    public ExecutionPlan defineStream(StreamDefinition streamDefinition) throws CreateExecutionPlanException {
+        if (streamDefinition == null) {
+            throw new CreateExecutionPlanException("Stream definition should not be null");
+        }
+        if (streamDefinitionMap == null) {
+            streamDefinitionMap = new HashMap<String, StreamDefinition>();
+        }
+        this.streamDefinitionMap.put(streamDefinition.getStreamId(), streamDefinition);
         return this;
     }
 
@@ -54,8 +66,24 @@ public class ExecutionPlan {
         return this;
     }
 
-    public ExecutionPlan addQuery(Query query) {
-        this.query = query;
+    public ExecutionPlan addQuery(Query query) throws CreateExecutionPlanException {
+        if (query == null) {
+            throw new CreateExecutionPlanException("Query should not be null");
+        }
+        if (queryList == null) {
+            queryList = new ArrayList<Query>();
+        }
+        this.queryList.add(query);
         return this;
     }
+
+    public List<Query> getQueryList() {
+        return queryList;
+    }
+
+    public Map<String, StreamDefinition> getStreamDefinitionMap() {
+        return streamDefinitionMap;
+    }
+
+
 }
