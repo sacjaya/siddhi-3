@@ -35,10 +35,6 @@ public class StreamDefinition extends AbstractDefinition {
         return this;
     }
 
-    public String getStreamId() {
-        return id;
-    }
-
     @Override
     public String toString() {
         return "StreamDefinition{" +

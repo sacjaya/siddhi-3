@@ -75,7 +75,7 @@ public class SelectorValidator {
             for (StreamDefinition definition : streamDefinitionMap.values()) {
                 for (Attribute attribute : definition.getAttributeList()) {
                     temp.attribute(attribute.getName(), attribute.getType());
-                    selector.select(attribute.getName(), new Variable(definition.getStreamId(), attribute.getName())); //TODO:discuss for join
+                    selector.select(attribute.getName(), new Variable(definition.getId(), attribute.getName())); //TODO:discuss for join
                 }
             }
         }

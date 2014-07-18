@@ -28,20 +28,30 @@ import org.wso2.siddhi.query.api.query.output.OutputRate;
 import org.wso2.siddhi.query.api.query.output.stream.*;
 import org.wso2.siddhi.query.api.query.selection.Selector;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Query {
 
     private InputStream inputStream;
     private Selector selector = new Selector();
     private OutputStream outputStream;
     private OutputRate outputRate;
+    private Map<String,String> properties = new HashMap<String,String>();
 
     public static Query query() {
         return new Query();
     }
 
-    public Query property(String key, String value) {
+    public  Query property(String key, String value) {
+       //todo handel
+       properties.put(key,value);
+       return this;
+    }
+
+    public  String getPropertyValue(String key) {
         //todo handel
-        return this;
+        return properties.get(key);
     }
 
     public Query from(InputStream inputStream) {

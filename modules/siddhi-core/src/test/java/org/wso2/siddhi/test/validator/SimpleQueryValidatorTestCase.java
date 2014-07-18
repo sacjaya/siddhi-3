@@ -52,17 +52,17 @@ public class SimpleQueryValidatorTestCase {
         testDefinition3 = StreamDefinition.id("TwitterStream").attribute("symbol", Attribute.Type.STRING).attribute("wordCount", Attribute.Type.INT);
 
         definitionMap = new HashMap<String, StreamDefinition>(2);
-        definitionMap.put(testDefinition1.getStreamId(), testDefinition1);
-        definitionMap.put(testDefinition2.getStreamId(), testDefinition2);
-        definitionMap.put(testDefinition3.getStreamId(), testDefinition3);
+        definitionMap.put(testDefinition1.getId(), testDefinition1);
+        definitionMap.put(testDefinition2.getId(), testDefinition2);
+        definitionMap.put(testDefinition3.getId(), testDefinition3);
 
         streamDefinitionList = new ArrayList<StreamDefinition>();
         streamDefinitionList.add(testDefinition1);
         streamDefinitionList.add(testDefinition2);
         renameMap = new HashMap<String, String>(2);
-        renameMap.put(testDefinition1.getStreamId(), testDefinition1.getStreamId());
-        renameMap.put(testDefinition2.getStreamId(), testDefinition2.getStreamId());
-        renameMap.put(testDefinition3.getStreamId(), testDefinition3.getStreamId());
+        renameMap.put(testDefinition1.getId(), testDefinition1.getId());
+        renameMap.put(testDefinition2.getId(), testDefinition2.getId());
+        renameMap.put(testDefinition3.getId(), testDefinition3.getId());
 
         query = new Query();
 
@@ -137,8 +137,8 @@ public class SimpleQueryValidatorTestCase {
     @Test
     public void SelectorValidatorTest() throws ValidatorException {
         Map<String, StreamDefinition> sampleRenameMap = new HashMap<String, StreamDefinition>();
-        sampleRenameMap.put(testDefinition1.getStreamId(), testDefinition1);
-        sampleRenameMap.put(testDefinition3.getStreamId(), testDefinition3);
+        sampleRenameMap.put(testDefinition1.getId(), testDefinition1);
+        sampleRenameMap.put(testDefinition3.getId(), testDefinition3);
         SelectorValidator.validate(query.getSelector(), sampleRenameMap);
         query.getSelector();
     }

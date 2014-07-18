@@ -23,9 +23,7 @@ import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.input.JoinInputStream;
 import org.wso2.siddhi.query.api.query.input.pattern.Pattern;
-import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,17 +50,17 @@ public class PatternValidatorTestCase {
         testDefinition3 = StreamDefinition.id("TwitterStream").attribute("symbol", Attribute.Type.STRING).attribute("wordCount", Attribute.Type.INT);
 
         definitionMap = new HashMap<String, StreamDefinition>(2);
-        definitionMap.put(testDefinition1.getStreamId(), testDefinition1);
-        definitionMap.put(testDefinition2.getStreamId(), testDefinition2);
-        definitionMap.put(testDefinition3.getStreamId(), testDefinition3);
+        definitionMap.put(testDefinition1.getId(), testDefinition1);
+        definitionMap.put(testDefinition2.getId(), testDefinition2);
+        definitionMap.put(testDefinition3.getId(), testDefinition3);
 
         streamDefinitionList = new ArrayList<StreamDefinition>();
         streamDefinitionList.add(testDefinition1);
         streamDefinitionList.add(testDefinition2);
         renameMap = new HashMap<String, String>(2);
-        renameMap.put(testDefinition1.getStreamId(), testDefinition1.getStreamId());
-        renameMap.put(testDefinition2.getStreamId(), testDefinition2.getStreamId());
-        renameMap.put(testDefinition3.getStreamId(), testDefinition3.getStreamId());
+        renameMap.put(testDefinition1.getId(), testDefinition1.getId());
+        renameMap.put(testDefinition2.getId(), testDefinition2.getId());
+        renameMap.put(testDefinition3.getId(), testDefinition3.getId());
 
         query = new Query();
 
