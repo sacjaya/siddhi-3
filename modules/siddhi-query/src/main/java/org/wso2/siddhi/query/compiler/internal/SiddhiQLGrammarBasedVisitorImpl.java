@@ -34,8 +34,7 @@ public class SiddhiQLGrammarBasedVisitorImpl extends SiddhiQLGrammarBaseVisitor 
     @Override
     public Object visitDefinitionStream(@NotNull SiddhiQLGrammarParser.DefinitionStreamContext ctx) {
 
-        StreamDefinition streamDefinition = QueryFactory.createStreamDefinition();
-        streamDefinition.name(ctx.source().getText());
+        StreamDefinition streamDefinition = StreamDefinition.id(ctx.source().getText());
 
         List<Attribute> attributeList = (List<Attribute>) visitDefinition(ctx.definition());
         if (attributeList != null) {
