@@ -64,7 +64,7 @@ public class PatternValidatorTestCase {
 
         query = new Query();
 
-        query.from(
+        /*query.from(
                 Query.patternInputStream(
                         Pattern.followedBy(
                                 Query.inputStream("StockStream", "e1").filter(Condition.compare(Expression.variable("price"),
@@ -94,7 +94,7 @@ public class PatternValidatorTestCase {
                                 Expression.value(50)))
 
 
-        );
+        );*/
 
 
         /*executionPlan = new ExecutionPlan("testExecutionPlan");
