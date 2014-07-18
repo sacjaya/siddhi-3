@@ -60,7 +60,7 @@ public class FilterTestCase {
         log.info("Filter test1");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan =  new ExecutionPlan();
+        ExecutionPlan executionPlan =  new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -104,7 +104,7 @@ public class FilterTestCase {
     public void testFilterQuery2() throws InterruptedException, ValidatorException, CreateExecutionPlanException {
         log.info("Filter test2");
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan =  new ExecutionPlan();
+        ExecutionPlan executionPlan =  new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -151,7 +151,7 @@ public class FilterTestCase {
         log.info("Filter test3");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -195,7 +195,7 @@ public class FilterTestCase {
         log.info("Filter test4");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -248,7 +248,7 @@ public class FilterTestCase {
 
         log.info("Filter test5");
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -295,7 +295,7 @@ public class FilterTestCase {
         log.info("Filter test6");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -347,7 +347,7 @@ public class FilterTestCase {
         log.info("Filter test7");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -388,7 +388,7 @@ public class FilterTestCase {
         log.info("Filter test8");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -428,7 +428,7 @@ public class FilterTestCase {
         log.info("Filter test9");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -471,7 +471,7 @@ public class FilterTestCase {
         log.info("Filter test10");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -511,7 +511,7 @@ public class FilterTestCase {
         log.info("Filter test11");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
         
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -550,7 +550,7 @@ public class FilterTestCase {
         log.info("Filter test12");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan =  new ExecutionPlan();
+        ExecutionPlan executionPlan =  new ExecutionPlan("plan1");
         
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -590,7 +590,7 @@ public class FilterTestCase {
         log.info("Filter test13");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT).attribute("validity", Attribute.Type.BOOL);
         executionPlan.defineStream(streamDefinition);
@@ -628,7 +628,7 @@ public class FilterTestCase {
         log.info("Filter test14");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -668,7 +668,7 @@ public class FilterTestCase {
         log.info("Filter test15");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -708,7 +708,7 @@ public class FilterTestCase {
         log.info("Filter test16");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -748,7 +748,7 @@ public class FilterTestCase {
         log.info("Filter test17");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -788,7 +788,7 @@ public class FilterTestCase {
         log.info("Filter test18");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -827,7 +827,7 @@ public class FilterTestCase {
         log.info("Filter test19");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.DOUBLE);
         executionPlan.defineStream(streamDefinition);
@@ -865,7 +865,7 @@ public class FilterTestCase {
         log.info("Filter test20");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.DOUBLE).attribute("quantity", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -903,7 +903,7 @@ public class FilterTestCase {
         log.info("Filter test21");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.DOUBLE).attribute("quantity", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -944,7 +944,7 @@ public class FilterTestCase {
         log.info("Filter test22");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.DOUBLE).attribute("quantity", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -982,7 +982,7 @@ public class FilterTestCase {
         log.info("Filter test23");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.DOUBLE).attribute("quantity", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -1023,7 +1023,7 @@ public class FilterTestCase {
         log.info("Filter test24");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT).attribute("quantity", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -1064,7 +1064,7 @@ public class FilterTestCase {
         log.info("Filter test25");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT).attribute("quantity", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);

@@ -60,7 +60,7 @@ public class PassThroughTestCase {
 
         log.info("stream callback test");
 
-        ExecutionPlan executionPlan = new ExecutionPlan();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
         executionPlan.defineStream(StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT));
 
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -91,7 +91,7 @@ public class PassThroughTestCase {
         log.info("Pass through query");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan =  new ExecutionPlan();
+        ExecutionPlan executionPlan =  new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition =  StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
@@ -150,7 +150,7 @@ public class PassThroughTestCase {
         log.info("Pass through query 2");
 
         SiddhiManager siddhiManager = new SiddhiManager();
-        ExecutionPlan executionPlan =  new ExecutionPlan();
+        ExecutionPlan executionPlan =  new ExecutionPlan("plan1");
 
         StreamDefinition streamDefinition =  StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
         executionPlan.defineStream(streamDefinition);
