@@ -20,6 +20,7 @@ package org.wso2.siddhi.query.api;
 import org.junit.Test;
 import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.exception.AttributeAlreadyExistException;
+import org.wso2.siddhi.query.api.exception.CreateExecutionPlanException;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.query.Query;
 
@@ -31,7 +32,7 @@ public class SimpleQueryTestCase {
 //    having avgPrice>50
 
     @Test
-    public void testCreatingFilterQuery() {
+    public void testCreatingFilterQuery() throws CreateExecutionPlanException {
         Query query = Query.query();
         query.from(
                 Query.inputStream("StockStream").
