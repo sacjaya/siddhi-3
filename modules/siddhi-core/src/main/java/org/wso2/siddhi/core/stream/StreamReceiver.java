@@ -27,9 +27,9 @@ public interface StreamReceiver {
     void receive(StreamEvent streamEvent) ;
 
     //list or 1 disruptor
-    void setDisruptorList(List<Disruptor> disruptorList);
+    void setDisruptors(Disruptor[] disruptors);
 
     String getStreamId();
 
-    List<Disruptor> getDisruptorList();
+    Disruptor[] getDisruptors();
 }

@@ -32,10 +32,10 @@ public class JoinQueryTestCase {
                 property("name", "Query1").property("summery", "Test Query").
                 from(
                         Query.joinInputStream(
-                                Query.inputStream("cseEventStream").
+                                Query.inputStream("s1", "cseEventStream").
                                         window("lengthBatch", Expression.value(50)),
                                 JoinInputStream.Type.JOIN,
-                                Query.inputStream("cseEventStream").
+                                Query.inputStream("s2", "cseEventStream").
                                         filter(Condition.and(
                                                         Condition.compare(
                                                                 Expression.add(Expression.value(7), Expression.value(9.5)),
@@ -48,15 +48,15 @@ public class JoinQueryTestCase {
                                                 )
                                         ).window("lengthBatch", Expression.value(50)),
                                 Condition.compare(
-                                        Expression.variable("cseEventStream", "price"),
+                                        Expression.variable("s1", "price"),
                                         Condition.Operator.EQUAL,
-                                        Expression.variable("cseEventStream", "price"))
+                                        Expression.variable("s2", "price"))
                         )
                 ).
                 select(
                         Query.outputSelector().
                                 select("symbol", Expression.variable("cseEventStream", "symbol")).
-                                select("", null, Expression.variable("cseEventStream", "symbol")).
+                                select(null, Expression.variable("cseEventStream", "symbol")).
                                 groupBy("cseEventStream", "symbol").
                                 having(
                                         Condition.compare(

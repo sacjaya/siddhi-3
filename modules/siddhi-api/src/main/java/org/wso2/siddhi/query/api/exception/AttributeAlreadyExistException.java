@@ -17,11 +17,7 @@
 */
 package org.wso2.siddhi.query.api.exception;
 
-public class AttributeAlreadyExistException extends RuntimeException {
-
-    public AttributeAlreadyExistException() {
-        super();
-    }
+public class AttributeAlreadyExistException extends ExecutionPlanValidationException {
 
     public AttributeAlreadyExistException(String message) {
         super(message);

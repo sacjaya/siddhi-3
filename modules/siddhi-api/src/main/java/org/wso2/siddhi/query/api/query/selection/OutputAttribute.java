@@ -15,14 +15,31 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.query.api.query.selection.attribute;
+package org.wso2.siddhi.query.api.query.selection;
+
+import org.wso2.siddhi.query.api.expression.Expression;
+import org.wso2.siddhi.query.api.expression.ExpressionValidator;
 
 import java.util.Map;
 import java.util.Set;
 
-public interface OutputAttribute {
+public class OutputAttribute {
 
-    String getRename();
+    private String rename;
+    private Expression expression;
+
+    public OutputAttribute(String rename, Expression expression) {
+        this.rename = rename;
+        this.expression = expression;
+    }
+
+    public String getRename() {
+        return rename;
+    }
+
+    public Expression getExpression() {
+        return expression;
+    }
 
     /**
      * Returns a set of strings which are the names of the variables contained
@@ -30,6 +47,8 @@ public interface OutputAttribute {
      *
      * @return a set of strings that are dependencies of an attribute
      */
-    public Map<String, Set<String>> getDependency();
+    public Map<String, Set<String>> getDependency() {
+        return ExpressionValidator.getDependency(expression);
+    }
 
 }

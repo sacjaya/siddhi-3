@@ -21,10 +21,6 @@ import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.exception.AttributeAlreadyExistException;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.expression.Variable;
-import org.wso2.siddhi.query.api.query.selection.attribute.ComplexAttribute;
-import org.wso2.siddhi.query.api.query.selection.attribute.OutputAttribute;
-import org.wso2.siddhi.query.api.query.selection.attribute.OutputAttributeExtension;
-import org.wso2.siddhi.query.api.query.selection.attribute.SimpleAttribute;
 
 import java.util.*;
 
@@ -34,7 +30,14 @@ public class Selector {
     private Condition havingCondition;
 
     public Selector select(String rename, Expression expression) {
-        OutputAttribute outputAttribute = new SimpleAttribute(rename, expression);
+        OutputAttribute outputAttribute = new OutputAttribute(rename, expression);
+        checkSelection(outputAttribute);
+        selectionList.add(outputAttribute);
+        return this;
+    }
+
+    public Selector select(Variable variable) {
+        OutputAttribute outputAttribute = new OutputAttribute(variable.getStreamId(), variable);
         checkSelection(outputAttribute);
         selectionList.add(outputAttribute);
         return this;
@@ -46,20 +49,6 @@ public class Selector {
                 throw new AttributeAlreadyExistException(attribute.getRename() + " is already defined as an output attribute ");
             }
         }
-    }
-
-    public Selector select(String rename, String attributeName, Expression... expressions) {
-        OutputAttribute outputAttribute = new ComplexAttribute(rename, attributeName, expressions);
-        checkSelection(outputAttribute);
-        selectionList.add(outputAttribute);
-        return this;
-    }
-
-    public Selector select(String rename, String extensionNamespace, String extensionFunctionName, Expression... expressions) {
-        OutputAttribute outputAttribute = new OutputAttributeExtension(rename, extensionNamespace, extensionFunctionName, expressions);
-        checkSelection(outputAttribute);
-        selectionList.add(outputAttribute);
-        return this;
     }
 
     public Selector having(Condition condition) {

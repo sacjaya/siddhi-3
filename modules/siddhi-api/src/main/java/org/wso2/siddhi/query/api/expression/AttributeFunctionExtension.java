@@ -21,12 +21,12 @@ import org.wso2.siddhi.query.api.extension.Extension;
 
 import java.util.Arrays;
 
-public class ExpressionExtension extends FunctionExpression implements Extension {
+public class AttributeFunctionExtension extends AttributeFunction implements Extension {
 
     private String extensionName;
 
-    public ExpressionExtension(String extensionName, String functionName, Expression... parameters) {
-        super(functionName,parameters);
+    public AttributeFunctionExtension(String extensionName, String functionName, Expression... parameters) {
+        super(functionName, parameters);
         this.extensionName = extensionName;
     }
 
@@ -36,11 +36,13 @@ public class ExpressionExtension extends FunctionExpression implements Extension
 
     @Override
     public String toString() {
-        return "ExpressionExtension{" +
-               "extensionName='" + extensionName + '\'' +
-               ", functionName='" + functionName + '\'' +
-               '}';
+        return "AttributeFunction{" +
+                "extensionName='" + extensionName + '\'' +
+                ", functionName='" + functionName + '\'' +
+                ", parameters=" + Arrays.toString(parameters) +
+                '}';
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -51,7 +53,7 @@ public class ExpressionExtension extends FunctionExpression implements Extension
             return false;
         }
 
-        ExpressionExtension that = (ExpressionExtension) o;
+        AttributeFunctionExtension that = (AttributeFunctionExtension) o;
 
         if (extensionName != null ? !extensionName.equals(that.extensionName) : that.extensionName != null) {
             return false;

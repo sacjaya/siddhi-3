@@ -52,7 +52,7 @@ public class SimpleQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
-                        select("avgPrice", "avg", Expression.variable("symbol")).
+                        select("avgPrice", Expression.function("avg", Expression.variable("symbol"))).
                         groupBy("symbol").
                         having(Condition.compare(Expression.variable("avgPrice"),
                                 Condition.Operator.GREATER_THAN_EQUAL,
@@ -87,7 +87,7 @@ public class SimpleQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
-                        select("avgPrice", "avg", Expression.variable("symbol")).
+                        select("avgPrice", Expression.function("avg", Expression.variable("price"))).
                         groupBy("symbol").
                         having(Condition.compare(Expression.variable("avgPrice"),
                                 Condition.Operator.GREATER_THAN_EQUAL,
@@ -126,7 +126,7 @@ public class SimpleQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
-                        select("avgPrice", "avg", Expression.variable("symbol")).
+                        select("avgPrice", Expression.function("avg", Expression.variable("price"))).
                         groupBy("symbol").
                         having(Condition.compare(Expression.variable("avgPrice"),
                                 Condition.Operator.GREATER_THAN_EQUAL,
@@ -169,7 +169,7 @@ public class SimpleQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
-                        select("avgPrice", "avg", Expression.variable("symbol")).
+                        select("avgPrice", Expression.function("avg", Expression.variable("price"))).
                         groupBy("symbol").
                         having(Condition.compare(Expression.variable("avgPrice"),
                                 Condition.Operator.GREATER_THAN_EQUAL,
@@ -198,7 +198,7 @@ public class SimpleQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
-                        select("price", "avg", Expression.variable("symbol")).
+                        select("price", Expression.function("avg", Expression.variable("price"))).
                         select("price", Expression.variable("price")).
                         groupBy("symbol").
                         having(Condition.compare(Expression.variable("avgPrice"),
@@ -230,7 +230,7 @@ public class SimpleQueryTestCase {
                         select(
                                 Query.outputSelector().
                                         select("symbol", Expression.variable("symbol")).
-                                        select("avgPrice", "avg", Expression.variable("symbol"))
+                                        select("avgPrice", Expression.function("avg", Expression.variable("price")))
                         ).
                         returnStream()
         );
@@ -264,7 +264,7 @@ public class SimpleQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
-                        select("avgPrice", "avg", Expression.variable("symbol"))
+                        select("avgPrice", Expression.function("avg", Expression.variable("price")))
         );
         query.returnStream();
 
@@ -276,7 +276,7 @@ public class SimpleQueryTestCase {
         Query query = Query.query();
         query.from(
                 Query.inputStream("StockStream").
-                        filter(Condition.and(Condition.compare(Expression.extension("ext", "FooBarCond", Expression.value(7), Expression.value(9.5)),
+                        filter(Condition.and(Condition.compare(Expression.function("ext", "FooBarCond", Expression.value(7), Expression.value(9.5)),
                                                 Condition.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
                                         Condition.extension("ext", "BarCond", Expression.value(100),
@@ -288,7 +288,7 @@ public class SimpleQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
-                        select("avgPrice", "ext", "avg", Expression.variable("symbol"))
+                        select("avgPrice", Expression.function("ext", "avg", Expression.variable("price")))
         );
         query.returnStream();
 
@@ -311,7 +311,7 @@ public class SimpleQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
-                        select("avgPrice", "ext", "avg", Expression.variable("symbol"))
+                        select("avgPrice", Expression.function("ext", "avg", Expression.variable("symbol")))
         );
         query.returnStream();
 

@@ -18,16 +18,14 @@ package org.wso2.siddhi.query.api.query;
 
 import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.expression.constant.Constant;
+import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
 import org.wso2.siddhi.query.api.query.input.*;
 import org.wso2.siddhi.query.api.query.input.pattern.PatternInputStream;
 import org.wso2.siddhi.query.api.query.input.pattern.element.PatternElement;
 import org.wso2.siddhi.query.api.query.input.sequence.SequenceInputStream;
 import org.wso2.siddhi.query.api.query.input.sequence.element.SequenceElement;
 import org.wso2.siddhi.query.api.query.output.OutputRate;
-import org.wso2.siddhi.query.api.query.output.stream.DeleteStream;
-import org.wso2.siddhi.query.api.query.output.stream.InsertIntoStream;
-import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
-import org.wso2.siddhi.query.api.query.output.stream.UpdateStream;
+import org.wso2.siddhi.query.api.query.output.stream.*;
 import org.wso2.siddhi.query.api.query.selection.Selector;
 
 public class Query {
@@ -41,9 +39,9 @@ public class Query {
         return new Query();
     }
 
-    public  Query property(String key, String value) {
-       //todo handel
-       return this;
+    public Query property(String key, String value) {
+        //todo handel
+        return this;
     }
 
     public Query from(InputStream inputStream) {
@@ -66,9 +64,18 @@ public class Query {
         return this;
     }
 
-
     public Query insertInto(String outputStreamId) {
         this.outputStream = new InsertIntoStream(outputStreamId);
+        return this;
+    }
+
+    public Query insertIntoPartitioned(String outputStreamId, OutputStream.OutputEventsFor outputEventsFor) {
+        this.outputStream = new InsertIntoPartitionedStream(outputStreamId, outputEventsFor);
+        return this;
+    }
+
+    public Query insertIntoPartitioned(String outputStreamId) {
+        this.outputStream = new InsertIntoPartitionedStream(outputStreamId);
         return this;
     }
 
@@ -139,6 +146,21 @@ public class Query {
     }
 
     public static InputStream joinInputStream(SingleInputStream leftStream, JoinInputStream.Type type,
+                                              SingleInputStream rightStream,
+                                              Constant within,
+                                              JoinInputStream.EventTrigger trigger) {
+        return new JoinInputStream(leftStream, type, rightStream, null, within, trigger);
+    }
+
+    public static InputStream joinInputStream(SingleInputStream leftStream, JoinInputStream.Type type,
+                                              SingleInputStream rightStream,
+                                              Condition onCompare,
+                                              JoinInputStream.EventTrigger trigger) {
+        return new JoinInputStream(leftStream, type, rightStream, onCompare, null, trigger);
+    }
+
+
+    public static InputStream joinInputStream(SingleInputStream leftStream, JoinInputStream.Type type,
                                               SingleInputStream rightStream, Constant within) {
         return new JoinInputStream(leftStream, type, rightStream, null, within, JoinInputStream.EventTrigger.ALL);
     }
@@ -157,7 +179,7 @@ public class Query {
         return new PatternInputStream(patternElement, null);
     }
 
-    public static PatternInputStream patternInputStream(PatternElement patternElement, Constant within) {
+    public static PatternInputStream patternInputStream(PatternElement patternElement, TimeConstant within) {
         return new PatternInputStream(patternElement, within);
     }
 
