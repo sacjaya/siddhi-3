@@ -13,6 +13,7 @@
 package org.wso2.siddhi.core.util.validate;
 
 import org.wso2.siddhi.core.exception.ValidatorException;
+import org.wso2.siddhi.core.util.parser.ExecutorParser;
 import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
@@ -39,10 +40,12 @@ public class InStreamValidator {
             for (StreamHandler handler : ((SingleInputStream) inputStream).getStreamHandlers()) {
                 if (handler instanceof Filter) {
                     Condition condition = ((Filter) handler).getFilterCondition();
-                    ValidatorUtil.validateCondition(condition, tempDefinitionMap, defaultDefinition);
+                    //ValidatorUtil.validateCondition(condition, tempDefinitionMap, defaultDefinition);
+                    ExecutorParser.parseCondition(condition, defaultDefinition, null, tempDefinitionMap);
                 } else if (handler instanceof Window) {
                     for (Expression expression : ((Window) handler).getParameters()) {
-                        ValidatorUtil.validateCompareExpression(expression, tempDefinitionMap, defaultDefinition);
+                        //ValidatorUtil.validateCompareExpression(expression, tempDefinitionMap, defaultDefinition);
+                        ExecutorParser.parseExpression(expression, defaultDefinition, null, tempDefinitionMap);
                     }
                 } else if (handler instanceof StreamFunction) {
                     //TODO: handle. get output attr names and types and set them in temp map
