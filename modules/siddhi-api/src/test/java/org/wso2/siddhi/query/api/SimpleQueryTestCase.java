@@ -62,7 +62,7 @@ public class SimpleQueryTestCase {
         );
         query.insertInto("OutStockStream");
 
-        ExecutionPlan.executionPlan().addQuery(query);
+        ExecutionPlan.executionPlan("test").addQuery(query);
 
     }
 

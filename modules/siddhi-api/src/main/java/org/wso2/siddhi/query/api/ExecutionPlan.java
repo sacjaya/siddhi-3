@@ -29,42 +29,34 @@ import java.util.List;
 import java.util.Map;
 
 public class ExecutionPlan {
-    private String name;
 
-    //todo manage the variables
-    private List<Query> queryList;
-    private List<Partition> partitionList;
-    private Map<String, StreamDefinition> streamDefinitionMap;
-    private TableDefinition tableDefinition;
+    private String name;
+    private List<Query> queryList = new ArrayList<Query>();
+    private List<Partition> partitionList = new ArrayList<Partition>();
+    private Map<String, StreamDefinition> streamDefinitionMap = new HashMap<String, StreamDefinition>();
+    private Map<String, TableDefinition> tableDefinitionMap = new HashMap<String, TableDefinition>();
 
     public ExecutionPlan(String name) {
         this.name = name;
-    }
-
-    public ExecutionPlan() {
     }
 
     public static ExecutionPlan executionPlan(String name) {
         return new ExecutionPlan(name);
     }
 
-    public static ExecutionPlan executionPlan() {
-        return new ExecutionPlan();
-    }
-
     public ExecutionPlan defineStream(StreamDefinition streamDefinition) throws CreateExecutionPlanException {
         if (streamDefinition == null) {
             throw new CreateExecutionPlanException("Stream definition should not be null");
         }
-        if (streamDefinitionMap == null) {
-            streamDefinitionMap = new HashMap<String, StreamDefinition>();
-        }
-        this.streamDefinitionMap.put(streamDefinition.getStreamId(), streamDefinition);
+        this.streamDefinitionMap.put(streamDefinition.getId(), streamDefinition);
         return this;
     }
 
     public ExecutionPlan defineTable(TableDefinition tableDefinition) {
-        this.tableDefinition = tableDefinition;
+        if (tableDefinition == null) {
+            throw new CreateExecutionPlanException("Stream definition should not be null");
+        }
+        this.tableDefinitionMap.put(tableDefinition.getId(), tableDefinition);
         return this;
     }
 
@@ -72,26 +64,24 @@ public class ExecutionPlan {
         if (query == null) {
             throw new CreateExecutionPlanException("Query should not be null");
         }
-        if (queryList == null) {
-            queryList = new ArrayList<Query>();
-        }
         this.queryList.add(query);
         return this;
     }
 
-    public List<Query> getQueryList() {
-        return queryList;
-    }
-
     public ExecutionPlan addPartition(Partition partition) throws CreateExecutionPlanException {
         if (partition == null) {
-            throw new CreateExecutionPlanException("Query should not be null");
-        }
-        if (partitionList == null) {
-            partitionList = new ArrayList<Partition>();
+            throw new CreateExecutionPlanException("Partition should not be null");
         }
         this.partitionList.add(partition);
         return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Query> getQueryList() {
+        return queryList;
     }
 
     public List<Partition> getPartitionList() {
@@ -102,7 +92,7 @@ public class ExecutionPlan {
         return streamDefinitionMap;
     }
 
-
-
-
+    public Map<String, TableDefinition> getTableDefinitionMap() {
+        return tableDefinitionMap;
+    }
 }
