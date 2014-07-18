@@ -21,9 +21,7 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.expression.Variable;
 import org.wso2.siddhi.query.api.query.selection.Selector;
-import org.wso2.siddhi.query.api.query.selection.attribute.ComplexAttribute;
 import org.wso2.siddhi.query.api.query.selection.OutputAttribute;
-import org.wso2.siddhi.query.api.query.selection.attribute.SimpleAttribute;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,12 +39,14 @@ public class SelectorValidator {
         StreamDefinition temp = new StreamDefinition();        //inferred stream
         if (selector.getSelectionList().size() > 0) {
             for (OutputAttribute attribute : selector.getSelectionList()) {
-                if (attribute instanceof SimpleAttribute) {
+                /*if (attribute instanceof SimpleAttribute) {*/
                     /*ValidatorUtil.validateCompareExpression(((SimpleAttribute) attribute).getExpression(), streamDefinitionMap, null);
                     Attribute.Type returnType = ValidatorUtil.getExpressionReturnType(((SimpleAttribute) attribute).getExpression(), streamDefinitionMap);*/
-                    ExpressionExecutor executor = ExecutorParser.parseExpression(((SimpleAttribute) attribute).getExpression(), null, null, streamDefinitionMap);//current stream reference and siddhi context is null
+
+                ExpressionExecutor executor = ExecutorParser.parseExpression(attribute.getExpression(), null, null, streamDefinitionMap);//current stream reference and siddhi context is null
                     temp.attribute(attribute.getRename(), executor.getReturnType());
-                } else if (attribute instanceof ComplexAttribute) {          //TODO:check if we need to validate attribute names
+
+                /*} else if (attribute instanceof ComplexAttribute) {          //TODO:check if we need to validate attribute names
                     for (Expression expression : ((ComplexAttribute) attribute).getExpressions()) {
                         ValidatorUtil.validateCompareExpression(expression, streamDefinitionMap, null);
                         Attribute.Type type = ValidatorUtil.getExpressionReturnType(expression, streamDefinitionMap);
@@ -58,7 +58,7 @@ public class SelectorValidator {
                         }
                         temp.attribute(attribute.getRename(), result);
                     }
-                }
+                }*/
             }
             if (selector.getGroupByList() != null) {                        //Handle group by
                 for (Variable var : selector.getGroupByList()) {
