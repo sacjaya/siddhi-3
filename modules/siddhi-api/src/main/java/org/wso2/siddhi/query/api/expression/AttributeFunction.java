@@ -21,12 +21,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class FunctionExpression extends Expression {
+public class AttributeFunction extends Expression {
 
     protected String functionName;
     protected Expression[] parameters;
 
-    public FunctionExpression(String functionName, Expression... parameters) {
+    public AttributeFunction(String functionName, Expression... parameters) {
         this.functionName = functionName;
         this.parameters = parameters;
     }
@@ -51,11 +51,13 @@ public class FunctionExpression extends Expression {
 //        }
 //    }
 
+
     @Override
     public String toString() {
-        return "ExpressionFunction{" +
-               ", functionName='" + functionName + '\'' +
-               '}';
+        return "AttributeFunction{" +
+                "functionName='" + functionName + '\'' +
+                ", parameters=" + Arrays.toString(parameters) +
+                '}';
     }
 
     @Override
@@ -67,7 +69,7 @@ public class FunctionExpression extends Expression {
             return false;
         }
 
-        FunctionExpression that = (FunctionExpression) o;
+        AttributeFunction that = (AttributeFunction) o;
 
         if (functionName != null ? !functionName.equals(that.functionName) : that.functionName != null) {
             return false;
@@ -90,7 +92,7 @@ public class FunctionExpression extends Expression {
     protected Map<String, Set<String>> getDependency() {
         Map<String, Set<String>> dependencyMap = new HashMap<String, Set<String>>();
         for (Expression expression : parameters) {
-            for (Map.Entry<String,Set<String>> dependency : expression.getDependency().entrySet()) {
+            for (Map.Entry<String, Set<String>> dependency : expression.getDependency().entrySet()) {
                 Set<String> attributeSet = dependencyMap.get(dependency.getKey());
                 if (attributeSet != null) {
                     attributeSet.addAll(dependency.getValue());

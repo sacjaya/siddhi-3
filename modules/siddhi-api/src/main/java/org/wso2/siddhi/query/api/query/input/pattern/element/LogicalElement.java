@@ -17,34 +17,33 @@
 package org.wso2.siddhi.query.api.query.input.pattern.element;
 
 import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
-import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 
 
 public class LogicalElement implements PatternElement {
-    protected BasicSingleInputStream standardStream1;
+    protected StreamElement streamElement1;
     protected Type type;
-    protected BasicSingleInputStream standardStream2;
+    protected StreamElement standardStream2;
     protected TimeConstant within;
 
-    public LogicalElement(BasicSingleInputStream standardStream1, Type type,
-                          BasicSingleInputStream standardStream2) {
-        this.standardStream1 = standardStream1;
+    public LogicalElement(StreamElement streamElement1, Type type,
+                          StreamElement standardStream2) {
+        this.streamElement1 = streamElement1;
         this.type = type;
         this.standardStream2 = standardStream2;
     }
 
-    public LogicalElement(BasicSingleInputStream standardStream1, Type type, BasicSingleInputStream standardStream2, TimeConstant within) {
-        this.standardStream1 = standardStream1;
+    public LogicalElement(StreamElement streamElement1, Type type, StreamElement standardStream2, TimeConstant within) {
+        this.streamElement1 = streamElement1;
         this.type = type;
         this.standardStream2 = standardStream2;
         this.within = within;
     }
 
-    public BasicSingleInputStream getStandardStream1() {
-        return standardStream1;
+    public StreamElement getStreamElement1() {
+        return streamElement1;
     }
 
-    public BasicSingleInputStream getStandardStream2() {
+    public StreamElement getStandardStream2() {
         return standardStream2;
     }
 

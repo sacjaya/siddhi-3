@@ -12,18 +12,17 @@
  */
 package org.wso2.siddhi.query.api.exception;
 
-public class CreateExecutionPlanException extends ExecutionPlanValidationException {
+public abstract class ExecutionPlanValidationException extends RuntimeException {
 
-    //todo remove this as its not specific
-    public CreateExecutionPlanException(String message) {
+    public ExecutionPlanValidationException(String message) {
         super(message);
     }
 
-    public CreateExecutionPlanException(String message, Throwable throwable) {
+    public ExecutionPlanValidationException(String message, Throwable throwable) {
         super(message, throwable);
     }
 
-    public CreateExecutionPlanException(Throwable throwable) {
+    public ExecutionPlanValidationException(Throwable throwable) {
         super(throwable);
     }
 }

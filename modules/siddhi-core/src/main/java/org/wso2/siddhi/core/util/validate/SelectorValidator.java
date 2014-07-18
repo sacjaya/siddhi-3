@@ -20,7 +20,7 @@ import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.expression.Variable;
 import org.wso2.siddhi.query.api.query.selection.Selector;
 import org.wso2.siddhi.query.api.query.selection.attribute.ComplexAttribute;
-import org.wso2.siddhi.query.api.query.selection.attribute.OutputAttribute;
+import org.wso2.siddhi.query.api.query.selection.OutputAttribute;
 import org.wso2.siddhi.query.api.query.selection.attribute.SimpleAttribute;
 
 import java.util.HashMap;

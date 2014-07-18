@@ -85,14 +85,13 @@ public abstract class Expression {
         return new Variable(streamId, position, attributeName);
     }
 
-    public static Expression extension(String extensionNamespace, String extensionFunctionName,
-                                       Expression... expressions) {
-        return new ExpressionExtension(extensionNamespace, extensionFunctionName, expressions);
+    public static Expression function(String extensionNamespace, String extensionFunctionName,
+                                      Expression... expressions) {
+        return new AttributeFunctionExtension(extensionNamespace, extensionFunctionName, expressions);
     }
 
-    public static Expression function(String extensionFunctionName,
-                                      Expression... expressions) {
-        return new FunctionExpression(extensionFunctionName, expressions);
+    public static Expression function(String functionName, Expression... expressions) {
+        return new AttributeFunction(functionName, expressions);
     }
 
     public static Type type(Attribute.Type type) {
@@ -102,7 +101,7 @@ public abstract class Expression {
 //    protected abstract void validate(List<QueryEventSource> queryEventSources,
 //                                     String streamReferenceId, boolean processInStreamDefinition);
 
-    protected Map<String,Set<String>> getDependency() {
+    protected Map<String, Set<String>> getDependency() {
         return new HashMap<String, Set<String>>();
     }
 }

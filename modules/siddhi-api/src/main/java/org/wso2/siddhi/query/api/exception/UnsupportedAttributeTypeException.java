@@ -18,11 +18,7 @@
 package org.wso2.siddhi.query.api.exception;
 
 
-public class UnsupportedAttributeTypeException extends RuntimeException {
-
-    public UnsupportedAttributeTypeException() {
-        super();
-    }
+public class UnsupportedAttributeTypeException extends ExecutionPlanValidationException {
 
     public UnsupportedAttributeTypeException(String message) {
         super(message);

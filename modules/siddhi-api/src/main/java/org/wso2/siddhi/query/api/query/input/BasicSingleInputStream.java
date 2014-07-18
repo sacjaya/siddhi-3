@@ -19,17 +19,15 @@ package org.wso2.siddhi.query.api.query.input;
 import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
 import org.wso2.siddhi.query.api.query.input.handler.Filter;
 import org.wso2.siddhi.query.api.query.input.handler.StreamFunction;
 import org.wso2.siddhi.query.api.query.input.handler.StreamHandler;
 import org.wso2.siddhi.query.api.query.input.handler.Window;
-import org.wso2.siddhi.query.api.query.input.pattern.element.PatternElement;
 import org.wso2.siddhi.query.api.query.input.sequence.element.SequenceElement;
 
 import java.util.List;
 
-public class BasicSingleInputStream extends SingleInputStream implements PatternElement,SequenceElement {
+public class BasicSingleInputStream extends SingleInputStream implements SequenceElement {
 
 //    protected boolean isCounterStream = false;
 
@@ -135,7 +133,7 @@ public class BasicSingleInputStream extends SingleInputStream implements Pattern
     }
 
     public BasicSingleInputStream function(String extensionName, String functionName,
-                                 Expression... parameters) {
+                                           Expression... parameters) {
         streamHandlers.add(new StreamFunction(extensionName, functionName, parameters));
         return this;
     }
@@ -152,10 +150,4 @@ public class BasicSingleInputStream extends SingleInputStream implements Pattern
 //    public boolean isCounterStream() {
 //        return isCounterStream;
 //    }
-
-    @Override
-    public TimeConstant getWithin() {
-        //TODO
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 }

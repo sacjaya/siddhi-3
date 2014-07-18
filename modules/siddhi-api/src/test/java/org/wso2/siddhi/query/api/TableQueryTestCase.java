@@ -154,7 +154,7 @@ public class TableQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("symbol")).
-                        select("avgPrice", "avg", Expression.variable("symbol")).
+                        select("avgPrice", Expression.function("avg", Expression.variable("symbol"))).
                         groupBy("symbol").
                         having(Condition.compare(Expression.variable("avgPrice"),
                                 Condition.Operator.GREATER_THAN_EQUAL,
