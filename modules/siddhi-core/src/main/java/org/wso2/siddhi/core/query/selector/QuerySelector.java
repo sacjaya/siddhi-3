@@ -28,7 +28,7 @@ import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.query.input.InputStream;
 import org.wso2.siddhi.query.api.query.selection.Selector;
-import org.wso2.siddhi.query.api.query.selection.attribute.OutputAttribute;
+import org.wso2.siddhi.query.api.query.selection.OutputAttribute;
 import org.wso2.siddhi.query.api.query.selection.attribute.SimpleAttribute;
 
 import java.util.ArrayList;

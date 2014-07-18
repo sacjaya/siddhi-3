@@ -17,27 +17,26 @@
 package org.wso2.siddhi.query.api.query.input.pattern.element;
 
 import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
-import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 
 public class CountElement implements PatternElement {
 
     public static final int ANY = -1;
 
-    private BasicSingleInputStream standardStream;
+    private StreamElement streamElement;
     private int minCount = ANY;
     private int maxCount = ANY;
     private TimeConstant within;
 
-    public CountElement(BasicSingleInputStream standardStream, int minCount, int maxCount, TimeConstant within) {
-        this.standardStream = standardStream;
-//        standardStream.setCounterStream(true);
+    public CountElement(StreamElement streamElement, int minCount, int maxCount, TimeConstant within) {
+        this.streamElement = streamElement;
+//        streamElement.setCounterStream(true);
         this.minCount = minCount;
         this.maxCount = maxCount;
         this.within = within;
     }
 
-    public CountElement(BasicSingleInputStream standardStream, int minCount, int maxCount) {
-        this(standardStream, minCount, maxCount, null);
+    public CountElement(StreamElement streamElement, int minCount, int maxCount) {
+        this(streamElement, minCount, maxCount, null);
     }
 
     public int getMinCount() {
@@ -48,8 +47,8 @@ public class CountElement implements PatternElement {
         return maxCount;
     }
 
-    public BasicSingleInputStream getStandardStream() {
-        return standardStream;
+    public StreamElement getStreamElement() {
+        return streamElement;
     }
 
     @Override

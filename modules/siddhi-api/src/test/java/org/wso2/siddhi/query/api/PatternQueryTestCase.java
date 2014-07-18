@@ -40,16 +40,16 @@ public class PatternQueryTestCase {
         query.from(
                 Query.patternInputStream(
                         Pattern.followedBy(
-                                Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                Pattern.stream(Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                        Expression.value(30))),
+                                        Expression.value(30)))),
                                 Pattern.followedBy(
-                                        Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.value(20))),
-                                        Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
+                                                Expression.value(20)))),
+                                        Pattern.stream(Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.variable("e1", "price")))
+                                                Expression.variable("e1", "price"))))
                                 )
                         )
                 )
@@ -58,7 +58,7 @@ public class PatternQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("e1", "symbol")).
-                        select("avgPrice", "avg", Expression.variable("e2", "price")).
+                        select("avgPrice", Expression.function("avg", Expression.variable("e2", "price"))).
                         groupBy("e1", "symbol").
                         having(Condition.compare(Expression.variable("avgPrice"),
                                 Condition.Operator.GREATER_THAN,
@@ -84,15 +84,16 @@ public class PatternQueryTestCase {
                 Query.patternInputStream(
                         Pattern.followedBy(
                                 Pattern.every(
-                                        Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.value(30)))),
-                                Pattern.followedBy(Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                                Expression.value(30))))),
+                                Pattern.followedBy(
+                                        Pattern.stream(Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.value(20))),
-                                        Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
+                                                Expression.value(20)))),
+                                        Pattern.stream(Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.variable("e1", "price")))
+                                                Expression.variable("e1", "price"))))
                                 )
                         )
                 )
@@ -101,7 +102,7 @@ public class PatternQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("e1", "symbol")).
-                        select("avgPrice", "avg", Expression.variable("e2", "price")).
+                        select("avgPrice", Expression.function("avg", Expression.variable("e2", "price"))).
                         groupBy("e1", "symbol").
                         having(Condition.compare(Expression.variable("avgPrice"),
                                 Condition.Operator.GREATER_THAN,
@@ -123,22 +124,25 @@ public class PatternQueryTestCase {
                 Query.patternInputStream(
                         Pattern.followedBy(
                                 Pattern.every(
-                                        Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.value(30)))),
+                                                Expression.value(30))))),
                                 Pattern.followedBy(
-                                        Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.value(20))),
-                                        Pattern.followedBy(Pattern.every(Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
-                                                        Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.variable("e1", "price")))),
+                                                Expression.value(20)))),
+                                        Pattern.followedBy(
+                                                Pattern.every(
+                                                        Pattern.stream(Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
+                                                                Condition.Operator.GREATER_THAN_EQUAL,
+                                                                Expression.variable("e1", "price"))))),
                                                 Pattern.followedBy(
-                                                        Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
+                                                        Pattern.stream(Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
                                                                 Condition.Operator.GREATER_THAN,
-                                                                Expression.value(74))), Query.inputStream("e5", "Stream4").filter(Condition.compare(Expression.variable("symbol"),
+                                                                Expression.value(74)))),
+                                                        Pattern.stream(Query.inputStream("e5", "Stream4").filter(Condition.compare(Expression.variable("symbol"),
                                                                 Condition.Operator.EQUAL,
-                                                                Expression.value("IBM")))
+                                                                Expression.value("IBM"))))
 
                                                 )
                                         )
@@ -150,7 +154,7 @@ public class PatternQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("e1", "symbol")).
-                        select("avgPrice", "avg", Expression.variable("e2", "price"))
+                        select("avgPrice", Expression.function("avg", Expression.variable("e2", "price")))
 
         );
         query.insertInto("OutputStream");
@@ -171,20 +175,20 @@ public class PatternQueryTestCase {
                         Pattern.followedBy(
                                 Pattern.every(
                                         Pattern.followedBy(
-                                                Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                                Pattern.stream(Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.value(30))),
-                                                Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                                        Expression.value(30)))),
+                                                Pattern.stream(Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.value(20))))),
+                                                        Expression.value(20)))))),
                                 Pattern.followedBy(
-                                        Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.variable("e1", "price"))),
+                                                Expression.variable("e1", "price")))),
 
-                                        Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN,
-                                                Expression.value(74))))
+                                                Expression.value(74)))))
 
                         )
                 )
@@ -192,7 +196,7 @@ public class PatternQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("e1", "symbol")).
-                        select("avgPrice", "avg", Expression.variable("e2", "price"))
+                        select("avgPrice", Expression.function("avg", Expression.variable("e2", "price")))
 
         );
         query.insertInto("OutputStream");
@@ -212,21 +216,21 @@ public class PatternQueryTestCase {
                 Query.patternInputStream(
                         Pattern.followedBy(
                                 Pattern.every(
-                                        Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.value(30)))),
+                                                Expression.value(30))))),
                                 Pattern.followedBy(
                                         Pattern.logicalAnd(
-                                                Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                                Pattern.stream(Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.value(20))),
-                                                Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
+                                                        Expression.value(20)))),
+                                                Pattern.stream(Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.variable("e1", "price"))))
+                                                        Expression.variable("e1", "price")))))
                                         ,
-                                        Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN,
-                                                Expression.value(74))))
+                                                Expression.value(74)))))
 
                         )
                 )
@@ -234,7 +238,7 @@ public class PatternQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("e1", "symbol")).
-                        select("avgPrice", "avg", Expression.variable("e2", "price"))
+                        select("avgPrice", Expression.function("avg", Expression.variable("e2", "price")))
 
         );
         query.insertInto("OutputStream");
@@ -243,7 +247,7 @@ public class PatternQueryTestCase {
     }
 
 
-//    from every (e1=Stream1[price >= 30]) -> e2=Stream1[ price >= 20] or e3=Stream2[ price >= e1.price] within 3 min -> e4=Stream3[price>74]
+//    from every (e1=Stream1[price >= 30]) -> e2=Stream1[ price >= 20] or e3=Stream2[ price >= e1.price] within 3 min -> e4=Stream3[price>74] within 2 min
 //    select e1.symbol, avg(e2.price ) as avgPrice
 //    insert into OutputStream
 
@@ -254,22 +258,22 @@ public class PatternQueryTestCase {
                 Query.patternInputStream(
                         Pattern.followedBy(
                                 Pattern.every(
-                                        Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.value(30)))),
+                                                Expression.value(30))))),
                                 Pattern.followedBy(
                                         Pattern.logicalOr(
-                                                Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                                Pattern.stream(Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.value(20))),
-                                                Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
+                                                        Expression.value(20)))),
+                                                Pattern.stream(Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.variable("e1", "price"))),
+                                                        Expression.variable("e1", "price")))),
                                                 Time.minute(3))
                                         ,
-                                        Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN,
-                                                Expression.value(74))))
+                                                Expression.value(74)))))
 
                         )
                 )
@@ -277,7 +281,7 @@ public class PatternQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("e1", "symbol")).
-                        select("avgPrice", "avg", Expression.variable("e2", "price"))
+                        select("avgPrice", Expression.function("avg", Expression.variable("e2", "price")))
 
         );
         query.insertInto("OutputStream");
@@ -297,22 +301,22 @@ public class PatternQueryTestCase {
                 Query.patternInputStream(
                         Pattern.followedBy(
                                 Pattern.every(
-                                        Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.value(30)))),
+                                                Expression.value(30))))),
                                 Pattern.followedBy(
                                         Pattern.count(
-                                                Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("prev", "price"),
+                                                Pattern.stream(Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("prev", "price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.value(20))),
+                                                        Expression.value(20)))),
                                                 3, 5),
                                         Pattern.followedBy(
-                                                Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
+                                                Pattern.stream(Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.variable("e1", "price"))),
-                                                Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
+                                                        Expression.variable("e1", "price")))),
+                                                Pattern.stream(Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
                                                         Condition.Operator.GREATER_THAN,
-                                                        Expression.value(74))))
+                                                        Expression.value(74)))))
                                 )
                         )
                 )
@@ -320,7 +324,7 @@ public class PatternQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("e1", "symbol")).
-                        select("avgPrice", "avg", Expression.variable("e2", "price"))
+                        select("avgPrice", Expression.function("avg", Expression.variable("e2", "price")))
 
         );
         query.insertInto("OutputStream");
@@ -338,22 +342,22 @@ public class PatternQueryTestCase {
                 Query.patternInputStream(
                         Pattern.followedBy(
                                 Pattern.every(
-                                        Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.value(30)))),
+                                                Expression.value(30))))),
                                 Pattern.followedBy(
                                         Pattern.countLessThanEqual(
-                                                Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("prev", "price"),
+                                                Pattern.stream(Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("prev", "price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.value(20))),
+                                                        Expression.value(20)))),
                                                 5),
                                         Pattern.followedBy(
-                                                Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
+                                                Pattern.stream(Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.variable("e1", "price"))),
-                                                Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
+                                                        Expression.variable("e1", "price")))),
+                                                Pattern.stream(Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
                                                         Condition.Operator.GREATER_THAN,
-                                                        Expression.value(74))))
+                                                        Expression.value(74)))))
                                 )
                         )
                 )
@@ -361,7 +365,7 @@ public class PatternQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("e1", "symbol")).
-                        select("avgPrice", "avg", Expression.variable("e2", "price"))
+                        select("avgPrice", Expression.function("avg", Expression.variable("e2", "price")))
 
         );
         query.insertInto("OutputStream");
@@ -380,22 +384,22 @@ public class PatternQueryTestCase {
                 Query.patternInputStream(
                         Pattern.followedBy(
                                 Pattern.every(
-                                        Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.value(30)))),
+                                                Expression.value(30))))),
                                 Pattern.followedBy(
                                         Pattern.countMoreThanEqual(
-                                                Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("prev", "price"),
+                                                Pattern.stream(Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("prev", "price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.value(20))),
+                                                        Expression.value(20)))),
                                                 5, Time.minute(3)),
                                         Pattern.followedBy(
-                                                Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
+                                                Pattern.stream(Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.variable("e1", "price"))),
-                                                Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
+                                                        Expression.variable("e1", "price")))),
+                                                Pattern.stream(Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
                                                         Condition.Operator.GREATER_THAN,
-                                                        Expression.value(74))))
+                                                        Expression.value(74)))))
                                 )
                         )
                 )
@@ -403,7 +407,7 @@ public class PatternQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("e1", "symbol")).
-                        select("avgPrice", "avg", Expression.variable("e2", "price"))
+                        select("avgPrice", Expression.function("avg", Expression.variable("e2", "price")))
 
         );
         query.insertInto("OutputStream");
@@ -422,21 +426,21 @@ public class PatternQueryTestCase {
                 Query.patternInputStream(
                         Pattern.followedBy(
                                 Pattern.every(
-                                        Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e1", "Stream1").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
-                                                Expression.value(30)))),
+                                                Expression.value(30))))),
                                 Pattern.followedBy(
                                         Pattern.followedBy(
-                                                Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("prev", "price"),
+                                                Pattern.stream(Query.inputStream("e2", "Stream1").filter(Condition.compare(Expression.variable("prev", "price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.value(20))),
-                                                Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
+                                                        Expression.value(20)))),
+                                                Pattern.stream(Query.inputStream("e3", "Stream2").filter(Condition.compare(Expression.variable("price"),
                                                         Condition.Operator.GREATER_THAN_EQUAL,
-                                                        Expression.variable("e1", "price"))),
+                                                        Expression.variable("e1", "price")))),
                                                 Time.minute(4)),
-                                        Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
+                                        Pattern.stream(Query.inputStream("e4", "Stream3").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN,
-                                                Expression.value(74)))
+                                                Expression.value(74))))
                                 )
                         )
                 )
@@ -444,13 +448,12 @@ public class PatternQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("e1", "symbol")).
-                        select("avgPrice", "avg", Expression.variable("e2", "price"))
+                        select("avgPrice", Expression.function("avg", Expression.variable("e2", "price")))
 
         );
         query.insertInto("OutputStream");
 
     }
-
 
 
 }

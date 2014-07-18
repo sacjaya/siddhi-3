@@ -19,6 +19,7 @@ package org.wso2.siddhi.core.util.parser;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.OperationNotSupportedException;
+import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.executor.condition.*;
 import org.wso2.siddhi.core.executor.expression.ConstantExpressionExecutor;
 import org.wso2.siddhi.core.executor.expression.ExpressionExecutor;
@@ -45,64 +46,64 @@ import org.wso2.siddhi.core.executor.expression.multiply.MultiplyExpressionExecu
 import org.wso2.siddhi.core.executor.expression.multiply.MultiplyExpressionExecutorLong;
 import org.wso2.siddhi.query.api.condition.*;
 import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.*;
 import org.wso2.siddhi.query.api.expression.constant.*;
-import org.wso2.siddhi.query.api.query.input.InputStream;
+
+import java.util.Map;
 
 public class ExecutorParser {
 
 
-
     public static ConditionExecutor parseCondition(Condition condition,
                                                    String currentStreamReference,
-                                                   boolean processInDefinition,
-                                                   SiddhiContext siddhiContext,InputStream inputStream) {
+                                                   SiddhiContext siddhiContext, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
         if (condition instanceof AndCondition) {
-            return new AndConditionExecutor(parseCondition(((AndCondition) condition).getLeftCondition(), currentStreamReference,  processInDefinition, siddhiContext, inputStream),
-                    parseCondition(((AndCondition) condition).getRightCondition(),  currentStreamReference,  processInDefinition, siddhiContext, inputStream));
+            return new AndConditionExecutor(parseCondition(((AndCondition) condition).getLeftCondition(), currentStreamReference, siddhiContext, streamDefinitionMap),
+                    parseCondition(((AndCondition) condition).getRightCondition(), currentStreamReference, siddhiContext, streamDefinitionMap));
         } else if (condition instanceof OrCondition) {
-            return new OrConditionExecutor(parseCondition(((OrCondition) condition).getLeftCondition(),  currentStreamReference,  processInDefinition, siddhiContext, inputStream),
-                    parseCondition(((OrCondition) condition).getRightCondition(),  currentStreamReference,  processInDefinition, siddhiContext, inputStream));
-        }  else if (condition instanceof NotCondition) {
-            return new NotConditionExecutor(parseCondition(((NotCondition) condition).getCondition(),  currentStreamReference,  processInDefinition, siddhiContext, inputStream));
+            return new OrConditionExecutor(parseCondition(((OrCondition) condition).getLeftCondition(), currentStreamReference, siddhiContext, streamDefinitionMap),
+                    parseCondition(((OrCondition) condition).getRightCondition(), currentStreamReference, siddhiContext, streamDefinitionMap));
+        } else if (condition instanceof NotCondition) {
+            return new NotConditionExecutor(parseCondition(((NotCondition) condition).getCondition(), currentStreamReference, siddhiContext, streamDefinitionMap));
         } else if (condition instanceof BooleanCondition) {
-            return new BooleanConditionExecutor(parseExpression(((BooleanCondition) condition).getExpression(), currentStreamReference, processInDefinition, siddhiContext, inputStream));
+            return new BooleanConditionExecutor(parseExpression(((BooleanCondition) condition).getExpression(), currentStreamReference, siddhiContext, streamDefinitionMap));
         } else if (condition instanceof Compare) {
             if (((Compare) condition).getOperator() == Condition.Operator.EQUAL) {
-                return ComparatorParser.parseEqualCompare(parseExpression(((Compare) condition).getLeftExpression(),  currentStreamReference, processInDefinition, siddhiContext,inputStream),
-                        parseExpression(((Compare) condition).getRightExpression(),  currentStreamReference, processInDefinition, siddhiContext,inputStream));
+                return ComparatorParser.parseEqualCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, siddhiContext, streamDefinitionMap),
+                        parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, siddhiContext, streamDefinitionMap));
             } else if (((Compare) condition).getOperator() == Condition.Operator.NOT_EQUAL) {
-                return ComparatorParser.parseNotEqualCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, processInDefinition, siddhiContext,inputStream),
-                        parseExpression(((Compare) condition).getRightExpression(),  currentStreamReference, processInDefinition, siddhiContext,inputStream));
+                return ComparatorParser.parseNotEqualCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, siddhiContext, streamDefinitionMap),
+                        parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, siddhiContext, streamDefinitionMap));
             } else if (((Compare) condition).getOperator() == Condition.Operator.GREATER_THAN) {
-                return ComparatorParser.parseGreaterThanCompare(parseExpression(((Compare) condition).getLeftExpression(),currentStreamReference, processInDefinition, siddhiContext,inputStream),
-                        parseExpression(((Compare) condition).getRightExpression(),currentStreamReference, processInDefinition, siddhiContext,inputStream));
+                return ComparatorParser.parseGreaterThanCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, siddhiContext, streamDefinitionMap),
+                        parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, siddhiContext, streamDefinitionMap));
             } else if (((Compare) condition).getOperator() == Condition.Operator.GREATER_THAN_EQUAL) {
-                return ComparatorParser.parseGreaterThanEqualCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, processInDefinition, siddhiContext,inputStream),
-                        parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, processInDefinition, siddhiContext,inputStream));
+                return ComparatorParser.parseGreaterThanEqualCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, siddhiContext, streamDefinitionMap),
+                        parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, siddhiContext, streamDefinitionMap));
             } else if (((Compare) condition).getOperator() == Condition.Operator.LESS_THAN) {
-                return ComparatorParser.parseLessThanCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, processInDefinition, siddhiContext,inputStream),
-                        parseExpression(((Compare) condition).getRightExpression(),  currentStreamReference, processInDefinition, siddhiContext,inputStream));
+                return ComparatorParser.parseLessThanCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, siddhiContext, streamDefinitionMap),
+                        parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, siddhiContext, streamDefinitionMap));
             } else if (((Compare) condition).getOperator() == Condition.Operator.LESS_THAN_EQUAL) {
-                return ComparatorParser.parseLessThanEqualCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, processInDefinition, siddhiContext,inputStream),
-                        parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, processInDefinition, siddhiContext,inputStream));
+                return ComparatorParser.parseLessThanEqualCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, siddhiContext, streamDefinitionMap),
+                        parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, siddhiContext, streamDefinitionMap));
 
             } else if (((Compare) condition).getOperator() == Condition.Operator.CONTAINS) {
-                return ComparatorParser.parseContainsCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, processInDefinition, siddhiContext,inputStream),
-                        parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, processInDefinition, siddhiContext,inputStream));
+                return ComparatorParser.parseContainsCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, siddhiContext, streamDefinitionMap),
+                        parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, siddhiContext, streamDefinitionMap));
             } else if (((Compare) condition).getOperator() == Condition.Operator.INSTANCE_OF) {
-                return ComparatorParser.parseInstanceOfCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, processInDefinition, siddhiContext,inputStream),
-                        parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, processInDefinition, siddhiContext,inputStream));
+                return ComparatorParser.parseInstanceOfCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, siddhiContext, streamDefinitionMap),
+                        parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, siddhiContext, streamDefinitionMap));
             }
         } else {
            //TODO: else
         }
         throw new OperationNotSupportedException(condition + " not supported !");
     }
+
     public static ExpressionExecutor parseExpression(Expression expression,
                                                      String currentStreamReference,
-                                                     boolean processInStreamDefinition,
-                                                     SiddhiContext siddhiContext, InputStream inputStream) {
+                                                     SiddhiContext siddhiContext, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
         if (expression instanceof Constant) {
             if (expression instanceof BoolConstant) {
                 return new ConstantExpressionExecutor(((BoolConstant) expression).getValue(), Attribute.Type.BOOL);
@@ -118,10 +119,11 @@ public class ExecutorParser {
                 return new ConstantExpressionExecutor(((DoubleConstant) expression).getValue(), Attribute.Type.DOUBLE);
             }
         } else if (expression instanceof Variable) {
-            return new VariableExpressionExecutor(((Variable) expression).getStreamId(), ((Variable) expression).getAttributeName(), currentStreamReference, inputStream);
-        }  else if (expression instanceof Multiply) {
-            ExpressionExecutor left = parseExpression(((Multiply) expression).getLeftValue(),  currentStreamReference, processInStreamDefinition, siddhiContext,inputStream);
-            ExpressionExecutor right = parseExpression(((Multiply) expression).getRightValue(),  currentStreamReference, processInStreamDefinition, siddhiContext,inputStream);
+            return parseVariable((Variable) expression, currentStreamReference, streamDefinitionMap);
+            //return new VariableExpressionExecutor(((Variable) expression).getStreamId(), ((Variable) expression).getAttributeName(), currentStreamReference, streamDefinitionMap);
+        } else if (expression instanceof Multiply) {
+            ExpressionExecutor left = parseExpression(((Multiply) expression).getLeftValue(), currentStreamReference, siddhiContext, streamDefinitionMap);
+            ExpressionExecutor right = parseExpression(((Multiply) expression).getRightValue(), currentStreamReference, siddhiContext, streamDefinitionMap);
             Attribute.Type type = parseArithmeticOperationResultType(left, right);
             switch (type) {
                 case INT:
@@ -134,8 +136,8 @@ public class ExecutorParser {
                     return new MultiplyExpressionExecutorDouble(left, right);
             }
         } else if (expression instanceof Add) {
-            ExpressionExecutor left = parseExpression(((Add) expression).getLeftValue(), currentStreamReference, processInStreamDefinition, siddhiContext, inputStream);
-            ExpressionExecutor right = parseExpression(((Add) expression).getRightValue(), currentStreamReference, processInStreamDefinition, siddhiContext, inputStream);
+            ExpressionExecutor left = parseExpression(((Add) expression).getLeftValue(), currentStreamReference, siddhiContext, streamDefinitionMap);
+            ExpressionExecutor right = parseExpression(((Add) expression).getRightValue(), currentStreamReference, siddhiContext, streamDefinitionMap);
             Attribute.Type type = parseArithmeticOperationResultType(left, right);
             switch (type) {
                 case INT:
@@ -148,8 +150,8 @@ public class ExecutorParser {
                     return new AddExpressionExecutorDouble(left, right);
             }
         } else if (expression instanceof Minus) {
-            ExpressionExecutor left = parseExpression(((Minus) expression).getLeftValue(), currentStreamReference, processInStreamDefinition, siddhiContext, inputStream);
-            ExpressionExecutor right = parseExpression(((Minus) expression).getRightValue(), currentStreamReference, processInStreamDefinition, siddhiContext, inputStream);
+            ExpressionExecutor left = parseExpression(((Minus) expression).getLeftValue(), currentStreamReference, siddhiContext, streamDefinitionMap);
+            ExpressionExecutor right = parseExpression(((Minus) expression).getRightValue(), currentStreamReference, siddhiContext, streamDefinitionMap);
             Attribute.Type type = parseArithmeticOperationResultType(left, right);
             switch (type) {
                 case INT:
@@ -162,8 +164,8 @@ public class ExecutorParser {
                     return new MinusExpressionExecutorDouble(left, right);
             }
         } else if (expression instanceof Mod) {
-            ExpressionExecutor left = parseExpression(((Mod) expression).getLeftValue(), currentStreamReference, processInStreamDefinition, siddhiContext, inputStream);
-            ExpressionExecutor right = parseExpression(((Mod) expression).getRightValue(), currentStreamReference, processInStreamDefinition, siddhiContext, inputStream);
+            ExpressionExecutor left = parseExpression(((Mod) expression).getLeftValue(), currentStreamReference, siddhiContext, streamDefinitionMap);
+            ExpressionExecutor right = parseExpression(((Mod) expression).getRightValue(), currentStreamReference, siddhiContext, streamDefinitionMap);
             Attribute.Type type = parseArithmeticOperationResultType(left, right);
             switch (type) {
                 case INT:
@@ -176,8 +178,8 @@ public class ExecutorParser {
                     return new ModExpressionExecutorDouble(left, right);
             }
         } else if (expression instanceof Divide) {
-            ExpressionExecutor left = parseExpression(((Divide) expression).getLeftValue(), currentStreamReference, processInStreamDefinition, siddhiContext, inputStream);
-            ExpressionExecutor right = parseExpression(((Divide) expression).getRightValue(), currentStreamReference, processInStreamDefinition, siddhiContext, inputStream);
+            ExpressionExecutor left = parseExpression(((Divide) expression).getLeftValue(), currentStreamReference, siddhiContext, streamDefinitionMap);
+            ExpressionExecutor right = parseExpression(((Divide) expression).getRightValue(), currentStreamReference, siddhiContext, streamDefinitionMap);
             Attribute.Type type = parseArithmeticOperationResultType(left, right);
             switch (type) {
                 case INT:
@@ -192,6 +194,48 @@ public class ExecutorParser {
         } //TODO else if parts
         throw new UnsupportedOperationException(expression.toString() + " not supported!");
 
+    }
+
+    private static ExpressionExecutor parseVariable(Variable variable, String currentStreamReference, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
+        String attributeName = variable.getAttributeName();
+        String streamId = variable.getStreamId();
+        String[] attributeNameArray = null;
+        if (streamId == null) {
+            if (currentStreamReference != null) {
+                attributeNameArray = streamDefinitionMap.get(currentStreamReference).getAttributeNameArray();
+                streamId = currentStreamReference;
+            } else {
+                //Check for duplicates and existence of attribute
+                int count = 0;
+                String id = null;
+                for (Map.Entry<String, StreamDefinition> entry : streamDefinitionMap.entrySet()) {
+                    attributeNameArray = entry.getValue().getAttributeNameArray();
+                    for (String anAttributeNameArray : attributeNameArray) {           //iterate through attribute list
+                        if (anAttributeNameArray.equals(attributeName)) {
+                            count++;
+                            id = entry.getKey();
+                        }
+                    }
+                }
+                if (count == 1) {
+                    return new VariableExpressionExecutor(id, attributeName, streamDefinitionMap.get(id), true);//TODO: check process in definition
+                } else {
+                    throw new ValidatorException("Could not find an attribute named " + attributeName);
+                }
+            }
+        } else {
+            attributeNameArray = streamDefinitionMap.get(streamId).getAttributeNameArray();
+        }
+        if (attributeNameArray != null) {
+            for (String resultAttributeName : attributeNameArray) {           //iterate through attribute list
+                if (attributeName.equals(resultAttributeName)) {
+                    return new VariableExpressionExecutor(streamId, attributeName, streamDefinitionMap.get(streamId), true);//TODO: check process in definition                }
+                }
+            }
+            throw new ValidatorException("Stream definition " + streamId + " does not contain an attribute named " + attributeName);
+        } else {
+            throw new ValidatorException("Stream definition " + streamId + " does not contain an attribute named " + attributeName);
+        }
     }
 
 
@@ -209,7 +253,6 @@ public class ExecutorParser {
             throw new ArithmeticException(leftExpressionExecutor.getReturnType() + " or " + rightExpressionExecutor.getReturnType() + " cannot be multiplied");
         }
     }
-
 
 
 }

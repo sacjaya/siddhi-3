@@ -82,10 +82,10 @@ public class SequenceInputStream implements InputStream, SequenceElement {
 //            //todo fix
 //            //   ((BasicSingleInputStream) sequenceElement).constructQueryEventSourceList(streamTableDefinitionMap, queryEventSources);
 //        } else if (sequenceElement instanceof OrElement) {
-//            constructEventStreamList(((OrElement) sequenceElement).getStandardStream1(), streamTableDefinitionMap, queryEventSources);
+//            constructEventStreamList(((OrElement) sequenceElement).getStreamElement1(), streamTableDefinitionMap, queryEventSources);
 //            constructEventStreamList(((OrElement) sequenceElement).getStandardStream2(), streamTableDefinitionMap, queryEventSources);
 //        } else if (sequenceElement instanceof RegexElement) {
-//            constructEventStreamList(((RegexElement) sequenceElement).getStandardStream(), streamTableDefinitionMap, queryEventSources);
+//            constructEventStreamList(((RegexElement) sequenceElement).getStreamElement(), streamTableDefinitionMap, queryEventSources);
 //        } else if (sequenceElement instanceof NextElement) {
 //            constructEventStreamList(((NextElement) sequenceElement).getSequenceElement(), streamTableDefinitionMap, queryEventSources);
 //            constructEventStreamList(((NextElement) sequenceElement).getNextSequenceElement(), streamTableDefinitionMap, queryEventSources);

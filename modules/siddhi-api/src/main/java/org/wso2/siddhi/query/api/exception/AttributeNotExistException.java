@@ -17,11 +17,7 @@
 */
 package org.wso2.siddhi.query.api.exception;
 
-public class AttributeNotExistException extends RuntimeException {
-
-    public AttributeNotExistException() {
-        super();
-    }
+public class AttributeNotExistException extends ExecutionPlanValidationException {
 
     public AttributeNotExistException(String message) {
         super(message);

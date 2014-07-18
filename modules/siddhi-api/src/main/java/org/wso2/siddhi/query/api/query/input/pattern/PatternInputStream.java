@@ -71,10 +71,10 @@ public class PatternInputStream implements InputStream, PatternElement {
         } else if (patternElement instanceof BasicSingleInputStream) {
             streamIds.addAll(((BasicSingleInputStream) patternElement).getStreamIds());
         } else if (patternElement instanceof LogicalElement) {
-            collectStreamIds(((LogicalElement) patternElement).getStandardStream1(), streamIds);
-            collectStreamIds(((LogicalElement) patternElement).getStandardStream1(), streamIds);
+            collectStreamIds(((LogicalElement) patternElement).getStreamElement1(), streamIds);
+            collectStreamIds(((LogicalElement) patternElement).getStreamElement1(), streamIds);
         } else if (patternElement instanceof CountElement) {
-            collectStreamIds(((CountElement) patternElement).getStandardStream(), streamIds);
+            collectStreamIds(((CountElement) patternElement).getStreamElement(), streamIds);
         } else if (patternElement instanceof FollowedByElement) {
             collectStreamIds(((FollowedByElement) patternElement).getPatternElement(), streamIds);
             collectStreamIds(((FollowedByElement) patternElement).getFollowedByPatternElement(), streamIds);
@@ -91,10 +91,10 @@ public class PatternInputStream implements InputStream, PatternElement {
 //            // todo fix
 //            // ((BasicSingleInputStream) patternElement).constructQueryEventSourceList(streamTableDefinitionMap, queryEventSources);
 //        } else if (patternElement instanceof LogicalElement) {
-//            constructEventStreamList(((LogicalElement) patternElement).getStandardStream1(), streamTableDefinitionMap, queryEventSources);
+//            constructEventStreamList(((LogicalElement) patternElement).getStreamElement1(), streamTableDefinitionMap, queryEventSources);
 //            constructEventStreamList(((LogicalElement) patternElement).getStandardStream2(), streamTableDefinitionMap, queryEventSources);
 //        } else if (patternElement instanceof CountElement) {
-//            constructEventStreamList(((CountElement) patternElement).getStandardStream(), streamTableDefinitionMap, queryEventSources);
+//            constructEventStreamList(((CountElement) patternElement).getStreamElement(), streamTableDefinitionMap, queryEventSources);
 //        } else if (patternElement instanceof FollowedByElement) {
 //            constructEventStreamList(((FollowedByElement) patternElement).getPatternElement(), streamTableDefinitionMap, queryEventSources);
 //            constructEventStreamList(((FollowedByElement) patternElement).getFollowedByPatternElement(), streamTableDefinitionMap, queryEventSources);

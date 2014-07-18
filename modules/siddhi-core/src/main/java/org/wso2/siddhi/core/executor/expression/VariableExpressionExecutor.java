@@ -22,6 +22,7 @@ import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 import org.wso2.siddhi.query.api.query.input.InputStream;
 
@@ -34,47 +35,27 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
     String streamReference;
 
 
-    public VariableExpressionExecutor(String streamIdOfVariable, String attributeName,
-                                      String currentStreamReference, InputStream inputStream) {
+    public VariableExpressionExecutor(String streamIdOfVariable, String attributeName, StreamDefinition definition, boolean processInDefinition) {
         this.attributeName = attributeName;
         if (streamIdOfVariable != null) {
             streamReference = streamIdOfVariable;
-        } else {
-            streamReference = currentStreamReference;
         }
-        AbstractDefinition definition = null;
-        if(inputStream instanceof BasicSingleInputStream) {
-            definition = getDefinition(inputStream);
-        } //TODO : else
 
-        if(definition!=null){
+        if (definition != null) {
             type = definition.getAttributeType(attributeName);
             attributePosition = definition.getAttributePosition(attributeName);
         }
     }
 
-
-    private AbstractDefinition getDefinition(InputStream inputStream){
-        AbstractDefinition definition = null;
-        if(inputStream instanceof BasicSingleInputStream) {
-            String referenceSourceId = ((BasicSingleInputStream)inputStream).getStreamReferenceId();
-            if (referenceSourceId != null && referenceSourceId.equals(streamReference)) {
-                definition = ((BasicSingleInputStream)inputStream).getDefinition();
-            }
-        } //TODO: else
-        return definition;
-    }
-
     @Override
     public Object execute(StreamEvent event) {
 
-            if (event instanceof Event) {
-                return ((Event) event).getData()[attributePosition];
-            }
-            else {
-                //TODO: else
-                return null;
-            }
+        if (event instanceof Event) {
+            return ((Event) event).getData()[attributePosition];
+        } else {
+            //TODO: else
+            return null;
+        }
 
     }
 

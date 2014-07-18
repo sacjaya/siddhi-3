@@ -44,7 +44,7 @@ public class SequenceQueryTestCase {
         query.select(
                 Query.outputSelector().
                         select("symbol", Expression.variable("e1", "symbol")).
-                        select("avgPrice", "avg", Expression.variable("e2", 0, "price")).
+                        select("avgPrice", Expression.function("avg", Expression.variable("e2",0, "price"))).
                         groupBy("e1", "symbol").
                         having(Condition.compare(Expression.variable("avgPrice"),
                                                  Condition.Operator.GREATER_THAN,

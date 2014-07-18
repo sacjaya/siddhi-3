@@ -25,10 +25,7 @@ import org.wso2.siddhi.query.api.query.input.pattern.element.PatternElement;
 import org.wso2.siddhi.query.api.query.input.sequence.SequenceInputStream;
 import org.wso2.siddhi.query.api.query.input.sequence.element.SequenceElement;
 import org.wso2.siddhi.query.api.query.output.OutputRate;
-import org.wso2.siddhi.query.api.query.output.stream.DeleteStream;
-import org.wso2.siddhi.query.api.query.output.stream.InsertIntoStream;
-import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
-import org.wso2.siddhi.query.api.query.output.stream.UpdateStream;
+import org.wso2.siddhi.query.api.query.output.stream.*;
 import org.wso2.siddhi.query.api.query.selection.Selector;
 
 import java.util.HashMap;
@@ -77,9 +74,18 @@ public class Query {
         return this;
     }
 
-
     public Query insertInto(String outputStreamId) {
         this.outputStream = new InsertIntoStream(outputStreamId);
+        return this;
+    }
+
+    public Query insertIntoPartitioned(String outputStreamId, OutputStream.OutputEventsFor outputEventsFor) {
+        this.outputStream = new InsertIntoPartitionedStream(outputStreamId, outputEventsFor);
+        return this;
+    }
+
+    public Query insertIntoPartitioned(String outputStreamId) {
+        this.outputStream = new InsertIntoPartitionedStream(outputStreamId);
         return this;
     }
 
@@ -148,6 +154,21 @@ public class Query {
                                               JoinInputStream.EventTrigger trigger) {
         return new JoinInputStream(leftStream, type, rightStream, onCompare, within, trigger);
     }
+
+    public static InputStream joinInputStream(SingleInputStream leftStream, JoinInputStream.Type type,
+                                              SingleInputStream rightStream,
+                                              Constant within,
+                                              JoinInputStream.EventTrigger trigger) {
+        return new JoinInputStream(leftStream, type, rightStream, null, within, trigger);
+    }
+
+    public static InputStream joinInputStream(SingleInputStream leftStream, JoinInputStream.Type type,
+                                              SingleInputStream rightStream,
+                                              Condition onCompare,
+                                              JoinInputStream.EventTrigger trigger) {
+        return new JoinInputStream(leftStream, type, rightStream, onCompare, null, trigger);
+    }
+
 
     public static InputStream joinInputStream(SingleInputStream leftStream, JoinInputStream.Type type,
                                               SingleInputStream rightStream, Constant within) {
