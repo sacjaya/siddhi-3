@@ -103,9 +103,9 @@ public class PatternValidatorTestCase {
 
     }
 
-    @Test
+    /*@Test
     public void QueryValidatorTestCase() throws ValidatorException {
         List<String> test = query.getInputStream().getStreamIds();
         QueryValidator.validate(query, definitionMap);
-    }
+    }*/
 }
