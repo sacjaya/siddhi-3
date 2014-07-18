@@ -121,7 +121,7 @@ public class ExecutorParser {
             }
         } else if (expression instanceof Variable) {
             return parseVariable((Variable) expression, currentStreamReference, streamDefinitionMap);
-            //return new VariableExpressionExecutor(((Variable) expression).getStreamId(), ((Variable) expression).getAttributeName(), currentStreamReference, streamDefinitionMap);
+            //return new VariableExpressionExecutor(((Variable) expression).getId(), ((Variable) expression).getAttributeName(), currentStreamReference, streamDefinitionMap);
         } else if (expression instanceof Multiply) {
             ExpressionExecutor left = parseExpression(((Multiply) expression).getLeftValue(), currentStreamReference, siddhiContext, streamDefinitionMap);
             ExpressionExecutor right = parseExpression(((Multiply) expression).getRightValue(), currentStreamReference, siddhiContext, streamDefinitionMap);

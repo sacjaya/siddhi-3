@@ -37,7 +37,7 @@ public class Query {
     private Selector selector = new Selector();
     private OutputStream outputStream;
     private OutputRate outputRate;
-    private Map<String,String> properties = new HashMap();
+    private Map<String,String> properties = new HashMap<String,String>();
 
     public static Query query() {
         return new Query();

@@ -23,7 +23,9 @@ import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.query.Query;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * {@linkplain Partition} class is used to represent the definition of
@@ -33,6 +35,7 @@ import java.util.List;
  */
 public class Partition {
 
+    private Map<String,String> properties = new HashMap<String,String>();
     private List<PartitionType> partitionTypeList = new ArrayList<PartitionType>();
     private Query query;
 
@@ -46,41 +49,16 @@ public class Partition {
 //        return this;
 //    }
 
-    public void addPartitionType(PartitionType partitionType) {
-        this.partitionTypeList.add(partitionType);
+//    public void addPartitionType(PartitionType partitionType) {
+//        this.partitionTypeList.add(partitionType);
+//    }
+
+    public static Partition partition() {
+        return new Partition();
     }
 
     public List<PartitionType> getPartitionTypeList() {
         return partitionTypeList;
-    }
-
-    @Override
-    public String toString() {
-        return "Partition{" +
-                "partitionTypeList=" + partitionTypeList +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Partition that = (Partition) o;
-
-        if (partitionTypeList != null ? !partitionTypeList.equals(that.partitionTypeList) : that.partitionTypeList != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public static Partition partition() {
-        return new Partition();
     }
 
     public Partition with(String streamId, Expression expression) {
@@ -110,4 +88,41 @@ public class Partition {
     public static RangePartitionType.RangePartitionProperty range(String partitionKey, Condition condition) {
         return new RangePartitionType.RangePartitionProperty(partitionKey, condition);
     }
+
+    public Partition property(String key, String value) {
+        //todo handel
+        properties.put(key,value);
+        return this;
+    }
+
+    public  String getPropertyValue(String key) {
+        //todo handel
+        return properties.get(key);
+    }
+
+    @Override
+    public String toString() {
+        return "Partition{" +
+                "partitionTypeList=" + partitionTypeList +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Partition that = (Partition) o;
+
+        if (partitionTypeList != null ? !partitionTypeList.equals(that.partitionTypeList) : that.partitionTypeList != null) {
+            return false;
+        }
+
+        return true;
+    }
+
 }

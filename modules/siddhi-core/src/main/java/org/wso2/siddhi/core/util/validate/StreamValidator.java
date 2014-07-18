@@ -30,8 +30,8 @@ public class StreamValidator {
      * @throws ValidatorException Thrown if validation is failed
      */
     public static void validate(Map<String, StreamDefinition> streamDefinitionMap, StreamDefinition definition) throws ValidatorException {
-        if (streamDefinitionMap.containsKey(definition.getStreamId()) && !(streamDefinitionMap.get(definition.getStreamId()).equals(definition))) {
-            throw new ValidatorException("Different stream definition already exist under stream name " + definition.getStreamId());
+        if (streamDefinitionMap.containsKey(definition.getId()) && !(streamDefinitionMap.get(definition.getId()).equals(definition))) {
+            throw new ValidatorException("Different stream definition already exist under stream name " + definition.getId());
         }
 
     }
@@ -45,8 +45,8 @@ public class StreamValidator {
      */
     public static void validate(List<StreamDefinition> definitionList, StreamDefinition newDefinition) throws ValidatorException {
         for (StreamDefinition definition : definitionList) {
-            if ((definition.getStreamId().equals(newDefinition.getStreamId())) && !definition.equals(newDefinition)) {
-                throw new ValidatorException("Different stream definition already exist under stream name " + newDefinition.getStreamId());
+            if ((definition.getId().equals(newDefinition.getId())) && !definition.equals(newDefinition)) {
+                throw new ValidatorException("Different stream definition already exist under stream name " + newDefinition.getId());
             }
         }
     }

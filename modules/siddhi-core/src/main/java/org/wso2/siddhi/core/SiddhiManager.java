@@ -22,7 +22,6 @@ import org.wso2.siddhi.core.config.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
-import org.wso2.siddhi.core.exception.OperationNotSupportedException;
 import org.wso2.siddhi.core.exception.QueryNotExistException;
 import org.wso2.siddhi.core.query.ExecutionRuntime;
 import org.wso2.siddhi.core.exception.ValidatorException;
@@ -100,27 +99,38 @@ public class SiddhiManager {
 
     public ExecutionPlanRuntime addExecutionPlan(ExecutionPlan executionPlan) throws SiddhiParserException {
         ExecutionPlanRuntime executionPlanRuntime = new ExecutionPlanRuntime(siddhiContext);
-        if(executionPlan.getStreamDefinitionMap() != null) {
-            for(StreamDefinition streamDefinition:executionPlan.getStreamDefinitionMap().values())  {
+
+        if (executionPlan.getStreamDefinitionMap() != null) {
+            for (StreamDefinition streamDefinition : executionPlan.getStreamDefinitionMap().values()) {
                 executionPlanRuntime.defineStream(streamDefinition);
             }
         }
 
-        if(executionPlan.getPartitionList() != null){
-            for(Partition partition:executionPlan.getPartitionList())  {
+        if (executionPlan.getPartitionList() != null) {
+            for (Partition partition : executionPlan.getPartitionList()) {
                 executionPlanRuntime.definePartition(partition);
             }
         }
 
-        if(executionPlan.getQueryList()!= null){
-            for(Query query:executionPlan.getQueryList())  {
+        if (executionPlan.getQueryList() != null) {
+            for (Query query : executionPlan.getQueryList()) {
                 executionPlanRuntime.addQuery(query);
             }
         }
         executionPlanRuntimeList.add(executionPlanRuntime);
-
         return executionPlanRuntime;
+
     }
+
+    public void removeStream(String streamId) {
+        AbstractDefinition abstractDefinition = streamDefinitionMap.get(streamId);
+        if (abstractDefinition != null && abstractDefinition instanceof StreamDefinition) {
+            streamDefinitionMap.remove(streamId);
+            streamJunctionMap.remove(streamId);
+            inputHandlerMap.remove(streamId);
+        }
+    }
+
 
     public void removeExecutionPlan(ExecutionPlanRuntime executionPlan) throws SiddhiParserException {
         ExecutionPlanRuntime executionPlanRuntime = new ExecutionPlanRuntime(siddhiContext);

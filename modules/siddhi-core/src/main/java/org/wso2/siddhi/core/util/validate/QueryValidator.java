@@ -112,7 +112,7 @@ public class QueryValidator {
         StreamDefinition definition = relevantDefinitionMap.get(null);
         definition.setId(outputStream.getStreamId());
         StreamValidator.validate(definitionMap, definition);
-        definitionMap.put(definition.getStreamId(), definition);
+        definitionMap.put(definition.getId(), definition);
     }
 
     /**

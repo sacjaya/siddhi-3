@@ -35,7 +35,6 @@ import org.wso2.siddhi.query.api.query.Query;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -63,17 +62,17 @@ public class ExecutionPlanRuntime {
 
     public InputHandler defineStream(StreamDefinition streamDefinition) {
         if (!checkEventStreamExist(streamDefinition)) {
-            streamDefinitionMap.put(streamDefinition.getStreamId(), streamDefinition);
-            StreamJunction streamJunction = streamJunctionMap.get(streamDefinition.getStreamId());
+            streamDefinitionMap.put(streamDefinition.getId(), streamDefinition);
+            StreamJunction streamJunction = streamJunctionMap.get(streamDefinition.getId());
             if (streamJunction == null) {
-                streamJunction = new StreamJunction(streamDefinition.getStreamId(), siddhiContext.getThreadPoolExecutor());
-                streamJunctionMap.put(streamDefinition.getStreamId(), streamJunction);
+                streamJunction = new StreamJunction(streamDefinition.getId(), siddhiContext.getThreadPoolExecutor());
+                streamJunctionMap.put(streamDefinition.getId(), streamJunction);
             }
-            InputHandler inputHandler = new InputHandler(streamDefinition.getStreamId(), streamJunction, siddhiContext);
-            inputHandlerMap.put(streamDefinition.getStreamId(), inputHandler);
+            InputHandler inputHandler = new InputHandler(streamDefinition.getId(), streamJunction, siddhiContext);
+            inputHandlerMap.put(streamDefinition.getId(), inputHandler);
             return inputHandler;
         } else {
-            return inputHandlerMap.get(streamDefinition.getStreamId());
+            return inputHandlerMap.get(streamDefinition.getId());
         }
 
     }
@@ -88,12 +87,12 @@ public class ExecutionPlanRuntime {
     }
 
     private boolean checkEventStreamExist(StreamDefinition newStreamDefinition) {
-        AbstractDefinition definition = streamDefinitionMap.get(newStreamDefinition.getStreamId());
+        AbstractDefinition definition = streamDefinitionMap.get(newStreamDefinition.getId());
         if (definition != null) {
             if (definition instanceof TableDefinition) {
-                throw new DifferentDefinitionAlreadyExistException("Table " + newStreamDefinition.getStreamId() + " is already defined as " + definition + ", hence cannot define " + newStreamDefinition);
+                throw new DifferentDefinitionAlreadyExistException("Table " + newStreamDefinition.getId() + " is already defined as " + definition + ", hence cannot define " + newStreamDefinition);
             } else if (!definition.getAttributeList().equals(newStreamDefinition.getAttributeList())) {
-                throw new DifferentDefinitionAlreadyExistException("Stream " + newStreamDefinition.getStreamId() + " is already defined as " + definition + ", hence cannot define " + newStreamDefinition);
+                throw new DifferentDefinitionAlreadyExistException("Stream " + newStreamDefinition.getId() + " is already defined as " + definition + ", hence cannot define " + newStreamDefinition);
             } else {
                 return true;
             }
