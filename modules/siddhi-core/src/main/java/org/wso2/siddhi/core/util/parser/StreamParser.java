@@ -18,28 +18,31 @@
 package org.wso2.siddhi.core.util.parser;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.query.processor.filter.FilterProcessor;
 import org.wso2.siddhi.core.query.processor.filter.PassthruFilterProcessor;
 import org.wso2.siddhi.core.query.processor.handler.SimpleHandlerProcessor;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.query.api.condition.Condition;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 import org.wso2.siddhi.query.api.query.input.InputStream;
 import org.wso2.siddhi.query.api.query.input.handler.Filter;
 import org.wso2.siddhi.query.api.query.input.handler.StreamHandler;
 
 import java.util.List;
+import java.util.Map;
 
 public class StreamParser {
 
 
-    public static QueryPartComposite parseSingleStream(InputStream queryStream, SiddhiContext siddhiContext) {
+    public static QueryPartComposite parseSingleStream(InputStream inputStream,  Map<String, StreamDefinition> teamStreamDefinitionMap, SiddhiContext siddhiContext) {
         QueryPartComposite queryPartComposite = new QueryPartComposite();
 
-        SimpleHandlerProcessor simpleHandlerProcessor =
-                new SimpleHandlerProcessor(generateFilerProcessor(queryStream, siddhiContext), queryStream);
+        SimpleHandlerProcessor simpleHandlerProcessor =                                                                                       //TODO
+                new SimpleHandlerProcessor(generateFilerProcessor(inputStream, teamStreamDefinitionMap,siddhiContext),inputStream.getStreamIds().get(0));
 
-        if (queryStream instanceof BasicSingleInputStream) {
+        if (inputStream instanceof BasicSingleInputStream) {
             queryPartComposite.getPreSelectProcessingElementList().add(simpleHandlerProcessor);
         } else {
             //TODO: else
@@ -50,7 +53,8 @@ public class StreamParser {
     }
 
 
-    private static FilterProcessor generateFilerProcessor(InputStream inputStream, SiddhiContext siddhiContext) {
+    private static FilterProcessor generateFilerProcessor( InputStream inputStream, Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext) {
+        //TODO
         List<StreamHandler> streamHandlers = ((BasicSingleInputStream) inputStream).getStreamHandlers();
         if (streamHandlers.size() == 0) {
             return new PassthruFilterProcessor();
@@ -59,7 +63,11 @@ public class StreamParser {
             if (streamHandler instanceof Filter) {
                 Filter filter = (Filter) streamHandler;
                 Condition condition = filter.getFilterCondition();
-                return new FilterProcessor(ExecutorParser.parseCondition(condition, ((BasicSingleInputStream) inputStream).getStreamReferenceId(), true, siddhiContext, inputStream));
+                try {
+                    return new FilterProcessor(ExecutorParser.parseCondition(condition, ((BasicSingleInputStream) inputStream).getStreamId(),  siddhiContext, tempStreamDefinitionMap));
+                } catch (ValidatorException e) {
+                    //TODO
+                }
             } else {
                 //TODO: else
 

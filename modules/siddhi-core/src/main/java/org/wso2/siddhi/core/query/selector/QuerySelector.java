@@ -19,6 +19,7 @@ package org.wso2.siddhi.core.query.selector;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.*;
+import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.selector.attribute.processor.AttributeProcessor;
 import org.wso2.siddhi.core.query.selector.attribute.processor.NonGroupingAttributeProcessor;
@@ -27,11 +28,11 @@ import org.wso2.siddhi.core.util.parser.ExecutorParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.query.input.InputStream;
-import org.wso2.siddhi.query.api.query.selection.Selector;
 import org.wso2.siddhi.query.api.query.selection.OutputAttribute;
-import org.wso2.siddhi.query.api.query.selection.attribute.SimpleAttribute;
+import org.wso2.siddhi.query.api.query.selection.Selector;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class QuerySelector {
 
@@ -40,18 +41,19 @@ public class QuerySelector {
     private final OutputRateManager outputRateManager;
     private int outputSize;
     private ArrayList<AttributeProcessor> attributeProcessorList;
+    Map<String, StreamDefinition> tempStreamDefinitionMap;
     private InputStream inputStream;
     public boolean currentOn = false;
     public boolean expiredOn = false;
 
 
     public QuerySelector(String outputStreamId, Selector selector,
-                         OutputRateManager outputRateManager, SiddhiContext siddhiContext, boolean currentOn, boolean expiredOn,InputStream inputStream) {
+                         OutputRateManager outputRateManager, SiddhiContext siddhiContext, boolean currentOn, boolean expiredOn,Map<String, StreamDefinition> tempStreamDefinitionMap) {
         this.currentOn = currentOn;
         this.expiredOn = expiredOn;
         this.selector = selector;
         outputSize = selector.getSelectionList().size();
-        this.inputStream = inputStream;
+        this.tempStreamDefinitionMap = tempStreamDefinitionMap;
         this.outputStreamDefinition = new StreamDefinition();
         this.outputStreamDefinition.setId(outputStreamId);
         this.outputRateManager = outputRateManager;
@@ -94,13 +96,15 @@ public class QuerySelector {
 
     private void populateAttributeProcessorList(SiddhiContext siddhiContext) {
         for (OutputAttribute outputAttribute : selector.getSelectionList()) {
-            if (outputAttribute instanceof SimpleAttribute) {
-                PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(((SimpleAttribute) outputAttribute).getExpression(),  null, false, siddhiContext,inputStream));
-                attributeProcessorList.add(attributeGenerator);
-                outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
-            } else {
-                //TODO: else
+            PassThroughAttributeProcessor attributeGenerator = null;
+            try {
+                attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(outputAttribute.getExpression(), null, siddhiContext, tempStreamDefinitionMap));
+            } catch (ValidatorException e) {
+                //TODO
             }
+            attributeProcessorList.add(attributeGenerator);
+                outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
+           //TODO avg, sum
         }
 
 

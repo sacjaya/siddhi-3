@@ -18,6 +18,7 @@
 package org.wso2.siddhi.core.query;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.partition.executor.ValuePartitionExecutor;
 import org.wso2.siddhi.core.query.creator.QueryCreator;
@@ -27,6 +28,7 @@ import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.core.util.parser.ExecutorParser;
 import org.wso2.siddhi.query.api.condition.ConditionValidator;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.ExpressionValidator;
 import org.wso2.siddhi.query.api.partition.Partition;
 import org.wso2.siddhi.query.api.partition.PartitionType;
@@ -56,20 +58,20 @@ public class QueryPartitioner {
 
                 ArrayList<PartitionExecutor> executorList = new ArrayList<PartitionExecutor>();
                 partitionExecutors.add(executorList);
-
+                                            //TODO
                 for (PartitionType partitionType : partition.getPartitionTypeList()) {   ((ValuePartitionType) partitionType).getStreamId() ;
                     Map<String, Set<String>> dependencyMap;
                     if (partitionType instanceof ValuePartitionType) {
                         dependencyMap = ExpressionValidator.getDependency(((ValuePartitionType) partitionType).getExpression());
                         if (dependencyMap.isEmpty() ||  ((ValuePartitionType) partitionType).getStreamId().equals(((BasicSingleInputStream) inputStream).getStreamId())) {
-                            executorList.add(new ValuePartitionExecutor(ExecutorParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(), true, siddhiContext, inputStream)));
+                            try {
+                                executorList.add(new ValuePartitionExecutor(ExecutorParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(),  siddhiContext, queryCreator.getTempStreamDefinitionMap())));
+                            } catch (ValidatorException e) {
+                                //TODO
+                            }
                         }
                     } else {
                           //TODO: range partitioning
-//                        dependencyMap = ConditionValidator.getDependency(((RangePartitionType) partitionType).ggetCondition());
-//                        if (dependencyMap.isEmpty() || dependencyMap.contains(queryEventSource.getSourceId())) {
-//                            executorList.add(new RangePartitionExecutor(ExecutorParser.parseCondition(((RangePartitionType) partitionType).getCondition(), tempQueryEventSourceList, queryEventSource.getSourceId(), eventTableMap, true, siddhiContext), ((RangePartitionType) partitionType).getPartitionKey()));
-//                        }
                     }
                 }
             }

@@ -36,7 +36,7 @@ public class BasicQueryCreator extends QueryCreator {
     }
 
     public QueryPartComposite constructQuery() {
-        QueryPartComposite queryPartComposite = StreamParser.parseSingleStream(getInputStream(), siddhiContext);
+        QueryPartComposite queryPartComposite = StreamParser.parseSingleStream(getInputStream(),getTempStreamDefinitionMap(), siddhiContext);
         QuerySelector querySelector = constructQuerySelector(outputRateManager);
         queryPartComposite.setQuerySelector(querySelector);
         return queryPartComposite;

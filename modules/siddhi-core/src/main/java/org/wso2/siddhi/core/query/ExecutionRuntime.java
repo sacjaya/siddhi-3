@@ -50,11 +50,10 @@ public class ExecutionRuntime {
 
 
     public ExecutionRuntime(Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap, Partition partition, SiddhiContext siddhiContext) {
-        if (query.getOutputStream() != null) {
-            this.queryId = query.getOutputStream().getStreamId() + "-" + UUID.randomUUID();
-        }  else {
-            this.queryId = UUID.randomUUID().toString();
+        if (query.getPropertyValue("name") == null) {
+           query.property("name", UUID.randomUUID().toString());
         }
+        this.queryId = query.getPropertyValue("name");
         this.query = query;
         outputRateManager = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
         QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap, outputRateManager, siddhiContext);
@@ -100,15 +99,16 @@ public class ExecutionRuntime {
         outputRateManager.addQueryCallback(callback);
     }
 
-    public void removeQuery(ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap) {
-        for (HandlerProcessor queryStreamProcessor : handlerProcessors) {
-            StreamJunction junction = streamJunctionMap.get(queryStreamProcessor.getStreamId());
-            if (junction != null) {
-                junction.removeEventFlow(queryStreamProcessor);
-            }
-        }
-        streamDefinitionMap.remove(query.getOutputStream().getStreamId());
-    }
+    //TODO
+//    public void removeQuery(ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap) {
+//        for (HandlerProcessor queryStreamProcessor : handlerProcessors) {
+//            StreamJunction junction = streamJunctionMap.get(queryStreamProcessor.getStreamId());
+//            if (junction != null) {
+//                junction.removeEventFlow(queryStreamProcessor);
+//            }
+//        }
+//        streamDefinitionMap.remove(query.getOutputStream().getStreamId());
+//    }
 
     public Query getQuery() {
         return query;

@@ -34,11 +34,11 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
     private Disruptor[] disruptors;
     private QuerySelector next;
     private FilterProcessor filterProcessor;
-    private InputStream inputStream ;
+    private String streamId ;
 
-    public SimpleHandlerProcessor(FilterProcessor filterProcessor,InputStream inputStream) {
+    public SimpleHandlerProcessor(FilterProcessor filterProcessor,String streamId) {
         this.filterProcessor = filterProcessor;
-        this.inputStream = inputStream;
+        this.streamId = streamId;
     }
 
     @Override
@@ -51,6 +51,11 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
         this.disruptors = disruptors;
     }
 
+    @Override
+    public String getStreamId() {
+        return streamId;
+    }
+
     protected void processHandler(StreamEvent streamEvent) {
         streamEvent = filterProcessor.process(streamEvent);
        if (streamEvent != null) {
@@ -58,14 +63,14 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
         }
     }
 
-    public String getStreamId() {
-       if(inputStream instanceof BasicSingleInputStream){
-           return ((BasicSingleInputStream) inputStream).getStreamId();
-       }  else {
-           //TODO: else
-       }
-        return null;
-    }
+//    public String getStreamId() {
+//       if(inputStream instanceof BasicSingleInputStream){
+//           return ((BasicSingleInputStream) inputStream).getStreamId();
+//       }  else {
+//           //TODO: else
+//       }
+//        return null;
+//    }
 
     @Override
     public Disruptor[] getDisruptors() {

@@ -19,9 +19,14 @@
 package org.wso2.siddhi.core.config;
 
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
+import org.wso2.siddhi.core.exception.QueryNotExistException;
 import org.wso2.siddhi.core.query.ExecutionRuntime;
+import org.wso2.siddhi.core.query.output.callback.InsertIntoStreamCallback;
+import org.wso2.siddhi.core.query.output.callback.OutputCallback;
+import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.input.InputHandler;
+import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.definition.TableDefinition;
@@ -44,7 +49,6 @@ public class ExecutionPlanRuntime {
 
 
     private SiddhiContext siddhiContext;
-//    private ConcurrentMap<String, Callback> callBck = new ConcurrentHashMap<String,Partition>();
 
    public ExecutionPlanRuntime(SiddhiContext siddhiContext){
        this.siddhiContext = siddhiContext;
@@ -53,6 +57,7 @@ public class ExecutionPlanRuntime {
 
 
     public void shutdown() {
+        //TODO
 
     }
 
@@ -73,6 +78,15 @@ public class ExecutionPlanRuntime {
 
     }
 
+    public void removeStream(String streamId) {
+        AbstractDefinition abstractDefinition = streamDefinitionMap.get(streamId);
+        if (abstractDefinition != null && abstractDefinition instanceof StreamDefinition) {
+            streamDefinitionMap.remove(streamId);
+            streamJunctionMap.remove(streamId);
+            inputHandlerMap.remove(streamId);
+        }
+    }
+
     private boolean checkEventStreamExist(StreamDefinition newStreamDefinition) {
         AbstractDefinition definition = streamDefinitionMap.get(newStreamDefinition.getStreamId());
         if (definition != null) {
@@ -89,7 +103,7 @@ public class ExecutionPlanRuntime {
 
     public void definePartition(Partition partition) {
         partitionList.add(partition);
-        //TODO: for a lis of queries
+        //TODO: for a list of queries
         Query query = partition.getQuery();
         if(query !=null){
             addQuery(query,partition);
@@ -99,15 +113,78 @@ public class ExecutionPlanRuntime {
 
     public String addQuery(Query query) {
         ExecutionRuntime executionRuntime = new ExecutionRuntime(query, streamDefinitionMap, streamJunctionMap, null,siddhiContext);
-        queryProcessorMap.put(executionRuntime.getQueryId(), executionRuntime);
+
+        queryProcessorMap.put( executionRuntime.getQueryId(), executionRuntime);
+        OutputCallback outputCallback = executionRuntime.getOutputCallback();
+        if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
+            defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
+        }
         return executionRuntime.getQueryId();
     }
 
 
-    public String addQuery(Query query, Partition partition) {
+    private String addQuery(Query query, Partition partition) {
         ExecutionRuntime executionRuntime = new ExecutionRuntime(query, streamDefinitionMap, streamJunctionMap, partition,siddhiContext);
+        OutputCallback outputCallback = executionRuntime.getOutputCallback();
+        if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
+            defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
+        }
         queryProcessorMap.put(executionRuntime.getQueryId(), executionRuntime);
         return executionRuntime.getQueryId();
     }
+
+//    public void removeQuery(String queryName) {
+//        ExecutionRuntime executionRuntime = queryProcessorMap.remove(queryName);
+//        if (executionRuntime != null) {
+//            executionRuntime.removeQuery(streamJunctionMap, streamDefinitionMap);
+//        }
+//    }
+
+    public void addCallback(String streamId, StreamCallback streamCallback) {
+
+        streamCallback.setStreamId(streamId);
+        StreamJunction streamJunction = streamJunctionMap.get(streamId);
+        if (streamJunction == null) {
+            streamJunction = new StreamJunction(streamId, siddhiContext.getThreadPoolExecutor());
+            streamJunctionMap.put(streamId, streamJunction);
+        }
+        streamJunction.addEventFlow(streamCallback);
+    }
+
+    public void addCallback(String queryName, QueryCallback callback) {
+
+        ExecutionRuntime executionRuntime = queryProcessorMap.get(queryName);
+        if (executionRuntime == null) {
+            throw new QueryNotExistException("No query fund for " + queryName);
+        }
+        callback.setStreamDefinition(executionRuntime.getOutputStreamDefinition());
+        executionRuntime.addCallback(callback);
+
+    }
+
+    public InputHandler getInputHandler(String streamId) {
+        return inputHandlerMap.get(streamId);
+    }
+
+    public StreamDefinition getStreamDefinition(String streamId) {
+        AbstractDefinition abstractDefinition = streamDefinitionMap.get(streamId);
+        if (abstractDefinition instanceof StreamDefinition) {
+            return (StreamDefinition) abstractDefinition;
+        } else {
+            return null;
+        }
+    }
+
+    public List<StreamDefinition> getStreamDefinitions() {
+        List<StreamDefinition> streamDefinitions = new ArrayList<StreamDefinition>(streamDefinitionMap.size());
+        for (AbstractDefinition abstractDefinition : streamDefinitionMap.values()) {
+            if (abstractDefinition instanceof StreamDefinition) {
+                streamDefinitions.add((StreamDefinition) abstractDefinition);
+            }
+        }
+        return streamDefinitions;
+    }
+
+
 
 }

@@ -24,6 +24,7 @@ import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.util.validate.QueryValidator;
 import org.wso2.siddhi.core.util.validate.StreamValidator;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.partition.Partition;
 import org.wso2.siddhi.query.api.query.Query;
 
 import java.util.ArrayList;
@@ -39,9 +40,11 @@ import java.util.Map;
 public class ExecutionPlan {
     private List<Query> queryList;
     private Map<String, StreamDefinition> streamDefinitionMap;
+    private List<Partition> partitionList;
     private List<InputHandler> inputHandlerList;
     private List<StreamReceiver> streamRecieverList;
     private String name;
+    private ExecutionPlanRuntime executionPlanRuntime;
 
 
     /**
@@ -51,6 +54,7 @@ public class ExecutionPlan {
      */
     public ExecutionPlan(String name) {
         this.name = name;
+//        executionPlanRuntime = new ExecutionPlanRuntime();
     }
 
     public void addQuery(Query query) throws ValidatorException {
@@ -113,5 +117,11 @@ public class ExecutionPlan {
 
     public List<Query> getQueryList() {
         return queryList;
+    }
+
+    public void addExecutionPlan(){
+//        executionPlanRuntime.addStreamDefinitions(streamDefinitionMap);
+//        executionPlanRuntime.addPartitions(partitionList);
+//        executionPlanRuntime.addQueries(queryList);
     }
 }
