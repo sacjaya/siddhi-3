@@ -22,8 +22,6 @@ import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.stream.StreamReceiver;
 
-import java.util.List;
-
 public abstract class StreamCallback implements StreamReceiver {
 
     private String streamId;

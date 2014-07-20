@@ -20,7 +20,7 @@ package org.wso2.siddhi.core.util.parser;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.query.processor.filter.FilterProcessor;
-import org.wso2.siddhi.core.query.processor.filter.PassthruFilterProcessor;
+import org.wso2.siddhi.core.query.processor.filter.PassThroughFilterProcessor;
 import org.wso2.siddhi.core.query.processor.handler.SimpleHandlerProcessor;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.query.api.condition.Condition;
@@ -57,7 +57,7 @@ public class StreamParser {
         //TODO
         List<StreamHandler> streamHandlers = ((BasicSingleInputStream) inputStream).getStreamHandlers();
         if (streamHandlers.size() == 0) {
-            return new PassthruFilterProcessor();
+            return new PassThroughFilterProcessor();
         }
         for (StreamHandler streamHandler : streamHandlers) {
             if (streamHandler instanceof Filter) {

@@ -21,18 +21,11 @@ import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.util.QueryPartComposite;
-import org.wso2.siddhi.core.util.parser.ExecutorParser;
 import org.wso2.siddhi.core.util.parser.QueryOutputParser;
-import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.api.query.input.*;
-import org.wso2.siddhi.query.api.query.input.handler.Filter;
-import org.wso2.siddhi.query.api.query.input.handler.StreamFunction;
-import org.wso2.siddhi.query.api.query.input.handler.StreamHandler;
-import org.wso2.siddhi.query.api.query.input.handler.Window;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,16 +55,14 @@ public abstract class QueryCreator {
         InputStream inputStream = getInputStream();
 
         if (inputStream instanceof BasicSingleInputStream ) {
+
             tempStreamDefinitionMap.put(((SingleInputStream) inputStream).getStreamId(), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));
-
-
-
-            querySelector = constructQuerySelector(outputRateManager);
 
         } else {
             //TODO: other inputstreamTypes
 
         }
+        querySelector = constructQuerySelector(outputRateManager);
         outputStreamDefinition = querySelector.getOutputStreamDefinition();
 
     }
@@ -79,7 +70,7 @@ public abstract class QueryCreator {
 
 
     protected QuerySelector constructQuerySelector(OutputRateManager outputRateManager) {
-        return QueryOutputParser.constructQuerySelector(query.getInputStream(),tempStreamDefinitionMap,query.getOutputStream(), query.getSelector(), outputRateManager,siddhiContext);
+        return QueryOutputParser.constructQuerySelector(tempStreamDefinitionMap,query.getOutputStream(), query.getSelector(), outputRateManager,siddhiContext);
     }
 
 

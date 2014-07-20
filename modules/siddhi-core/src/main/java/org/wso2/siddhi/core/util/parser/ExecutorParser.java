@@ -45,7 +45,6 @@ import org.wso2.siddhi.core.executor.expression.multiply.MultiplyExpressionExecu
 import org.wso2.siddhi.core.executor.expression.multiply.MultiplyExpressionExecutorInt;
 import org.wso2.siddhi.core.executor.expression.multiply.MultiplyExpressionExecutorLong;
 import org.wso2.siddhi.query.api.condition.*;
-import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.*;
@@ -200,7 +199,7 @@ public class ExecutorParser {
     private static ExpressionExecutor parseVariable(Variable variable, String currentStreamReference, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
         String attributeName = variable.getAttributeName();
         String streamId = variable.getStreamId();
-        String[] attributeNameArray = null;
+        String[] attributeNameArray;
         if (streamId == null) {
             if (currentStreamReference != null) {
                 attributeNameArray = streamDefinitionMap.get(currentStreamReference).getAttributeNameArray();

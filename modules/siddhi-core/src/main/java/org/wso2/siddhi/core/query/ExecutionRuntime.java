@@ -43,7 +43,6 @@ import java.util.concurrent.ConcurrentMap;
 public class ExecutionRuntime {
     private String queryId;
     private Query query;
-    private List<HandlerProcessor> handlerProcessors = new ArrayList<HandlerProcessor>();
     private StreamDefinition outputStreamDefinition;
     private OutputCallback outputCallback = null;
     private OutputRateManager outputRateManager;
@@ -69,13 +68,14 @@ public class ExecutionRuntime {
         QueryPartitioner queryPartitioner = new QueryPartitioner(partition,queryCreator, querySelectorList, siddhiContext);
 
         List<HandlerProcessor> handlerProcessorList = queryPartitioner.constructPartition();
+        List<HandlerProcessor> handlerProcessors = new ArrayList<HandlerProcessor>();
         if(partition == null){
             handlerProcessors = handlerProcessorList;
         } else{
              List<List<PartitionExecutor>> partitionExecutors = queryPartitioner.getPartitionExecutors();
             for (int i = 0; i < handlerProcessorList.size(); i++) {
                 HandlerProcessor queryStreamProcessor = handlerProcessorList.get(i);
-                handlerProcessors.add(new PartitionHandlerProcessor(queryStreamProcessor.getStreamId(), queryPartitioner, i,partitionExecutors.get(i)));
+                handlerProcessors.add(new PartitionHandlerProcessor(queryStreamProcessor.getStreamId(), queryPartitioner, i, partitionExecutors.get(i)));
 
             }
         }

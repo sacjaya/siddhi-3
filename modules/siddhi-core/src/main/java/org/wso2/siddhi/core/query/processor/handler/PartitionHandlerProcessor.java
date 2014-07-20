@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PartitionHandlerProcessor implements HandlerProcessor {
 
-    static final Logger log = Logger.getLogger(PartitionHandlerProcessor.class);
     private final String streamId;
     private QueryPartitioner queryPartitioner;
     private int disruptorsSize = 5;

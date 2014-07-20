@@ -19,15 +19,9 @@ package org.wso2.siddhi.core.query.processor.handler;
 
 import com.lmax.disruptor.dsl.Disruptor;
 import org.wso2.siddhi.core.event.*;
-
 import org.wso2.siddhi.core.query.processor.PreSelectProcessingElement;
 import org.wso2.siddhi.core.query.processor.filter.FilterProcessor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
-import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
-import org.wso2.siddhi.query.api.query.input.InputStream;
-
-import java.util.List;
-
 
 public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProcessingElement{
 

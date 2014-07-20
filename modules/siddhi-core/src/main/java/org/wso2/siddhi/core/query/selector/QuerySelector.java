@@ -25,9 +25,7 @@ import org.wso2.siddhi.core.query.selector.attribute.processor.AttributeProcesso
 import org.wso2.siddhi.core.query.selector.attribute.processor.NonGroupingAttributeProcessor;
 import org.wso2.siddhi.core.query.selector.attribute.processor.PassThroughAttributeProcessor;
 import org.wso2.siddhi.core.util.parser.ExecutorParser;
-import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.query.input.InputStream;
 import org.wso2.siddhi.query.api.query.selection.OutputAttribute;
 import org.wso2.siddhi.query.api.query.selection.Selector;
 
@@ -42,7 +40,6 @@ public class QuerySelector {
     private int outputSize;
     private ArrayList<AttributeProcessor> attributeProcessorList;
     Map<String, StreamDefinition> tempStreamDefinitionMap;
-    private InputStream inputStream;
     public boolean currentOn = false;
     public boolean expiredOn = false;
 
@@ -96,15 +93,15 @@ public class QuerySelector {
 
     private void populateAttributeProcessorList(SiddhiContext siddhiContext) {
         for (OutputAttribute outputAttribute : selector.getSelectionList()) {
-            PassThroughAttributeProcessor attributeGenerator = null;
-            try {
-                attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(outputAttribute.getExpression(), null, siddhiContext, tempStreamDefinitionMap));
-            } catch (ValidatorException e) {
-                //TODO
-            }
-            attributeProcessorList.add(attributeGenerator);
+           try {
+                PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(outputAttribute.getExpression(), null, siddhiContext, tempStreamDefinitionMap));
+                attributeProcessorList.add(attributeGenerator);
                 outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
-           //TODO avg, sum
+
+           } catch (ValidatorException e) {
+                //this will never happen as this is already validated
+           }
+            //TODO avg, sum
         }
 
 

@@ -25,9 +25,7 @@ import org.wso2.siddhi.core.query.output.callback.OutputCallback;
 import org.wso2.siddhi.core.query.output.rateLimit.PassThroughOutputRateManager;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.stream.StreamJunction;
-import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.query.input.InputStream;
 import org.wso2.siddhi.query.api.query.output.OutputRate;
 import org.wso2.siddhi.query.api.query.output.stream.DeleteStream;
 import org.wso2.siddhi.query.api.query.output.stream.InsertIntoStream;
@@ -42,7 +40,7 @@ import java.util.concurrent.ConcurrentMap;
 public class QueryOutputParser {
 
 
-    public static QuerySelector constructQuerySelector(InputStream inputStream, Map<String, StreamDefinition> tempStreamDefinitionMap, OutputStream outStream, Selector selector, OutputRateManager outputRateManager
+    public static QuerySelector constructQuerySelector(Map<String, StreamDefinition> tempStreamDefinitionMap, OutputStream outStream, Selector selector, OutputRateManager outputRateManager
             , SiddhiContext siddhiContext) {
         boolean currentOn = false;
         boolean expiredOn = false;

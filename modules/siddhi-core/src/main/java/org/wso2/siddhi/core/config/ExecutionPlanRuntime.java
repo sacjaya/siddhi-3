@@ -42,7 +42,6 @@ public class ExecutionPlanRuntime {
     private ConcurrentMap<String, AbstractDefinition> streamDefinitionMap = new ConcurrentHashMap<String, AbstractDefinition>(); //contains stream definition
     private ConcurrentMap<String, InputHandler> inputHandlerMap = new ConcurrentHashMap<String, InputHandler>();
     private ConcurrentMap<String, ExecutionRuntime> queryProcessorMap = new ConcurrentHashMap<String, ExecutionRuntime>();
-    private ConcurrentMap<String, Partition> partitionMap = new ConcurrentHashMap<String,Partition>();
     private ConcurrentMap<String, StreamJunction> streamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains definition
     private List<Partition> partitionList = new ArrayList<Partition>();
 

@@ -19,12 +19,8 @@ package org.wso2.siddhi.core.executor.expression;
 
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.StreamEvent;
-import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
-
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
-import org.wso2.siddhi.query.api.query.input.InputStream;
 
 public class VariableExpressionExecutor implements ExpressionExecutor {
     Attribute.Type type;

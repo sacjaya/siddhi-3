@@ -20,13 +20,10 @@ package org.wso2.siddhi.core.stream;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.wso2.siddhi.core.event.StreamEvent;
 
-import java.util.List;
-
 public interface StreamReceiver {
 
     void receive(StreamEvent streamEvent) ;
 
-    //list or 1 disruptor
     void setDisruptors(Disruptor[] disruptors);
 
     String getStreamId();
