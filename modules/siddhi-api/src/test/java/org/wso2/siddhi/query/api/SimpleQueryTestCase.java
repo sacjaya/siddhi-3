@@ -280,7 +280,7 @@ public class SimpleQueryTestCase {
                         filter(Condition.and(Condition.compare(Expression.function("ext", "FooBarCond", Expression.value(7), Expression.value(9.5)),
                                                 Condition.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
-                                        Condition.extension("ext", "BarCond", Expression.value(100),
+                                        Condition.function("ext", "BarCond", Expression.value(100),
                                                 Expression.variable("volume")
                                         )
                                 )
