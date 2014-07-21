@@ -19,14 +19,28 @@ package org.wso2.siddhi.query.api.query.output.stream;
 public class InsertIntoStream extends OutputStream {
 
 
+    private boolean isPartitioned;
+
+    public InsertIntoStream(String streamId) {
+        this(streamId, false, OutputEventsFor.CURRENT_EVENTS);
+    }
+
     public InsertIntoStream(String streamId, OutputEventsFor outputEventsFor) {
+        this(streamId, false, outputEventsFor);
+    }
+
+    public InsertIntoStream(String streamId, boolean isPartitioned) {
+        this(streamId, isPartitioned, OutputEventsFor.CURRENT_EVENTS);
+    }
+
+    public InsertIntoStream(String streamId, boolean isPartitioned, OutputEventsFor outputEventsFor) {
+        this.isPartitioned = isPartitioned;
         this.streamId = streamId;
         this.outputEventsFor = outputEventsFor;
     }
 
-    public InsertIntoStream(String streamId) {
-        this.streamId = streamId;
-        this.outputEventsFor = OutputEventsFor.CURRENT_EVENTS;
-    }
 
+    public boolean isPartitioned() {
+        return isPartitioned;
+    }
 }

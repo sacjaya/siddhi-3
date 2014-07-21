@@ -32,13 +32,20 @@ public class BasicSingleInputStream extends SingleInputStream implements Sequenc
 //    protected boolean isCounterStream = false;
 
     protected BasicSingleInputStream(String streamId) {
-        this(streamId, streamId);
+        this(streamId, false);
+    }
+
+    protected BasicSingleInputStream(String streamId, boolean isPartitioned) {
+        this(streamId, streamId, isPartitioned);
     }
 
     public BasicSingleInputStream(String streamId, String streamReferenceId) {
-        super(streamId, streamReferenceId);
-        this.streamId = streamId;
-        this.streamReferenceId = streamReferenceId;
+        this(streamId, streamReferenceId, false);
+
+    }
+
+    public BasicSingleInputStream(String streamId, String streamReferenceId, boolean isPartitioned) {
+        super(streamId, streamReferenceId, isPartitioned);
     }
 
     public AbstractDefinition getDefinition() {

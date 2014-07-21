@@ -1,0 +1,26 @@
+from Stream1[symbol == 'IBM']#stamk:reg(price)#reg(volume)
+select price, symbol, Stream1.1_priceM,  #Stream1.2_m
+insert into Stream2;
+
+from Stream1[price> 5 and symbol == 'IBM' or volume <= 5+3/6]
+insert into Stream2;
+
+from Stream1
+insert into Stream2;
+
+@source( db.name ='test')
+define table Test (symbol string, price double);
+
+define stream Test (symbol string, price double);
+
+
+
+/**
+define stream Test (symbol string, price double);
+
+define table Test (symbol string, price double);
+
+@from(dbname ='test')
+define table Test (symbol string, price double);
+
+*/

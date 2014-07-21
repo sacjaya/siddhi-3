@@ -37,19 +37,19 @@ public class Query {
     private Selector selector = new Selector();
     private OutputStream outputStream;
     private OutputRate outputRate;
-    private Map<String,String> properties = new HashMap<String,String>();
+    private Map<String, String> properties = new HashMap<String, String>();
 
     public static Query query() {
         return new Query();
     }
 
-    public  Query property(String key, String value) {
-       //todo handel
-       properties.put(key,value);
-       return this;
+    public Query property(String key, String value) {
+        //todo handel
+        properties.put(key, value);
+        return this;
     }
 
-    public  String getPropertyValue(String key) {
+    public String getPropertyValue(String key) {
         //todo handel
         return properties.get(key);
     }
@@ -80,12 +80,12 @@ public class Query {
     }
 
     public Query insertIntoPartitioned(String outputStreamId, OutputStream.OutputEventsFor outputEventsFor) {
-        this.outputStream = new InsertIntoPartitionedStream(outputStreamId, outputEventsFor);
+        this.outputStream = new InsertIntoStream(outputStreamId, true, outputEventsFor);
         return this;
     }
 
     public Query insertIntoPartitioned(String outputStreamId) {
-        this.outputStream = new InsertIntoPartitionedStream(outputStreamId);
+        this.outputStream = new InsertIntoStream(outputStreamId, true);
         return this;
     }
 
@@ -200,4 +200,13 @@ public class Query {
     public static SequenceInputStream sequenceInputStream(SequenceElement sequenceElement, Constant within) {
         return new SequenceInputStream(sequenceElement, within);
     }
+
+    public static BasicSingleInputStream partitionedInputStream(String streamId) {
+        return new BasicSingleInputStream(streamId, streamId, true);
+    }
+
+    public static BasicSingleInputStream partitionedInputStream(String streamReferenceId, String streamId) {
+        return new BasicSingleInputStream(streamReferenceId, streamId, true);
+    }
+
 }
