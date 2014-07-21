@@ -49,8 +49,8 @@ public abstract class Condition {
         return new BooleanCondition(expression);
     }
 
-    public static Condition extension(String extensionNamespace, String extensionFunctionName, Expression... expressions) {
-        return new ConditionExtension(extensionNamespace, extensionFunctionName, expressions);
+    public static Condition function(String extensionNamespace, String extensionFunctionName, Expression... expressions) {
+        return new ConditionFunctionExtension(extensionNamespace, extensionFunctionName, expressions);
     }
 
     public static Condition function(String extensionFunctionName, Expression... expressions) {

@@ -22,11 +22,11 @@ import org.wso2.siddhi.query.api.extension.Extension;
 
 import java.util.Arrays;
 
-public class ConditionExtension extends FunctionCondition implements Extension {
+public class ConditionFunctionExtension extends FunctionCondition implements Extension {
 
     private String extensionName;
 
-    public ConditionExtension(String extensionName, String functionName, Expression[] parameters) {
+    public ConditionFunctionExtension(String extensionName, String functionName, Expression[] parameters) {
         super(functionName,parameters);
         this.extensionName = extensionName;
     }
@@ -53,7 +53,7 @@ public class ConditionExtension extends FunctionCondition implements Extension {
             return false;
         }
 
-        ConditionExtension that = (ConditionExtension) o;
+        ConditionFunctionExtension that = (ConditionFunctionExtension) o;
 
         if (extensionName != null ? !extensionName.equals(that.extensionName) : that.extensionName != null) {
             return false;
