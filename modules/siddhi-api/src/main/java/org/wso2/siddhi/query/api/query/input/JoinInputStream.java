@@ -36,8 +36,8 @@ public class JoinInputStream implements InputStream {
     public enum EventTrigger {
         LEFT,RIGHT,ALL
     }
-    public JoinInputStream(InputStream leftInputStream, Type type,
-                           InputStream rightInputStream, Condition onCompare, Constant within,
+    public JoinInputStream(SingleInputStream leftInputStream, Type type,
+                           SingleInputStream rightInputStream, Condition onCompare, Constant within,
                            EventTrigger trigger) {
         this.leftInputStream = leftInputStream;
         this.type = type;

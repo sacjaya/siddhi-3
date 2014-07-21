@@ -53,7 +53,7 @@ public class PartitionQueryTestCase {
 
         Query query = Query.query();
         query.from(
-                Query.inputStream("StockStream").
+                Query.partitionedInputStream("StockStream").
                         filter(
                                 Condition.and(
                                         Condition.compare(

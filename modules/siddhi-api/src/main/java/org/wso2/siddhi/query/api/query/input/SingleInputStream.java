@@ -30,6 +30,7 @@ import java.util.List;
 
 public class SingleInputStream implements InputStream{
 
+    protected boolean isPartitioned=false;
     protected String streamId;
     protected AbstractDefinition definition;
     protected String streamReferenceId;
@@ -39,12 +40,20 @@ public class SingleInputStream implements InputStream{
     protected int windowPosition = -1;
 
     protected SingleInputStream(String streamId) {
-        this(streamId, streamId);
+        this(streamId,false);
+    }
+    protected SingleInputStream(String streamId, boolean isPartitioned) {
+        this(streamId, streamId, isPartitioned);
     }
 
     public SingleInputStream(String streamId, String streamReferenceId) {
+        this(streamId,streamReferenceId,false);
+    }
+
+    public SingleInputStream(String streamId, String streamReferenceId, boolean isPartitioned) {
         this.streamId = streamId;
         this.streamReferenceId = streamReferenceId;
+        this.isPartitioned =isPartitioned;
     }
 
     public SingleInputStream(BasicSingleInputStream standardStream, Window window) {
@@ -122,5 +131,9 @@ public class SingleInputStream implements InputStream{
     public SingleInputStream function(StreamFunction streamFunction) {
         streamHandlers.add(streamFunction);
         return this;
+    }
+
+    public boolean isPartitioned() {
+        return isPartitioned;
     }
 }

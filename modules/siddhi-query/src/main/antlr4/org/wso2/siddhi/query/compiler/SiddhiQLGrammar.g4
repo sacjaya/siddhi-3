@@ -16,15 +16,19 @@ definitionStreamFinal
     ;
 
 definitionStream
-    :'define' 'inputStream' source (definition|likeSource|fromSource)
+    : anotation * 'define' 'stream' source '(' attributeName type (',' attributeName type )* ')'
     ;
 
-definitionPoolFinal
-    : definitionPool ';'? EOF
+definitionTableFinal
+    :definitionTable ';'? EOF
     ;
 
-definitionPool
-    :'define' 'pool' source (definition|likeSource|fromSource) 'with' 'window.' functionOperation
+definitionTable
+    : anotation * 'define' 'table' source '(' attributeName type (',' attributeName type )* ')'
+    ;
+
+anotation
+    : '@' name ('(' parameterName '=' parameterValue (',' parameterName '=' parameterValue )* ')' )?
     ;
 
 partition
@@ -44,41 +48,20 @@ conditionRange
     :(condition 'as' stringVal) ('or' condition 'as' stringVal)*
     ;
 
-definition
-    :'(' attributeName type (',' attributeName type )* ')'
-    ;
-
-fromSource
-    :'from' source
-    ;
-
-likeSource
-    :'like' source
-    ;
-
-definitionTableFinal
-    :definitionTable ';'? EOF
-    ;
-
-definitionTable
-    :'define' 'table' source (definition|likeSource|fromSource)
-        ('with' '(' parameterName '=' parameterValue (',' parameterName '=' parameterValue )* ')' )?
-    ;
-
 definitionQueryFinal
     : query ';'? EOF
     ;
 
 query
-    :queryInput queryProjection? outputRate? queryOutput
+    : anotation * queryInput queryProjection? outputRate? queryOutput
     ;
 
 queryInput
-    :windowedStream|joinStream|patternStream|sequenceStream
+    :'from' (windowedStream|joinStream|patternStream|sequenceStream)
     ;
 
 windowedStream
-    :'from' source (filter | streamFunction)* window? (filter | streamFunction)*
+    : source (filter | streamFunction)* window? (filter | streamFunction)*
     ;
 
 joinStream
@@ -96,11 +79,11 @@ rightSource
     ;
 
 joinSource
-    :'from' source (filter | streamFunction)* window?
+    :source (filter | streamFunction)* window?
     ;
 
 patternStream
-    :'from' patternSourceChain
+    :patternSourceChain
     ;
 
 patternSourceChain
@@ -132,9 +115,9 @@ lastPatternSource
     ;
 
 logicalStatefulSource
-    :logicalStatefulSource 'and' logicalStatefulSource
+    :'('logicalStatefulSource')'
+    |logicalStatefulSource 'and' logicalStatefulSource
     |logicalStatefulSource 'or' logicalStatefulSource
-    |'('logicalStatefulSource')'
     |standardStatefulSource
     ;
 
@@ -152,7 +135,7 @@ basicStatefulSource
     ;
 
 sequenceStream
-    :'from' 'every'? sequenceSourceChain
+    :'every'? sequenceSourceChain
     ;
 
 sequenceSourceChain
@@ -223,53 +206,58 @@ withinTime
     ;
 
 outputAttribute
-    :attributeName
-    |complexAttribute 'as' attributeName
-    ;
-
-complexAttribute
-    :logicalOperation
-    ;
-
-condition
-    :logicalOperation
-    ;
-
-logicalOperation
-    :'not' logicalOperation
-    |logicalOperation 'and' logicalOperation
-    |logicalOperation 'or' logicalOperation
-    |logicalOperation ('>='|'<='|'=='|'!='|'>'|'<') logicalOperation
-    |logicalOperation 'instance of' type
-    |'('logicalOperation')'
-    |arithmeticOperation  
-    ;
-
-arithmeticOperation
-    :arithmeticOperation '^' arithmeticOperation
-    |arithmeticOperation ('*'|'/') arithmeticOperation
-    |arithmeticOperation ('+'|'-') arithmeticOperation
-    |arithmeticOperation '%' arithmeticOperation
-    |'('arithmeticOperation')'
-    |functionOperation
-    |attribute
-    ;
-
-complexAttributeList
-    :complexAttribute (','complexAttribute)*
-    ;
-
-functionOperation
-    :functionId '('complexAttributeList?')'
+    :attribute 'as' attributeName 
+    |attributeReference
     ;
 
 attribute
-    :attributeName
-    |constant
+    :mathOperation
+    ;
+
+condition
+    :mathOperation
+    ;
+
+mathOperation
+    :'('mathOperation')'
+    |'not' mathOperation
+    |mathOperation ('*'|'/'|'%') mathOperation
+    |mathOperation ('+'|'-') mathOperation
+    |mathOperation ('>='|'<='|'>'|'<') mathOperation
+    |mathOperation ('=='|'!=') mathOperation
+    |mathOperation 'and' mathOperation
+    |mathOperation 'or' mathOperation  
+    |functionOperation
+    |attributeReference
+    |attributeValue
+    ;
+
+attributeList
+    :attribute (','attribute)*
+    ;
+
+functionOperation
+    :functionId '('attributeList?')'
+    ;
+
+attributeReference
+    :(streamId '.')? attributeName
+    ;
+
+attributeValue
+    :constant
     ;
 
 functionId
     :id
+    ;
+
+streamId
+    :id
+    ;
+
+paopertyName
+    :PROPERTY_NAME_QUOTES | PROPERTY_NAME_NO_QUOTES |ID_QUOTES |ID_NO_QUOTES
     ;
 
 attributeName
@@ -289,7 +277,11 @@ event
     ;
 
 parameterName
-    :stringVal
+    :paopertyName
+    ;
+
+name
+    :id
     ;
 
 parameterValue
@@ -413,13 +405,17 @@ fragment NUM_SCI: ('e'|'E') '-'? NUM;
 
 fragment NUM: '0'..'9'+;
 
+PROPERTY_NAME_QUOTES : '`'ID_NO_QUOTES ('.'ID_NO_QUOTES ) ('.'ID_NO_QUOTES )*'`' {setText(getText().substring(1, getText().length()-1));};
+
+PROPERTY_NAME_NO_QUOTES : ID_NO_QUOTES ('.'ID_NO_QUOTES ) ('.'ID_NO_QUOTES )* ;
+
 ID_QUOTES : '`'('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*'`' {setText(getText().substring(1, getText().length()-1));};
 
 ID_NO_QUOTES : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')* ;
 
 STRING_VAL
-    :'\'' ( ~('\u0000'..'\u001f' | '\\' | '\''| '\"' ) )* '\'' {setText(getText().substring(1, getText().length()-1));}
-    |'"' ( ~('\u0000'..'\u001f' | '\\'  |'\"') )* '"'          {setText(getText().substring(1, getText().length()-1));}
+    :('\'' ( ~('\u0000'..'\u001f' | '\\' | '\''| '\"' ) )* '\'' 
+    |'"' ( ~('\u0000'..'\u001f' | '\\'  |'\"') )* '"' )         {setText(getText().substring(1, getText().length()-1));}
     ;
 
 //Hidden channels
