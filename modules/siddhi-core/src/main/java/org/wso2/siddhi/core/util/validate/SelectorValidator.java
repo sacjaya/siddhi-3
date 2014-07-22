@@ -12,16 +12,14 @@
  */
 package org.wso2.siddhi.core.util.validate;
 
-import org.wso2.siddhi.core.exception.OperationNotSupportedException;
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.executor.expression.ExpressionExecutor;
 import org.wso2.siddhi.core.util.parser.ExecutorParser;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.expression.Variable;
-import org.wso2.siddhi.query.api.query.selection.Selector;
 import org.wso2.siddhi.query.api.query.selection.OutputAttribute;
+import org.wso2.siddhi.query.api.query.selection.Selector;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,26 +37,8 @@ public class SelectorValidator {
         StreamDefinition temp = new StreamDefinition();        //inferred stream
         if (selector.getSelectionList().size() > 0) {
             for (OutputAttribute attribute : selector.getSelectionList()) {
-                /*if (attribute instanceof SimpleAttribute) {*/
-                    /*ValidatorUtil.validateCompareExpression(((SimpleAttribute) attribute).getExpression(), streamDefinitionMap, null);
-                    Attribute.Type returnType = ValidatorUtil.getExpressionReturnType(((SimpleAttribute) attribute).getExpression(), streamDefinitionMap);*/
-
                 ExpressionExecutor executor = ExecutorParser.parseExpression(attribute.getExpression(), null, null, streamDefinitionMap);//current stream reference and siddhi context is null
-                    temp.attribute(attribute.getRename(), executor.getReturnType());
-
-                /*} else if (attribute instanceof ComplexAttribute) {          //TODO:check if we need to validate attribute names
-                    for (Expression expression : ((ComplexAttribute) attribute).getExpressions()) {
-                        ValidatorUtil.validateCompareExpression(expression, streamDefinitionMap, null);
-                        Attribute.Type type = ValidatorUtil.getExpressionReturnType(expression, streamDefinitionMap);
-                        Attribute.Type result;
-                        try {
-                            result = ValidatorUtil.getAggregatorReturnType(((ComplexAttribute) attribute).getAttributeName(), type);
-                        } catch (OperationNotSupportedException e) {
-                            throw new ValidatorException(e.getMessage());
-                        }
-                        temp.attribute(attribute.getRename(), result);
-                    }
-                }*/
+                temp.attribute(attribute.getRename(), executor.getReturnType());
             }
             if (selector.getGroupByList() != null) {                        //Handle group by
                 for (Variable var : selector.getGroupByList()) {
@@ -68,7 +48,6 @@ public class SelectorValidator {
             if (selector.getHavingCondition() != null) {                    //Handle having condition. send only the inferred stream
                 Map<String, StreamDefinition> tempMap = new HashMap<String, StreamDefinition>(1);
                 tempMap.put(null, temp);                                     //putting with null id to avoid conflicts
-                //ValidatorUtil.validateCondition(selector.getHavingCondition(), tempMap, null);
                 ExecutorParser.parseCondition(selector.getHavingCondition(), null, null, tempMap);
             }
         } else {
