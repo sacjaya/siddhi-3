@@ -12,6 +12,7 @@
  */
 package org.wso2.siddhi.core.util.validate;
 
+import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.util.parser.ExecutorParser;
 import org.wso2.siddhi.query.api.condition.Condition;
@@ -37,15 +38,16 @@ public class InStreamValidator {
         if (inputStream instanceof BasicSingleInputStream || inputStream instanceof SingleInputStream) {
             tempDefinitionMap.put(((SingleInputStream) inputStream).getStreamId(), streamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));
             String defaultDefinition = ((SingleInputStream) inputStream).getStreamId();
+            SiddhiContext mockSiddhiContext = new SiddhiContext("testID", SiddhiContext.ProcessingState.DISABLED);
             for (StreamHandler handler : ((SingleInputStream) inputStream).getStreamHandlers()) {
                 if (handler instanceof Filter) {
                     Condition condition = ((Filter) handler).getFilterCondition();
                     //ValidatorUtil.validateCondition(condition, tempDefinitionMap, defaultDefinition);
-                    ExecutorParser.parseCondition(condition, defaultDefinition, null, tempDefinitionMap);
+                    ExecutorParser.parseCondition(condition, defaultDefinition, mockSiddhiContext, tempDefinitionMap);
                 } else if (handler instanceof Window) {
                     for (Expression expression : ((Window) handler).getParameters()) {
                         //ValidatorUtil.validateCompareExpression(expression, tempDefinitionMap, defaultDefinition);
-                        ExecutorParser.parseExpression(expression, defaultDefinition, null, tempDefinitionMap);
+                        ExecutorParser.parseExpression(expression, defaultDefinition, mockSiddhiContext, tempDefinitionMap);
                     }
                 } else if (handler instanceof StreamFunction) {
                     //TODO: handle. get output attr names and types and set them in temp map
