@@ -44,12 +44,16 @@ import org.wso2.siddhi.core.executor.expression.multiply.MultiplyExpressionExecu
 import org.wso2.siddhi.core.executor.expression.multiply.MultiplyExpressionExecutorFloat;
 import org.wso2.siddhi.core.executor.expression.multiply.MultiplyExpressionExecutorInt;
 import org.wso2.siddhi.core.executor.expression.multiply.MultiplyExpressionExecutorLong;
+import org.wso2.siddhi.core.executor.function.FunctionExecutor;
+import org.wso2.siddhi.core.util.SiddhiClassLoader;
 import org.wso2.siddhi.query.api.condition.*;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.*;
 import org.wso2.siddhi.query.api.expression.constant.*;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class ExecutorParser {
@@ -95,6 +99,20 @@ public class ExecutorParser {
                 return ComparatorParser.parseInstanceOfCompare(parseExpression(((Compare) condition).getLeftExpression(), currentStreamReference, siddhiContext, streamDefinitionMap),
                         parseExpression(((Compare) condition).getRightExpression(), currentStreamReference, siddhiContext, streamDefinitionMap));
             }
+        } else if (condition instanceof FunctionCondition) {
+            List<ExpressionExecutor> expressionExecutors = new LinkedList<ExpressionExecutor>();
+            for (Expression expression : ((FunctionCondition) condition).getParameters()) {
+                expressionExecutors.add(parseExpression(expression, currentStreamReference, siddhiContext, streamDefinitionMap));
+            }
+            FunctionExecutor expressionExecutor = (FunctionExecutor) SiddhiClassLoader.loadSiddhiImplementation(((AttributeFunction) Expression.function(((FunctionCondition) condition).getFunction(), ((FunctionCondition) condition).getParameters())).getFunction(), FunctionExecutor.class);
+            siddhiContext.addEternalReferencedHolder(expressionExecutor);
+            expressionExecutor.setSiddhiContext(siddhiContext);
+            expressionExecutor.setAttributeExpressionExecutors(expressionExecutors);
+            expressionExecutor.init();
+            if (expressionExecutor.getReturnType() != Attribute.Type.BOOL) {
+                throw new OperationNotSupportedException(((FunctionCondition) condition).getFunction() + " of class " + expressionExecutor.getClass().getName() + " does not return bool hence it cannot be used as a condition");
+            }
+            return new BooleanConditionExecutor(expressionExecutor);
         } else {
            //TODO: else
         }
