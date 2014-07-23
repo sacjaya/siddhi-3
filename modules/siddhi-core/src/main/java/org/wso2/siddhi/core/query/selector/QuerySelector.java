@@ -72,8 +72,8 @@ public class QuerySelector {
         }
 
         StreamEvent event;
-        event = new Event(streamEvent.getTimeStamp(), data);
-        outputRateManager.send(event.getTimeStamp(), event, null);
+        event = new Event(streamEvent.getTimestamp(), data);
+        outputRateManager.send(event.getTimestamp(), event, null);
 
     }
 

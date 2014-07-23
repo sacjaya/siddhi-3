@@ -17,33 +17,23 @@ package org.wso2.siddhi.core.event;
  * from StreamEvent before sending to Stream Handlers.
  */
 public class InnerStreamEvent extends StreamEvent {
-    private Object[] beforeWindow;          //Attributes before window execution
-    private Object[] onAfterWindow;         //Attributes on and after window execution
-    private Object[] out;                   //Resulting attributes
+    private Object[] beforeWindowData;          //Attributes before window execution
+    private Object[] onAfterWindowData;         //Attributes on and after window execution
 
-    public Object[] getBeforeWindow() {
-        return beforeWindow;
+    public Object[] getBeforeWindowData() {
+        return beforeWindowData;
     }
 
-    public void setBeforeWindow(Object[] beforeWindow) {
-        this.beforeWindow = beforeWindow;
+    public void setBeforeWindowData(Object[] beforeWindowData) {
+        this.beforeWindowData = beforeWindowData;
     }
 
-    public Object[] getOnAfterWindow() {
-        return onAfterWindow;
+    public Object[] getOnAfterWindowData() {
+        return onAfterWindowData;
     }
 
-    public void setOnAfterWindow(Object[] onAfterWindow) {
-        this.onAfterWindow = onAfterWindow;
+    public void setOnAfterWindowData(Object[] onAfterWindowData) {
+        this.onAfterWindowData = onAfterWindowData;
     }
-
-    public Object[] getOut() {
-        return out;
-    }
-
-    public void setOut(Object[] out) {
-        this.out = out;
-    }
-
 
 }

@@ -15,7 +15,9 @@ package org.wso2.siddhi.core.event;
 /**
  * This is the resulting event after join/pattern execution
  */
-public class StateEvent {
+public class StateEvent implements ComplexEvent {
+
+    protected long timestamp = -1;
     public StreamEvent[] streamEvents;
 
     public StreamEvent[] getStreamEvents() {
@@ -27,4 +29,8 @@ public class StateEvent {
     }
 
 
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
 }

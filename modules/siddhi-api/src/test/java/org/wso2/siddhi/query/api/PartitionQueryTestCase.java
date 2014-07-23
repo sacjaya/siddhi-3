@@ -78,7 +78,7 @@ public class PartitionQueryTestCase {
                                 Expression.value(50)
                         ))
         );
-        query.insertInto("OutStockStream");
+        query.insertIntoPartitioned("OutStockStream");
 
         partition.addQuery(query);
 

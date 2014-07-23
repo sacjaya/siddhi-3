@@ -27,7 +27,7 @@ public class SiddhiEventPublishTranslator implements EventTranslator<Event> {
 
 
     public SiddhiEventPublishTranslator(Event event) {
-        this.timeStamp = event.getTimeStamp();
+        this.timeStamp = event.getTimestamp();
         this.data = event.getData();
     }
 

@@ -24,12 +24,12 @@ import java.util.Arrays;
  */
 public class StreamEvent implements Event, ComplexEvent {
 
-    private long timeStamp = -1;
-    private Object[] data = new Object[1];
-    private Boolean isExpired = false;
+    protected long timestamp = -1;
+    protected Object[] data = new Object[1];
+    protected boolean isExpired = false;
 
-    public StreamEvent(long timeStamp, Object[] data) {
-        this.timeStamp = timeStamp;
+    public StreamEvent(long timestamp, Object[] data) {
+        this.timestamp = timestamp;
         this.data = data;
     }
 
@@ -41,8 +41,8 @@ public class StreamEvent implements Event, ComplexEvent {
     }
 
 
-    public long getTimeStamp() {
-        return timeStamp;
+    public long getTimestamp() {
+        return timestamp;
     }
 
     public Object[] getData() {
@@ -54,15 +54,16 @@ public class StreamEvent implements Event, ComplexEvent {
     }
 
     @Override
-    public Boolean isExpired() {
-        return null;
+    public boolean isExpired() {
+        return isExpired;
     }
 
     @Override
     public String toString() {
-        return "Event{" +
-                " timeStamp=" + timeStamp +
-                ", data=" + (data == null ? null : Arrays.asList(data)) +
+        return "StreamEvent{" +
+                "timestamp=" + timestamp +
+                ", data=" + Arrays.toString(data) +
+                ", isExpired=" + isExpired +
                 '}';
     }
 
@@ -74,8 +75,8 @@ public class StreamEvent implements Event, ComplexEvent {
         this.data = data;
     }
 
-    public void setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public void setIsExpired(Boolean isExpired) {

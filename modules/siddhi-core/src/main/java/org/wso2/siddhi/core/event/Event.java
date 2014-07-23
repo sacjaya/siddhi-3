@@ -22,7 +22,7 @@ public interface Event {
      *
      * @return
      */
-    long getTimeStamp();
+    long getTimestamp();
 
     /**
      * This should return the object[] which holds attribute values of the event
@@ -44,5 +44,5 @@ public interface Event {
      *
      * @return
      */
-    Boolean isExpired();
+    boolean isExpired();
 }
