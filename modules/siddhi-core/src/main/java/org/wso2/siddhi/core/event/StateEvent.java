@@ -18,7 +18,8 @@ package org.wso2.siddhi.core.event;
 public class StateEvent implements ComplexEvent {
 
     protected long timestamp = -1;
-    public StreamEvent[] streamEvents;
+    protected StreamEvent[] streamEvents;
+    protected StateEvent next = null;
 
     public StreamEvent[] getStreamEvents() {
         return streamEvents;
@@ -32,5 +33,13 @@ public class StateEvent implements ComplexEvent {
     @Override
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public StateEvent getNext() {
+        return next;
+    }
+
+    public void setNext(StateEvent next) {
+        this.next = next;
     }
 }

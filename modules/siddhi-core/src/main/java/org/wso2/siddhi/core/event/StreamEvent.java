@@ -20,13 +20,16 @@ package org.wso2.siddhi.core.event;
 import java.util.Arrays;
 
 /**
- * Basic processing event class implementation
+ * Basic processing event class implementation.
+ * Disruptors will have StreamEvents and after acquired
+ * by a handler will converted into InnerStreamEvent
  */
 public class StreamEvent implements Event, ComplexEvent {
 
     protected long timestamp = -1;
     protected Object[] data = new Object[1];
     protected boolean isExpired = false;
+    protected StreamEvent next = null;
 
     public StreamEvent(long timestamp, Object[] data) {
         this.timestamp = timestamp;
@@ -82,5 +85,14 @@ public class StreamEvent implements Event, ComplexEvent {
     public void setIsExpired(Boolean isExpired) {
         this.isExpired = isExpired;
     }
+
+    public StreamEvent getNext() {
+        return next;
+    }
+
+    public void setNext(StreamEvent next) {
+        this.next = next;
+    }
+
 
 }
