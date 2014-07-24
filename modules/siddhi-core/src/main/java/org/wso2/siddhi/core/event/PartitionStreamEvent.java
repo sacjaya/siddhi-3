@@ -16,7 +16,7 @@ package org.wso2.siddhi.core.event;
 /**
  * Event to be used within partitions
  */
-public class PartitionStreamEvent {
+public class PartitionStreamEvent extends StreamEvent {
 
     private String partitionKey;
 
