@@ -72,9 +72,8 @@ public class QuerySelector {
             data[i] = processOutputAttributeGenerator(streamEvent, attributeProcessor);
         }
 
-        StreamEvent event;
-        event = new Event(streamEvent.getTimeStamp(), data);
-        outputRateManager.send(event.getTimeStamp(), event, null);
+       StreamEvent event = new StreamEvent(streamEvent.getTimestamp(), data);
+        outputRateManager.send(event.getTimestamp(), event, null);
     }
 
     public void process(String key,StreamEvent streamEvent) {
@@ -84,9 +83,8 @@ public class QuerySelector {
             data[i] = processOutputAttributeGenerator(streamEvent, attributeProcessor);
         }
 
-        StreamEvent event;
-        event = new Event(streamEvent.getTimeStamp(), data);
-        outputRateManager.send(event.getTimeStamp(), key,event, null);
+        StreamEvent event = new StreamEvent(streamEvent.getTimestamp(), data);
+        outputRateManager.send(event.getTimestamp(), key,event, null);
     }
 
     private Object processOutputAttributeGenerator(StreamEvent streamEvent,AttributeProcessor attributeProcessor) {

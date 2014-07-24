@@ -1118,7 +1118,7 @@ public class FilterTestCase {
 //        executionPlan.addQuery(query);          ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan); 
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                count++;
 //            }
 //        });
@@ -1155,7 +1155,7 @@ public class FilterTestCase {
 //        executionPlan.addQuery(query);          ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan); 
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                count++;
 //            }
 //        });
@@ -1192,7 +1192,7 @@ public class FilterTestCase {
 //        executionPlan.addQuery(query);          ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan); 
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                count++;
 //            }
 //        });
@@ -1229,7 +1229,7 @@ public class FilterTestCase {
 //        executionPlan.addQuery(query);          ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan); 
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                count++;
 //            }
 //        });
@@ -1266,7 +1266,7 @@ public class FilterTestCase {
 //        executionPlan.addQuery(query);          ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan); 
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                count++;
 //            }
 //        });
@@ -1307,7 +1307,7 @@ public class FilterTestCase {
 //        executionPlan.addQuery(query);          ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan); 
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                count++;
 //            }
 //        });
@@ -1344,7 +1344,7 @@ public class FilterTestCase {
 //        executionPlan.addQuery(query);          ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan); 
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                count++;
 //            }
 //        });
@@ -1381,7 +1381,7 @@ public class FilterTestCase {
 //        executionPlan.addQuery(query);          ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan); 
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                count++;
 //            }
 //        });
@@ -1418,7 +1418,7 @@ public class FilterTestCase {
 //        executionPlan.addQuery(query);          ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan); 
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                count++;
 //            }
 //        });
@@ -1458,7 +1458,7 @@ public class FilterTestCase {
 //        executionPlan.addQuery(query);          ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan); 
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                count++;
 //            }
 //        });
@@ -1495,7 +1495,7 @@ public class FilterTestCase {
 //        executionPlan.addQuery(query);          ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan); 
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                count++;
 //            }
 //        });
@@ -1532,7 +1532,7 @@ public class FilterTestCase {
 //        executionPlan.addQuery(query);          ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan); 
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                count++;
 //            }
 //        });
@@ -1569,7 +1569,7 @@ public class FilterTestCase {
 //        executionPlan.addQuery(query);          ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan); 
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                count++;
 //            }
 //        });
@@ -1619,7 +1619,7 @@ public class FilterTestCase {
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
 //
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                Assert.assertTrue("155.5".equals(inEvents[0].getData()[1].toString()));
 //                Assert.assertTrue("150".equals(inEvents[0].getData()[2].toString()));
 //                Assert.assertTrue("9".equals(inEvents[0].getData()[3].toString()));
@@ -1668,7 +1668,7 @@ public class FilterTestCase {
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
 //
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                Assert.assertTrue("35.5".equals(inEvents[0].getData()[1].toString()));
 //                Assert.assertTrue("50".equals(inEvents[0].getData()[2].toString()));
 //                Assert.assertTrue("1".equals(inEvents[0].getData()[3].toString()));
@@ -1716,7 +1716,7 @@ public class FilterTestCase {
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
 //
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                Assert.assertTrue("30.0".equals(inEvents[0].getData()[1].toString()));
 //                Assert.assertTrue("50.0".equals(inEvents[0].getData()[2].toString()));
 //
@@ -1762,7 +1762,7 @@ public class FilterTestCase {
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
 //
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                Assert.assertTrue("20".equals(inEvents[0].getData()[1].toString()));
 //            }
 //
@@ -1811,7 +1811,7 @@ public class FilterTestCase {
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
 //
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                Assert.assertTrue("1.5".equals(inEvents[0].getData()[1].toString()));
 //                Assert.assertTrue("1".equals(inEvents[0].getData()[2].toString()));
 //                Assert.assertTrue("1".equals(inEvents[0].getData()[3].toString()));
@@ -1864,7 +1864,7 @@ public class FilterTestCase {
 //
 //        executionPlanRuntime.addCallback("query1", new QueryCallback() {
 //            @Override
-//            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+//            public void receive(long timestamp, Event[] inEvents, Event[] removeEvents) {
 //                Assert.assertEquals(60, inEvents[0].getData(0));
 //                count++;
 //            }

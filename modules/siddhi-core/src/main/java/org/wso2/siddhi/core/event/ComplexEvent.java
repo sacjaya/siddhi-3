@@ -24,5 +24,5 @@ import java.io.Serializable;
  */
 public interface ComplexEvent extends Serializable {
 
-    long getTimeStamp();
+    long getTimestamp();
 }

@@ -36,13 +36,14 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
     private final int handlerId;
     private List<PartitionExecutor> partitionExecutors;
     private ConcurrentHashMap<String, HandlerProcessor> partitionedHandlerMap = new ConcurrentHashMap<String, HandlerProcessor>();
+    private boolean toPartitionedStream;
 
-
-    public PartitionHandlerProcessor(String streamId, QueryPartitioner queryPartitioner, int handlerId, List<PartitionExecutor> partitionExecutors) {
+    public PartitionHandlerProcessor(boolean toPartitionedStream, String streamId, QueryPartitioner queryPartitioner, int handlerId, List<PartitionExecutor> partitionExecutors) {
         this.streamId = streamId;
         this.queryPartitioner = queryPartitioner;
         this.handlerId = handlerId;
         this.partitionExecutors = partitionExecutors;
+        this.toPartitionedStream = toPartitionedStream;
     }
 
     @Override
@@ -51,6 +52,11 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
                 String key = partitionExecutor.execute((streamEvent));
                 send(key, streamEvent);
         }
+    }
+
+    @Override
+    public void receive(String key, StreamEvent streamEvent) {
+        receive(streamEvent);
     }
 
 
@@ -67,7 +73,11 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
             handlerProcessor = queryPartitioner.newPartition(handlerId, key);
             partitionedHandlerMap.put(key, handlerProcessor);
         }
-        handlerProcessor.receive(event);
+        if(toPartitionedStream){
+            handlerProcessor.receive(key,event);
+        }   else {
+            handlerProcessor.receive(event);
+        }
     }
 
     public String getStreamId() {

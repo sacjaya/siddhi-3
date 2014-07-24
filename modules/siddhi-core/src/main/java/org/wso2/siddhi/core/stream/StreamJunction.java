@@ -26,6 +26,7 @@ import org.wso2.siddhi.core.event.disruptor.util.SiddhiEventFactory;
 import org.wso2.siddhi.core.event.disruptor.util.SiddhiEventPublishTranslator;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.PartitionHandlerProcessor;
+import org.wso2.siddhi.core.query.processor.handler.PartitionedStreamHandlerProcessor;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -52,7 +53,8 @@ public class StreamJunction {
             if (distruptorEnabled) {
                 if(streamReceiver instanceof PartitionHandlerProcessor){
 
-                    for(String key:((PartitionHandlerProcessor) streamReceiver).getPartitionKeys(event)){
+                    for(String key:((PartitionHandlerProcessor) streamReceiver).getPartitionKeys(allEvents)){
+                        //hash function to get the disruptor to which the event should be sent
                         int disruptorNo =Math.abs(key.hashCode())%((PartitionHandlerProcessor) streamReceiver).getDisruptorsSize();
                         streamReceiver.getDisruptors()[disruptorNo].publishEvent(new SiddhiEventPublishTranslator(event));
                     }
@@ -67,6 +69,44 @@ public class StreamJunction {
         }
     }
 
+    public void send(String keys, StreamEvent allEvents) {
+        //TODO ::::::::****************
+        Event event = (Event) allEvents;
+
+
+
+
+
+
+
+
+
+
+        for (StreamReceiver streamReceiver : streamReceivers) {
+            if (distruptorEnabled) {
+                if(streamReceiver instanceof PartitionHandlerProcessor){
+
+                    for(String key:((PartitionHandlerProcessor) streamReceiver).getPartitionKeys(allEvents)){
+                        //hash function to get the disruptor to which the event should be sent
+                        int disruptorNo =Math.abs(key.hashCode())%((PartitionHandlerProcessor) streamReceiver).getDisruptorsSize();
+                        streamReceiver.getDisruptors()[disruptorNo].publishEvent(new SiddhiEventPublishTranslator(event));
+                    }
+
+                } else {
+                    streamReceiver.getDisruptors()[0].publishEvent(new SiddhiEventPublishTranslator(event));
+                }
+            } else {
+                if(streamReceiver instanceof PartitionedStreamHandlerProcessor) {
+                streamReceiver.receive(keys,  allEvents);
+                }     else{
+                    streamReceiver.receive(allEvents);
+                }
+
+            }
+
+        }
+    }
+
     public synchronized void addEventFlow(StreamReceiver streamReceiver) {
         if (distruptorEnabled) {
 
@@ -74,7 +114,7 @@ public class StreamJunction {
                int disruptorsSize = ((PartitionHandlerProcessor) streamReceiver).getDisruptorsSize();
                Disruptor[] disruptors= new Disruptor[disruptorsSize];
                for (int i=0;i<disruptorsSize;i++) {
-                    Disruptor<Event> disruptor = new Disruptor<Event>(factory, bufferSize, threadPoolExecutor, ProducerType.SINGLE, new SleepingWaitStrategy());
+                    Disruptor<StreamEvent> disruptor = new Disruptor<StreamEvent>(factory, bufferSize, threadPoolExecutor, ProducerType.SINGLE, new SleepingWaitStrategy());
                     disruptors[i]= disruptor;
                     disruptor.handleEventsWith(new StreamHandler(streamReceiver));
                     disruptor.start();
@@ -85,7 +125,7 @@ public class StreamJunction {
 
             } else{
                 Disruptor[] disruptors= new Disruptor[1];
-                Disruptor<Event> disruptor = new Disruptor<Event>(factory, bufferSize, threadPoolExecutor, ProducerType.SINGLE, new SleepingWaitStrategy());
+                Disruptor<StreamEvent> disruptor = new Disruptor<StreamEvent>(factory, bufferSize, threadPoolExecutor, ProducerType.SINGLE, new SleepingWaitStrategy());
                 disruptors[0] = disruptor;
                 streamReceiver.setDisruptors(disruptors);
                 disruptor.handleEventsWith(new StreamHandler(streamReceiver));

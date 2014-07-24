@@ -18,7 +18,6 @@
 
 package org.wso2.siddhi.core;
 
-import org.wso2.siddhi.core.config.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.ValidatorException;

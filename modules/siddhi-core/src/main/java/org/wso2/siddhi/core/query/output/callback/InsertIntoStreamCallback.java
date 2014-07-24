@@ -35,7 +35,12 @@ public class InsertIntoStreamCallback implements OutputCallback {
         outputStreamJunction.send(streamEvent);
     }
 
-   public StreamDefinition getOutputStreamDefinition() {
+    @Override
+    public void send(String key, StreamEvent streamEvent) {
+        outputStreamJunction.send(key,streamEvent);
+    }
+
+    public StreamDefinition getOutputStreamDefinition() {
         return outputStreamDefinition;
     }
 }

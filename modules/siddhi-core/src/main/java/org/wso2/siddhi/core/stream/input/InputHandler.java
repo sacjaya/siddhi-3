@@ -35,14 +35,14 @@ public class InputHandler {
     }
 
     public void send(Object[] data) throws InterruptedException {
-        StreamEvent event = new Event(System.currentTimeMillis(), data);
-        //?
+        StreamEvent event = new StreamEvent(System.currentTimeMillis(), data);
+
         threadBarrier.pass();
         streamJunction.send(event);
     }
 
     public void send(long timeStamp, Object[] data) throws InterruptedException {
-        StreamEvent event = new Event(timeStamp, data);
+        StreamEvent event = new StreamEvent(timeStamp, data);
         threadBarrier.pass();
         streamJunction.send(event);
     }

@@ -105,7 +105,7 @@ public class ExecutorParser {
                 expressionExecutors.add(parseExpression(expression, currentStreamReference, siddhiContext, streamDefinitionMap));
             }
             FunctionExecutor expressionExecutor = (FunctionExecutor) SiddhiClassLoader.loadSiddhiImplementation(((AttributeFunction) Expression.function(((FunctionCondition) condition).getFunction(), ((FunctionCondition) condition).getParameters())).getFunction(), FunctionExecutor.class);
-            siddhiContext.addEternalReferencedHolder(expressionExecutor);
+//            siddhiContext.addEternalReferencedHolder(expressionExecutor);
             expressionExecutor.setSiddhiContext(siddhiContext);
             expressionExecutor.setAttributeExpressionExecutors(expressionExecutors);
             expressionExecutor.init();

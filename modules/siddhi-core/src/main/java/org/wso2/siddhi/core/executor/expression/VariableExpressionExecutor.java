@@ -46,12 +46,7 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
     @Override
     public Object execute(StreamEvent event) {
 
-        if (event instanceof Event) {
-            return ((Event) event).getData()[attributePosition];
-        } else {
-            //TODO: else
-            return null;
-        }
+       return ((Event) event).getData()[attributePosition];
 
     }
 

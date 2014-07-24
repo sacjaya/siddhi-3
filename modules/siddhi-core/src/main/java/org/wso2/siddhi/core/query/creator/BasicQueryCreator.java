@@ -21,6 +21,7 @@ import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.util.QueryPartComposite;
+import org.wso2.siddhi.core.util.parser.QueryOutputParser;
 import org.wso2.siddhi.core.util.parser.StreamParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.query.Query;
@@ -38,6 +39,16 @@ public class BasicQueryCreator extends QueryCreator {
     public QueryPartComposite constructQuery() {
         QueryPartComposite queryPartComposite = StreamParser.parseSingleStream(getInputStream(),getTempStreamDefinitionMap(), siddhiContext);
         QuerySelector querySelector = constructQuerySelector(outputRateManager);
+        queryPartComposite.setQuerySelector(querySelector);
+        return queryPartComposite;
+    }
+
+    public QueryPartComposite constructQuery(OutputRateManager rate) {
+        QueryPartComposite queryPartComposite = StreamParser.parseSingleStream(getInputStream(),getTempStreamDefinitionMap(), siddhiContext);
+        OutputRateManager rateManager = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
+        QuerySelector querySelector = constructQuerySelector(rateManager);
+        rateManager.setOutputCallback(outputRateManager.getOutputCallback());
+
         queryPartComposite.setQuerySelector(querySelector);
         return queryPartComposite;
     }

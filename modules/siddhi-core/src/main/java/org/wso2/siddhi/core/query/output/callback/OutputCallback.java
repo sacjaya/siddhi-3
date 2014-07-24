@@ -23,4 +23,6 @@ public interface OutputCallback {
 
     void send(StreamEvent streamEvent);
 
+    void send(String key,StreamEvent streamEvent);
+
 }

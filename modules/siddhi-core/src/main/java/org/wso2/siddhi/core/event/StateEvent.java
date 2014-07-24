@@ -10,39 +10,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.wso2.siddhi.core.event;
 
 /**
- * This is the event interface exposed to the user.
+ * This is the resulting event after join/pattern execution
  */
-public interface Event {
-    /**
-     * This should return the timestamp associated with the event.
-     *
-     * @return
-     */
-    long getTimestamp();
+public class StateEvent implements ComplexEvent {
 
-    /**
-     * This should return the object[] which holds attribute values of the event
-     *
-     * @return
-     */
-    Object[] getData();
+    protected long timestamp = -1;
+    public StreamEvent[] streamEvents;
 
-    /**
-     * This should return object in the ith position of attribute array.
-     *
-     * @param i array index
-     * @return
-     */
-    Object getData(int i);
+    public StreamEvent[] getStreamEvents() {
+        return streamEvents;
+    }
 
-    /**
-     * This should return whether the message is expired
-     *
-     * @return
-     */
-    boolean isExpired();
+    public void setStreamEvents(StreamEvent[] streamEvents) {
+        this.streamEvents = streamEvents;
+    }
+
+
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
 }

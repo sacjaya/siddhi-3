@@ -20,19 +20,20 @@ package org.wso2.siddhi.core.event.disruptor.util;
 
 import com.lmax.disruptor.EventTranslator;
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.event.StreamEvent;
 
-public class SiddhiEventPublishTranslator implements EventTranslator<Event> {
+public class SiddhiEventPublishTranslator implements EventTranslator<StreamEvent> {
     private long timeStamp;
     private Object[] data;
 
 
     public SiddhiEventPublishTranslator(Event event) {
-        this.timeStamp = event.getTimeStamp();
+        this.timeStamp = event.getTimestamp();
         this.data = event.getData();
     }
 
-    public void translateTo(Event event, long sequence) {
+    public void translateTo(StreamEvent event, long sequence) {
         event.setData(data);
-        event.setTimeStamp(timeStamp);
+        event.setTimestamp(timeStamp);
     }
 }

@@ -33,11 +33,25 @@ public abstract class OutputRateManager {
 
     public abstract void send(long timeStamp, StreamEvent currentEvent, StreamEvent expiredEvent);
 
+    public abstract void send(long timeStamp, String key, StreamEvent currentEvent, StreamEvent expiredEvent);
+
 
     protected void sendToCallBacks(long timeStamp, StreamEvent currentEvent, StreamEvent expiredEvent,
                                    StreamEvent allEvent) {
         if (outputCallback != null && allEvent != null) {
             outputCallback.send(allEvent);
+        }
+        if (queryCallbacks.size() > 0) {
+            for (QueryCallback callback : queryCallbacks) {
+                callback.receiveStreamEvent(timeStamp, currentEvent, expiredEvent);
+            }
+        }
+    }
+
+    protected void sendToCallBacks(long timeStamp,String key, StreamEvent currentEvent, StreamEvent expiredEvent,
+                                   StreamEvent allEvent) {
+        if (outputCallback != null && allEvent != null) {
+            outputCallback.send(key,allEvent);
         }
         if (queryCallbacks.size() > 0) {
             for (QueryCallback callback : queryCallbacks) {
@@ -56,6 +70,10 @@ public abstract class OutputRateManager {
         if (outputCallback != null) {
             hasCallBack = true;
         }
+    }
+
+    public OutputCallback getOutputCallback(){
+        return outputCallback;
     }
 
     public boolean hasCallBack() {

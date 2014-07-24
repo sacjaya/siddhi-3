@@ -20,8 +20,9 @@ package org.wso2.siddhi.core.stream;
 
 import com.lmax.disruptor.EventHandler;
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.event.StreamEvent;
 
-public class StreamHandler implements EventHandler<Event> {
+public class StreamHandler implements EventHandler<StreamEvent> {
 
     private StreamReceiver streamReceiver;
 
@@ -29,7 +30,7 @@ public class StreamHandler implements EventHandler<Event> {
         this.streamReceiver = streamReceiver;
     }
 
-    public void onEvent(Event event, long sequence, boolean endOfBatch) {
+    public void onEvent(StreamEvent event, long sequence, boolean endOfBatch) {
        streamReceiver.receive(event);
 
     }

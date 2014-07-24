@@ -27,4 +27,9 @@ public class PassThroughOutputRateManager extends OutputRateManager {
         sendToCallBacks(timeStamp, currentEvent, expiredEvent, currentEvent != null ? currentEvent : expiredEvent);
 
     }
+
+    @Override
+    public void send(long timeStamp, String key, StreamEvent currentEvent, StreamEvent expiredEvent) {
+        sendToCallBacks(timeStamp, key,currentEvent, expiredEvent, currentEvent != null ? currentEvent : expiredEvent);
+    }
 }

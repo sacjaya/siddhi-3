@@ -41,6 +41,18 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
     }
 
     @Override
+    public void receive(String key, StreamEvent streamEvent) {
+        processHandler(key,streamEvent);
+    }
+
+    private void processHandler(String key, StreamEvent streamEvent) {
+        streamEvent = filterProcessor.process(streamEvent);
+        if (streamEvent != null) {
+            next.process(key, streamEvent);
+        }
+    }
+
+    @Override
     public void setDisruptors(Disruptor[] disruptors) {
         this.disruptors = disruptors;
     }

@@ -40,7 +40,6 @@ public abstract class QueryCreator {
     protected final Query query;
     protected StreamDefinition outputStreamDefinition;
     public QuerySelector querySelector;
-    //TODO
     Map<String, StreamDefinition> tempStreamDefinitionMap = new HashMap<String, StreamDefinition>();
 
     protected QueryCreator(String queryId, Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, OutputRateManager outputRateManager, SiddhiContext siddhiContext) {
@@ -53,11 +52,8 @@ public abstract class QueryCreator {
 
     protected void init() {
         InputStream inputStream = getInputStream();
-
         if (inputStream instanceof BasicSingleInputStream ) {
-
             tempStreamDefinitionMap.put(((SingleInputStream) inputStream).getStreamId(), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));
-
         } else {
             //TODO: other inputstreamTypes
 
@@ -87,4 +83,6 @@ public abstract class QueryCreator {
     }
 
     public abstract QueryPartComposite constructQuery() ;
+
+    public abstract QueryPartComposite constructQuery(OutputRateManager outputRateManager) ;
 }

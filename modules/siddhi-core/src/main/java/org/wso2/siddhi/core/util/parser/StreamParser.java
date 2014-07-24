@@ -36,11 +36,11 @@ import java.util.Map;
 public class StreamParser {
 
 
-    public static QueryPartComposite parseSingleStream(InputStream inputStream,  Map<String, StreamDefinition> teamStreamDefinitionMap, SiddhiContext siddhiContext) {
+    public static QueryPartComposite parseSingleStream(InputStream inputStream,  Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext) {
         QueryPartComposite queryPartComposite = new QueryPartComposite();
 
         SimpleHandlerProcessor simpleHandlerProcessor =                                                                                       //TODO
-                new SimpleHandlerProcessor(generateFilerProcessor(inputStream, teamStreamDefinitionMap,siddhiContext),inputStream.getStreamIds().get(0));
+                new SimpleHandlerProcessor(generateFilerProcessor(inputStream, tempStreamDefinitionMap,siddhiContext),inputStream.getStreamIds().get(0));
 
         if (inputStream instanceof BasicSingleInputStream) {
             queryPartComposite.getPreSelectProcessingElementList().add(simpleHandlerProcessor);
@@ -54,7 +54,7 @@ public class StreamParser {
 
 
     private static FilterProcessor generateFilerProcessor( InputStream inputStream, Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext) {
-        //TODO
+        //TODO :handle other input streams
         List<StreamHandler> streamHandlers = ((BasicSingleInputStream) inputStream).getStreamHandlers();
         if (streamHandlers.size() == 0) {
             return new PassThroughFilterProcessor();
@@ -66,7 +66,7 @@ public class StreamParser {
                 try {
                     return new FilterProcessor(ExecutorParser.parseCondition(condition, ((BasicSingleInputStream) inputStream).getStreamId(),  siddhiContext, tempStreamDefinitionMap));
                 } catch (ValidatorException e) {
-                    //TODO
+                    //This will never occur
                 }
             } else {
                 //TODO: else

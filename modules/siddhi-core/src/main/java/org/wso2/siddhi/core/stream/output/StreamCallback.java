@@ -32,6 +32,10 @@ public abstract class StreamCallback implements StreamReceiver {
         send(streamEvent);
     }
 
+    public void receive(String key,StreamEvent streamEvent) {
+        send(streamEvent);
+    }
+
 
     private void send(StreamEvent event) {
        receive(event.toArray());

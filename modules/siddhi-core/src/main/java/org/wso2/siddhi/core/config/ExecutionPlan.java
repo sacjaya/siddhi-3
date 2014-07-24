@@ -15,10 +15,9 @@
  */
 package org.wso2.siddhi.core.config;
 
+import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.exception.CreateExecutionPlanException;
-import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
 import org.wso2.siddhi.core.exception.ValidatorException;
-import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.StreamReceiver;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.util.validate.QueryValidator;

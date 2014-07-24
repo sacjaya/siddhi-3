@@ -44,6 +44,7 @@ public class QueryOutputParser {
             , SiddhiContext siddhiContext) {
         boolean currentOn = false;
         boolean expiredOn = false;
+        boolean isPartitioned= false;
         String id = null;
 
         if (outStream != null) {
@@ -59,8 +60,11 @@ public class QueryOutputParser {
             currentOn = true;
             expiredOn = true;
         }
+        if(outStream instanceof InsertIntoStream){
+            isPartitioned = ((InsertIntoStream) outStream).isPartitioned();
+        }
 
-        return new QuerySelector(id,selector, outputRateManager, siddhiContext, currentOn, expiredOn,  tempStreamDefinitionMap);
+        return new QuerySelector(id,selector, outputRateManager, siddhiContext, currentOn, expiredOn, isPartitioned,tempStreamDefinitionMap);
 
 
     }

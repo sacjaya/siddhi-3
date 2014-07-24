@@ -17,11 +17,70 @@
 */
 package org.wso2.siddhi.core.event;
 
-/**
- * Events that can be streamed
- */
-public interface StreamEvent extends ComplexEvent {
+import java.util.Arrays;
 
-    Event[] toArray();
+/**
+ * Basic processing event class implementation
+ */
+public class StreamEvent implements Event, ComplexEvent {
+
+    protected long timestamp = -1;
+    protected Object[] data = new Object[1];
+    protected boolean isExpired = false;
+
+    public StreamEvent(long timestamp, Object[] data) {
+        this.timestamp = timestamp;
+        this.data = data;
+    }
+
+    public StreamEvent() {
+    }
+
+    public StreamEvent(int dataSize) {
+        this.data = new Object[dataSize];
+    }
+
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public Object[] getData() {
+        return data;
+    }
+
+    public Object getData(int i) {
+        return data[i];
+    }
+
+    @Override
+    public boolean isExpired() {
+        return isExpired;
+    }
+
+    @Override
+    public String toString() {
+        return "StreamEvent{" +
+                "timestamp=" + timestamp +
+                ", data=" + Arrays.toString(data) +
+                ", isExpired=" + isExpired +
+                '}';
+    }
+
+    public StreamEvent[] toArray() { //TODO: review and remove
+        return new StreamEvent[]{this};
+    }
+
+    public void setData(Object[] data) {
+        this.data = data;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setIsExpired(Boolean isExpired) {
+        this.isExpired = isExpired;
+    }
 
 }

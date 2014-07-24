@@ -20,8 +20,9 @@ package org.wso2.siddhi.core.event.disruptor.util;
 
 import com.lmax.disruptor.EventFactory;
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.event.StreamEvent;
 
-public class SiddhiEventFactory implements EventFactory<Event>
+public class SiddhiEventFactory implements EventFactory<StreamEvent>
 {
 
 //    int dataSize;
@@ -31,8 +32,8 @@ public class SiddhiEventFactory implements EventFactory<Event>
 //    }
 
 
-    public Event newInstance()
+    public StreamEvent newInstance()
     {
-        return new Event();
+        return new StreamEvent();
     }
 }

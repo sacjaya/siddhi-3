@@ -20,13 +20,14 @@ import org.junit.Test;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.exception.AttributeAlreadyExistException;
 import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.exception.CreateExecutionPlanException;
 
 public class DefineStreamTestCase {
 
     //define stream StockStream (symbol string, price int, volume float );
 
     @Test
-    public void testCreatingStreamDefinition() {
+    public void testCreatingStreamDefinition() throws CreateExecutionPlanException {
         ExecutionPlan.executionPlan("Test").defineStream(StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT));
 
     }
