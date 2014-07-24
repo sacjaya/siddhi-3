@@ -18,10 +18,12 @@
 
 package org.wso2.siddhi.core.config;
 
+import org.wso2.siddhi.core.extension.EternalReferencedHolder;
 import org.wso2.siddhi.core.snapshot.SnapshotService;
 import org.wso2.siddhi.core.snapshot.ThreadBarrier;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
@@ -37,13 +39,15 @@ public class SiddhiContext {
     private List<Class> siddhiExtensions;
     private ConcurrentHashMap<String, DataSource> siddhiDataSources;
     private ThreadBarrier threadBarrier;
+    private List<EternalReferencedHolder> eternalReferencedHolders;
 
 
-    public enum ProcessingState {ENABLE_INTERNAL,ENABLE_EXTERNAL,DISABLED}
+    public enum ProcessingState {ENABLE_INTERNAL, ENABLE_EXTERNAL, DISABLED}
 
     public SiddhiContext(String executionPlanIdentifier, ProcessingState distributedProcessingState) {
         this.executionPlanIdentifier = executionPlanIdentifier;
         this.siddhiDataSources = new ConcurrentHashMap<String, DataSource>();
+        this.eternalReferencedHolders = new ArrayList<EternalReferencedHolder>();
     }
 
     public int getEventBatchSize() {
@@ -62,7 +66,7 @@ public class SiddhiContext {
         return snapshotService;
     }
 
-     public void setThreadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
+    public void setThreadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
         this.threadPoolExecutor = threadPoolExecutor;
     }
 
@@ -78,7 +82,7 @@ public class SiddhiContext {
         return scheduledExecutorService;
     }
 
-     public String getExecutionPlanIdentifier() {
+    public String getExecutionPlanIdentifier() {
         return executionPlanIdentifier;
     }
 
@@ -106,7 +110,15 @@ public class SiddhiContext {
         return threadBarrier;
     }
 
- }
+    public void addEternalReferencedHolder(EternalReferencedHolder eternalReferencedHolder) {
+        eternalReferencedHolders.add(eternalReferencedHolder);
+    }
+
+    public List<EternalReferencedHolder> getEternalReferencedHolders() {
+        return eternalReferencedHolders;
+    }
+
+}
 
 
 
