@@ -22,6 +22,7 @@ import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
 import org.wso2.siddhi.core.exception.QueryNotExistException;
 import org.wso2.siddhi.core.query.ExecutionRuntime;
+import org.wso2.siddhi.core.query.PartitionRuntime;
 import org.wso2.siddhi.core.query.output.callback.InsertIntoStreamCallback;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
@@ -44,7 +45,7 @@ public class ExecutionPlanRuntime {
     private ConcurrentMap<String, InputHandler> inputHandlerMap = new ConcurrentHashMap<String, InputHandler>();
     private ConcurrentMap<String, ExecutionRuntime> queryProcessorMap = new ConcurrentHashMap<String, ExecutionRuntime>();
     private ConcurrentMap<String, StreamJunction> streamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains definition
-    private List<Partition> partitionList = new ArrayList<Partition>();
+    private ConcurrentMap<String,Partition> partitionList = new ConcurrentHashMap<String,Partition>();
 
 
     private SiddhiContext siddhiContext;
@@ -94,13 +95,12 @@ public class ExecutionPlanRuntime {
     }
 
     public void definePartition(Partition partition) {
-        partitionList.add(partition);
+//        PartitionRuntime partitionRuntime = new PartitionRuntime(streamDefinitionMap, streamJunctionMap, partition,siddhiContext)
+        partitionList.put(partition.getPropertyValue("name"),partition);
         //TODO: for a list of queries
-        Query query = partition.getQuery();
-        if(query !=null){
+        for (Query query:partition.getQueryList()) {
             addQuery(query,partition);
         }
-
     }
 
     public String addQuery(Query query) {
