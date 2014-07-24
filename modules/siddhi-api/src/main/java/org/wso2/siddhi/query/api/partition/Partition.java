@@ -37,7 +37,7 @@ public class Partition {
 
     private Map<String,String> properties = new HashMap<String,String>();
     private List<PartitionType> partitionTypeList = new ArrayList<PartitionType>();
-    private Query query;
+    private List<Query> queryList = new ArrayList<Query>();
 
 //    public Partition partitionBy(Variable variable) {
 //        this.partitionTypeList.add(new ValuePartitionType(variable));
@@ -77,12 +77,12 @@ public class Partition {
 
     public Partition addQuery(Query query) {
         //todo handle with
-        this.query = query;
+        queryList.add(query);
         return this;
     }
 
-    public Query getQuery(){
-        return query;
+    public List<Query> getQueryList(){
+        return queryList;
     }
 
     public static RangePartitionType.RangePartitionProperty range(String partitionKey, Condition condition) {
