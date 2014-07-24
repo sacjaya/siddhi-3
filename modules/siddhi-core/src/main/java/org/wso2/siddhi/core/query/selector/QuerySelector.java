@@ -40,21 +40,22 @@ public class QuerySelector {
     private int outputSize;
     private ArrayList<AttributeProcessor> attributeProcessorList;
     Map<String, StreamDefinition> tempStreamDefinitionMap;
+    public boolean partitionedStream= false;
     public boolean currentOn = false;
     public boolean expiredOn = false;
 
 
     public QuerySelector(String outputStreamId, Selector selector,
-                         OutputRateManager outputRateManager, SiddhiContext siddhiContext, boolean currentOn, boolean expiredOn,Map<String, StreamDefinition> tempStreamDefinitionMap) {
+                         OutputRateManager outputRateManager, SiddhiContext siddhiContext, boolean currentOn, boolean expiredOn, boolean isPartitioned,Map<String, StreamDefinition> tempStreamDefinitionMap) {
         this.currentOn = currentOn;
         this.expiredOn = expiredOn;
         this.selector = selector;
-        outputSize = selector.getSelectionList().size();
+        this.outputSize = selector.getSelectionList().size();
         this.tempStreamDefinitionMap = tempStreamDefinitionMap;
         this.outputStreamDefinition = new StreamDefinition();
         this.outputStreamDefinition.setId(outputStreamId);
         this.outputRateManager = outputRateManager;
-
+         this.partitionedStream = isPartitioned;
         attributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
         populateAttributeProcessorList(siddhiContext);
 
@@ -74,7 +75,18 @@ public class QuerySelector {
         StreamEvent event;
         event = new Event(streamEvent.getTimeStamp(), data);
         outputRateManager.send(event.getTimeStamp(), event, null);
+    }
 
+    public void process(String key,StreamEvent streamEvent) {
+        Object[] data = new Object[outputSize];
+        for (int i = 0; i < outputSize; i++) {
+            AttributeProcessor attributeProcessor = attributeProcessorList.get(i);
+            data[i] = processOutputAttributeGenerator(streamEvent, attributeProcessor);
+        }
+
+        StreamEvent event;
+        event = new Event(streamEvent.getTimeStamp(), data);
+        outputRateManager.send(event.getTimeStamp(), key,event, null);
     }
 
     private Object processOutputAttributeGenerator(StreamEvent streamEvent,AttributeProcessor attributeProcessor) {
@@ -91,6 +103,10 @@ public class QuerySelector {
           return outputStreamDefinition;
       }
 
+    public boolean isPartitioned(){
+        return partitionedStream;
+    }
+
     private void populateAttributeProcessorList(SiddhiContext siddhiContext) {
         for (OutputAttribute outputAttribute : selector.getSelectionList()) {
            try {
@@ -106,6 +122,8 @@ public class QuerySelector {
 
 
     }
+
+
 
 
 
