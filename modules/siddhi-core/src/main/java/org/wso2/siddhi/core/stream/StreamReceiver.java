@@ -24,8 +24,6 @@ public interface StreamReceiver {
 
     void receive(StreamEvent streamEvent) ;
 
-    void receive(String key, StreamEvent streamEvent) ;
-
     void setDisruptors(Disruptor[] disruptors);
 
     String getStreamId();

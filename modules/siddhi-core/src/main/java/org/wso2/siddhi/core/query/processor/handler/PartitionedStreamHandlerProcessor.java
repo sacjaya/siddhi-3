@@ -18,6 +18,7 @@
 package org.wso2.siddhi.core.query.processor.handler;
 
 import com.lmax.disruptor.dsl.Disruptor;
+import org.wso2.siddhi.core.event.PartitionStreamEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.query.QueryPartitioner;
@@ -41,17 +42,11 @@ public class PartitionedStreamHandlerProcessor implements HandlerProcessor {
         this.handlerId = handlerId;
     }
 
-    @Override
-    public void receive(StreamEvent streamEvent) {
-//        for (PartitionExecutor partitionExecutor : partitionExecutors) {
-//                String key = partitionExecutor.execute((streamEvent));
-//                send(key, streamEvent);
-//        }
-    }
+
 
     @Override
-    public void receive(String key, StreamEvent streamEvent) {
-           send(key, streamEvent);
+    public void receive(StreamEvent streamEvent) {
+           send(streamEvent);
 
     }
 
@@ -60,16 +55,17 @@ public class PartitionedStreamHandlerProcessor implements HandlerProcessor {
         this.disruptors = disruptors;
     }
 
-    private void send(String key, StreamEvent event) {
-        if (key == null) {
+    private void send(StreamEvent event) {
+        if (!(event instanceof PartitionStreamEvent)) {
             return;
         }
+        String key = ((PartitionStreamEvent) event).getPartitionKey();
         HandlerProcessor handlerProcessor = partitionedHandlerMap.get(key);
         if (handlerProcessor == null) {
             handlerProcessor = queryPartitioner.newPartition(handlerId, key);
             partitionedHandlerMap.put(key, handlerProcessor);
         }
-        handlerProcessor.receive(key,event);
+        handlerProcessor.receive(event);
 
     }
 

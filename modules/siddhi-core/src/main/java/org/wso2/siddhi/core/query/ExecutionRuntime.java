@@ -51,7 +51,6 @@ public class ExecutionRuntime {
     private OutputRateManager outputRateManager;
     private List<HandlerProcessor> handlerProcessors = new ArrayList<HandlerProcessor>();
 
-    private List<HandlerProcessor> handlerPArtitionProcessors = new ArrayList<HandlerProcessor>();
 
     public ExecutionRuntime(Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap, Partition partition, SiddhiContext siddhiContext) {
         if (query.getPropertyValue("name") == null) {
@@ -71,10 +70,16 @@ public class ExecutionRuntime {
 
         List<HandlerProcessor> handlerProcessorList = queryPartitioner.constructPartition();
 
-        if(partition == null && !((SingleInputStream) query.getInputStream()).isPartitioned()){
+        if(partition == null){
             handlerProcessors = handlerProcessorList;
+        } else if (((SingleInputStream) query.getInputStream()).isPartitioned() ){
+                for (int i = 0; i < handlerProcessorList.size(); i++) {
+                    HandlerProcessor queryStreamProcessor = handlerProcessorList.get(i);
+                    handlerProcessors.add(new PartitionedStreamHandlerProcessor(queryStreamProcessor.getStreamId(), queryPartitioner, i));
+
+                }
         } else if (partition != null){
-             List<List<PartitionExecutor>> partitionExecutors = queryPartitioner.getPartitionExecutors();
+            List<List<PartitionExecutor>> partitionExecutors = queryPartitioner.getPartitionExecutors();
             for (int i = 0; i < handlerProcessorList.size(); i++) {
                 HandlerProcessor queryStreamProcessor = handlerProcessorList.get(i);
                 handlerProcessors.add(new PartitionHandlerProcessor(queryCreator.querySelector.partitionedStream,queryStreamProcessor.getStreamId(), queryPartitioner, i, partitionExecutors.get(i)));
@@ -85,27 +90,6 @@ public class ExecutionRuntime {
         for (HandlerProcessor handlerProcessor : handlerProcessors) {
             streamJunctionMap.get(handlerProcessor.getStreamId()).addEventFlow(handlerProcessor);
         }
-
-        if(query.getInputStream() instanceof BasicSingleInputStream){
-            if(((SingleInputStream) query.getInputStream()).isPartitioned() ){
-                QueryPartitioner queryStreamPartitioner = new QueryPartitioner(partition,queryCreator, querySelectorList, siddhiContext);
-
-                List<HandlerProcessor> handlerProcessorList1 = queryStreamPartitioner.constructPartition();
-
-
-                    for (int i = 0; i < handlerProcessorList1.size(); i++) {
-                        HandlerProcessor queryStreamProcessor = handlerProcessorList1.get(i);
-                        handlerPArtitionProcessors.add(new PartitionedStreamHandlerProcessor(queryStreamProcessor.getStreamId(), queryStreamPartitioner, i));
-
-                    }
-
-
-                for (HandlerProcessor handlerProcessor : handlerPArtitionProcessors) {
-                    streamJunctionMap.get(handlerProcessor.getStreamId()).addEventFlow(handlerProcessor);
-                }
-            }
-        }
-
     }
 
 

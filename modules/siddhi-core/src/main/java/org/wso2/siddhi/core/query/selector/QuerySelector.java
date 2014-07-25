@@ -71,21 +71,17 @@ public class QuerySelector {
             AttributeProcessor attributeProcessor = attributeProcessorList.get(i);
             data[i] = processOutputAttributeGenerator(streamEvent, attributeProcessor);
         }
-
-       StreamEvent event = new StreamEvent(streamEvent.getTimestamp(), data);
-        outputRateManager.send(event.getTimestamp(), event, null);
+       if(streamEvent instanceof PartitionStreamEvent){
+           PartitionStreamEvent event = new PartitionStreamEvent();
+           event.setPartitionKey(((PartitionStreamEvent) streamEvent).getPartitionKey());
+           event.setData(data);
+           outputRateManager.send(event.getTimestamp(),event,null);
+       }  else {
+            StreamEvent event = new StreamEvent(streamEvent.getTimestamp(), data);
+            outputRateManager.send(event.getTimestamp(), event, null);
+       }
     }
 
-    public void process(String key,StreamEvent streamEvent) {
-        Object[] data = new Object[outputSize];
-        for (int i = 0; i < outputSize; i++) {
-            AttributeProcessor attributeProcessor = attributeProcessorList.get(i);
-            data[i] = processOutputAttributeGenerator(streamEvent, attributeProcessor);
-        }
-
-        StreamEvent event = new StreamEvent(streamEvent.getTimestamp(), data);
-        outputRateManager.send(event.getTimestamp(), key,event, null);
-    }
 
     private Object processOutputAttributeGenerator(StreamEvent streamEvent,AttributeProcessor attributeProcessor) {
         if (attributeProcessor instanceof NonGroupingAttributeProcessor) {

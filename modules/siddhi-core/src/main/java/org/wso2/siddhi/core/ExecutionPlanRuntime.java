@@ -95,12 +95,12 @@ public class ExecutionPlanRuntime {
     }
 
     public void definePartition(Partition partition) {
-//        PartitionRuntime partitionRuntime = new PartitionRuntime(streamDefinitionMap, streamJunctionMap, partition,siddhiContext)
-        partitionList.put(partition.getPropertyValue("name"),partition);
-        //TODO: for a list of queries
-        for (Query query:partition.getQueryList()) {
-            addQuery(query,partition);
+        PartitionRuntime partitionRuntime = new PartitionRuntime(streamDefinitionMap, streamJunctionMap, queryProcessorMap,partition,siddhiContext);
+        partitionList.put(partitionRuntime.getPartitionId(), partition);
+        for(Query query:partition.getQueryList()){
+            partitionRuntime.addQueryId(addQuery(query, partition));
         }
+
     }
 
     public String addQuery(Query query) {

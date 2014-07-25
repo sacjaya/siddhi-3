@@ -96,11 +96,9 @@ public class StreamJunction {
                     streamReceiver.getDisruptors()[0].publishEvent(new SiddhiEventPublishTranslator(event));
                 }
             } else {
-                if(streamReceiver instanceof PartitionedStreamHandlerProcessor) {
-                streamReceiver.receive(keys,  allEvents);
-                }     else{
+
                     streamReceiver.receive(allEvents);
-                }
+
 
             }
 
