@@ -39,8 +39,8 @@ public class QuerySelector {
     private final OutputRateManager outputRateManager;
     private int outputSize;
     private ArrayList<AttributeProcessor> attributeProcessorList;
-    Map<String, StreamDefinition> tempStreamDefinitionMap;
-    public boolean partitionedStream= false;
+    private Map<String, StreamDefinition> tempStreamDefinitionMap;
+    private boolean partitionedStream= false;
     public boolean currentOn = false;
     public boolean expiredOn = false;
 
@@ -72,9 +72,7 @@ public class QuerySelector {
             data[i] = processOutputAttributeGenerator(streamEvent, attributeProcessor);
         }
        if(streamEvent instanceof PartitionStreamEvent){
-           PartitionStreamEvent event = new PartitionStreamEvent();
-           event.setPartitionKey(((PartitionStreamEvent) streamEvent).getPartitionKey());
-           event.setData(data);
+           PartitionStreamEvent event = new PartitionStreamEvent(streamEvent.getTimestamp(),data,((PartitionStreamEvent) streamEvent).getPartitionKey());
            outputRateManager.send(event.getTimestamp(),event,null);
        }  else {
             StreamEvent event = new StreamEvent(streamEvent.getTimestamp(), data);

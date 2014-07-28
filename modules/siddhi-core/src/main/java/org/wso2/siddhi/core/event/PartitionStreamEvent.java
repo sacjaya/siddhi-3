@@ -20,6 +20,12 @@ public class PartitionStreamEvent extends StreamEvent {
 
     private String partitionKey;
 
+    public PartitionStreamEvent(long timestamp, Object[] data, String key) {
+        this.timestamp = timestamp;
+        this.data = data;
+        this.partitionKey = key;
+    }
+
     public String getPartitionKey() {
         return partitionKey;
     }

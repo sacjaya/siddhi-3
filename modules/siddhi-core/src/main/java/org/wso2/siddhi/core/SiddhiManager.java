@@ -81,21 +81,24 @@ public class SiddhiManager {
         }
     }
 
+    /**
+     * add stream definitions, partitions and queries of an execution plan
+     * @param executionPlan
+     * @return
+     * @throws SiddhiParserException
+     */
     public ExecutionPlanRuntime addExecutionPlan(ExecutionPlan executionPlan) throws SiddhiParserException {
         ExecutionPlanRuntime executionPlanRuntime = new ExecutionPlanRuntime(siddhiContext);
-
         if (executionPlan.getStreamDefinitionMap() != null) {
             for (StreamDefinition streamDefinition : executionPlan.getStreamDefinitionMap().values()) {
                 executionPlanRuntime.defineStream(streamDefinition);
             }
         }
-
         if (executionPlan.getPartitionList() != null) {
             for (Partition partition : executionPlan.getPartitionList()) {
                 executionPlanRuntime.definePartition(partition);
             }
         }
-
         if (executionPlan.getQueryList() != null) {
             for (Query query : executionPlan.getQueryList()) {
                 executionPlanRuntime.addQuery(query);
@@ -103,12 +106,10 @@ public class SiddhiManager {
         }
         executionPlanRuntimeList.add(executionPlanRuntime);
         return executionPlanRuntime;
-
     }
 
-    public void removeExecutionPlan(ExecutionPlanRuntime executionPlan) throws SiddhiParserException {
-        ExecutionPlanRuntime executionPlanRuntime = new ExecutionPlanRuntime(siddhiContext);
-        executionPlanRuntimeList.remove(executionPlanRuntime);
+    public void removeExecutionPlan(ExecutionPlanRuntime executionPlanRuntime) throws SiddhiParserException {
+       executionPlanRuntimeList.remove(executionPlanRuntime);
     }
 
     public List<ExecutionPlanRuntime> getExecutionPlans() {
@@ -132,8 +133,6 @@ public class SiddhiManager {
     public SiddhiContext getSiddhiContext() {
         return siddhiContext;
     }
-
-
 
 
 }

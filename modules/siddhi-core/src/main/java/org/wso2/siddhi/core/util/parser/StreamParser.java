@@ -27,6 +27,7 @@ import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 import org.wso2.siddhi.query.api.query.input.InputStream;
+import org.wso2.siddhi.query.api.query.input.SingleInputStream;
 import org.wso2.siddhi.query.api.query.input.handler.Filter;
 import org.wso2.siddhi.query.api.query.input.handler.StreamHandler;
 
@@ -36,11 +37,11 @@ import java.util.Map;
 public class StreamParser {
 
 
-    public static QueryPartComposite parseSingleStream(InputStream inputStream,  Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext) {
+    public static QueryPartComposite parseSingleStream(InputStream inputStream, Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext) {
         QueryPartComposite queryPartComposite = new QueryPartComposite();
 
-        SimpleHandlerProcessor simpleHandlerProcessor =                                                                                       //TODO
-                new SimpleHandlerProcessor(generateFilerProcessor(inputStream, tempStreamDefinitionMap,siddhiContext),inputStream.getStreamIds().get(0));
+        SimpleHandlerProcessor simpleHandlerProcessor =
+                new SimpleHandlerProcessor(generateFilerProcessor(inputStream, tempStreamDefinitionMap, siddhiContext), ((SingleInputStream) inputStream).getStreamId());
 
         if (inputStream instanceof BasicSingleInputStream) {
             queryPartComposite.getPreSelectProcessingElementList().add(simpleHandlerProcessor);
@@ -53,9 +54,9 @@ public class StreamParser {
     }
 
 
-    private static FilterProcessor generateFilerProcessor( InputStream inputStream, Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext) {
+    private static FilterProcessor generateFilerProcessor(InputStream inputStream, Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext) {
         //TODO :handle other input streams
-        List<StreamHandler> streamHandlers = ((BasicSingleInputStream) inputStream).getStreamHandlers();
+        List<StreamHandler> streamHandlers = ((SingleInputStream) inputStream).getStreamHandlers();
         if (streamHandlers.size() == 0) {
             return new PassThroughFilterProcessor();
         }
@@ -64,13 +65,10 @@ public class StreamParser {
                 Filter filter = (Filter) streamHandler;
                 Condition condition = filter.getFilterCondition();
                 try {
-                    return new FilterProcessor(ExecutorParser.parseCondition(condition, ((BasicSingleInputStream) inputStream).getStreamId(),  siddhiContext, tempStreamDefinitionMap));
+                    return new FilterProcessor(ExecutorParser.parseCondition(condition, ((SingleInputStream) inputStream).getStreamId(), siddhiContext, tempStreamDefinitionMap));
                 } catch (ValidatorException e) {
                     //This will never occur
                 }
-            } else {
-                //TODO: else
-
             }
         }
         return null;

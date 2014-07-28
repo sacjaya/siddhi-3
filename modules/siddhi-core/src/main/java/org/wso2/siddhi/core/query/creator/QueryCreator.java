@@ -34,6 +34,7 @@ import java.util.concurrent.ConcurrentMap;
 public abstract class QueryCreator {
 
     protected final ConcurrentMap<String, AbstractDefinition> streamDefinitionMap;
+    protected final ConcurrentMap<String, AbstractDefinition> localStreamDefinitionMap;
     protected OutputRateManager outputRateManager;
     protected final SiddhiContext siddhiContext;
     protected final String queryId;
@@ -42,10 +43,11 @@ public abstract class QueryCreator {
     public QuerySelector querySelector;
     Map<String, StreamDefinition> tempStreamDefinitionMap = new HashMap<String, StreamDefinition>();
 
-    protected QueryCreator(String queryId, Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, OutputRateManager outputRateManager, SiddhiContext siddhiContext) {
+    protected QueryCreator(String queryId, Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, AbstractDefinition> localStreamDefinitionMap, OutputRateManager outputRateManager, SiddhiContext siddhiContext) {
         this.queryId = queryId;
         this.query = query;
         this.streamDefinitionMap = streamDefinitionMap;
+        this.localStreamDefinitionMap = localStreamDefinitionMap;
         this.outputRateManager = outputRateManager;
         this.siddhiContext = siddhiContext;
     }
@@ -53,7 +55,12 @@ public abstract class QueryCreator {
     protected void init() {
         InputStream inputStream = getInputStream();
         if (inputStream instanceof BasicSingleInputStream ) {
-            tempStreamDefinitionMap.put(((SingleInputStream) inputStream).getStreamId(), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));
+           if(((BasicSingleInputStream) inputStream).isPartitioned()){
+               tempStreamDefinitionMap.put(((SingleInputStream) inputStream).getStreamId(), (StreamDefinition) localStreamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));
+           }  else {
+           tempStreamDefinitionMap.put(((SingleInputStream) inputStream).getStreamId(), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));
+           }
+
         } else {
             //TODO: other inputstreamTypes
 
@@ -84,5 +91,4 @@ public abstract class QueryCreator {
 
     public abstract QueryPartComposite constructQuery() ;
 
-    public abstract QueryPartComposite constructQuery(OutputRateManager outputRateManager) ;
 }

@@ -18,7 +18,6 @@
 package org.wso2.siddhi.core.query.processor.handler;
 
 import com.lmax.disruptor.dsl.Disruptor;
-import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.event.PartitionStreamEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
@@ -69,10 +68,7 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
             partitionedHandlerMap.put(key, handlerProcessor);
         }
         if(toPartitionedStream){
-            PartitionStreamEvent partitionStreamEvent = new PartitionStreamEvent();
-            partitionStreamEvent.setData(event.getData());
-            partitionStreamEvent.setTimestamp(event.getTimestamp());
-            partitionStreamEvent.setPartitionKey(key);
+            PartitionStreamEvent partitionStreamEvent = new PartitionStreamEvent(event.getTimestamp(),event.getData(),key);
             partitionStreamEvent.setIsExpired(event.isExpired());
             partitionStreamEvent.setNext(event.getNext());
             handlerProcessor.receive(partitionStreamEvent);

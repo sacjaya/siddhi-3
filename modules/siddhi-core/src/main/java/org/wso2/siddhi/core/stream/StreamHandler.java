@@ -19,7 +19,6 @@
 package org.wso2.siddhi.core.stream;
 
 import com.lmax.disruptor.EventHandler;
-import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.StreamEvent;
 
 public class StreamHandler implements EventHandler<StreamEvent> {
