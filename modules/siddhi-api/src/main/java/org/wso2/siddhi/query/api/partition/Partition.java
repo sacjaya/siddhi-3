@@ -19,6 +19,7 @@
 package org.wso2.siddhi.query.api.partition;
 
 import org.wso2.siddhi.query.api.condition.Condition;
+import org.wso2.siddhi.query.api.execution.element.ExecutionElement;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.query.Query;
 
@@ -33,7 +34,7 @@ import java.util.Map;
  * partition ID and a list of partition types that belong to a given definition
  * instance.
  */
-public class Partition {
+public class Partition implements ExecutionElement{
 
     private Map<String,String> properties = new HashMap<String,String>();
     private List<PartitionType> partitionTypeList = new ArrayList<PartitionType>();

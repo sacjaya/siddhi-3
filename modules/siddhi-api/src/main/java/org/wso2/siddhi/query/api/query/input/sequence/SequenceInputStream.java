@@ -16,13 +16,13 @@
  */
 package org.wso2.siddhi.query.api.query.input.sequence;
 
-import org.wso2.siddhi.query.api.expression.constant.Constant;
 import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 import org.wso2.siddhi.query.api.query.input.InputStream;
 import org.wso2.siddhi.query.api.query.input.sequence.element.NextElement;
 import org.wso2.siddhi.query.api.query.input.sequence.element.OrElement;
-import org.wso2.siddhi.query.api.query.input.sequence.element.RegexElement;
 import org.wso2.siddhi.query.api.query.input.sequence.element.SequenceElement;
+import org.wso2.siddhi.query.api.expression.constant.Constant;
+import org.wso2.siddhi.query.api.query.input.sequence.element.RegexElement;
 
 import java.util.ArrayList;
 import java.util.HashSet;

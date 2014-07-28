@@ -16,8 +16,8 @@
  */
 package org.wso2.siddhi.query.api.query.input.pattern.element;
 
-import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
 import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
+import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
 
 
 public class StreamElement implements PatternElement {

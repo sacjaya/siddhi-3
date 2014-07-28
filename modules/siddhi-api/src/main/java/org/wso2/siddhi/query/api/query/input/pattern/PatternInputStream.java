@@ -16,12 +16,12 @@
  */
 package org.wso2.siddhi.query.api.query.input.pattern;
 
+import org.wso2.siddhi.query.api.query.input.pattern.element.CountElement;
+import org.wso2.siddhi.query.api.query.input.pattern.element.LogicalElement;
 import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
 import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
 import org.wso2.siddhi.query.api.query.input.InputStream;
-import org.wso2.siddhi.query.api.query.input.pattern.element.CountElement;
 import org.wso2.siddhi.query.api.query.input.pattern.element.FollowedByElement;
-import org.wso2.siddhi.query.api.query.input.pattern.element.LogicalElement;
 import org.wso2.siddhi.query.api.query.input.pattern.element.PatternElement;
 
 import java.util.ArrayList;
