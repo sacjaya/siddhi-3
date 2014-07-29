@@ -62,11 +62,11 @@ public class MetaStreamEvent {
     public void addData(Attribute attribute) { //TODO Handle complex selector attr
         if (outData != null) {
             outData.add(attribute);
-        }
-        if (afterWindowData != null) {
+        } else if (afterWindowData != null) {
             afterWindowData.add(attribute);
+        } else {
+            beforeWindowData.add(attribute);
         }
-        beforeWindowData.add(attribute);
     }
 
 }
