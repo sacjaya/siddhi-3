@@ -28,11 +28,11 @@ import java.util.concurrent.ConcurrentMap;
 
 public class QueryCreatorFactory {
 
-    public static QueryCreator constructQueryCreator(String queryId, Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap,
+    public static QueryCreator constructQueryCreator(String queryId, Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, AbstractDefinition> localStreamDefinitionMap,
                                                      OutputRateManager outputRateManager,
                                                      SiddhiContext siddhiContext) {
         if (query.getInputStream() instanceof BasicSingleInputStream) {
-            return new BasicQueryCreator(queryId, query, streamDefinitionMap, outputRateManager, siddhiContext);
+            return new BasicQueryCreator(queryId, query, streamDefinitionMap, localStreamDefinitionMap,outputRateManager, siddhiContext);
         } //TODO: for other streams
         else {
             throw new QueryCreationException("Unsupported input stream found, " + query.getInputStream().getClass().getName());

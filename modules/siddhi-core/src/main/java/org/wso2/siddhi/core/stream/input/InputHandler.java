@@ -18,7 +18,6 @@
 package org.wso2.siddhi.core.stream.input;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.snapshot.ThreadBarrier;
 import org.wso2.siddhi.core.stream.StreamJunction;

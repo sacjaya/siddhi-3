@@ -35,8 +35,6 @@ import org.wso2.siddhi.query.api.definition.TableDefinition;
 import org.wso2.siddhi.query.api.partition.Partition;
 import org.wso2.siddhi.query.api.query.Query;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -45,14 +43,14 @@ public class ExecutionPlanRuntime {
     private ConcurrentMap<String, InputHandler> inputHandlerMap = new ConcurrentHashMap<String, InputHandler>();
     private ConcurrentMap<String, ExecutionRuntime> queryProcessorMap = new ConcurrentHashMap<String, ExecutionRuntime>();
     private ConcurrentMap<String, StreamJunction> streamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains definition
-    private ConcurrentMap<String,Partition> partitionList = new ConcurrentHashMap<String,Partition>();
+    private ConcurrentMap<String, PartitionRuntime> partitionList = new ConcurrentHashMap<String, PartitionRuntime>();
 
 
     private SiddhiContext siddhiContext;
 
-   public ExecutionPlanRuntime(SiddhiContext siddhiContext){
-       this.siddhiContext = siddhiContext;
-   }
+    public ExecutionPlanRuntime(SiddhiContext siddhiContext) {
+        this.siddhiContext = siddhiContext;
+    }
 
     public InputHandler defineStream(StreamDefinition streamDefinition) {
         if (!checkEventStreamExist(streamDefinition)) {
@@ -71,15 +69,6 @@ public class ExecutionPlanRuntime {
 
     }
 
-    public void removeStream(String streamId) {
-        AbstractDefinition abstractDefinition = streamDefinitionMap.get(streamId);
-        if (abstractDefinition != null && abstractDefinition instanceof StreamDefinition) {
-            streamDefinitionMap.remove(streamId);
-            streamJunctionMap.remove(streamId);
-            inputHandlerMap.remove(streamId);
-        }
-    }
-
     private boolean checkEventStreamExist(StreamDefinition newStreamDefinition) {
         AbstractDefinition definition = streamDefinitionMap.get(newStreamDefinition.getId());
         if (definition != null) {
@@ -95,27 +84,16 @@ public class ExecutionPlanRuntime {
     }
 
     public void definePartition(Partition partition) {
-//        PartitionRuntime partitionRuntime = new PartitionRuntime(streamDefinitionMap, streamJunctionMap, partition,siddhiContext)
-        partitionList.put(partition.getPropertyValue("name"),partition);
-        //TODO: for a list of queries
-        for (Query query:partition.getQueryList()) {
-            addQuery(query,partition);
+        PartitionRuntime partitionRuntime = new PartitionRuntime(partition, siddhiContext);
+        partitionList.put(partitionRuntime.getPartitionId(), partitionRuntime);
+        for (Query query : partition.getQueryList()) {
+            partitionRuntime.addQueryId(addQuery(query, partition, partitionRuntime));
         }
+
     }
 
     public String addQuery(Query query) {
-        ExecutionRuntime executionRuntime = new ExecutionRuntime(query, streamDefinitionMap, streamJunctionMap, null,siddhiContext);
-        queryProcessorMap.put( executionRuntime.getQueryId(), executionRuntime);
-        OutputCallback outputCallback = executionRuntime.getOutputCallback();
-        if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
-            defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
-        }
-        return executionRuntime.getQueryId();
-    }
-
-
-    private String addQuery(Query query, Partition partition) {
-        ExecutionRuntime executionRuntime = new ExecutionRuntime(query, streamDefinitionMap, streamJunctionMap, partition,siddhiContext);
+        ExecutionRuntime executionRuntime = new ExecutionRuntime(query, streamDefinitionMap, streamJunctionMap, null, siddhiContext, null);
         queryProcessorMap.put(executionRuntime.getQueryId(), executionRuntime);
         OutputCallback outputCallback = executionRuntime.getOutputCallback();
         if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
@@ -124,11 +102,22 @@ public class ExecutionPlanRuntime {
         return executionRuntime.getQueryId();
     }
 
-    public void removeQuery(String queryName) {
-        ExecutionRuntime executionRuntime = queryProcessorMap.remove(queryName);
-        if (executionRuntime != null) {
-            executionRuntime.removeQuery(streamJunctionMap, streamDefinitionMap);
+
+    private String addQuery(Query query, Partition partition, PartitionRuntime partitionRuntime) {
+        ExecutionRuntime executionRuntime = new ExecutionRuntime(query, streamDefinitionMap, streamJunctionMap, partition, siddhiContext, partitionRuntime);
+        queryProcessorMap.put(executionRuntime.getQueryId(), executionRuntime);
+        OutputCallback outputCallback = executionRuntime.getOutputCallback();
+        if (executionRuntime.isLocalStream()) {
+            if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
+                partitionRuntime.defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
+            }
+        } else {
+            if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
+                defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
+            }
+
         }
+        return executionRuntime.getQueryId();
     }
 
     public void addCallback(String streamId, StreamCallback streamCallback) {
@@ -155,26 +144,5 @@ public class ExecutionPlanRuntime {
     public InputHandler getInputHandler(String streamId) {
         return inputHandlerMap.get(streamId);
     }
-
-    public StreamDefinition getStreamDefinition(String streamId) {
-        AbstractDefinition abstractDefinition = streamDefinitionMap.get(streamId);
-        if (abstractDefinition instanceof StreamDefinition) {
-            return (StreamDefinition) abstractDefinition;
-        } else {
-            return null;
-        }
-    }
-
-    public List<StreamDefinition> getStreamDefinitions() {
-        List<StreamDefinition> streamDefinitions = new ArrayList<StreamDefinition>(streamDefinitionMap.size());
-        for (AbstractDefinition abstractDefinition : streamDefinitionMap.values()) {
-            if (abstractDefinition instanceof StreamDefinition) {
-                streamDefinitions.add((StreamDefinition) abstractDefinition);
-            }
-        }
-        return streamDefinitions;
-    }
-
-
 
 }

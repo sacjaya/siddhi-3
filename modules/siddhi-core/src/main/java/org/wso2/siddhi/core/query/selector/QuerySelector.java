@@ -39,8 +39,8 @@ public class QuerySelector {
     private final OutputRateManager outputRateManager;
     private int outputSize;
     private ArrayList<AttributeProcessor> attributeProcessorList;
-    Map<String, StreamDefinition> tempStreamDefinitionMap;
-    public boolean partitionedStream= false;
+    private Map<String, StreamDefinition> tempStreamDefinitionMap;
+    private boolean partitionedStream= false;
     public boolean currentOn = false;
     public boolean expiredOn = false;
 
@@ -71,21 +71,15 @@ public class QuerySelector {
             AttributeProcessor attributeProcessor = attributeProcessorList.get(i);
             data[i] = processOutputAttributeGenerator(streamEvent, attributeProcessor);
         }
-
-       StreamEvent event = new StreamEvent(streamEvent.getTimestamp(), data);
-        outputRateManager.send(event.getTimestamp(), event, null);
+       if(streamEvent instanceof PartitionStreamEvent){
+           PartitionStreamEvent event = new PartitionStreamEvent(streamEvent.getTimestamp(),data,((PartitionStreamEvent) streamEvent).getPartitionKey());
+           outputRateManager.send(event.getTimestamp(),event,null);
+       }  else {
+            StreamEvent event = new StreamEvent(streamEvent.getTimestamp(), data);
+            outputRateManager.send(event.getTimestamp(), event, null);
+       }
     }
 
-    public void process(String key,StreamEvent streamEvent) {
-        Object[] data = new Object[outputSize];
-        for (int i = 0; i < outputSize; i++) {
-            AttributeProcessor attributeProcessor = attributeProcessorList.get(i);
-            data[i] = processOutputAttributeGenerator(streamEvent, attributeProcessor);
-        }
-
-        StreamEvent event = new StreamEvent(streamEvent.getTimestamp(), data);
-        outputRateManager.send(event.getTimestamp(), key,event, null);
-    }
 
     private Object processOutputAttributeGenerator(StreamEvent streamEvent,AttributeProcessor attributeProcessor) {
         if (attributeProcessor instanceof NonGroupingAttributeProcessor) {
