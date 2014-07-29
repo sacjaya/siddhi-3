@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 
-public class ExecutionRuntime {
+public class QueryRuntime {
     private String queryId;
     private Query query;
     private StreamDefinition outputStreamDefinition;
@@ -52,7 +52,7 @@ public class ExecutionRuntime {
     private boolean localStream;
 
 
-    public ExecutionRuntime(Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap, Partition partition, SiddhiContext siddhiContext,PartitionRuntime partitionRuntime) {
+    public QueryRuntime(Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap, Partition partition, SiddhiContext siddhiContext, PartitionRuntime partitionRuntime) {
         if (query.getPropertyValue("name") == null) {
            query.property("name", UUID.randomUUID().toString());
         }
