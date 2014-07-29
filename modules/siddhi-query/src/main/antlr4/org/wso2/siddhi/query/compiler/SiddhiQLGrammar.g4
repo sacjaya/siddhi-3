@@ -7,8 +7,8 @@
 grammar SiddhiQLGrammar;
 
 executionPlan
-    :(definitionStream|definitionTable|query)
-        (';'  (definitionStream|definitionTable|query))* ';'? EOF
+    :(definitionStream|definitionTable|query|partition)
+        (';'  (definitionStream|definitionTable|query|partition))* ';'? EOF
     ;
 
 definitionStreamFinal
@@ -32,16 +32,16 @@ anotation
     ;
 
 partition
-    :'with' 'partition' '('partitionStream (','partitionStream)*')' 'do' query+ 'done'
+    : 'partition' 'with' '('partitionStream (','partitionStream)*')' 'begin' query+ 'end' 
+    ;
+
+partitionFinal
+    : partition ';'? EOF
     ;
 
 partitionStream
-    :partitionAttribute ('and' partitionAttribute)* 'of'source
-    ;
-
-partitionAttribute
-    :attributeName | conditionRange
-    |'('partitionAttribute')'
+    :attributeName 'of' streamId
+    |conditionRange 'of' streamId 
     ;
 
 conditionRange
@@ -83,51 +83,39 @@ joinSource
     ;
 
 patternStream
-    :patternSourceChain
+    :everyPatternSourceChain 
+    ;
+
+everyPatternSourceChain
+    : '('everyPatternSourceChain')' withinTime? 
+    | 'every' '('patternSourceChain ')' withinTime?   
+    | everyPatternSourceChain  '->' everyPatternSourceChain
+    | patternSourceChain
+    | 'every' patternSource withinTime? 
     ;
 
 patternSourceChain
-    : firstPatternSource  '->' followingPatternSourceChain
-    | 'every'? '('patternSourceChain ')' withinTime? 
+    : '('patternSourceChain')' withinTime? 
+    | patternSourceChain  '->' patternSourceChain
+    | patternSource withinTime? 
     ;
 
-followingPatternSourceChain
-    : followingPatternSource  '->' followingPatternSourceChain 
-    | lastPatternSource
-    | 'every'? '('followingPatternSourceChain ')' withinTime? 
-    ;
-
-firstPatternSource
-    :logicalStatefulSource
-    |collectionPatternSource
-    |'every' (logicalStatefulSource|collectionPatternSource)
-    ;
-
-followingPatternSource
-    :logicalStatefulSource withinTime?
-    |collectionPatternSource  withinTime?
-    |'every' (logicalStatefulSource|collectionPatternSource)
-    ;
-
-lastPatternSource
-    :logicalStatefulSource withinTime?
-    |collectionPatternSource withinTime?
+patternSource
+    :logicalStatefulSource|collectionPatternSource|standardStatefulSource
     ;
 
 logicalStatefulSource
-    :'('logicalStatefulSource')'
-    |logicalStatefulSource 'and' logicalStatefulSource
-    |logicalStatefulSource 'or' logicalStatefulSource
-    |standardStatefulSource
+    :'not' standardStatefulSource ('and' standardStatefulSource) ?
+    |standardStatefulSource 'and' standardStatefulSource
+    |standardStatefulSource 'or' standardStatefulSource
     ;
 
 collectionPatternSource
     :standardStatefulSource '<' collect '>'
-    |'('collectionPatternSource')'
     ;
 
 standardStatefulSource
-    : event '=' basicStatefulSource
+    : (event '=')? basicStatefulSource
     ;
 
 basicStatefulSource
@@ -135,36 +123,25 @@ basicStatefulSource
     ;
 
 sequenceStream
-    :'every'? sequenceSourceChain
+    :'every'? sequenceSourceChain ',' sequenceSourceChain
     ;
 
 sequenceSourceChain
-    :firstSequenceSource ',' followingSequenceSourceChain
-    |'('sequenceSourceChain ')' withinTime? 
+    :'('sequenceSourceChain ')' withinTime? 
+    | sequenceSourceChain ',' sequenceSourceChain
+    | sequenceSource  withinTime? 
     ;
 
-followingSequenceSourceChain
-    : followingSequenceSource  (',' followingSequenceSourceChain)? 
-    | '('followingSequenceSourceChain ')' withinTime? 
-    ;
-
-firstSequenceSource
-    :logicalStatefulSource
-    |collectionSequenceSource
-    ;
-
-followingSequenceSource
-    :logicalStatefulSource withinTime?
-    |collectionSequenceSource withinTime?
+sequenceSource
+    :logicalStatefulSource|collectionSequenceSource|standardStatefulSource
     ;
 
 collectionSequenceSource
     :standardStatefulSource ('<' collect '>'|'*'|'?'|'+') 
-    |'('collectionSequenceSource')'
     ;
 
 filter
-    :'#'?'['condition']'
+    :'#'? '['condition']'
     ;
 
 streamFunction
@@ -172,7 +149,7 @@ streamFunction
     ;
 
 window
-    :'#' 'window.' functionOperation
+    :'#' 'window' '.' functionOperation
     ;
 
 queryProjection
@@ -206,7 +183,7 @@ withinTime
     ;
 
 outputAttribute
-    :attribute 'as' attributeName 
+    :attribute 'as' attributeName
     |attributeReference
     ;
 
@@ -237,11 +214,16 @@ attributeList
     ;
 
 functionOperation
-    :functionId '('attributeList?')'
+    : (functionNamespace ':')? functionId '('attributeList?')'
     ;
 
 attributeReference
-    :(streamId '.')? attributeName
+    :'#'? id ('['attributeIndex']')? ('#'id ('['attributeIndex']')?)? '.'  attributeName
+    | attributeName
+    ;
+
+attributeIndex
+    : NUMBER| 'last' ('-' NUMBER)?| 'previous' ('-' NUMBER)?
     ;
 
 attributeValue
@@ -252,12 +234,16 @@ functionId
     :id
     ;
 
+functionNamespace
+    :id
+    ;
+
 streamId
     :id
     ;
 
-paopertyName
-    :PROPERTY_NAME_QUOTES | PROPERTY_NAME_NO_QUOTES |ID_QUOTES |ID_NO_QUOTES
+propertyName
+    : id ('.'id )*
     ;
 
 attributeName
@@ -265,7 +251,7 @@ attributeName
     ;
 
 source
-    :'#'?id
+    :'#'? streamId
     ;
 
 target
@@ -277,7 +263,7 @@ event
     ;
 
 parameterName
-    :paopertyName
+    :propertyName
     ;
 
 name
@@ -404,10 +390,6 @@ POSITIVE_DOUBLE_VAL :  NUM ('.' NUM NUM_SCI? ('D'|'d')?| NUM_SCI? ('D'|'d'));
 fragment NUM_SCI: ('e'|'E') '-'? NUM;
 
 fragment NUM: '0'..'9'+;
-
-PROPERTY_NAME_QUOTES : '`'ID_NO_QUOTES ('.'ID_NO_QUOTES ) ('.'ID_NO_QUOTES )*'`' {setText(getText().substring(1, getText().length()-1));};
-
-PROPERTY_NAME_NO_QUOTES : ID_NO_QUOTES ('.'ID_NO_QUOTES ) ('.'ID_NO_QUOTES )* ;
 
 ID_QUOTES : '`'('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*'`' {setText(getText().substring(1, getText().length()-1));};
 
