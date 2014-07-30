@@ -14,6 +14,7 @@
 package org.wso2.siddhi.core.event;
 
 import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.definition.FunctionAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,11 +62,23 @@ public class MetaStreamEvent {
      */
     public void addData(Attribute attribute) { //TODO Handle complex selector attr
         if (outData != null) {
-            outData.add(attribute);
+            if (outData.get(outData.size() - 1) instanceof FunctionAttribute) {
+                if (!((FunctionAttribute) outData.get(outData.size() - 1)).isInitialized()) {   //if last element is a not initialized function attribute,
+                    afterWindowData.add(attribute);                                             //then reserve that spot for result of function and
+                } else {                                                                        //allocate position for actual variable
+                    outData.add(attribute);
+                }
+            } else {
+                outData.add(attribute);
+            }
         } else if (afterWindowData != null) {
-            afterWindowData.add(attribute);
+            if (!afterWindowData.contains(attribute)) {
+                afterWindowData.add(attribute);
+            }
         } else {
-            beforeWindowData.add(attribute);
+            if (beforeWindowData.contains(attribute)) {
+                beforeWindowData.add(attribute);
+            }
         }
     }
 
