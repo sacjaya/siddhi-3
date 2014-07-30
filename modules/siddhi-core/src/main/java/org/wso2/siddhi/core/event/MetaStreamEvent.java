@@ -62,7 +62,7 @@ public class MetaStreamEvent {
      */
     public void addData(Attribute attribute) { //TODO Handle complex selector attr
         if (outData != null) {
-            if (outData.get(outData.size() - 1) instanceof FunctionAttribute) {
+            if (outData.size() > 0 && outData.get(outData.size() - 1) instanceof FunctionAttribute) {
                 if (!((FunctionAttribute) outData.get(outData.size() - 1)).isInitialized()) {   //if last element is a not initialized function attribute,
                     afterWindowData.add(attribute);                                             //then reserve that spot for result of function and
                 } else {                                                                        //allocate position for actual variable
