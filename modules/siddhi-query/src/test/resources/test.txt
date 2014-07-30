@@ -1,4 +1,9 @@
-partition with (symbol of Stream1, random() of Stream2, v<2 as 'small' or v>=price as "large" of Stream3)
+
+from `Stream1`[price> 5.0d and symbol == 'IBM' or volume <= 5f+3.3/6E45 or false]
+--from Stream1[price> 6E45 and symbol == 'IBM' or volume <= 5f+3.3/6.0]
+insert into Stream2;
+
+partition with (symbol of Stream1, random() of Stream2, v<2 as 'small' or v>=price as 'large' of Stream3 )
 begin
 
     from Stream1 insert into stream2;
@@ -27,7 +32,7 @@ on StreamA.price == StreamB.price
 select avg(StreamA.price), StreamB.price as foo
 insert into StreamC;
 
-//Test
+--Test
 from Stream1[symbol == 'IBM']#stamk:reg(price)#reg(volume)
 select price, symbol, Stream1#reg[0].priceM, Stream1#reg[1].m
 insert into Stream2;
