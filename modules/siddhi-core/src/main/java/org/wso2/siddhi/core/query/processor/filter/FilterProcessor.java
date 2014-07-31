@@ -18,6 +18,7 @@
 package org.wso2.siddhi.core.query.processor.filter;
 
 import org.wso2.siddhi.core.event.*;
+import org.wso2.siddhi.core.event.converter.EventConverter;
 import org.wso2.siddhi.core.executor.condition.ConditionExecutor;
 import org.wso2.siddhi.core.query.processor.Processor;
 
@@ -25,6 +26,7 @@ import org.wso2.siddhi.core.query.processor.Processor;
 public class FilterProcessor implements Processor {
     private ConditionExecutor conditionExecutor;
     private Processor next;
+    private EventConverter eventConverter = null;
 
     public FilterProcessor(ConditionExecutor conditionExecutor) {
         this.conditionExecutor = conditionExecutor;
@@ -45,4 +47,10 @@ public class FilterProcessor implements Processor {
             this.next.addToNext(processor);
         }
     }
+
+    @Override
+    public void setEventConverter(EventConverter eventConverter) {
+        this.eventConverter = eventConverter;
+    }
+
 }
