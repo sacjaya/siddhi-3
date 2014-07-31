@@ -60,7 +60,7 @@ public class MetaStreamEvent {
      *
      * @param attribute
      */
-    public void addData(Attribute attribute) { //TODO Handle complex selector attr
+    public void addData(Attribute attribute) {
         if (outData != null) {
             if (outData.size() > 0 && outData.get(outData.size() - 1) instanceof FunctionAttribute) {
                 if (!((FunctionAttribute) outData.get(outData.size() - 1)).isInitialized()) {   //if last element is a not initialized function attribute,
@@ -76,7 +76,7 @@ public class MetaStreamEvent {
                 afterWindowData.add(attribute);
             }
         } else {
-            if (beforeWindowData.contains(attribute)) {
+            if (!beforeWindowData.contains(attribute)) {
                 beforeWindowData.add(attribute);
             }
         }
