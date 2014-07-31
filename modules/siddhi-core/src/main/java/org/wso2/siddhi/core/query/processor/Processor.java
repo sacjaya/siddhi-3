@@ -13,7 +13,21 @@
 
 package org.wso2.siddhi.core.query.processor;
 
-public interface Processor {
+import org.wso2.siddhi.core.event.converter.EventConverter;
 
+public interface Processor {
+    /**
+     * To construct the Processor chain specifying the
+     * next processor which will handle event
+     *
+     * @param processor
+     */
     void addToNext(Processor processor);
+
+    /**
+     * To set event converter is applicable
+     *
+     * @param eventConverter
+     */
+    void setEventConverter(EventConverter eventConverter);
 }
