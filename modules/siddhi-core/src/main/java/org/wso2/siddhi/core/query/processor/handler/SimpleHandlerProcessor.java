@@ -18,28 +18,43 @@
 package org.wso2.siddhi.core.query.processor.handler;
 
 import com.lmax.disruptor.dsl.Disruptor;
-import org.wso2.siddhi.core.event.*;
+import org.wso2.siddhi.core.event.StreamEvent;
+import org.wso2.siddhi.core.event.converter.EventConverter;
 import org.wso2.siddhi.core.query.processor.PreSelectProcessingElement;
-import org.wso2.siddhi.core.query.processor.filter.FilterProcessor;
+import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 
-public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProcessingElement{
+public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProcessingElement {
 
     private Disruptor[] disruptors;
     private QuerySelector next;
-    private FilterProcessor filterProcessor;
-    private String streamId ;
+    private Processor processor;
+    private String streamId;
+    private EventConverter eventConverter;
 
-    public SimpleHandlerProcessor(FilterProcessor filterProcessor,String streamId) {
-        this.filterProcessor = filterProcessor;
+    public SimpleHandlerProcessor(Processor processor, String streamId) {
+        this.processor = processor;
+        this.streamId = streamId;
+    }
+
+    public SimpleHandlerProcessor(String streamId) {
         this.streamId = streamId;
     }
 
     @Override
     public void receive(StreamEvent streamEvent) {
-              processHandler(streamEvent);
+        if (eventConverter != null) {
+            streamEvent = eventConverter.constructInnerStreamEvent(streamEvent.getData());
+        }
+        processHandler(streamEvent);
     }
 
+    private void processHandler(String key, StreamEvent streamEvent) {
+        streamEvent = processor.process(streamEvent);
+        if (streamEvent != null) {
+            next.process(streamEvent);
+        }
+    }
 
     @Override
     public void setDisruptors(Disruptor[] disruptors) {
@@ -52,29 +67,37 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
     }
 
     protected void processHandler(StreamEvent streamEvent) {
-        streamEvent = filterProcessor.process(streamEvent);
-       if (streamEvent != null) {
-              next.process(streamEvent);
+        streamEvent = processor.process(streamEvent);
+        if (streamEvent != null) {
+            next.process(streamEvent);
         }
     }
-
-//    public String getStreamId() {
-//       if(inputStream instanceof BasicSingleInputStream){
-//           return ((BasicSingleInputStream) inputStream).getStreamId();
-//       }  else {
-//           //TODO: else
-//       }
-//        return null;
-//    }
 
     @Override
     public Disruptor[] getDisruptors() {
         return disruptors;
     }
 
+    @Override
+    public Processor getProcessor() {
+        return processor;
+    }
+
+    @Override
+    public void setEventConverter(EventConverter eventConverter) {
+        this.eventConverter = eventConverter;
+    }
+
+    @Override
+    public void setSelector(QuerySelector querySelector) {
+        this.next = querySelector;
+    }
+
     public void setNext(QuerySelector querySelector) {
         this.next = querySelector;
     }
 
-
+    public void setProcessor(Processor processor) {
+        this.processor = processor;
+    }
 }

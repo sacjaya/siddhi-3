@@ -20,8 +20,11 @@ package org.wso2.siddhi.core.query.processor.handler;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.wso2.siddhi.core.event.PartitionStreamEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
+import org.wso2.siddhi.core.event.converter.EventConverter;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.query.QueryPartitioner;
+import org.wso2.siddhi.core.query.processor.Processor;
+import org.wso2.siddhi.core.query.selector.QuerySelector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +40,8 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
     private List<PartitionExecutor> partitionExecutors;
     private ConcurrentHashMap<String, HandlerProcessor> partitionedHandlerMap = new ConcurrentHashMap<String, HandlerProcessor>();
     private boolean toPartitionedStream;
+    private EventConverter eventConverter;
+    private QuerySelector next;     //TODO: review. added to implement HandlerProcessor.setQuerySelector()
 
     public PartitionHandlerProcessor(boolean toPartitionedStream, String streamId, QueryPartitioner queryPartitioner, int handlerId, List<PartitionExecutor> partitionExecutors) {
         this.streamId = streamId;
@@ -49,8 +54,8 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
     @Override
     public void receive(StreamEvent streamEvent) {
         for (PartitionExecutor partitionExecutor : partitionExecutors) {
-                String key = partitionExecutor.execute((streamEvent));
-                send(key, streamEvent);
+            String key = partitionExecutor.execute((streamEvent));
+            send(key, streamEvent);
         }
     }
 
@@ -67,12 +72,12 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
             handlerProcessor = queryPartitioner.newPartition(handlerId, key);
             partitionedHandlerMap.put(key, handlerProcessor);
         }
-        if(toPartitionedStream){
-            PartitionStreamEvent partitionStreamEvent = new PartitionStreamEvent(event.getTimestamp(),event.getData(),key);
+        if (toPartitionedStream) {
+            PartitionStreamEvent partitionStreamEvent = new PartitionStreamEvent(event.getTimestamp(), event.getData(), key);
             partitionStreamEvent.setIsExpired(event.isExpired());
             partitionStreamEvent.setNext(event.getNext());
             handlerProcessor.receive(partitionStreamEvent);
-        }   else {
+        } else {
             handlerProcessor.receive(event);
         }
     }
@@ -86,16 +91,31 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
         return disruptors;
     }
 
-    public int getDisruptorsSize(){
+    @Override
+    public Processor getProcessor() { //TODO: figure out what to do. Needed for setting event converter
+        return null;
+    }
+
+    @Override
+    public void setEventConverter(EventConverter eventConverter) {
+        this.eventConverter = eventConverter;
+    }
+
+    @Override
+    public void setSelector(QuerySelector querySelector) {
+        this.next = querySelector;
+    }
+
+    public int getDisruptorsSize() {
         return disruptorsSize;
     }
 
-    public void setDisruptorsSize(int disruptorsSize){
-        this.disruptorsSize =  disruptorsSize;
+    public void setDisruptorsSize(int disruptorsSize) {
+        this.disruptorsSize = disruptorsSize;
     }
 
-    public List<String> getPartitionKeys(StreamEvent streamEvent){
-        List<String>  keys = new ArrayList<String>();
+    public List<String> getPartitionKeys(StreamEvent streamEvent) {
+        List<String> keys = new ArrayList<String>();
         for (PartitionExecutor partitionExecutor : partitionExecutors) {
             keys.add(partitionExecutor.execute((streamEvent)));
 
