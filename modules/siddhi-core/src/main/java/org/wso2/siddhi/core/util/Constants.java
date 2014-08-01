@@ -20,4 +20,7 @@ public class Constants {
     public static final String MAX = "max";
     public static final String MIN = "min";
     public static final String COUNT = "count";
+    public static final int BEFORE_WINDOW_DATA_INDEX = 0;
+    public static final int AFTER_WINDOW_DATA_INDEX = 1;
+    public static final int OUT_DATA_INDEX = 2;
 }
