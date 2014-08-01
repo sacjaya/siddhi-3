@@ -34,11 +34,19 @@ public class MetaStreamEvent {
     }
 
     public List<Attribute> getAfterWindowData() {
-        return afterWindowData;
+        if (afterWindowData != null) {
+            return afterWindowData;
+        } else {
+            return new ArrayList<Attribute>();  //return empty arraylist to avoid NPE
+        }
     }
 
     public List<Attribute> getOutData() {
-        return outData;
+        if (outData != null) {
+            return outData;
+        } else {
+            return new ArrayList<Attribute>();  //return empty arraylist to avoid NPE
+        }
     }
 
     public void intializeAfterWindowData() {
