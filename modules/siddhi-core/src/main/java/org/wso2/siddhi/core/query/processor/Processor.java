@@ -13,6 +13,7 @@
 
 package org.wso2.siddhi.core.query.processor;
 
+import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.event.converter.EventConverter;
 
 public interface Processor {
@@ -25,9 +26,10 @@ public interface Processor {
     void addToNext(Processor processor);
 
     /**
-     * To set event converter is applicable
+     * To process incoming event
      *
-     * @param eventConverter
+     * @param streamEvent
+     * @return
      */
-    void setEventConverter(EventConverter eventConverter);
+    StreamEvent process(StreamEvent streamEvent);
 }
