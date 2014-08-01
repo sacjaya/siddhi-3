@@ -37,7 +37,7 @@ public class SelectorValidator {
         StreamDefinition temp = new StreamDefinition();        //inferred stream
         if (selector.getSelectionList().size() > 0) {
             for (OutputAttribute attribute : selector.getSelectionList()) {
-                ExpressionExecutor executor = ExecutorParser.parseExpression(attribute.getExpression(), null, null, streamDefinitionMap);//current stream reference and siddhi context is null
+                ExpressionExecutor executor = ExecutorParser.parseExpression(attribute.getExpression(), null, null, streamDefinitionMap, null, null);//current stream reference and siddhi context is null
                 temp.attribute(attribute.getRename(), executor.getReturnType());
             }
             if (selector.getGroupByList() != null) {                        //Handle group by
@@ -48,7 +48,7 @@ public class SelectorValidator {
             if (selector.getHavingCondition() != null) {                    //Handle having condition. send only the inferred stream
                 Map<String, StreamDefinition> tempMap = new HashMap<String, StreamDefinition>(1);
                 tempMap.put(null, temp);                                     //putting with null id to avoid conflicts
-                ExecutorParser.parseCondition(selector.getHavingCondition(), null, null, tempMap);
+                ExecutorParser.parseCondition(selector.getHavingCondition(), null, null, tempMap, null, null);
             }
         } else {
             for (StreamDefinition definition : streamDefinitionMap.values()) {
