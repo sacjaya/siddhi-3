@@ -18,17 +18,21 @@
 package org.wso2.siddhi.core.executor.expression;
 
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.event.InnerStreamEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
+import org.wso2.siddhi.core.util.Constants;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 public class VariableExpressionExecutor implements ExpressionExecutor {
+    Attribute attribute;
     Attribute.Type type;
     int streamPosition = -1;
     int attributePosition = -1;
     int innerStreamPosition = -1;  //Simple Event (Default)
     String attributeName;
     String streamReference;
+    private int[] position = new int[]{-1, -1};
 
 
     public VariableExpressionExecutor(String streamIdOfVariable, String attributeName, StreamDefinition definition, boolean processInDefinition) {
@@ -40,13 +44,24 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
         if (definition != null) {
             type = definition.getAttributeType(attributeName);
             attributePosition = definition.getAttributePosition(attributeName);
+            attribute = new Attribute(attributeName, type);
         }
     }
 
     @Override
     public Object execute(StreamEvent event) {
-
-       return ((Event) event).getData()[attributePosition];
+        switch (position[0]) {
+            case (Constants.BEFORE_WINDOW_DATA_INDEX):
+                return ((InnerStreamEvent) event).getBeforeWindowData()[position[1]];
+            case (Constants.AFTER_WINDOW_DATA_INDEX):
+                return ((InnerStreamEvent) event).getOnAfterWindowData()[position[1]];
+            case (Constants.OUT_DATA_INDEX):
+                return ((InnerStreamEvent) event).getData()[position[1]];
+            case (-1):
+                return null; //TODO: exception?
+            default:
+                return null; //TODO: exception?
+        }
 
     }
 
@@ -75,4 +90,23 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
             return obj.toString();
         }
     }
+
+
+    public Attribute getAttribute() {
+        return attribute;
+    }
+
+    public void setAttribute(Attribute attribute) {
+        this.attribute = attribute;
+    }
+
+    public int[] getPosition() {
+        return position;
+    }
+
+    public void setPosition(int[] position) {
+        this.position = position;
+    }
+
+
 }

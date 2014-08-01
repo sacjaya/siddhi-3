@@ -18,7 +18,9 @@
 package org.wso2.siddhi.core.util.parser;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.event.MetaStreamEvent;
 import org.wso2.siddhi.core.exception.QueryCreationException;
+import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.output.callback.InsertIntoStreamCallback;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
@@ -34,6 +36,7 @@ import org.wso2.siddhi.query.api.query.output.stream.UpdateStream;
 import org.wso2.siddhi.query.api.query.selection.Selector;
 
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
@@ -41,10 +44,10 @@ public class QueryOutputParser {
 
 
     public static QuerySelector constructQuerySelector(Map<String, StreamDefinition> tempStreamDefinitionMap, OutputStream outStream, Selector selector, OutputRateManager outputRateManager
-            , SiddhiContext siddhiContext) {
+            , SiddhiContext siddhiContext, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutors) {
         boolean currentOn = false;
         boolean expiredOn = false;
-        boolean isPartitioned= false;
+        boolean isPartitioned = false;
         String id = null;
 
         if (outStream != null) {
@@ -60,11 +63,11 @@ public class QueryOutputParser {
             currentOn = true;
             expiredOn = true;
         }
-        if(outStream instanceof InsertIntoStream){
+        if (outStream instanceof InsertIntoStream) {
             isPartitioned = ((InsertIntoStream) outStream).isPartitioned();
         }
 
-        return new QuerySelector(id,selector, outputRateManager, siddhiContext, currentOn, expiredOn, isPartitioned,tempStreamDefinitionMap);
+        return new QuerySelector(id, selector, outputRateManager, siddhiContext, currentOn, expiredOn, isPartitioned, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors);
 
 
     }
