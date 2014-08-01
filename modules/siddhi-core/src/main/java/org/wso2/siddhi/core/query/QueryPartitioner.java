@@ -62,7 +62,7 @@ public class QueryPartitioner {
                         dependencyMap = ExpressionValidator.getDependency(((ValuePartitionType) partitionType).getExpression());
                         if (dependencyMap.isEmpty() ||  ((ValuePartitionType) partitionType).getStreamId().equals(((BasicSingleInputStream) inputStream).getStreamId())) {
                             try {
-                                executorList.add(new ValuePartitionExecutor(ExecutorParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(),  siddhiContext, queryCreator.getTempStreamDefinitionMap())));
+                                executorList.add(new ValuePartitionExecutor(ExecutorParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(), siddhiContext, queryCreator.getTempStreamDefinitionMap(), null, null)));//TODO: handle null arguments
                             } catch (ValidatorException e) {
                                 //This will never happen
                             }
@@ -82,7 +82,8 @@ public class QueryPartitioner {
         for (PreSelectProcessingElement preSelectProcessingElement : queryPartComposite.getPreSelectProcessingElementList()) {
             preSelectProcessingElement.setNext(queryPartComposite.getQuerySelector());
         }
-        return queryPartComposite.getHandlerProcessorList();
+        //return queryPartComposite.getHandlerProcessorList();
+        return Arrays.asList(queryPartComposite.getHandlerProcessor()); //TODO: discuss and fix handlerProcessorList/processor
     }
 
 
