@@ -58,15 +58,6 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
         }
     }
 
-//    public String getStreamId() {
-//       if(inputStream instanceof BasicSingleInputStream){
-//           return ((BasicSingleInputStream) inputStream).getStreamId();
-//       }  else {
-//           //TODO: else
-//       }
-//        return null;
-//    }
-
     @Override
     public Disruptor[] getDisruptors() {
         return disruptors;
@@ -77,4 +68,8 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
     }
 
 
+    @Override
+    public int getDisruptorsSize() {
+        return 1;
+    }
 }

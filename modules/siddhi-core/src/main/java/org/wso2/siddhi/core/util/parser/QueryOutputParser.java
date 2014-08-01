@@ -69,7 +69,7 @@ public class QueryOutputParser {
 
     }
 
-    public static OutputCallback constructOutputCallback(OutputStream outStream, ConcurrentMap<String, StreamJunction> streamJunctionMap, SiddhiContext siddhiContext,
+    public static OutputCallback constructOutputCallback(OutputStream outStream,  ConcurrentMap<String, StreamJunction> streamJunctionMap, SiddhiContext siddhiContext,
                                                          StreamDefinition outputStreamDefinition) {
         String id = outStream.getStreamId();
         //Construct CallBack
@@ -92,7 +92,37 @@ public class QueryOutputParser {
         }
     }
 
+    public static OutputCallback constructOutputCallback(OutputStream outStream, String key, ConcurrentMap<String, StreamJunction> streamJunctionMap, SiddhiContext siddhiContext,
+                                                         StreamDefinition outputStreamDefinition) {
+        String id = outStream.getStreamId();
+        //Construct CallBack
+        if (outStream instanceof InsertIntoStream) {
+            StreamJunction outputStreamJunction = streamJunctionMap.get(id+key);
+            if (outputStreamJunction == null) {
+                outputStreamJunction = new StreamJunction(id+key, siddhiContext.getThreadPoolExecutor());
+                streamJunctionMap.putIfAbsent(id+key, outputStreamJunction);
+            }
+            return new InsertIntoStreamCallback(outputStreamJunction, outputStreamDefinition);
 
+        } else if (outStream instanceof DeleteStream) {
+            //TODO: else
+            return null;
+        } else if (outStream instanceof UpdateStream) {
+            //TODO: else
+            return null;
+        } else {
+            throw new QueryCreationException(outStream.getClass().getName() + " not supported");
+        }
+    }
+
+
+    public static OutputCallback constructOutputCallback(StreamJunction streamJunction, SiddhiContext siddhiContext,
+                                                         StreamDefinition outputStreamDefinition) {
+
+            return new InsertIntoStreamCallback(streamJunction, outputStreamDefinition);
+
+
+    }
     public static OutputRateManager constructOutputRateManager(OutputRate outputRate) {
         if (outputRate == null) {
             return new PassThroughOutputRateManager();

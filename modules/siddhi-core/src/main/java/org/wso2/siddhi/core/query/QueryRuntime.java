@@ -27,14 +27,13 @@ import org.wso2.siddhi.core.query.output.callback.OutputCallback;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.PartitionHandlerProcessor;
-import org.wso2.siddhi.core.query.processor.handler.PartitionedStreamHandlerProcessor;
-import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.util.parser.QueryOutputParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.partition.Partition;
 import org.wso2.siddhi.query.api.query.Query;
+import org.wso2.siddhi.query.api.query.input.JoinInputStream;
 import org.wso2.siddhi.query.api.query.input.SingleInputStream;
 
 import java.util.ArrayList;
@@ -49,28 +48,36 @@ public class QueryRuntime {
     private OutputCallback outputCallback = null;
     private OutputRateManager outputRateManager;
     private List<HandlerProcessor> handlerProcessors = new ArrayList<HandlerProcessor>();
-    private boolean localStream;
+    private boolean toLocalStream;
+    private SiddhiContext siddhiContext;
+    private ConcurrentMap<String, StreamJunction> localStreamJunctionMap;
 
+    private QueryRuntime() {
+
+    }
 
     public QueryRuntime(Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap, Partition partition, SiddhiContext siddhiContext, PartitionRuntime partitionRuntime) {
         if (query.getPropertyValue("name") == null) {
-           query.property("name", UUID.randomUUID().toString());
+            query.property("name", UUID.randomUUID().toString());
         }
         this.queryId = query.getPropertyValue("name");
         this.query = query;
+        this.siddhiContext = siddhiContext;
+
         outputRateManager = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
 
         ConcurrentMap<String, AbstractDefinition> localStreamDefinitionMap = null;
         ConcurrentMap<String, StreamJunction> localStreamJunctionMap = null;
-        if(partitionRuntime != null){
+        if (partitionRuntime != null) {
             localStreamDefinitionMap = partitionRuntime.getLocalStreamDefinitionMap();
             localStreamJunctionMap = partitionRuntime.getLocalStreamJunctionMap();
         }
-        QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap,localStreamDefinitionMap, outputRateManager, siddhiContext);
+        this.localStreamJunctionMap = localStreamJunctionMap;
+        QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap, localStreamDefinitionMap, outputRateManager, siddhiContext);
         outputStreamDefinition = queryCreator.getOutputStreamDefinition();
 
-        if(queryCreator.querySelector.isPartitioned()){
-            localStream = true;
+        if (queryCreator.querySelector.isPartitioned()) {
+            toLocalStream = true;
             outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), localStreamJunctionMap, siddhiContext, outputStreamDefinition);
             outputRateManager.setOutputCallback(outputCallback);
 
@@ -79,35 +86,24 @@ public class QueryRuntime {
             outputRateManager.setOutputCallback(outputCallback);
         }
 
-        ArrayList<QuerySelector> querySelectorList = new ArrayList<QuerySelector>();
+        QueryPartitioner queryPartitioner = new QueryPartitioner(partition, queryCreator,siddhiContext);
 
-        QueryPartitioner queryPartitioner = new QueryPartitioner(partition,queryCreator, querySelectorList, siddhiContext);
+        List<HandlerProcessor> handlerProcessorList = queryPartitioner.constructPartition(outputRateManager);
 
-        List<HandlerProcessor> handlerProcessorList = queryPartitioner.constructPartition();
-
-        if(partition == null){
+        if (partitionRuntime == null) {
             handlerProcessors = handlerProcessorList;
             for (HandlerProcessor handlerProcessor : handlerProcessors) {
                 streamJunctionMap.get(handlerProcessor.getStreamId()).addEventFlow(handlerProcessor);
             }
-        } else if (((SingleInputStream) query.getInputStream()).isPartitioned() ){
-                for (int i = 0; i < handlerProcessorList.size(); i++) {
-                    HandlerProcessor queryStreamProcessor = handlerProcessorList.get(i);
-                    handlerProcessors.add(new PartitionedStreamHandlerProcessor(queryStreamProcessor.getStreamId(), queryPartitioner, i));
-
-                }
-            for (HandlerProcessor handlerProcessor : handlerProcessors) {
-                localStreamJunctionMap.get(handlerProcessor.getStreamId()).addEventFlow(handlerProcessor);
-            }
+        } else if (((SingleInputStream) query.getInputStream()).isPartitioned() /*TODO: for joins*/) {
+            handlerProcessors = handlerProcessorList;
         } else {
             List<List<PartitionExecutor>> partitionExecutors = queryPartitioner.getPartitionExecutors();
             for (int i = 0; i < handlerProcessorList.size(); i++) {
                 HandlerProcessor queryStreamProcessor = handlerProcessorList.get(i);
-                handlerProcessors.add(new PartitionHandlerProcessor(queryCreator.querySelector.isPartitioned(),queryStreamProcessor.getStreamId(), queryPartitioner, i, partitionExecutors.get(i)));
+                partitionRuntime.addHandlerProcessors(new PartitionHandlerProcessor(siddhiContext, queryStreamProcessor.getStreamId(), queryPartitioner, i, partitionExecutors.get(i), partitionRuntime));
             }
-            for (HandlerProcessor handlerProcessor : handlerProcessors) {
-                streamJunctionMap.get(handlerProcessor.getStreamId()).addEventFlow(handlerProcessor);
-            }
+
         }
 
 
@@ -126,21 +122,74 @@ public class QueryRuntime {
         outputRateManager.addQueryCallback(callback);
     }
 
-    public void removeQuery(ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap) {
-        for (HandlerProcessor queryStreamProcessor : handlerProcessors) {
-            StreamJunction junction = streamJunctionMap.get(queryStreamProcessor.getStreamId());
-            if (junction != null) {
-                junction.removeEventFlow(queryStreamProcessor);
-            }
-        }
-        streamDefinitionMap.remove(query.getOutputStream().getStreamId());
-    }
+//    public void removeQuery(ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap) {
+//        for (HandlerProcessor queryStreamProcessor : handlerProcessors) {
+//            StreamJunction junction = streamJunctionMap.get(queryStreamProcessor.getStreamId());
+//            if (junction != null) {
+//                junction.removeEventFlow(queryStreamProcessor);
+//            }
+//        }
+//        streamDefinitionMap.remove(query.getOutputStream().getStreamId());
+//    }
 
     public StreamDefinition getOutputStreamDefinition() {
         return outputStreamDefinition;
     }
 
-    public boolean isLocalStream(){
-        return localStream;
+    public List<String> getInputStreamId() {
+        return query.getInputStream().getStreamIds();
+    }
+
+    public boolean isToLocalStream() {
+        return toLocalStream;
+    }
+
+    public boolean isFromLocalStream() {
+        if (query.getInputStream() instanceof SingleInputStream) {
+            return ((SingleInputStream) query.getInputStream()).isPartitioned();
+        } else if(query.getInputStream() instanceof JoinInputStream){
+            //TODO for join ,pattern and sequence streams
+        }
+        return false;
+    }
+
+    public QueryRuntime clone(String streamId,String key) {
+        QueryRuntime queryRuntime = new QueryRuntime();
+        queryRuntime.queryId = query.getPropertyValue("name") + key;
+        queryRuntime.outputRateManager = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
+        queryRuntime.toLocalStream = this.toLocalStream;
+        queryRuntime.query = this.query;
+        queryRuntime.outputStreamDefinition = this.outputStreamDefinition;
+
+        if (!toLocalStream) {
+            queryRuntime.outputRateManager.setOutputCallback(outputCallback);
+            queryRuntime.outputCallback = this.outputCallback;
+
+        } else {
+            OutputCallback outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), key, localStreamJunctionMap, siddhiContext, outputStreamDefinition);
+            queryRuntime.outputRateManager.setOutputCallback(outputCallback);
+            queryRuntime.outputCallback = outputCallback;
+
+        }
+
+        if(this.isFromLocalStream()){
+            queryRuntime.handlerProcessors = this.handlerProcessors;
+            for (HandlerProcessor handlerProcessor : this.handlerProcessors) {
+                StreamJunction streamJunction = localStreamJunctionMap.get(streamId+key);
+                if (streamJunction == null){
+                    streamJunction = new StreamJunction(streamId+key, siddhiContext.getThreadPoolExecutor());
+                    localStreamJunctionMap.put(streamId+key,streamJunction);
+                }
+                streamJunction.addEventFlow(handlerProcessor);
+
+            }
+
+        }
+        return queryRuntime;
+
+    }
+
+    public OutputRateManager getOutputRateManager() {
+        return this.outputRateManager;
     }
 }

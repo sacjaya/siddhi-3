@@ -24,8 +24,10 @@ import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.core.util.parser.QueryOutputParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
+import org.wso2.siddhi.query.api.query.input.InputStream;
+import org.wso2.siddhi.query.api.query.input.SingleInputStream;
 import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.input.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +56,7 @@ public abstract class QueryCreator {
 
     protected void init() {
         InputStream inputStream = getInputStream();
-        if (inputStream instanceof BasicSingleInputStream ) {
+        if (inputStream instanceof BasicSingleInputStream) {
            if(((BasicSingleInputStream) inputStream).isPartitioned()){
                tempStreamDefinitionMap.put(((SingleInputStream) inputStream).getStreamId(), (StreamDefinition) localStreamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));
            }  else {
@@ -89,6 +91,6 @@ public abstract class QueryCreator {
         return query.getInputStream();
     }
 
-    public abstract QueryPartComposite constructQuery() ;
+    public abstract QueryPartComposite constructQuery(OutputRateManager outputRateManager) ;
 
 }

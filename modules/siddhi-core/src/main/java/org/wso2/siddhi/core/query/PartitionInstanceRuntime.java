@@ -15,13 +15,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.siddhi.core.query.processor.handler;
 
-import org.wso2.siddhi.core.stream.StreamReceiver;
+package org.wso2.siddhi.core.query;
 
-public interface HandlerProcessor extends StreamReceiver {
+import java.util.List;
 
-    public int getDisruptorsSize();
+public class PartitionInstanceRuntime {
+    private String key;
+    private List<QueryRuntime> queryRuntimeList;
 
+    public PartitionInstanceRuntime(String key,List<QueryRuntime> queryRuntimeList){
+        this.key =key;
+        this.queryRuntimeList = queryRuntimeList;
+    }
+
+    public String getKey(){
+        return key;
+    }
 
 }

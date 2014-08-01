@@ -21,7 +21,7 @@ package org.wso2.siddhi.core;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
 import org.wso2.siddhi.core.exception.QueryNotExistException;
-import org.wso2.siddhi.core.query.ExecutionRuntime;
+import org.wso2.siddhi.core.query.QueryRuntime;
 import org.wso2.siddhi.core.query.PartitionRuntime;
 import org.wso2.siddhi.core.query.output.callback.InsertIntoStreamCallback;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
@@ -41,11 +41,9 @@ import java.util.concurrent.ConcurrentMap;
 public class ExecutionPlanRuntime {
     private ConcurrentMap<String, AbstractDefinition> streamDefinitionMap = new ConcurrentHashMap<String, AbstractDefinition>(); //contains stream definition
     private ConcurrentMap<String, InputHandler> inputHandlerMap = new ConcurrentHashMap<String, InputHandler>();
-    private ConcurrentMap<String, ExecutionRuntime> queryProcessorMap = new ConcurrentHashMap<String, ExecutionRuntime>();
+    private ConcurrentMap<String, QueryRuntime> queryProcessorMap = new ConcurrentHashMap<String, QueryRuntime>();
     private ConcurrentMap<String, StreamJunction> streamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains definition
     private ConcurrentMap<String, PartitionRuntime> partitionList = new ConcurrentHashMap<String, PartitionRuntime>();
-
-
     private SiddhiContext siddhiContext;
 
     public ExecutionPlanRuntime(SiddhiContext siddhiContext) {
@@ -84,41 +82,22 @@ public class ExecutionPlanRuntime {
     }
 
     public void definePartition(Partition partition) {
-        PartitionRuntime partitionRuntime = new PartitionRuntime(partition, siddhiContext);
+        PartitionRuntime partitionRuntime = new PartitionRuntime(partition, streamDefinitionMap,streamJunctionMap,inputHandlerMap,siddhiContext);
         partitionList.put(partitionRuntime.getPartitionId(), partitionRuntime);
-        for (Query query : partition.getQueryList()) {
-            partitionRuntime.addQueryId(addQuery(query, partition, partitionRuntime));
-        }
-
     }
 
     public String addQuery(Query query) {
-        ExecutionRuntime executionRuntime = new ExecutionRuntime(query, streamDefinitionMap, streamJunctionMap, null, siddhiContext, null);
-        queryProcessorMap.put(executionRuntime.getQueryId(), executionRuntime);
-        OutputCallback outputCallback = executionRuntime.getOutputCallback();
+        QueryRuntime queryRuntime = new QueryRuntime(query, streamDefinitionMap, streamJunctionMap, null, siddhiContext, null);
+        queryProcessorMap.put(queryRuntime.getQueryId(), queryRuntime);
+        OutputCallback outputCallback = queryRuntime.getOutputCallback();
         if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
             defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
         }
-        return executionRuntime.getQueryId();
+        return queryRuntime.getQueryId();
     }
 
 
-    private String addQuery(Query query, Partition partition, PartitionRuntime partitionRuntime) {
-        ExecutionRuntime executionRuntime = new ExecutionRuntime(query, streamDefinitionMap, streamJunctionMap, partition, siddhiContext, partitionRuntime);
-        queryProcessorMap.put(executionRuntime.getQueryId(), executionRuntime);
-        OutputCallback outputCallback = executionRuntime.getOutputCallback();
-        if (executionRuntime.isLocalStream()) {
-            if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
-                partitionRuntime.defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
-            }
-        } else {
-            if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
-                defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
-            }
 
-        }
-        return executionRuntime.getQueryId();
-    }
 
     public void addCallback(String streamId, StreamCallback streamCallback) {
         streamCallback.setStreamId(streamId);
@@ -132,12 +111,12 @@ public class ExecutionPlanRuntime {
 
     public void addCallback(String queryName, QueryCallback callback) {
 
-        ExecutionRuntime executionRuntime = queryProcessorMap.get(queryName);
-        if (executionRuntime == null) {
+        QueryRuntime queryRuntime = queryProcessorMap.get(queryName);
+        if (queryRuntime == null) {
             throw new QueryNotExistException("No query fund for " + queryName);
         }
-        callback.setStreamDefinition(executionRuntime.getOutputStreamDefinition());
-        executionRuntime.addCallback(callback);
+        callback.setStreamDefinition(queryRuntime.getOutputStreamDefinition());
+        queryRuntime.addCallback(callback);
 
     }
 
