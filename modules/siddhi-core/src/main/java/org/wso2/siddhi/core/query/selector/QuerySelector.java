@@ -18,18 +18,25 @@
 package org.wso2.siddhi.core.query.selector;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.event.*;
+import org.wso2.siddhi.core.event.MetaStreamEvent;
+import org.wso2.siddhi.core.event.PartitionStreamEvent;
+import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.exception.ValidatorException;
+import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.selector.attribute.processor.AttributeProcessor;
 import org.wso2.siddhi.core.query.selector.attribute.processor.NonGroupingAttributeProcessor;
 import org.wso2.siddhi.core.query.selector.attribute.processor.PassThroughAttributeProcessor;
 import org.wso2.siddhi.core.util.parser.ExecutorParser;
+import org.wso2.siddhi.query.api.definition.FunctionAttribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.expression.AttributeFunction;
+import org.wso2.siddhi.query.api.expression.Variable;
 import org.wso2.siddhi.query.api.query.selection.OutputAttribute;
 import org.wso2.siddhi.query.api.query.selection.Selector;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class QuerySelector {
@@ -40,13 +47,13 @@ public class QuerySelector {
     private int outputSize;
     private ArrayList<AttributeProcessor> attributeProcessorList;
     private Map<String, StreamDefinition> tempStreamDefinitionMap;
-    private boolean partitionedStream= false;
+    private boolean partitionedStream = false;
     public boolean currentOn = false;
     public boolean expiredOn = false;
 
 
     public QuerySelector(String outputStreamId, Selector selector,
-                         OutputRateManager outputRateManager, SiddhiContext siddhiContext, boolean currentOn, boolean expiredOn, boolean isPartitioned,Map<String, StreamDefinition> tempStreamDefinitionMap) {
+                         OutputRateManager outputRateManager, SiddhiContext siddhiContext, boolean currentOn, boolean expiredOn, boolean isPartitioned, Map<String, StreamDefinition> tempStreamDefinitionMap, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutors) {
         this.currentOn = currentOn;
         this.expiredOn = expiredOn;
         this.selector = selector;
@@ -55,14 +62,12 @@ public class QuerySelector {
         this.outputStreamDefinition = new StreamDefinition();
         this.outputStreamDefinition.setId(outputStreamId);
         this.outputRateManager = outputRateManager;
-         this.partitionedStream = isPartitioned;
+        this.partitionedStream = isPartitioned;
         attributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
-        populateAttributeProcessorList(siddhiContext);
-
+        populateAttributeProcessorList(siddhiContext, metaStreamEvent, variableExpressionExecutors);
 
 
     }
-
 
 
     public void process(StreamEvent streamEvent) {
@@ -71,17 +76,17 @@ public class QuerySelector {
             AttributeProcessor attributeProcessor = attributeProcessorList.get(i);
             data[i] = processOutputAttributeGenerator(streamEvent, attributeProcessor);
         }
-       if(streamEvent instanceof PartitionStreamEvent){
-           PartitionStreamEvent event = new PartitionStreamEvent(streamEvent.getTimestamp(),data,((PartitionStreamEvent) streamEvent).getPartitionKey());
-           outputRateManager.send(event.getTimestamp(),event,null);
-       }  else {
+        if (streamEvent instanceof PartitionStreamEvent) {
+            PartitionStreamEvent event = new PartitionStreamEvent(streamEvent.getTimestamp(), data, ((PartitionStreamEvent) streamEvent).getPartitionKey());
+            outputRateManager.send(event.getTimestamp(), event, null);
+        } else {
             StreamEvent event = new StreamEvent(streamEvent.getTimestamp(), data);
             outputRateManager.send(event.getTimestamp(), event, null);
-       }
+        }
     }
 
 
-    private Object processOutputAttributeGenerator(StreamEvent streamEvent,AttributeProcessor attributeProcessor) {
+    private Object processOutputAttributeGenerator(StreamEvent streamEvent, AttributeProcessor attributeProcessor) {
         if (attributeProcessor instanceof NonGroupingAttributeProcessor) {
             return ((NonGroupingAttributeProcessor) attributeProcessor).process(streamEvent);
         } else {
@@ -91,32 +96,38 @@ public class QuerySelector {
     }
 
 
-      public StreamDefinition getOutputStreamDefinition(){
-          return outputStreamDefinition;
-      }
+    public StreamDefinition getOutputStreamDefinition() {
+        return outputStreamDefinition;
+    }
 
-    public boolean isPartitioned(){
+    public boolean isPartitioned() {
         return partitionedStream;
     }
 
-    private void populateAttributeProcessorList(SiddhiContext siddhiContext) {
+    private void populateAttributeProcessorList(SiddhiContext siddhiContext, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutors) {
         for (OutputAttribute outputAttribute : selector.getSelectionList()) {
-           try {
-                PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(outputAttribute.getExpression(), null, siddhiContext, tempStreamDefinitionMap));
-                attributeProcessorList.add(attributeGenerator);
-                outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
+            try {
+                if (!(outputAttribute.getExpression() instanceof Variable)) {
+                    metaStreamEvent.addData(new FunctionAttribute(false));//insert dummy function attribute with isInitialized set to false
+                    //TODO: implement function attribute processor
+                    PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(outputAttribute.getExpression(), null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors));//TODO: handle null args
+                    attributeProcessorList.add(attributeGenerator);
+                    outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
+                    ((FunctionAttribute) metaStreamEvent.getOutData().get(metaStreamEvent.getOutData().size() - 1)).setIsInitialized(true);    //set isInitialed true after processing
+                } else {
+                    PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(outputAttribute.getExpression(), null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors));//TODO: handle null args
+                    attributeProcessorList.add(attributeGenerator);
+                    outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
+                }
 
-           } catch (ValidatorException e) {
+            } catch (ValidatorException e) {
                 //this will never happen as this is already validated
-           }
+            }
             //TODO avg, sum
         }
 
 
     }
-
-
-
 
 
 }

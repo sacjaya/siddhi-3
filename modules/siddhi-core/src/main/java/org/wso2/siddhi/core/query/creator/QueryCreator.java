@@ -18,16 +18,21 @@
 package org.wso2.siddhi.core.query.creator;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.event.MetaStreamEvent;
+import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
+import org.wso2.siddhi.core.util.Constants;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.core.util.parser.QueryOutputParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
+import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.api.query.input.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
@@ -40,8 +45,9 @@ public abstract class QueryCreator {
     protected final String queryId;
     protected final Query query;
     protected StreamDefinition outputStreamDefinition;
-    public QuerySelector querySelector;
-    Map<String, StreamDefinition> tempStreamDefinitionMap = new HashMap<String, StreamDefinition>();
+    protected QuerySelector querySelector;
+    protected Map<String, StreamDefinition> tempStreamDefinitionMap = new HashMap<String, StreamDefinition>();
+    protected StreamDefinition defaultDefinition;
 
     protected QueryCreator(String queryId, Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, AbstractDefinition> localStreamDefinitionMap, OutputRateManager outputRateManager, SiddhiContext siddhiContext) {
         this.queryId = queryId;
@@ -50,10 +56,11 @@ public abstract class QueryCreator {
         this.localStreamDefinitionMap = localStreamDefinitionMap;
         this.outputRateManager = outputRateManager;
         this.siddhiContext = siddhiContext;
+        this.defaultDefinition = (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId());
     }
 
     protected void init() {
-        InputStream inputStream = getInputStream();
+        /*InputStream inputStream = getInputStream();
         if (inputStream instanceof BasicSingleInputStream ) {
            if(((BasicSingleInputStream) inputStream).isPartitioned()){
                tempStreamDefinitionMap.put(((SingleInputStream) inputStream).getStreamId(), (StreamDefinition) localStreamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));
@@ -66,14 +73,14 @@ public abstract class QueryCreator {
 
         }
         querySelector = constructQuerySelector(outputRateManager);
-        outputStreamDefinition = querySelector.getOutputStreamDefinition();
+        outputStreamDefinition = querySelector.getOutputStreamDefinition();*/
 
     }
 
 
+    protected QuerySelector constructQuerySelector(OutputRateManager outputRateManager, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutors) {
 
-    protected QuerySelector constructQuerySelector(OutputRateManager outputRateManager) {
-        return QueryOutputParser.constructQuerySelector(tempStreamDefinitionMap,query.getOutputStream(), query.getSelector(), outputRateManager,siddhiContext);
+        return QueryOutputParser.constructQuerySelector(tempStreamDefinitionMap, query.getOutputStream(), query.getSelector(), outputRateManager, siddhiContext, metaStreamEvent, variableExpressionExecutors);
     }
 
 
@@ -81,7 +88,7 @@ public abstract class QueryCreator {
         return outputStreamDefinition;
     }
 
-    public  Map<String, StreamDefinition> getTempStreamDefinitionMap(){
+    public Map<String, StreamDefinition> getTempStreamDefinitionMap() {
         return tempStreamDefinitionMap;
     }
 
@@ -89,6 +96,39 @@ public abstract class QueryCreator {
         return query.getInputStream();
     }
 
-    public abstract QueryPartComposite constructQuery() ;
+    public abstract QueryPartComposite constructQuery();
 
+    protected void updateVariablePosition(MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutorList) {
+        //Position[array ID, index] : Array ID -> outData = 2; afterWindowData = 1; beforeWindowData = 0;
+        refactorMetaStreamEvent(metaStreamEvent);
+        for (VariableExpressionExecutor variableExpressionExecutor : variableExpressionExecutorList) {
+            if (metaStreamEvent.getOutData().contains(variableExpressionExecutor.getAttribute())) {
+                variableExpressionExecutor.setPosition(new int[]{Constants.OUT_DATA_INDEX, metaStreamEvent.getOutData().indexOf(variableExpressionExecutor.getAttribute())});
+            } else if (metaStreamEvent.getAfterWindowData().contains(variableExpressionExecutor.getAttribute())) {
+                variableExpressionExecutor.setPosition(new int[]{Constants.AFTER_WINDOW_DATA_INDEX, metaStreamEvent.getAfterWindowData().indexOf(variableExpressionExecutor.getAttribute())});
+            } else if (metaStreamEvent.getBeforeWindowData().contains(variableExpressionExecutor.getAttribute())) {
+                variableExpressionExecutor.setPosition(new int[]{Constants.BEFORE_WINDOW_DATA_INDEX, metaStreamEvent.getBeforeWindowData().indexOf(variableExpressionExecutor.getAttribute())});
+            }
+        }
+
+    }
+
+    private void refactorMetaStreamEvent(MetaStreamEvent metaStreamEvent) {
+        for (Attribute attribute : metaStreamEvent.getOutData()) {
+            if (metaStreamEvent.getBeforeWindowData().contains(attribute)) {
+                metaStreamEvent.getBeforeWindowData().remove(attribute);
+            } else if (metaStreamEvent.getAfterWindowData().contains(attribute)) {
+                metaStreamEvent.getAfterWindowData().remove(attribute);
+            }
+        }
+        for (Attribute attribute : metaStreamEvent.getAfterWindowData()) {
+            if (metaStreamEvent.getBeforeWindowData().contains(attribute)) {
+                metaStreamEvent.getBeforeWindowData().remove(attribute);
+            }
+        }
+    }
+
+    public QuerySelector getQuerySelector() {
+        return querySelector;
+    }
 }
