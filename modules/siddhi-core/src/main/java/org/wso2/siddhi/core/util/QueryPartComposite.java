@@ -18,8 +18,11 @@
 package org.wso2.siddhi.core.util;
 
 import org.wso2.siddhi.core.query.processor.PreSelectProcessingElement;
+import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
+import org.wso2.siddhi.core.query.processor.handler.SimpleHandlerProcessor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
+import org.wso2.siddhi.core.stream.StreamReceiver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,7 @@ public class QueryPartComposite {
     private List<PreSelectProcessingElement> preSelectProcessingElementList = new ArrayList<PreSelectProcessingElement>();
     private List<HandlerProcessor> handlerProcessorList = new ArrayList<HandlerProcessor>();
     private QuerySelector querySelector;
+    private HandlerProcessor handlerProcessor;
 
     public List<PreSelectProcessingElement> getPreSelectProcessingElementList() {
         return preSelectProcessingElementList;
@@ -44,4 +48,13 @@ public class QueryPartComposite {
     public QuerySelector getQuerySelector() {
         return querySelector;
     }
+
+    public void setHandlerProcessor(HandlerProcessor handlerProcessor) {
+        this.handlerProcessor = handlerProcessor;
+    }
+
+    public HandlerProcessor getHandlerProcessor() {
+        return handlerProcessor;
+    }
+
 }
