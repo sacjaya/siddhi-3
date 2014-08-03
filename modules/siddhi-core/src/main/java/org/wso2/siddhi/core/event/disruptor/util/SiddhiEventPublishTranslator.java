@@ -20,7 +20,6 @@ package org.wso2.siddhi.core.event.disruptor.util;
 
 import com.lmax.disruptor.EventTranslator;
 import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.core.event.PartitionStreamEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
 
 public class SiddhiEventPublishTranslator implements EventTranslator<StreamEvent> {
@@ -32,17 +31,11 @@ public class SiddhiEventPublishTranslator implements EventTranslator<StreamEvent
     public SiddhiEventPublishTranslator(Event event) {
         this.timeStamp = event.getTimestamp();
         this.data = event.getData();
-        if (event instanceof PartitionStreamEvent){
-            this.key = ((PartitionStreamEvent) event).getPartitionKey();
-        }
     }
 
     public void translateTo(StreamEvent event, long sequence) {
 
         event.setData(data);
         event.setTimestamp(timeStamp);
-        if(event instanceof PartitionStreamEvent) {
-            ((PartitionStreamEvent) event).setPartitionKey(key);
-        }
     }
 }
