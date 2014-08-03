@@ -11,29 +11,29 @@
  * limitations under the License.
  */
 
-package org.wso2.siddhi.core.event;
+package org.wso2.siddhi.core.event.converter;
 
 /**
- * Event to be used within partitions
+ * Element to hold helper information to event
+ * conversion process
  */
-public class PartitionStreamEvent extends StreamEvent {
+public class ConverterMetaElement {
+    private int fromPosition;               //position of StreamEvent
+    private int[] toPosition = new int[2];  //new position in InnerStreamEvent
 
-    private String partitionKey;
-
-    public PartitionStreamEvent(long timestamp, Object[] data, String key) {
-        this.timestamp = timestamp;
-        this.data = data;
-        this.partitionKey = key;
+    public int[] getToPosition() {
+        return toPosition;
     }
 
-    public PartitionStreamEvent() {
-     }
-
-    public String getPartitionKey() {
-        return partitionKey;
+    public void setToPosition(int[] toPosition) {
+        this.toPosition = toPosition;
     }
 
-    public void setPartitionKey(String partitionKey) {
-        this.partitionKey = partitionKey;
+    public int getFromPosition() {
+        return fromPosition;
+    }
+
+    public void setFromPosition(int fromPosition) {
+        this.fromPosition = fromPosition;
     }
 }

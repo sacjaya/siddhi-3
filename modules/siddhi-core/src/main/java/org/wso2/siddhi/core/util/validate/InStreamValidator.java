@@ -30,8 +30,9 @@ public class InStreamValidator {
 
     /**
      * Validate a given input stream. Complex streams should be handled at upper layer
+     *
      * @param inputStream
-     * @param streamDefinitionMap  @throws ValidatorException
+     * @param streamDefinitionMap @throws ValidatorException
      * @param tempDefinitionMap
      */
     public static void validate(InputStream inputStream, Map<String, StreamDefinition> streamDefinitionMap, Map<String, StreamDefinition> tempDefinitionMap) throws ValidatorException {
@@ -43,11 +44,11 @@ public class InStreamValidator {
                 if (handler instanceof Filter) {
                     Condition condition = ((Filter) handler).getFilterCondition();
                     //ValidatorUtil.validateCondition(condition, tempDefinitionMap, defaultDefinition);
-                    ExecutorParser.parseCondition(condition, defaultDefinition, mockSiddhiContext, tempDefinitionMap);
+                    ExecutorParser.parseCondition(condition, defaultDefinition, mockSiddhiContext, tempDefinitionMap, null, null);
                 } else if (handler instanceof Window) {
                     for (Expression expression : ((Window) handler).getParameters()) {
                         //ValidatorUtil.validateCompareExpression(expression, tempDefinitionMap, defaultDefinition);
-                        ExecutorParser.parseExpression(expression, defaultDefinition, mockSiddhiContext, tempDefinitionMap);
+                        ExecutorParser.parseExpression(expression, defaultDefinition, mockSiddhiContext, tempDefinitionMap, null, null);
                     }
                 } else if (handler instanceof StreamFunction) {
                     //TODO: handle. get output attr names and types and set them in temp map

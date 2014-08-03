@@ -11,25 +11,26 @@
  * limitations under the License.
  */
 
-package org.wso2.siddhi.core.query.processor;
+package org.wso2.siddhi.query.api.definition;
 
-import org.wso2.siddhi.core.event.StreamEvent;
-import org.wso2.siddhi.core.event.converter.EventConverter;
+/**
+ * Class to hold output attributes of a function.
+ * Used in MetaStreamEvent
+ */
+public class FunctionAttribute extends Attribute {
 
-public interface Processor {
-    /**
-     * To construct the Processor chain specifying the
-     * next processor which will handle event
-     *
-     * @param processor
-     */
-    void addToNext(Processor processor);
+    private Boolean isInitialized;
 
-    /**
-     * To process incoming event
-     *
-     * @param streamEvent
-     * @return
-     */
-    StreamEvent process(StreamEvent streamEvent);
+    public FunctionAttribute(Boolean initialized) {
+        super("", null);                             //initializing dummy attribute to be used later by Function Executor
+        this.isInitialized = initialized;
+    }
+
+    public Boolean isInitialized() {
+        return isInitialized;
+    }
+
+    public void setIsInitialized(Boolean isInitialized) {
+        this.isInitialized = isInitialized;
+    }
 }

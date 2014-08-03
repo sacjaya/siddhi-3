@@ -17,11 +17,38 @@
  */
 package org.wso2.siddhi.core.query.processor.handler;
 
+import org.wso2.siddhi.core.event.converter.EventConverter;
+import org.wso2.siddhi.core.query.processor.Processor;
+import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.stream.StreamReceiver;
 
 public interface HandlerProcessor extends StreamReceiver {
 
+
     public int getDisruptorsSize();
+
+    /**
+     * Get first Processor of Processor chain
+     *
+     * @return
+     */
+    Processor getProcessor();
+
+    /**
+     * Set eventConverter to Handler Processor which does
+     * Stream event to InnerStreamEvent conversion
+     *
+     * @param eventConverter
+     */
+    void setEventConverter(EventConverter eventConverter);
+
+    /**
+     * Set the QuerySelector of the handler
+     *
+     * @param querySelector
+     */
+    void setSelector(QuerySelector querySelector);
+
 
 
 }

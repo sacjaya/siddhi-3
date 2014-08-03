@@ -20,12 +20,17 @@ package org.wso2.siddhi.core.query.processor.handler;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.StreamEvent;
+import org.wso2.siddhi.core.event.converter.EventConverter;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.query.PartitionInstanceRuntime;
 import org.wso2.siddhi.core.query.PartitionRuntime;
 import org.wso2.siddhi.core.query.QueryPartitioner;
+
 import org.wso2.siddhi.core.query.QueryRuntime;
 import org.wso2.siddhi.core.stream.StreamJunction;
+
+import org.wso2.siddhi.core.query.processor.Processor;
+import org.wso2.siddhi.core.query.selector.QuerySelector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +47,13 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
     private PartitionRuntime partitionRuntime;
     private List<PartitionExecutor> partitionExecutors;
 
+
+    private ConcurrentHashMap<String, HandlerProcessor> partitionedHandlerMap = new ConcurrentHashMap<String, HandlerProcessor>();
+    private boolean toPartitionedStream;
+    private EventConverter eventConverter;
+    private QuerySelector next;     //TODO: review. added to implement HandlerProcessor.setQuerySelector()
+
+
     public PartitionHandlerProcessor(SiddhiContext siddhiContext, String streamId, QueryPartitioner queryPartitioner, int handlerId, List<PartitionExecutor> partitionExecutors, PartitionRuntime partitionRuntime) {
         this.streamId = streamId;
         this.queryPartitioner = queryPartitioner;
@@ -54,8 +66,8 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
     @Override
     public void receive(StreamEvent streamEvent) {
         for (PartitionExecutor partitionExecutor : partitionExecutors) {
-                String key = partitionExecutor.execute((streamEvent));
-                send(key, streamEvent);
+            String key = partitionExecutor.execute((streamEvent));
+            send(key, streamEvent);
         }
         if(partitionExecutors.isEmpty()){
             send(streamEvent);
@@ -112,8 +124,19 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
                 }
             }
         }
-        }
+//<<<<<<< HEAD
+//=======
+//        if (toPartitionedStream) {
+//            PartitionStreamEvent partitionStreamEvent = new PartitionStreamEvent(event.getTimestamp(), event.getData(), key);
+//            partitionStreamEvent.setIsExpired(event.isExpired());
+//            partitionStreamEvent.setNext(event.getNext());
+//            handlerProcessor.receive(partitionStreamEvent);
+//        } else {
+//            handlerProcessor.receive(event);
+//>>>>>>> 8af6f64acc63e5bfdbd4dcda1917b303043aa3a5
+//        }
 
+    }
     }
 
     public String getStreamId() {
@@ -125,16 +148,31 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
         return disruptors;
     }
 
-    public int getDisruptorsSize(){
+    @Override
+    public Processor getProcessor() { //TODO: figure out what to do. Needed for setting event converter
+        return null;
+    }
+
+    @Override
+    public void setEventConverter(EventConverter eventConverter) {
+        this.eventConverter = eventConverter;
+    }
+
+    @Override
+    public void setSelector(QuerySelector querySelector) {
+        this.next = querySelector;
+    }
+
+    public int getDisruptorsSize() {
         return disruptorsSize;
     }
 
-    public void setDisruptorsSize(int disruptorsSize){
-        this.disruptorsSize =  disruptorsSize;
+    public void setDisruptorsSize(int disruptorsSize) {
+        this.disruptorsSize = disruptorsSize;
     }
 
-    public List<String> getPartitionKeys(StreamEvent streamEvent){
-        List<String>  keys = new ArrayList<String>();
+    public List<String> getPartitionKeys(StreamEvent streamEvent) {
+        List<String> keys = new ArrayList<String>();
         for (PartitionExecutor partitionExecutor : partitionExecutors) {
             keys.add(partitionExecutor.execute((streamEvent)));
 

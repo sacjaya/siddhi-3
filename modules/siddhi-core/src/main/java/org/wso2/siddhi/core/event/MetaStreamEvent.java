@@ -14,6 +14,7 @@
 package org.wso2.siddhi.core.event;
 
 import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.definition.FunctionAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +34,19 @@ public class MetaStreamEvent {
     }
 
     public List<Attribute> getAfterWindowData() {
-        return afterWindowData;
+        if (afterWindowData != null) {
+            return afterWindowData;
+        } else {
+            return new ArrayList<Attribute>();  //return empty arraylist to avoid NPE
+        }
     }
 
     public List<Attribute> getOutData() {
-        return outData;
+        if (outData != null) {
+            return outData;
+        } else {
+            return new ArrayList<Attribute>();  //return empty arraylist to avoid NPE
+        }
     }
 
     public void intializeAfterWindowData() {
@@ -59,13 +68,25 @@ public class MetaStreamEvent {
      *
      * @param attribute
      */
-    public void addData(Attribute attribute) { //TODO Handle complex selector attr
+    public void addData(Attribute attribute) {
         if (outData != null) {
-            outData.add(attribute);
+            if (outData.size() > 0 && outData.get(outData.size() - 1) instanceof FunctionAttribute) {
+                if (!((FunctionAttribute) outData.get(outData.size() - 1)).isInitialized()) {   //if last element is a not initialized function attribute,
+                    afterWindowData.add(attribute);                                             //then reserve that spot for result of function and
+                } else {                                                                        //allocate position for actual variable
+                    outData.add(attribute);
+                }
+            } else {
+                outData.add(attribute);
+            }
         } else if (afterWindowData != null) {
-            afterWindowData.add(attribute);
+            if (!afterWindowData.contains(attribute)) {
+                afterWindowData.add(attribute);
+            }
         } else {
-            beforeWindowData.add(attribute);
+            if (!beforeWindowData.contains(attribute)) {
+                beforeWindowData.add(attribute);
+            }
         }
     }
 

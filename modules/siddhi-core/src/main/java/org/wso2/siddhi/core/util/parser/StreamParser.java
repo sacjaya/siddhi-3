@@ -18,60 +18,119 @@
 package org.wso2.siddhi.core.util.parser;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.event.MetaStreamEvent;
 import org.wso2.siddhi.core.exception.ValidatorException;
+import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
+import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.query.processor.filter.FilterProcessor;
 import org.wso2.siddhi.core.query.processor.filter.PassThroughFilterProcessor;
 import org.wso2.siddhi.core.query.processor.handler.SimpleHandlerProcessor;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
+import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.query.input.InputStream;
 import org.wso2.siddhi.query.api.query.input.SingleInputStream;
 import org.wso2.siddhi.query.api.query.input.handler.Filter;
 import org.wso2.siddhi.query.api.query.input.handler.StreamHandler;
+import org.wso2.siddhi.query.api.query.input.handler.Window;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class StreamParser {
+    //QueryPartComposite queryPartComposite = new QueryPartComposite();
 
-
-    public static QueryPartComposite parseSingleStream(InputStream inputStream, Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext) {
+    public static QueryPartComposite parseSingleStream(InputStream inputStream, Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutorList) {
         QueryPartComposite queryPartComposite = new QueryPartComposite();
-
-        SimpleHandlerProcessor simpleHandlerProcessor =
-                new SimpleHandlerProcessor(generateFilerProcessor(inputStream, tempStreamDefinitionMap, siddhiContext), ((SingleInputStream) inputStream).getStreamId());
-
-        if (inputStream instanceof BasicSingleInputStream) {
-            queryPartComposite.getPreSelectProcessingElementList().add(simpleHandlerProcessor);
+        //TODO pass-through
+        int i = 0;
+        Processor processor = null;
+        if (((SingleInputStream) inputStream).getStreamHandlers().size() > 0) {
+            for (StreamHandler handler : ((SingleInputStream) inputStream).getStreamHandlers()) {
+                if (i == 0) {
+                    processor = generateProcessor(handler, tempStreamDefinitionMap, siddhiContext, metaStreamEvent, variableExpressionExecutorList);
+                    i++;
+                } else {
+                    processor.addToNext(generateProcessor(handler, tempStreamDefinitionMap, siddhiContext, metaStreamEvent, variableExpressionExecutorList));
+                }
+            }
         } else {
-            //TODO: else
+            processor = new PassThroughFilterProcessor();
+
         }
 
-        queryPartComposite.getHandlerProcessorList().add(simpleHandlerProcessor);
+        SimpleHandlerProcessor simpleHandlerProcessor =                                                                                       //TODO
+                new SimpleHandlerProcessor(inputStream.getStreamIds().get(0));
+        simpleHandlerProcessor.setProcessor(processor);
+        //queryPartComposite.getPreSelectProcessingElementList().add(simpleHandlerProcessor);
+        //queryPartComposite.setProcessorChain(processor);
+        queryPartComposite.setHandlerProcessor(simpleHandlerProcessor);
         return queryPartComposite;
     }
 
-
-    private static FilterProcessor generateFilerProcessor(InputStream inputStream, Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext) {
-        //TODO :handle other input streams
-        List<StreamHandler> streamHandlers = ((SingleInputStream) inputStream).getStreamHandlers();
-        if (streamHandlers.size() == 0) {
-            return new PassThroughFilterProcessor();
-        }
-        for (StreamHandler streamHandler : streamHandlers) {
-            if (streamHandler instanceof Filter) {
-                Filter filter = (Filter) streamHandler;
-                Condition condition = filter.getFilterCondition();
+    private static Processor generateProcessor(StreamHandler streamHandler, Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutorList) {
+        if (streamHandler instanceof Filter) {
+            //Filter filter = (Filter) streamHandler;
+            Condition condition = ((Filter) streamHandler).getFilterCondition();
+            try {
+                return new FilterProcessor(ExecutorParser.parseCondition(condition, null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutorList)); //streamId already set at validation
+                //return new FilterProcessor(ExecutorParser.parseCondition(condition, ((BasicSingleInputStream) inputStream).getStreamId(),  siddhiContext, tempStreamDefinitionMap,metaStreamEvent,variableExpressionExecutorList));
+            } catch (ValidatorException e) {
+                //This will never occur
+            }
+        } else if (streamHandler instanceof Window) {
+            metaStreamEvent.intializeAfterWindowData();
+            for (Expression expression : ((Window) streamHandler).getParameters()) {
                 try {
-                    return new FilterProcessor(ExecutorParser.parseCondition(condition, ((SingleInputStream) inputStream).getStreamId(), siddhiContext, tempStreamDefinitionMap));
+                    ExecutorParser.parseExpression(expression, null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutorList);
                 } catch (ValidatorException e) {
                     //This will never occur
                 }
             }
+            return null; //TODO Window processor impl
+        } else {
+            //TODO: else
         }
         return null;
+    }
+
+
+    private static List<FilterProcessor> generateFilerProcessor(InputStream inputStream, Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutorList) {
+        //TODO :handle other input streams
+        List<FilterProcessor> filterProcessors = new ArrayList<FilterProcessor>();
+        List<StreamHandler> streamHandlers = ((SingleInputStream) inputStream).getStreamHandlers();
+        /*if (streamHandlers.size() == 0) {
+            return(Arrays.asList(new PassThroughFilterProcessor()));
+        }*/
+        for (StreamHandler streamHandler : streamHandlers) {
+            if (streamHandler instanceof Filter) {
+                //Filter filter = (Filter) streamHandler;
+                Condition condition = ((Filter) streamHandler).getFilterCondition();
+                try {
+                    FilterProcessor filterProcessor = new FilterProcessor(ExecutorParser.parseCondition(condition, ((SingleInputStream) inputStream).getStreamId(), siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutorList));
+                    filterProcessors.add(filterProcessor);
+                    //return new FilterProcessor(ExecutorParser.parseCondition(condition, ((BasicSingleInputStream) inputStream).getStreamId(),  siddhiContext, tempStreamDefinitionMap,metaStreamEvent,variableExpressionExecutorList));
+
+                } catch (ValidatorException e) {
+                    //This will never occur
+                }
+            } else if (streamHandler instanceof Window) {
+                metaStreamEvent.intializeAfterWindowData();
+                for (Expression expression : ((Window) streamHandler).getParameters()) {
+                    try {
+                        ExecutorParser.parseExpression(expression, ((SingleInputStream) inputStream).getStreamId(), siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutorList);
+                    } catch (ValidatorException e) {
+                        //This will never occur
+                    }
+                }
+
+            } else {
+                //TODO: else
+            }
+        }
+        return filterProcessors;
 
     }
 

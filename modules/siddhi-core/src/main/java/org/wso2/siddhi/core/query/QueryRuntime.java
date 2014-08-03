@@ -35,6 +35,7 @@ import org.wso2.siddhi.query.api.partition.Partition;
 import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.api.query.input.JoinInputStream;
 import org.wso2.siddhi.query.api.query.input.SingleInputStream;
+import org.wso2.siddhi.query.api.query.output.stream.InsertIntoStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,10 +74,15 @@ public class QueryRuntime {
             localStreamJunctionMap = partitionRuntime.getLocalStreamJunctionMap();
         }
         this.localStreamJunctionMap = localStreamJunctionMap;
-        QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap, localStreamDefinitionMap, outputRateManager, siddhiContext);
-        outputStreamDefinition = queryCreator.getOutputStreamDefinition();
 
-        if (queryCreator.querySelector.isPartitioned()) {
+        QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap,localStreamDefinitionMap, outputRateManager, siddhiContext);
+
+        QueryPartitioner queryPartitioner = new QueryPartitioner(partition, queryCreator,siddhiContext);
+
+        List<HandlerProcessor> handlerProcessorList = queryPartitioner.constructPartition(outputRateManager);
+
+        outputStreamDefinition = queryCreator.getOutputStreamDefinition();
+        if (query.getOutputStream() instanceof InsertIntoStream && ((InsertIntoStream) query.getOutputStream()).isPartitioned()) {
             toLocalStream = true;
             outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), localStreamJunctionMap, siddhiContext, outputStreamDefinition);
             outputRateManager.setOutputCallback(outputCallback);
@@ -86,12 +92,9 @@ public class QueryRuntime {
             outputRateManager.setOutputCallback(outputCallback);
         }
 
-        QueryPartitioner queryPartitioner = new QueryPartitioner(partition, queryCreator,siddhiContext);
-
-        List<HandlerProcessor> handlerProcessorList = queryPartitioner.constructPartition(outputRateManager);
-
+//<<<<<<< HEAD:modules/siddhi-core/src/main/java/org/wso2/siddhi/core/query/QueryRuntime.java
         if (partitionRuntime == null) {
-            handlerProcessors = handlerProcessorList;
+               handlerProcessors = handlerProcessorList;
             for (HandlerProcessor handlerProcessor : handlerProcessors) {
                 streamJunctionMap.get(handlerProcessor.getStreamId()).addEventFlow(handlerProcessor);
             }
@@ -103,6 +106,7 @@ public class QueryRuntime {
                 HandlerProcessor queryStreamProcessor = handlerProcessorList.get(i);
                 partitionRuntime.addHandlerProcessors(new PartitionHandlerProcessor(siddhiContext, queryStreamProcessor.getStreamId(), queryPartitioner, i, partitionExecutors.get(i), partitionRuntime));
             }
+
 
         }
 

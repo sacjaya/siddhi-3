@@ -20,8 +20,11 @@ package org.wso2.siddhi.core.query.processor.handler;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.wso2.siddhi.core.event.PartitionStreamEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
+import org.wso2.siddhi.core.event.converter.EventConverter;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.query.QueryPartitioner;
+import org.wso2.siddhi.core.query.processor.Processor;
+import org.wso2.siddhi.core.query.selector.QuerySelector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,8 @@ public class PartitionedStreamHandlerProcessor implements HandlerProcessor {
     private Disruptor[] disruptors;
     private final int handlerId;
     private ConcurrentHashMap<String, HandlerProcessor> partitionedHandlerMap = new ConcurrentHashMap<String, HandlerProcessor>();
+    private EventConverter eventConverter;
+    private QuerySelector next;     //TODO: review. added to implement HandlerProcessor.setQuerySelector()
 
     public PartitionedStreamHandlerProcessor(String streamId, QueryPartitioner queryPartitioner, int handlerId) {
         this.streamId = streamId;
@@ -76,6 +81,21 @@ public class PartitionedStreamHandlerProcessor implements HandlerProcessor {
 
     public Disruptor[] getDisruptors() {
         return disruptors;
+    }
+
+    @Override
+    public Processor getProcessor() { //TODO: figure out what to do
+        return null;
+    }
+
+    @Override
+    public void setEventConverter(EventConverter eventConverter) {
+        this.eventConverter = eventConverter;
+    }
+
+    @Override
+    public void setSelector(QuerySelector querySelector) {
+        this.next = querySelector;
     }
 
     public int getDisruptorsSize(){

@@ -51,7 +51,7 @@ public class ExecutionPlanRuntime {
     }
 
     public InputHandler defineStream(StreamDefinition streamDefinition) {
-        if (!checkEventStreamExist(streamDefinition)) {
+        if (inputHandlerMap.get(streamDefinition.getId()) == null) {
             streamDefinitionMap.put(streamDefinition.getId(), streamDefinition);
             StreamJunction streamJunction = streamJunctionMap.get(streamDefinition.getId());
             if (streamJunction == null) {
