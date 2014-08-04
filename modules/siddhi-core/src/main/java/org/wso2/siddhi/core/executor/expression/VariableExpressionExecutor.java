@@ -44,6 +44,8 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
         if (definition != null) {
             type = definition.getAttributeType(attributeName);
             attributePosition = definition.getAttributePosition(attributeName);
+            position[0] = Constants.OUT_DATA_INDEX;
+            position[1] = attributePosition;
             attribute = new Attribute(attributeName, type);
         }
     }
@@ -56,7 +58,7 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
             case (Constants.AFTER_WINDOW_DATA_INDEX):
                 return ((InnerStreamEvent) event).getOnAfterWindowData()[position[1]];
             case (Constants.OUT_DATA_INDEX):
-                return ((InnerStreamEvent) event).getData()[position[1]];
+                return event.getData()[position[1]];
             case (-1):
                 return null; //TODO: exception?
             default:
