@@ -28,8 +28,10 @@ import org.wso2.siddhi.core.util.parser.QueryOutputParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
+import org.wso2.siddhi.query.api.query.input.InputStream;
+import org.wso2.siddhi.query.api.query.input.SingleInputStream;
 import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.input.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -60,8 +62,13 @@ public abstract class QueryCreator {
     }
 
     protected void init() {
+//<<<<<<< HEAD
+//        InputStream inputStream = getInputStream();
+//        if (inputStream instanceof BasicSingleInputStream) {
+//=======
         /*InputStream inputStream = getInputStream();
         if (inputStream instanceof BasicSingleInputStream ) {
+>>>>>>> 8af6f64acc63e5bfdbd4dcda1917b303043aa3a5
            if(((BasicSingleInputStream) inputStream).isPartitioned()){
                tempStreamDefinitionMap.put(((SingleInputStream) inputStream).getStreamId(), (StreamDefinition) localStreamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));
            }  else {
@@ -96,7 +103,10 @@ public abstract class QueryCreator {
         return query.getInputStream();
     }
 
-    public abstract QueryPartComposite constructQuery();
+
+    public abstract QueryPartComposite constructQuery(OutputRateManager outputRateManager) ;
+
+//    public abstract QueryPartComposite constructQuery();
 
     protected void updateVariablePosition(MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutorList) {
         //Position[array ID, index] : Array ID -> outData = 2; afterWindowData = 1; beforeWindowData = 0;
@@ -127,6 +137,7 @@ public abstract class QueryCreator {
             }
         }
     }
+//>>>>>>> 8af6f64acc63e5bfdbd4dcda1917b303043aa3a5
 
     public QuerySelector getQuerySelector() {
         return querySelector;

@@ -97,7 +97,14 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
         this.next = querySelector;
     }
 
+
+    @Override
+    public int getDisruptorsSize() {
+        return 1;
+    }
+
     public void setProcessor(Processor processor) {
         this.processor = processor;
+
     }
 }

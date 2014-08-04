@@ -22,6 +22,7 @@ import org.wso2.siddhi.core.event.MetaStreamEvent;
 import org.wso2.siddhi.core.event.converter.EventConverter;
 import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
+import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.core.util.parser.StreamParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
@@ -47,7 +48,14 @@ public class BasicQueryCreator extends QueryCreator {
         }
     }
 
-    public QueryPartComposite constructQuery() {
+//    public QueryPartComposite constructQuery( OutputRateManager outputRateManager) {
+//        QueryPartComposite queryPartComposite = StreamParser.parseSingleStream(getInputStream(),getTempStreamDefinitionMap(), siddhiContext);
+//        QuerySelector querySelector = constructQuerySelector(outputRateManager);
+//        queryPartComposite.setQuerySelector(querySelector);
+//        return queryPartComposite;
+//    }
+
+    public QueryPartComposite constructQuery(OutputRateManager outputRateManager) {
         MetaStreamEvent metaStreamEvent = new MetaStreamEvent();
         List<VariableExpressionExecutor> variableExpressionExecutorList = new LinkedList<VariableExpressionExecutor>();
         tempStreamDefinitionMap.put(((SingleInputStream) getInputStream()).getStreamId(), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId()));
@@ -62,6 +70,8 @@ public class BasicQueryCreator extends QueryCreator {
         queryPartComposite.getHandlerProcessor().setEventConverter(new EventConverter(metaStreamEvent, defaultDefinition));
         return queryPartComposite;
     }
+
+
 
 
 }

@@ -20,6 +20,7 @@ package org.wso2.siddhi.query.api;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.definition.TableDefinition;
 import org.wso2.siddhi.query.api.exception.CreateExecutionPlanException;
+import org.wso2.siddhi.query.api.execution.element.ExecutionElement;
 import org.wso2.siddhi.query.api.partition.Partition;
 import org.wso2.siddhi.query.api.query.Query;
 
@@ -31,8 +32,7 @@ import java.util.Map;
 public class ExecutionPlan {
 
     private String name;
-    private List<Query> queryList = new ArrayList<Query>();
-    private List<Partition> partitionList = new ArrayList<Partition>();
+    private List<ExecutionElement> executionElementList = new ArrayList<ExecutionElement>();
     private Map<String, StreamDefinition> streamDefinitionMap = new HashMap<String, StreamDefinition>();
     private Map<String, TableDefinition> tableDefinitionMap = new HashMap<String, TableDefinition>();
 
@@ -64,7 +64,7 @@ public class ExecutionPlan {
         if (query == null) {
             throw new CreateExecutionPlanException("Query should not be null");
         }
-        this.queryList.add(query);
+        this.executionElementList.add(query);
         return this;
     }
 
@@ -72,7 +72,7 @@ public class ExecutionPlan {
         if (partition == null) {
             throw new CreateExecutionPlanException("Partition should not be null");
         }
-        this.partitionList.add(partition);
+        this.executionElementList.add(partition);
         return this;
     }
 
@@ -80,12 +80,8 @@ public class ExecutionPlan {
         return name;
     }
 
-    public List<Query> getQueryList() {
-        return queryList;
-    }
-
-    public List<Partition> getPartitionList() {
-        return partitionList;
+    public List<ExecutionElement> getExecutionElementList() {
+        return executionElementList;
     }
 
     public Map<String, StreamDefinition> getStreamDefinitionMap() {

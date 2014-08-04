@@ -24,6 +24,9 @@ import org.wso2.siddhi.core.stream.StreamReceiver;
 
 public interface HandlerProcessor extends StreamReceiver {
 
+
+    public int getDisruptorsSize();
+
     /**
      * Get first Processor of Processor chain
      *
@@ -45,6 +48,7 @@ public interface HandlerProcessor extends StreamReceiver {
      * @param querySelector
      */
     void setSelector(QuerySelector querySelector);
+
 
 
 }

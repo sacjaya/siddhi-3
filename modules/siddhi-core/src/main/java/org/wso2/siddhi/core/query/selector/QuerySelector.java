@@ -19,7 +19,6 @@ package org.wso2.siddhi.core.query.selector;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.MetaStreamEvent;
-import org.wso2.siddhi.core.event.PartitionStreamEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
@@ -76,13 +75,10 @@ public class QuerySelector {
             AttributeProcessor attributeProcessor = attributeProcessorList.get(i);
             data[i] = processOutputAttributeGenerator(streamEvent, attributeProcessor);
         }
-        if (streamEvent instanceof PartitionStreamEvent) {
-            PartitionStreamEvent event = new PartitionStreamEvent(streamEvent.getTimestamp(), data, ((PartitionStreamEvent) streamEvent).getPartitionKey());
-            outputRateManager.send(event.getTimestamp(), event, null);
-        } else {
-            StreamEvent event = new StreamEvent(streamEvent.getTimestamp(), data);
-            outputRateManager.send(event.getTimestamp(), event, null);
-        }
+
+        StreamEvent event = new StreamEvent(streamEvent.getTimestamp(), data);
+        outputRateManager.send(event.getTimestamp(), event, null);
+
     }
 
 

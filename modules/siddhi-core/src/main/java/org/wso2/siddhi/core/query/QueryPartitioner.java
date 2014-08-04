@@ -22,6 +22,7 @@ import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.partition.executor.ValuePartitionExecutor;
 import org.wso2.siddhi.core.query.creator.QueryCreator;
+import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.processor.PreSelectProcessingElement;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
@@ -41,12 +42,11 @@ public class QueryPartitioner {
     private final QueryCreator queryCreator;
     private List<List<PartitionExecutor>> partitionExecutors = new ArrayList<List<PartitionExecutor>>();
     private ConcurrentHashMap<String, List<HandlerProcessor>> partitionMap = new ConcurrentHashMap<String, List<HandlerProcessor>>();
-    private List<QuerySelector> querySelectorList;
+    private List<QuerySelector> querySelectorList = new ArrayList<QuerySelector>();;
 
-    public QueryPartitioner(Partition partition, QueryCreator queryCreator, List<QuerySelector> querySelectorList,
+    public QueryPartitioner(Partition partition, QueryCreator queryCreator,
                             SiddhiContext siddhiContext) {
         this.queryCreator = queryCreator;
-        this.querySelectorList = querySelectorList;
 
         if (partition != null) {
 
@@ -76,8 +76,8 @@ public class QueryPartitioner {
         }
     }
 
-    public List<HandlerProcessor> constructPartition() {
-        QueryPartComposite queryPartComposite = queryCreator.constructQuery();
+    public List<HandlerProcessor> constructPartition(OutputRateManager outputRateManager) {
+        QueryPartComposite queryPartComposite = queryCreator.constructQuery(outputRateManager);
         querySelectorList.add(queryPartComposite.getQuerySelector());
         for (PreSelectProcessingElement preSelectProcessingElement : queryPartComposite.getPreSelectProcessingElementList()) {
             preSelectProcessingElement.setNext(queryPartComposite.getQuerySelector());
@@ -91,10 +91,11 @@ public class QueryPartitioner {
         return partitionExecutors;
     }
 
-    public HandlerProcessor newPartition(int handlerId, String partitionKey) {
+    public HandlerProcessor newPartition(int handlerId, String partitionKey, OutputRateManager outputRateManager) {
         List<HandlerProcessor> handlerProcessorList = partitionMap.get(partitionKey);
         if (handlerProcessorList == null) {
-            handlerProcessorList = constructPartition();
+
+            handlerProcessorList = constructPartition(outputRateManager);
             partitionMap.put(partitionKey, handlerProcessorList);
         }
         return handlerProcessorList.get(handlerId);

@@ -17,21 +17,25 @@
 package org.wso2.siddhi.query.api.query;
 
 import org.wso2.siddhi.query.api.condition.Condition;
+import org.wso2.siddhi.query.api.execution.element.ExecutionElement;
+import org.wso2.siddhi.query.api.query.input.*;
+import org.wso2.siddhi.query.api.query.output.stream.DeleteStream;
+import org.wso2.siddhi.query.api.query.output.stream.InsertIntoStream;
+import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
+import org.wso2.siddhi.query.api.query.output.stream.UpdateStream;
 import org.wso2.siddhi.query.api.expression.constant.Constant;
 import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
-import org.wso2.siddhi.query.api.query.input.*;
 import org.wso2.siddhi.query.api.query.input.pattern.PatternInputStream;
 import org.wso2.siddhi.query.api.query.input.pattern.element.PatternElement;
 import org.wso2.siddhi.query.api.query.input.sequence.SequenceInputStream;
 import org.wso2.siddhi.query.api.query.input.sequence.element.SequenceElement;
 import org.wso2.siddhi.query.api.query.output.OutputRate;
-import org.wso2.siddhi.query.api.query.output.stream.*;
 import org.wso2.siddhi.query.api.query.selection.Selector;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Query {
+public class Query implements ExecutionElement{
 
     private InputStream inputStream;
     private Selector selector = new Selector();

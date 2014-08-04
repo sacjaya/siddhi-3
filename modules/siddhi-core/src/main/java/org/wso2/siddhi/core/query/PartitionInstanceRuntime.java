@@ -16,26 +16,21 @@
  * under the License.
  */
 
-package org.wso2.siddhi.core.event.disruptor.util;
+package org.wso2.siddhi.core.query;
 
-import com.lmax.disruptor.EventTranslator;
-import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.core.event.StreamEvent;
+import java.util.List;
 
-public class SiddhiEventPublishTranslator implements EventTranslator<StreamEvent> {
-    private long timeStamp;
-    private Object[] data;
+public class PartitionInstanceRuntime {
     private String key;
+    private List<QueryRuntime> queryRuntimeList;
 
-
-    public SiddhiEventPublishTranslator(Event event) {
-        this.timeStamp = event.getTimestamp();
-        this.data = event.getData();
+    public PartitionInstanceRuntime(String key,List<QueryRuntime> queryRuntimeList){
+        this.key =key;
+        this.queryRuntimeList = queryRuntimeList;
     }
 
-    public void translateTo(StreamEvent event, long sequence) {
-
-        event.setData(data);
-        event.setTimestamp(timeStamp);
+    public String getKey(){
+        return key;
     }
+
 }

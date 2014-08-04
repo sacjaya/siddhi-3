@@ -28,6 +28,7 @@ import org.wso2.siddhi.core.util.validate.QueryValidator;
 import org.wso2.siddhi.core.util.validate.StreamValidator;
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.execution.element.ExecutionElement;
 import org.wso2.siddhi.query.api.partition.Partition;
 import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
@@ -41,7 +42,7 @@ import java.util.concurrent.*;
 
 public class SiddhiManager {
     private SiddhiContext siddhiContext;
-    private List<ExecutionPlanRuntime> executionPlanRuntimeList;
+    private ConcurrentMap<String, ExecutionPlanRuntime> executionPlanRuntimeMap = new ConcurrentHashMap<String, ExecutionPlanRuntime>();
 
 
     public SiddhiManager() {
@@ -64,22 +65,22 @@ public class SiddhiManager {
         this.siddhiContext.setScheduledExecutorService(Executors.newScheduledThreadPool(siddhiConfiguration.getThreadSchedulerCorePoolSize(), new SiddhiThreadFactory("Scheduler")));
         this.siddhiContext.setSnapshotService(new SnapshotService(siddhiContext));
 
-        executionPlanRuntimeList = new ArrayList<ExecutionPlanRuntime>();
+
     }
 
-    public void validateExecutionPlan(ExecutionPlan executionPlan) throws ValidatorException {
-        Map<String, StreamDefinition> tempMap = new HashMap<String, StreamDefinition>();
-        if (executionPlan.getStreamDefinitionMap() != null) {
-            for (StreamDefinition definition : executionPlan.getStreamDefinitionMap().values()) {
-                StreamValidator.validate(tempMap, definition);
-            }
-            if (executionPlan.getQueryList() != null) {
-                for (Query query : executionPlan.getQueryList()) {
-                    QueryValidator.validate(query, tempMap);
-                }
-            }
-        }
-    }
+//    public void validateExecutionPlan(ExecutionPlan executionPlan) throws ValidatorException {
+//        Map<String, StreamDefinition> tempMap = new HashMap<String, StreamDefinition>();
+//        if (executionPlan.getStreamDefinitionMap() != null) {
+//            for (StreamDefinition definition : executionPlan.getStreamDefinitionMap().values()) {
+//                StreamValidator.validate(tempMap, definition);
+//            }
+//            if (executionPlan.getQueryList() != null) {
+//                for (Query query : executionPlan.getQueryList()) {
+//                    QueryValidator.validate(query, tempMap);
+//                }
+//            }
+//        }
+//    }
 
     /**
      * add stream definitions, partitions and queries of an execution plan
@@ -94,26 +95,23 @@ public class SiddhiManager {
                 executionPlanRuntime.defineStream(streamDefinition);
             }
         }
-        if (executionPlan.getPartitionList() != null) {
-            for (Partition partition : executionPlan.getPartitionList()) {
-                executionPlanRuntime.definePartition(partition);
+        if (executionPlan.getExecutionElementList() != null) {
+            for (ExecutionElement executionElement : executionPlan.getExecutionElementList()) {
+                if (executionElement instanceof Query){
+                    executionPlanRuntime.addQuery((Query) executionElement);
+                } else {
+                    executionPlanRuntime.definePartition((Partition) executionElement);
+                }
+
             }
         }
-        if (executionPlan.getQueryList() != null) {
-            for (Query query : executionPlan.getQueryList()) {
-                executionPlanRuntime.addQuery(query);
-            }
-        }
-        executionPlanRuntimeList.add(executionPlanRuntime);
+
+        executionPlanRuntimeMap.put(executionPlan.getName(),executionPlanRuntime);
         return executionPlanRuntime;
     }
 
-    public void removeExecutionPlan(ExecutionPlanRuntime executionPlanRuntime) throws SiddhiParserException {
-       executionPlanRuntimeList.remove(executionPlanRuntime);
-    }
-
-    public List<ExecutionPlanRuntime> getExecutionPlans() {
-        return executionPlanRuntimeList;
+    public void removeExecutionPlan(String name) throws SiddhiParserException {
+        executionPlanRuntimeMap.remove(name);
     }
 
     public void shutdown() {
