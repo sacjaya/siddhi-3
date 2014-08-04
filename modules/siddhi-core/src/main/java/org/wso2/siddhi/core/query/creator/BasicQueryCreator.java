@@ -22,7 +22,7 @@ import org.wso2.siddhi.core.event.MetaStreamEvent;
 import org.wso2.siddhi.core.event.converter.EventConverter;
 import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
-import org.wso2.siddhi.core.query.selector.QuerySelector;
+import org.wso2.siddhi.core.util.MetaStreamEventHelper;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.core.util.parser.StreamParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
@@ -66,12 +66,10 @@ public class BasicQueryCreator extends QueryCreator {
         this.outputStreamDefinition = querySelector.getOutputStreamDefinition();
         queryPartComposite.setQuerySelector(querySelector);
         queryPartComposite.getHandlerProcessor().setSelector(querySelector);
-        updateVariablePosition(metaStreamEvent, variableExpressionExecutorList);
+        MetaStreamEventHelper.updateVariablePosition(metaStreamEvent, variableExpressionExecutorList);
         queryPartComposite.getHandlerProcessor().setEventConverter(new EventConverter(metaStreamEvent, defaultDefinition));
         return queryPartComposite;
     }
-
-
 
 
 }

@@ -50,6 +50,7 @@ public abstract class QueryCreator {
     protected QuerySelector querySelector;
     protected Map<String, StreamDefinition> tempStreamDefinitionMap = new HashMap<String, StreamDefinition>();
     protected StreamDefinition defaultDefinition;
+    protected MetaStreamEvent metaStreamEvent = new MetaStreamEvent();
 
     protected QueryCreator(String queryId, Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, AbstractDefinition> localStreamDefinitionMap, OutputRateManager outputRateManager, SiddhiContext siddhiContext) {
         this.queryId = queryId;
@@ -108,38 +109,13 @@ public abstract class QueryCreator {
 
 //    public abstract QueryPartComposite constructQuery();
 
-    protected void updateVariablePosition(MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutorList) {
-        //Position[array ID, index] : Array ID -> outData = 2; afterWindowData = 1; beforeWindowData = 0;
-        refactorMetaStreamEvent(metaStreamEvent);
-        for (VariableExpressionExecutor variableExpressionExecutor : variableExpressionExecutorList) {
-            if (metaStreamEvent.getOutData().contains(variableExpressionExecutor.getAttribute())) {
-                variableExpressionExecutor.setPosition(new int[]{Constants.OUT_DATA_INDEX, metaStreamEvent.getOutData().indexOf(variableExpressionExecutor.getAttribute())});
-            } else if (metaStreamEvent.getAfterWindowData().contains(variableExpressionExecutor.getAttribute())) {
-                variableExpressionExecutor.setPosition(new int[]{Constants.AFTER_WINDOW_DATA_INDEX, metaStreamEvent.getAfterWindowData().indexOf(variableExpressionExecutor.getAttribute())});
-            } else if (metaStreamEvent.getBeforeWindowData().contains(variableExpressionExecutor.getAttribute())) {
-                variableExpressionExecutor.setPosition(new int[]{Constants.BEFORE_WINDOW_DATA_INDEX, metaStreamEvent.getBeforeWindowData().indexOf(variableExpressionExecutor.getAttribute())});
-            }
-        }
-
-    }
-
-    private void refactorMetaStreamEvent(MetaStreamEvent metaStreamEvent) {
-        for (Attribute attribute : metaStreamEvent.getOutData()) {
-            if (metaStreamEvent.getBeforeWindowData().contains(attribute)) {
-                metaStreamEvent.getBeforeWindowData().remove(attribute);
-            } else if (metaStreamEvent.getAfterWindowData().contains(attribute)) {
-                metaStreamEvent.getAfterWindowData().remove(attribute);
-            }
-        }
-        for (Attribute attribute : metaStreamEvent.getAfterWindowData()) {
-            if (metaStreamEvent.getBeforeWindowData().contains(attribute)) {
-                metaStreamEvent.getBeforeWindowData().remove(attribute);
-            }
-        }
-    }
-//>>>>>>> 8af6f64acc63e5bfdbd4dcda1917b303043aa3a5
-
     public QuerySelector getQuerySelector() {
         return querySelector;
     }
+
+    public MetaStreamEvent getMetaStreamEvent() {
+        return metaStreamEvent;
+    }
+//>>>>>>> 8af6f64acc63e5bfdbd4dcda1917b303043aa3a5
+
 }
