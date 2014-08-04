@@ -60,31 +60,11 @@ public abstract class QueryCreator {
         this.outputRateManager = outputRateManager;
         this.siddhiContext = siddhiContext;
         this.defaultDefinition = (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId());
-    }
-
-    protected void init() {
-//<<<<<<< HEAD
-//        InputStream inputStream = getInputStream();
-//        if (inputStream instanceof BasicSingleInputStream) {
-//=======
-        /*InputStream inputStream = getInputStream();
-        if (inputStream instanceof BasicSingleInputStream ) {
->>>>>>> 8af6f64acc63e5bfdbd4dcda1917b303043aa3a5
-           if(((BasicSingleInputStream) inputStream).isPartitioned()){
-               tempStreamDefinitionMap.put(((SingleInputStream) inputStream).getStreamId(), (StreamDefinition) localStreamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));
-           }  else {
-           tempStreamDefinitionMap.put(((SingleInputStream) inputStream).getStreamId(), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));
-           }
-
-        } else {
-            //TODO: other inputstreamTypes
+        if(defaultDefinition ==  null){
+           this.defaultDefinition = (StreamDefinition) localStreamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId());
 
         }
-        querySelector = constructQuerySelector(outputRateManager);
-        outputStreamDefinition = querySelector.getOutputStreamDefinition();*/
-
     }
-
 
     protected QuerySelector constructQuerySelector(OutputRateManager outputRateManager, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutors) {
 

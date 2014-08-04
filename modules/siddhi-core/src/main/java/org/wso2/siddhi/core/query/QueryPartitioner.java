@@ -42,7 +42,7 @@ public class QueryPartitioner {
     private final QueryCreator queryCreator;
     private List<List<PartitionExecutor>> partitionExecutors = new ArrayList<List<PartitionExecutor>>();
     private ConcurrentHashMap<String, List<HandlerProcessor>> partitionMap = new ConcurrentHashMap<String, List<HandlerProcessor>>();
-    private List<QuerySelector> querySelectorList = new ArrayList<QuerySelector>();;
+    private List<QuerySelector> querySelectorList = new ArrayList<QuerySelector>();
 
     public QueryPartitioner(Partition partition, QueryCreator queryCreator,
                             SiddhiContext siddhiContext) {
@@ -53,7 +53,6 @@ public class QueryPartitioner {
             InputStream inputStream = queryCreator.getInputStream();
 
             if(inputStream instanceof BasicSingleInputStream){
-
                 ArrayList<PartitionExecutor> executorList = new ArrayList<PartitionExecutor>();
                 partitionExecutors.add(executorList);
                 for (PartitionType partitionType : partition.getPartitionTypeList()) {
@@ -62,7 +61,7 @@ public class QueryPartitioner {
                         dependencyMap = ExpressionValidator.getDependency(((ValuePartitionType) partitionType).getExpression());
                         if (dependencyMap.isEmpty() ||  ((ValuePartitionType) partitionType).getStreamId().equals(((BasicSingleInputStream) inputStream).getStreamId())) {
                             try {
-                                executorList.add(new ValuePartitionExecutor(ExecutorParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(), siddhiContext, queryCreator.getTempStreamDefinitionMap(), null, null)));//TODO: handle null arguments
+                                executorList.add(new ValuePartitionExecutor(ExecutorParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(), siddhiContext, queryCreator.getTempStreamDefinitionMap(), null,null)));//TODO: handle null arguments
                             } catch (ValidatorException e) {
                                 //This will never happen
                             }

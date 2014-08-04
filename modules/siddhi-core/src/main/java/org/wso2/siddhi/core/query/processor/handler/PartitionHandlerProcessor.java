@@ -49,7 +49,6 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
 
 
     private ConcurrentHashMap<String, HandlerProcessor> partitionedHandlerMap = new ConcurrentHashMap<String, HandlerProcessor>();
-    private boolean toPartitionedStream;
     private EventConverter eventConverter;
     private QuerySelector next;     //TODO: review. added to implement HandlerProcessor.setQuerySelector()
 
@@ -69,7 +68,7 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
             String key = partitionExecutor.execute((streamEvent));
             send(key, streamEvent);
         }
-        if(partitionExecutors.isEmpty()){
+        if (partitionExecutors.isEmpty()) {
             send(streamEvent);
         }
     }
@@ -83,60 +82,43 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
             return;
         }
 
-            PartitionInstanceRuntime partitionInstance = partitionRuntime.getPartitionInstanceRuntime(key);
-            if(partitionInstance == null){
-                //TODO    clone and send event
-                partitionRuntime.clone(key);
-            }
-            //TODO get the correct stream junction and send the event
-            StreamJunction streamJunction  = partitionRuntime.getStreamJunction(streamId+key);
-            streamJunction.send(event);
-
+        PartitionInstanceRuntime partitionInstance = partitionRuntime.getPartitionInstanceRuntime(key);
+        if (partitionInstance == null) {
+            partitionRuntime.clone(key);
+        }
+        StreamJunction streamJunction = partitionRuntime.getStreamJunction(streamId + key);
+        streamJunction.send(event);
 
 
     }
 
     private void send(StreamEvent event) {
-
-       StreamJunction streamJunction  = partitionRuntime.getStreamJunction(streamId);
-       if(streamJunction == null){
-           streamJunction = new StreamJunction(streamId, siddhiContext.getThreadPoolExecutor());
-
-       }
-       streamJunction.send(event);
+        StreamJunction streamJunction = partitionRuntime.getStreamJunction(streamId);
+        if (streamJunction == null) {
+            streamJunction = new StreamJunction(streamId, siddhiContext.getThreadPoolExecutor());
+        }
+        streamJunction.send(event);
 
     }
 
 
-    public void addStreamJunction(String key ,List<QueryRuntime> queryRuntimeList){
-        if(!partitionExecutors.isEmpty()){
-            StreamJunction streamJunction  = partitionRuntime.getStreamJunction(streamId+key);
-            if(streamJunction== null){
-            for(QueryRuntime queryRuntime:queryRuntimeList){
-                if(queryRuntime.getInputStreamId().get(0).equals(streamId)){
+    public void addStreamJunction(String key, List<QueryRuntime> queryRuntimeList) {
+        if (!partitionExecutors.isEmpty()) {
+            StreamJunction streamJunction = partitionRuntime.getStreamJunction(streamId + key);
+            if (streamJunction == null) {
+                for (QueryRuntime queryRuntime : queryRuntimeList) {
+                    if (queryRuntime.getInputStreamId().get(0).equals(streamId)) {
 
-                    HandlerProcessor handlerProcessor = queryPartitioner.newPartition(handlerId, key, queryRuntime.getOutputRateManager());
-                    streamJunction = new StreamJunction(streamId+key, siddhiContext.getThreadPoolExecutor());
-                    streamJunction.addEventFlow(handlerProcessor);
-                    partitionRuntime.addStreamJunction(streamId+key,streamJunction);
+                        HandlerProcessor handlerProcessor = queryPartitioner.newPartition(handlerId, key, queryRuntime.getOutputRateManager());
+                        streamJunction = new StreamJunction(streamId + key, siddhiContext.getThreadPoolExecutor());
+                        streamJunction.addEventFlow(handlerProcessor);
+                        partitionRuntime.addStreamJunction(streamId + key, streamJunction);
 
 
+                    }
                 }
             }
         }
-//<<<<<<< HEAD
-//=======
-//        if (toPartitionedStream) {
-//            PartitionStreamEvent partitionStreamEvent = new PartitionStreamEvent(event.getTimestamp(), event.getData(), key);
-//            partitionStreamEvent.setIsExpired(event.isExpired());
-//            partitionStreamEvent.setNext(event.getNext());
-//            handlerProcessor.receive(partitionStreamEvent);
-//        } else {
-//            handlerProcessor.receive(event);
-//>>>>>>> 8af6f64acc63e5bfdbd4dcda1917b303043aa3a5
-//        }
-
-    }
     }
 
     public String getStreamId() {
@@ -179,7 +161,6 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
         }
         return keys;
     }
-
 
 
 }

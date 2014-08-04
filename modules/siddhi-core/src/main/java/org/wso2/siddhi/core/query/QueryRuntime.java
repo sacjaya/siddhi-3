@@ -92,7 +92,6 @@ public class QueryRuntime {
             outputRateManager.setOutputCallback(outputCallback);
         }
 
-//<<<<<<< HEAD:modules/siddhi-core/src/main/java/org/wso2/siddhi/core/query/QueryRuntime.java
         if (partitionRuntime == null) {
                handlerProcessors = handlerProcessorList;
             for (HandlerProcessor handlerProcessor : handlerProcessors) {
@@ -106,8 +105,6 @@ public class QueryRuntime {
                 HandlerProcessor queryStreamProcessor = handlerProcessorList.get(i);
                 partitionRuntime.addHandlerProcessors(new PartitionHandlerProcessor(siddhiContext, queryStreamProcessor.getStreamId(), queryPartitioner, i, partitionExecutors.get(i), partitionRuntime));
             }
-
-
         }
 
 

@@ -37,7 +37,7 @@ public class StreamJunction {
     private ThreadPoolExecutor threadPoolExecutor;
     private ExecutorService tst = Executors.newCachedThreadPool();
     private SiddhiEventFactory factory = new SiddhiEventFactory();
-    private boolean disruptorEnabled = false;
+    private boolean disruptorEnabled = true;
     private String streamId;
 
     public StreamJunction(String streamId, ThreadPoolExecutor threadPoolExecutor) {
@@ -68,32 +68,33 @@ public class StreamJunction {
     }
 
     public synchronized void addEventFlow(StreamReceiver streamReceiver) {
-        if (disruptorEnabled) {
 
-            int bufferSize = 1024;
-            if (streamReceiver instanceof PartitionHandlerProcessor) {
-                int disruptorsSize = ((HandlerProcessor)streamReceiver).getDisruptorsSize();
-                Disruptor[] disruptors = new Disruptor[disruptorsSize];
-                for (int i = 0; i < disruptorsSize; i++) {
+            if (disruptorEnabled) {
+
+                int bufferSize = 1024;
+                if (streamReceiver instanceof PartitionHandlerProcessor) {
+                    int disruptorsSize = ((HandlerProcessor)streamReceiver).getDisruptorsSize();
+                    Disruptor[] disruptors = new Disruptor[disruptorsSize];
+                    for (int i = 0; i < disruptorsSize; i++) {
+                        Disruptor<StreamEvent> disruptor = new Disruptor<StreamEvent>(factory, bufferSize, tst, ProducerType.SINGLE, new SleepingWaitStrategy());
+                        disruptors[i] = disruptor;
+                        disruptor.handleEventsWith(new StreamHandler(streamReceiver));
+                        disruptor.start();
+                    }
+                    streamReceiver.setDisruptors(disruptors);
+
+                }else {
+                    Disruptor[] disruptors = new Disruptor[1];
                     Disruptor<StreamEvent> disruptor = new Disruptor<StreamEvent>(factory, bufferSize, tst, ProducerType.SINGLE, new SleepingWaitStrategy());
-                    disruptors[i] = disruptor;
+                    disruptors[0] = disruptor;
+                    streamReceiver.setDisruptors(disruptors);
                     disruptor.handleEventsWith(new StreamHandler(streamReceiver));
                     disruptor.start();
                 }
-                streamReceiver.setDisruptors(disruptors);
 
-            }else {
-                Disruptor[] disruptors = new Disruptor[1];
-                Disruptor<StreamEvent> disruptor = new Disruptor<StreamEvent>(factory, bufferSize, tst, ProducerType.SINGLE, new SleepingWaitStrategy());
-                disruptors[0] = disruptor;
-                streamReceiver.setDisruptors(disruptors);
-                disruptor.handleEventsWith(new StreamHandler(streamReceiver));
-                disruptor.start();
             }
-
-        }
-        //in reverse order to execute the later states first to overcome to dependencies of count states
-        streamReceivers.add(0, streamReceiver);
+            //in reverse order to execute the later states first to overcome to dependencies of count states
+            streamReceivers.add(0, streamReceiver);
 
     }
 

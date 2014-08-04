@@ -41,8 +41,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PartitionRuntime {
     private String partitionId;
-    private List<String> queryIds = new ArrayList<String>();
-    private List<QueryRuntime> test = new CopyOnWriteArrayList<QueryRuntime>();
+    private List<QueryRuntime> partitionedQueryRuntimeList = new CopyOnWriteArrayList<QueryRuntime>();
     private ConcurrentMap<String, StreamJunction> localStreamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains definition
     private ConcurrentMap<String, AbstractDefinition> localStreamDefinitionMap = new ConcurrentHashMap<String, AbstractDefinition>(); //contains stream definition
     private SiddhiContext siddhiContext;
@@ -121,18 +120,11 @@ public class PartitionRuntime {
 
     }
 
-    public List<String> getQueryIds(){
-        return queryIds;
-    }
-
     public void addHandlerProcessors(HandlerProcessor handlerProcessor){
         handlerProcessors.add(handlerProcessor);
         streamJunctionMap.get(handlerProcessor.getStreamId()).addEventFlow(handlerProcessor);
     }
 
-    public List<HandlerProcessor> getHandlerProcessors(){
-        return this.handlerProcessors;
-    }
     public void defineLocalStream(StreamDefinition streamDefinition) {
         if (!checkEventStreamExist(streamDefinition,localStreamDefinitionMap)) {
             localStreamDefinitionMap.put(streamDefinition.getId(), streamDefinition);
@@ -178,40 +170,40 @@ public class PartitionRuntime {
         return false;
     }
 
+    /**
+     * clone all the queries of the partition for a given partition key
+     * @param key
+     * @return
+     */
     public List<QueryRuntime> clone(String key) {
         List<QueryRuntime> queryRuntimeList = new ArrayList<QueryRuntime>();
         for(QueryRuntime queryRuntime:metaQueryProcessorMap.values()){
             if(queryRuntime.isFromLocalStream()){
                 queryRuntimeList.add( queryRuntime.clone(queryRuntime.getInputStreamId().get(0),key));
             } else{
-                QueryRuntime qr = queryRuntime.clone(null,key);
-                queryRuntimeList.add(qr);
-                test.add(qr);
-
+                QueryRuntime qRuntime = queryRuntime.clone(null,key);
+                queryRuntimeList.add(qRuntime);
+                partitionedQueryRuntimeList.add(qRuntime);
             }
 
         }
 
         addPartitionInstance(key, new PartitionInstanceRuntime(key,queryRuntimeList));
         updateHandlers(key);
-        return test;
+        return partitionedQueryRuntimeList;
     }
 
     public List<QueryRuntime> test(){
-        return  test;
+        return partitionedQueryRuntimeList;
     }
 
     public void updateHandlers(String key){
         for(HandlerProcessor handlerProcessor :handlerProcessors){
             if(handlerProcessor instanceof PartitionHandlerProcessor){
-                ((PartitionHandlerProcessor) handlerProcessor).addStreamJunction(key,test);
+                ((PartitionHandlerProcessor) handlerProcessor).addStreamJunction(key,partitionedQueryRuntimeList);
             }
         }
 
     }
 
-    public StreamJunction getGlobalStreamJunction(String streamId) {
-        return streamJunctionMap.get(streamId);
-
-    }
 }

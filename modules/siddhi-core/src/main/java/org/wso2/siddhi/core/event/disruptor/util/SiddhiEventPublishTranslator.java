@@ -25,8 +25,6 @@ import org.wso2.siddhi.core.event.StreamEvent;
 public class SiddhiEventPublishTranslator implements EventTranslator<StreamEvent> {
     private long timeStamp;
     private Object[] data;
-    private String key;
-
 
     public SiddhiEventPublishTranslator(Event event) {
         this.timeStamp = event.getTimestamp();

@@ -40,7 +40,6 @@ public class BasicQueryCreator extends QueryCreator {
 
     public BasicQueryCreator(String queryId, Query query, ConcurrentMap<String, AbstractDefinition> streamTableDefinitionMap, ConcurrentMap<String, AbstractDefinition> localStreamTableDefinitionMap, OutputRateManager outputRateManager, SiddhiContext siddhiContext) {
         super(queryId, query, streamTableDefinitionMap, localStreamTableDefinitionMap, outputRateManager, siddhiContext);
-        init();
         if (((SingleInputStream) getInputStream()).isPartitioned()) {
             tempStreamDefinitionMap.put(((SingleInputStream) getInputStream()).getStreamId(), (StreamDefinition) localStreamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId()));
         } else {
@@ -57,7 +56,10 @@ public class BasicQueryCreator extends QueryCreator {
 
     public QueryPartComposite constructQuery(OutputRateManager outputRateManager) {
         List<VariableExpressionExecutor> variableExpressionExecutorList = new LinkedList<VariableExpressionExecutor>();
-        tempStreamDefinitionMap.put(((SingleInputStream) getInputStream()).getStreamId(), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId()));
+        //TODO: recheck
+        if(!tempStreamDefinitionMap.containsKey(((SingleInputStream) getInputStream()).getStreamId()))   {
+               tempStreamDefinitionMap.put(((SingleInputStream) getInputStream()).getStreamId(), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId()));
+        }
         QueryPartComposite queryPartComposite = StreamParser.parseSingleStream(getInputStream(), this.tempStreamDefinitionMap, siddhiContext, metaStreamEvent, variableExpressionExecutorList);
         metaStreamEvent.intializeAfterWindowData();
         metaStreamEvent.intializeOutData();
