@@ -56,7 +56,6 @@ public class BasicQueryCreator extends QueryCreator {
 //    }
 
     public QueryPartComposite constructQuery(OutputRateManager outputRateManager) {
-        MetaStreamEvent metaStreamEvent = new MetaStreamEvent();
         List<VariableExpressionExecutor> variableExpressionExecutorList = new LinkedList<VariableExpressionExecutor>();
         tempStreamDefinitionMap.put(((SingleInputStream) getInputStream()).getStreamId(), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId()));
         QueryPartComposite queryPartComposite = StreamParser.parseSingleStream(getInputStream(), this.tempStreamDefinitionMap, siddhiContext, metaStreamEvent, variableExpressionExecutorList);
