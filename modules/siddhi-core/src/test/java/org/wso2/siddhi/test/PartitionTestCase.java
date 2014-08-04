@@ -789,7 +789,101 @@ public class PartitionTestCase {
 
     }
 
+    @Test
+    public void testPartitionQuery7() throws InterruptedException, ValidatorException {
+        log.info("Partition test3");
 
+
+        SiddhiManager siddhiManager = new SiddhiManager();
+        ExecutionPlan executionPlan = new ExecutionPlan("plan1");
+
+        StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
+        StreamDefinition streamDefinition1 = StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.STRING).attribute("volume", Attribute.Type.INT);
+
+        executionPlan.defineStream(streamDefinition);
+        executionPlan.defineStream(streamDefinition1);
+
+        Partition partition = Partition.partition().
+                with("cseEventStream", Expression.variable("symbol")).with("StockStream", Expression.variable("symbol"));
+
+        Query query = Query.query();
+        query.from(Query.inputStream("cseEventStream"));
+        query.select(
+                Query.outputSelector().
+                        select("symbol", Expression.variable("symbol")).
+                        select("price", Expression.variable("price")).
+                        select("volume", Expression.variable("volume"))
+
+        );
+        query.insertIntoPartitioned("StockStream");
+
+
+
+        Query query1 = Query.query();
+        query1.from(Query.partitionedInputStream("StockStream"));
+        query1.select(
+                Query.outputSelector().
+                        select("symbol", Expression.variable("symbol")).
+                        select("price", Expression.variable("price")).
+                        select("volume", Expression.variable("volume"))
+
+        );
+        query1.insertInto("OutStockStream");
+
+        Query query2 = Query.query();
+        query2.from(Query.inputStream("StockStream"));
+        query2.select(
+                Query.outputSelector().
+                        select("symbol", Expression.variable("symbol")).
+                        select("price", Expression.value(12.5f)).
+                        select("volume", Expression.variable("volume"))
+
+        );
+        query2.insertInto("OutStockStream");
+
+
+//        streamDefinitionMap.put("cseEventStream", streamDefinition);
+//        streamDefinitionMap.put("StockStream", streamDefinition1);
+//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        QueryValidator.validate(query, streamDefinitionMap);
+//        QueryValidator.validate(query1, streamDefinitionMap);
+
+
+        partition.addQuery(query);
+        partition.addQuery(query1);
+        partition.addQuery(query2);
+        executionPlan.addPartition(partition);
+
+
+        ExecutionPlanRuntime executionRuntime = siddhiManager.addExecutionPlan(executionPlan);
+
+
+
+        executionRuntime.addCallback("OutStockStream", new StreamCallback() {
+            @Override
+            public void receive(Event[] events) {
+                count++;
+                eventArrived = true;
+            }
+        });
+        InputHandler inputHandler = executionRuntime.getInputHandler("cseEventStream");
+        inputHandler.send(new Object[]{"IBM", 75.6f, 100});
+        inputHandler.send(new Object[]{"WSO2", 75.6f, 100});
+        inputHandler.send(new Object[]{"IBM", 75.6f, 100});
+        inputHandler.send(new Object[]{"ORACLE", 75.6f, 100});
+
+        InputHandler inputHandler1 = executionRuntime.getInputHandler("StockStream");
+        inputHandler1.send(new Object[]{"IBM", "75.6f", 100});
+        inputHandler1.send(new Object[]{"WSO2", "75.6f", 100});
+        inputHandler1.send(new Object[]{"IBM", "75.6f", 100});
+        inputHandler1.send(new Object[]{"ORACLE", "75.6f", 100});
+
+        Thread.sleep(8000);
+        siddhiManager.shutdown();
+        Assert.assertEquals(8, count);
+
+
+    }
 
 
 
