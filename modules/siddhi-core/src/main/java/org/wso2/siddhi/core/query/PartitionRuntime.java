@@ -99,7 +99,7 @@ public class PartitionRuntime {
     }
 
     public void addStreamJunction(String key,StreamJunction streamJunction){
-        localStreamJunctionMap.putIfAbsent(key, streamJunction);
+        localStreamJunctionMap.put(key, streamJunction);
     }
 
     public StreamJunction getStreamJunction(String key){
@@ -131,7 +131,7 @@ public class PartitionRuntime {
             StreamJunction streamJunction = localStreamJunctionMap.get(streamDefinition.getId());
             if (streamJunction == null) {
                 streamJunction = new StreamJunction(streamDefinition.getId(), siddhiContext.getThreadPoolExecutor());
-                localStreamJunctionMap.put(streamDefinition.getId(), streamJunction);
+                localStreamJunctionMap.putIfAbsent(streamDefinition.getId(), streamJunction);
             }
         }
     }
@@ -143,7 +143,7 @@ public class PartitionRuntime {
             StreamJunction streamJunction = streamJunctionMap.get(streamDefinition.getId());
             if (streamJunction == null) {
                 streamJunction = new StreamJunction(streamDefinition.getId(), siddhiContext.getThreadPoolExecutor());
-                streamJunctionMap.put(streamDefinition.getId(), streamJunction);
+                streamJunctionMap.putIfAbsent(streamDefinition.getId(), streamJunction);
             }
             InputHandler inputHandler = new InputHandler(streamDefinition.getId(), streamJunction, siddhiContext);
             inputHandlerMap.put(streamDefinition.getId(), inputHandler);

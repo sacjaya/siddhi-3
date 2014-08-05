@@ -19,7 +19,6 @@
 package org.wso2.siddhi.core;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
 import org.wso2.siddhi.core.exception.QueryNotExistException;
 import org.wso2.siddhi.core.query.QueryRuntime;
 import org.wso2.siddhi.core.query.PartitionRuntime;
@@ -31,7 +30,6 @@ import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.definition.TableDefinition;
 import org.wso2.siddhi.query.api.partition.Partition;
 import org.wso2.siddhi.query.api.query.Query;
 
@@ -42,8 +40,8 @@ public class ExecutionPlanRuntime {
     private ConcurrentMap<String, AbstractDefinition> streamDefinitionMap = new ConcurrentHashMap<String, AbstractDefinition>(); //contains stream definition
     private ConcurrentMap<String, InputHandler> inputHandlerMap = new ConcurrentHashMap<String, InputHandler>();
     private ConcurrentMap<String, QueryRuntime> queryProcessorMap = new ConcurrentHashMap<String, QueryRuntime>();
-    private ConcurrentMap<String, StreamJunction> streamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains definition
-    private ConcurrentMap<String, PartitionRuntime> partitionList = new ConcurrentHashMap<String, PartitionRuntime>();
+    private ConcurrentMap<String, StreamJunction> streamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains stream junctions
+    private ConcurrentMap<String, PartitionRuntime> partitionList = new ConcurrentHashMap<String, PartitionRuntime>(); //contains partitions
     private SiddhiContext siddhiContext;
 
     public ExecutionPlanRuntime(SiddhiContext siddhiContext) {
@@ -65,20 +63,6 @@ public class ExecutionPlanRuntime {
             return inputHandlerMap.get(streamDefinition.getId());
         }
 
-    }
-
-    private boolean checkEventStreamExist(StreamDefinition newStreamDefinition) {
-        AbstractDefinition definition = streamDefinitionMap.get(newStreamDefinition.getId());
-        if (definition != null) {
-            if (definition instanceof TableDefinition) {
-                throw new DifferentDefinitionAlreadyExistException("Table " + newStreamDefinition.getId() + " is already defined as " + definition + ", hence cannot define " + newStreamDefinition);
-            } else if (!definition.getAttributeList().equals(newStreamDefinition.getAttributeList())) {
-                throw new DifferentDefinitionAlreadyExistException("Stream " + newStreamDefinition.getId() + " is already defined as " + definition + ", hence cannot define " + newStreamDefinition);
-            } else {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void definePartition(Partition partition) {

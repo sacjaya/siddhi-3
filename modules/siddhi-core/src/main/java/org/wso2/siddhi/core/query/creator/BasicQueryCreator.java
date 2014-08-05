@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 public class BasicQueryCreator extends QueryCreator {
-     EventConverter eventConverter;
+     private EventConverter eventConverter;
     //Map<String, StreamDefinition> tempStreamDefinitionMap = new HashMap<String, StreamDefinition>();
 
     public BasicQueryCreator(String queryId, Query query, ConcurrentMap<String, AbstractDefinition> streamTableDefinitionMap, ConcurrentMap<String, AbstractDefinition> localStreamTableDefinitionMap, OutputRateManager outputRateManager, SiddhiContext siddhiContext) {
@@ -55,9 +55,11 @@ public class BasicQueryCreator extends QueryCreator {
         queryPartComposite.setQuerySelector(querySelector);
         queryPartComposite.getHandlerProcessor().setSelector(querySelector);
         MetaStreamEventHelper.updateVariablePosition(metaStreamEvent, variableExpressionExecutorList);
-        queryPartComposite.getHandlerProcessor().setEventConverter( getEventConverter());
+        queryPartComposite.getHandlerProcessor().setEventConverter(getEventConverter());
         return queryPartComposite;
     }
+
+
 
     private synchronized  EventConverter getEventConverter(){
         if(eventConverter == null){

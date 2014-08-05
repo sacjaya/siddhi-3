@@ -87,6 +87,10 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
             partitionRuntime.clone(key);
         }
         StreamJunction streamJunction = partitionRuntime.getStreamJunction(streamId + key);
+        if (streamJunction == null) {
+            streamJunction = new StreamJunction(streamId+key, siddhiContext.getThreadPoolExecutor());
+            partitionRuntime.addStreamJunction(streamId+key,streamJunction);
+        }
         streamJunction.send(event);
 
 
@@ -96,6 +100,7 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
         StreamJunction streamJunction = partitionRuntime.getStreamJunction(streamId);
         if (streamJunction == null) {
             streamJunction = new StreamJunction(streamId, siddhiContext.getThreadPoolExecutor());
+            partitionRuntime.addStreamJunction(streamId,streamJunction);
         }
         streamJunction.send(event);
 

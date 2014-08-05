@@ -179,7 +179,7 @@ public class QueryRuntime {
                 StreamJunction streamJunction = localStreamJunctionMap.get(streamId+key);
                 if (streamJunction == null){
                     streamJunction = new StreamJunction(streamId+key, siddhiContext.getThreadPoolExecutor());
-                    localStreamJunctionMap.put(streamId+key,streamJunction);
+                    localStreamJunctionMap.putIfAbsent(streamId+key,streamJunction);
                 }
                 streamJunction.addEventFlow(handlerProcessor);
 

@@ -37,7 +37,7 @@ public class StreamJunction {
     private ThreadPoolExecutor threadPoolExecutor;
     private ExecutorService tst = Executors.newCachedThreadPool();
     private SiddhiEventFactory factory = new SiddhiEventFactory();
-    private boolean disruptorEnabled = true;
+    private boolean disruptorEnabled = false;
     private String streamId;
 
     public StreamJunction(String streamId, ThreadPoolExecutor threadPoolExecutor) {

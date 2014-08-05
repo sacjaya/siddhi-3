@@ -36,7 +36,7 @@ public class MetaStreamEventHelper {
 
     }
 
-    public static void refactorMetaStreamEvent(MetaStreamEvent metaStreamEvent) {
+    public synchronized static void refactorMetaStreamEvent(MetaStreamEvent metaStreamEvent) {
         for (Attribute attribute : metaStreamEvent.getOutData()) {
             if (metaStreamEvent.getBeforeWindowData().contains(attribute)) {
                 metaStreamEvent.getBeforeWindowData().remove(attribute);
