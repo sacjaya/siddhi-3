@@ -18,6 +18,7 @@ import org.wso2.siddhi.query.api.definition.FunctionAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Class to hold mapping between StreamEvent
@@ -25,7 +26,7 @@ import java.util.List;
  * used to update variable positions on Variable executors
  */
 public class MetaStreamEvent {
-    private List<Attribute> beforeWindowData = new ArrayList<Attribute>();
+    private List<Attribute> beforeWindowData = new CopyOnWriteArrayList<Attribute>();
     private List<Attribute> afterWindowData = null;
     private List<Attribute> outData = null;
 
@@ -37,7 +38,7 @@ public class MetaStreamEvent {
         if (afterWindowData != null) {
             return afterWindowData;
         } else {
-            return new ArrayList<Attribute>();  //return empty arraylist to avoid NPE
+            return new CopyOnWriteArrayList<Attribute>();  //return empty arraylist to avoid NPE
         }
     }
 
@@ -45,7 +46,7 @@ public class MetaStreamEvent {
         if (outData != null) {
             return outData;
         } else {
-            return new ArrayList<Attribute>();  //return empty arraylist to avoid NPE
+            return  new CopyOnWriteArrayList<Attribute>();  //return empty arraylist to avoid NPE
         }
     }
 
@@ -57,7 +58,7 @@ public class MetaStreamEvent {
 
     public void intializeOutData() {
         if (outData == null) {
-            outData = new ArrayList<Attribute>();
+            outData = new CopyOnWriteArrayList<Attribute>();
         }
     }
 

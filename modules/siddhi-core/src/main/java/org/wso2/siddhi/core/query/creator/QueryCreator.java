@@ -59,11 +59,14 @@ public abstract class QueryCreator {
         this.localStreamDefinitionMap = localStreamDefinitionMap;
         this.outputRateManager = outputRateManager;
         this.siddhiContext = siddhiContext;
-        this.defaultDefinition = (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId());
-        if(defaultDefinition ==  null){
-           this.defaultDefinition = (StreamDefinition) localStreamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId());
-
-        }
+        if(getInputStream() instanceof SingleInputStream){
+            String streamId = ((SingleInputStream) getInputStream()).getStreamId();
+            if(((SingleInputStream) getInputStream()).isPartitioned())    {
+                this.defaultDefinition = (StreamDefinition) localStreamDefinitionMap.get(streamId);
+            }  else {
+                this.defaultDefinition = (StreamDefinition) streamDefinitionMap.get(streamId);
+            }
+        } //TODO other streams
     }
 
     protected QuerySelector constructQuerySelector(OutputRateManager outputRateManager, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutors) {
