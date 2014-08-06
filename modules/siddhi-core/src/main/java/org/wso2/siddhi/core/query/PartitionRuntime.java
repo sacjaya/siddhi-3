@@ -175,22 +175,26 @@ public class PartitionRuntime {
      * @param key
      * @return
      */
-    public List<QueryRuntime> clone(String key) {
-        List<QueryRuntime> queryRuntimeList = new ArrayList<QueryRuntime>();
-        for(QueryRuntime queryRuntime:metaQueryProcessorMap.values()){
-            if(queryRuntime.isFromLocalStream()){
-                queryRuntimeList.add( queryRuntime.clone(queryRuntime.getInputStreamId().get(0),key));
-            } else{
-                QueryRuntime qRuntime = queryRuntime.clone(null,key);
-                queryRuntimeList.add(qRuntime);
-                partitionedQueryRuntimeList.add(qRuntime);
+    public synchronized List<QueryRuntime> clone(String key){
+        PartitionInstanceRuntime partitionInstance = this.getPartitionInstanceRuntime(key);
+        if (partitionInstance == null) {
+            List<QueryRuntime> queryRuntimeList = new ArrayList<QueryRuntime>();
+            for(QueryRuntime queryRuntime:metaQueryProcessorMap.values()){
+                if(queryRuntime.isFromLocalStream()){
+                    queryRuntimeList.add( queryRuntime.clone(queryRuntime.getInputStreamId().get(0),key));
+                } else{
+                    QueryRuntime qRuntime = queryRuntime.clone(null,key);
+                    queryRuntimeList.add(qRuntime);
+                    partitionedQueryRuntimeList.add(qRuntime);
+                }
+
             }
 
+            addPartitionInstance(key, new PartitionInstanceRuntime(key,queryRuntimeList));
+            updateHandlers(key);
+            return partitionedQueryRuntimeList;
         }
-
-        addPartitionInstance(key, new PartitionInstanceRuntime(key,queryRuntimeList));
-        updateHandlers(key);
-        return partitionedQueryRuntimeList;
+        return null;
     }
 
     public List<QueryRuntime> test(){

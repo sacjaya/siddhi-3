@@ -82,10 +82,8 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
             return;
         }
 
-        PartitionInstanceRuntime partitionInstance = partitionRuntime.getPartitionInstanceRuntime(key);
-        if (partitionInstance == null) {
-            partitionRuntime.clone(key);
-        }
+        partitionRuntime.clone(key);
+
         StreamJunction streamJunction = partitionRuntime.getStreamJunction(streamId + key);
         if (streamJunction == null) {
             streamJunction = new StreamJunction(streamId+key, siddhiContext.getThreadPoolExecutor());

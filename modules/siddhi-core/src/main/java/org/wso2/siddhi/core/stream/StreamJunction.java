@@ -68,7 +68,7 @@ public class StreamJunction {
     }
 
     public synchronized void addEventFlow(StreamReceiver streamReceiver) {
-         if(!streamReceivers.contains(streamReceiver))       {
+//         if(!streamReceivers.contains(streamReceiver))       {
             if (disruptorEnabled) {
 
                 int bufferSize = 1024;
@@ -95,7 +95,7 @@ public class StreamJunction {
             }
             //in reverse order to execute the later states first to overcome to dependencies of count states
             streamReceivers.add(0, streamReceiver);
-         }
+//         }
     }
 
     public void removeEventFlow(HandlerProcessor queryStreamProcessor) {

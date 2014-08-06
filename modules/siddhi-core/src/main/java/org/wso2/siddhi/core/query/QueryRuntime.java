@@ -64,16 +64,13 @@ public class QueryRuntime {
         this.queryId = query.getPropertyValue("name");
         this.query = query;
         this.siddhiContext = siddhiContext;
-
         outputRateManager = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
 
         ConcurrentMap<String, AbstractDefinition> localStreamDefinitionMap = null;
-        ConcurrentMap<String, StreamJunction> localStreamJunctionMap = null;
         if (partitionRuntime != null) {
             localStreamDefinitionMap = partitionRuntime.getLocalStreamDefinitionMap();
             localStreamJunctionMap = partitionRuntime.getLocalStreamJunctionMap();
         }
-        this.localStreamJunctionMap = localStreamJunctionMap;
 
         QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap,localStreamDefinitionMap, outputRateManager, siddhiContext);
 
