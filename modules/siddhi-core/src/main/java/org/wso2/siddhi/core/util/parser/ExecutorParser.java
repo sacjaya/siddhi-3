@@ -36,10 +36,10 @@ import org.wso2.siddhi.core.executor.expression.divide.DivideExpressionExecutorD
 import org.wso2.siddhi.core.executor.expression.divide.DivideExpressionExecutorFloat;
 import org.wso2.siddhi.core.executor.expression.divide.DivideExpressionExecutorInt;
 import org.wso2.siddhi.core.executor.expression.divide.DivideExpressionExecutorLong;
-import org.wso2.siddhi.core.executor.expression.minus.MinusExpressionExecutorDouble;
-import org.wso2.siddhi.core.executor.expression.minus.MinusExpressionExecutorFloat;
-import org.wso2.siddhi.core.executor.expression.minus.MinusExpressionExecutorInt;
-import org.wso2.siddhi.core.executor.expression.minus.MinusExpressionExecutorLong;
+import org.wso2.siddhi.core.executor.expression.Subtract.SubtractExpressionExecutorDouble;
+import org.wso2.siddhi.core.executor.expression.Subtract.SubtractExpressionExecutorFloat;
+import org.wso2.siddhi.core.executor.expression.Subtract.SubtractExpressionExecutorInt;
+import org.wso2.siddhi.core.executor.expression.Subtract.SubtractExpressionExecutorLong;
 import org.wso2.siddhi.core.executor.expression.mod.ModExpressionExecutorDouble;
 import org.wso2.siddhi.core.executor.expression.mod.ModExpressionExecutorFloat;
 import org.wso2.siddhi.core.executor.expression.mod.ModExpressionExecutorInt;
@@ -180,13 +180,13 @@ public class ExecutorParser {
             Attribute.Type type = parseArithmeticOperationResultType(left, right);
             switch (type) {
                 case INT:
-                    return new MinusExpressionExecutorInt(left, right);
+                    return new SubtractExpressionExecutorInt(left, right);
                 case LONG:
-                    return new MinusExpressionExecutorLong(left, right);
+                    return new SubtractExpressionExecutorLong(left, right);
                 case FLOAT:
-                    return new MinusExpressionExecutorFloat(left, right);
+                    return new SubtractExpressionExecutorFloat(left, right);
                 case DOUBLE:
-                    return new MinusExpressionExecutorDouble(left, right);
+                    return new SubtractExpressionExecutorDouble(left, right);
             }
         } else if (expression instanceof Mod) {
             ExpressionExecutor left = parseExpression(((Mod) expression).getLeftValue(), currentStreamReference, siddhiContext, streamDefinitionMap, metaStreamEvent, executorList);

@@ -15,31 +15,31 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.core.executor.expression.minus;
+package org.wso2.siddhi.core.executor.expression.Subtract;
 
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.executor.expression.ExpressionExecutor;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
-public class MinusExpressionExecutorDouble implements ExpressionExecutor {
+public class SubtractExpressionExecutorLong implements ExpressionExecutor {
     private ExpressionExecutor leftExpressionExecutor;
     private ExpressionExecutor rightExpressionExecutor;
 
 
-    public MinusExpressionExecutorDouble(ExpressionExecutor leftExpressionExecutor,
-                                         ExpressionExecutor rightExpressionExecutor) {
+    public SubtractExpressionExecutorLong(ExpressionExecutor leftExpressionExecutor,
+                                          ExpressionExecutor rightExpressionExecutor) {
         this.leftExpressionExecutor = leftExpressionExecutor;
         this.rightExpressionExecutor = rightExpressionExecutor;
     }
 
     @Override
     public Object execute(StreamEvent event) {
-        return ((Number) leftExpressionExecutor.execute(event)).doubleValue() - ((Number) rightExpressionExecutor.execute(event)).doubleValue();
+        return ((Number) leftExpressionExecutor.execute(event)).longValue() - ((Number) rightExpressionExecutor.execute(event)).longValue();
 
     }
 
     public Attribute.Type getReturnType() {
-        return Attribute.Type.DOUBLE;
+        return Attribute.Type.LONG;
     }
 
 }

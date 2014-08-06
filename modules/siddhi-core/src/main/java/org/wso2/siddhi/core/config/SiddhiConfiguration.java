@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class SiddhiConfiguration {
+
     /**
      * Core pool size of the Siddhi thread executor
      */
@@ -45,28 +46,21 @@ public class SiddhiConfiguration {
     /**
      * Identifier to current Siddhi instance
      */
-    private String instanceIdentifier;
+    private String siddhiInstanceIdentifier;
 
     /**
-     * Query plan aIdentifier
+     * Siddhi Extensions classes
      */
-    private String executionPlanIdentifier;
-
     private List<Class> siddhiExtensions;
 
     public SiddhiConfiguration() {
 
         threadExecutorCorePoolSize = Runtime.getRuntime().availableProcessors();
-
         threadExecutorMaxPoolSize = 50;
-
         threadSchedulerCorePoolSize = 20;
-
         eventBatchSize = 50;
+        siddhiInstanceIdentifier = UUID.randomUUID().toString();
 
-        instanceIdentifier = UUID.randomUUID().toString();
-
-        executionPlanIdentifier = UUID.randomUUID().toString();
     }
 
     public int getThreadExecutorCorePoolSize() {
@@ -105,22 +99,13 @@ public class SiddhiConfiguration {
         return this;
     }
 
-    public String getInstanceIdentifier() {
-        return instanceIdentifier;
-    }
-
-    public SiddhiConfiguration setInstanceIdentifier(String instanceIdentifier) {
-        this.instanceIdentifier = instanceIdentifier;
+    public SiddhiConfiguration setSiddhiInstanceIdentifier(String siddhiInstanceIdentifier) {
+        this.siddhiInstanceIdentifier = siddhiInstanceIdentifier;
         return this;
     }
 
-    public SiddhiConfiguration setExecutionPlanIdentifier(String executionPlanIdentifier) {
-        this.executionPlanIdentifier = executionPlanIdentifier;
-        return this;
-    }
-
-    public String getExecutionPlanIdentifier() {
-        return executionPlanIdentifier;
+    public String getSiddhiInstanceIdentifier() {
+        return siddhiInstanceIdentifier;
     }
 
     public List<Class> getSiddhiExtensions() {

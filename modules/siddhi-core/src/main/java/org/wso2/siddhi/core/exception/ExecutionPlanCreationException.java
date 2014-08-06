@@ -12,20 +12,20 @@
  */
 package org.wso2.siddhi.core.exception;
 
-public class CreateExecutionPlanException extends Exception {
-    public CreateExecutionPlanException() {
+public class ExecutionPlanCreationException extends Exception {
+    public ExecutionPlanCreationException() {
         super();
     }
 
-    public CreateExecutionPlanException(String message) {
+    public ExecutionPlanCreationException(String message) {
         super(message);
     }
 
-    public CreateExecutionPlanException(String message, Throwable throwable) {
+    public ExecutionPlanCreationException(String message, Throwable throwable) {
         super(message, throwable);
     }
 
-    public CreateExecutionPlanException(Throwable throwable) {
+    public ExecutionPlanCreationException(Throwable throwable) {
         super(throwable);
     }
 }

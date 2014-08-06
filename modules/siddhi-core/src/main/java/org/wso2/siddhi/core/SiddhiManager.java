@@ -50,7 +50,7 @@ public class SiddhiManager {
     public SiddhiManager(SiddhiConfiguration siddhiConfiguration) {
 
 
-        this.siddhiContext = new SiddhiContext(siddhiConfiguration.getExecutionPlanIdentifier(), SiddhiContext.ProcessingState.DISABLED);
+        this.siddhiContext = new SiddhiContext(siddhiConfiguration.getSiddhiInstanceIdentifier(), SiddhiContext.ProcessingState.DISABLED);
         this.siddhiContext.setEventBatchSize(siddhiConfiguration.getEventBatchSize());
         this.siddhiContext.setSiddhiExtensions(siddhiConfiguration.getSiddhiExtensions());
         this.siddhiContext.setThreadBarrier(new ThreadBarrier());

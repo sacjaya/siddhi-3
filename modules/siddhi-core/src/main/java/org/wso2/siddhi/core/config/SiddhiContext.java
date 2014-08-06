@@ -35,7 +35,7 @@ public class SiddhiContext {
     private SnapshotService snapshotService;
     private ThreadPoolExecutor threadPoolExecutor;
     private ScheduledExecutorService scheduledExecutorService;
-    private String executionPlanIdentifier;
+    private String siddhiInstanceIdentifier;
     private List<Class> siddhiExtensions;
     private ConcurrentHashMap<String, DataSource> siddhiDataSources;
     private ThreadBarrier threadBarrier;
@@ -44,8 +44,8 @@ public class SiddhiContext {
 
     public enum ProcessingState {ENABLE_INTERNAL, ENABLE_EXTERNAL, DISABLED}
 
-    public SiddhiContext(String executionPlanIdentifier, ProcessingState distributedProcessingState) {
-        this.executionPlanIdentifier = executionPlanIdentifier;
+    public SiddhiContext(String siddhiInstanceIdentifier, ProcessingState distributedProcessingState) {
+        this.siddhiInstanceIdentifier = siddhiInstanceIdentifier;
         this.siddhiDataSources = new ConcurrentHashMap<String, DataSource>();
         this.eternalReferencedHolders = new ArrayList<EternalReferencedHolder>();
     }
@@ -82,8 +82,8 @@ public class SiddhiContext {
         return scheduledExecutorService;
     }
 
-    public String getExecutionPlanIdentifier() {
-        return executionPlanIdentifier;
+    public String getSiddhiInstanceIdentifier() {
+        return siddhiInstanceIdentifier;
     }
 
     public void setSiddhiExtensions(List<Class> siddhiExtensions) {

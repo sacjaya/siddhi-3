@@ -55,7 +55,7 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  re.query.processor,org.wso2.siddhi.core.query.selector,org.wso2.siddhi.
  query.api.query.input";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.execution.partition;uses:="org.wso2.siddhi.query.api,org.wso2.siddh
  i.query.api.expression,org.wso2.siddhi.query.api.expression";version="3.
- 0.0.SNAPSHOT",org.wso2.siddhi.core.executor.expression.minus;uses:="org
+ 0.0.SNAPSHOT",org.wso2.siddhi.core.executor.expression.Subtract;uses:="org
  .wso2.siddhi.query.api.definition,org.wso2.siddhi.core.event,org.wso2.s
  iddhi.core.executor.expression";version="3.0.0.SNAPSHOT",org.wso2.siddh
  i.core.util.parser;uses:="org.wso2.siddhi.query.api.definition,org.wso2
