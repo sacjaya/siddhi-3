@@ -18,7 +18,6 @@
 package org.wso2.siddhi.core.query.creator;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.event.MetaStreamEvent;
 import org.wso2.siddhi.core.event.converter.EventConverter;
 import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
@@ -27,8 +26,8 @@ import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.core.util.parser.StreamParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.input.SingleInputStream;
+import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.execution.query.input.SingleInputStream;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -69,7 +68,7 @@ public class BasicQueryCreator extends QueryCreator {
     }
 
     private void constructTempStreamDefinitionMap(){
-        if (((SingleInputStream) getInputStream()).isPartitioned()) {
+        if (((SingleInputStream) getInputStream()).isInnerStream()) {
             tempStreamDefinitionMap.put(((SingleInputStream) getInputStream()).getStreamId(), (StreamDefinition) localStreamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId()));
         } else {
             tempStreamDefinitionMap.put(((SingleInputStream) getInputStream()).getStreamId(), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId()));

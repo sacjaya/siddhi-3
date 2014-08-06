@@ -17,9 +17,9 @@ import org.wso2.siddhi.core.executor.expression.ExpressionExecutor;
 import org.wso2.siddhi.core.util.parser.ExecutorParser;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.execution.query.selection.OutputAttribute;
+import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 import org.wso2.siddhi.query.api.expression.Variable;
-import org.wso2.siddhi.query.api.query.selection.OutputAttribute;
-import org.wso2.siddhi.query.api.query.selection.Selector;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,16 +45,16 @@ public class SelectorValidator {
                     ValidatorUtil.handleVariable(var, streamDefinitionMap, null);
                 }
             }
-            if (selector.getHavingCondition() != null) {                    //Handle having condition. send only the inferred stream
+            if (selector.getHavingExpression() != null) {                    //Handle having onDeleteExpression. send only the inferred stream
                 Map<String, StreamDefinition> tempMap = new HashMap<String, StreamDefinition>(1);
                 tempMap.put(null, temp);                                     //putting with null id to avoid conflicts
-                ExecutorParser.parseCondition(selector.getHavingCondition(), null, null, tempMap, null, null);
+                ExecutorParser.parseCondition(selector.getHavingExpression(), null, null, tempMap, null, null);
             }
         } else {
             for (StreamDefinition definition : streamDefinitionMap.values()) {
                 for (Attribute attribute : definition.getAttributeList()) {
                     temp.attribute(attribute.getName(), attribute.getType());
-                    selector.select(attribute.getName(), new Variable(definition.getId(), attribute.getName())); //TODO:discuss for join
+                    selector.select(attribute.getName(), new Variable( attribute.getName()).ofStream(definition.getId())); //TODO:discuss for join
                 }
             }
         }

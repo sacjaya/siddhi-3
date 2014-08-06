@@ -19,17 +19,12 @@ package org.wso2.siddhi.query.api.expression;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
 public class Type extends Expression {
+
     private Attribute.Type type;
 
     public Type(Attribute.Type type) {
         this.type = type;
     }
-
-//    @Override
-//    protected void validate(List<QueryEventSource> queryEventSources, String streamReferenceId,
-//                            boolean processInStreamDefinition) {
-//        //nothing to validate
-//    }
 
     public Attribute.Type getType() {
         return type;

@@ -17,56 +17,84 @@
 */
 package org.wso2.siddhi.query.api.expression.constant;
 
-public class TimeConstant implements  Constant {
-
-    private long value = 0;
+public class TimeConstant extends LongConstant {
 
     public TimeConstant(long i) {
-        value = i;
+        super(i);
     }
 
-
-    public TimeConstant milliSec(int i) {
+    public TimeConstant milliSec(long i) {
         value += (long) i;
         return this;
     }
 
-    public TimeConstant sec(int i) {
+    public TimeConstant milliSec(int i) {
+        return milliSec((long) i);
+    }
+
+
+    public TimeConstant sec(long i) {
         value += ((long) i) * 1000;
         return this;
     }
 
+    public TimeConstant sec(int i) {
+        return sec((long) i);
+    }
 
-    public TimeConstant minute(int i) {
+
+    public TimeConstant minute(long i) {
         value += ((long) i) * 60 * 1000;
         return this;
     }
 
+    public TimeConstant minute(int i) {
+        return minute((long) i);
+    }
 
-    public TimeConstant hour(int i) {
+    public TimeConstant hour(long i) {
         value += ((long) i) * 60 * 60 * 1000;
         return this;
     }
 
+    public TimeConstant hour(int i) {
+        return hour((long) i);
+    }
 
-    public TimeConstant day(int i) {
+    public TimeConstant day(long i) {
         value += ((long) i) * 24 * 60 * 60 * 1000;
         return this;
     }
 
-    public TimeConstant week(int i) {
+    public TimeConstant day(int i) {
+        return day((long) i);
+    }
+
+    public TimeConstant week(long i) {
         value += ((long) i) * 7 * 24 * 60 * 60 * 1000;
         return this;
     }
 
+    public TimeConstant week(int i) {
+        return week((long) i);
+    }
+
+    public TimeConstant month(long i) {
+        value += ((long) i) * 2630000000L; //30.43.. days in a mount
+        return this;
+    }
+
     public TimeConstant month(int i) {
-        value += ((long) i) * 30* 24 * 60 * 60 * 1000;
+        return month((long) i);
+    }
+
+    public TimeConstant year(long i) {
+        value += ((long) i) * 31556900000L; //365.24.. days in a year
         return this;
     }
 
     public TimeConstant year(int i) {
-        value += ((long) i) * 365* 24 * 60 * 60 * 1000;
-        return this;
+        return year((long) i);
     }
 
     public long value() {

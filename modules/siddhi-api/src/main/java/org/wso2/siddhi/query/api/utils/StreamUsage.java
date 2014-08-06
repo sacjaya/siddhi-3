@@ -14,13 +14,13 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-
 package org.wso2.siddhi.query.api.utils;
 
 /**
  * Created by suho on 6/2/14.
  */
 public class StreamUsage {
+
     private String streamId;
 
     public StreamUsage(String streamId) {

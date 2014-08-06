@@ -18,20 +18,26 @@
 
 grammar SiddhiQL;
 
+@header {
+	//import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
+}
+
 parse
     : execution_plan EOF
     ;
 
 error
- : UNEXPECTED_CHAR 
-   { 
-     throw new RuntimeException("UNEXPECTED_CHAR=" + $UNEXPECTED_CHAR.text); 
-   }
- ;
+    : UNEXPECTED_CHAR 
+  //      {throw new SiddhiParserException("You have an error in your SiddhiQL at line " + $UNEXPECTED_CHAR.line + ", unexpected charecter '"+ $UNEXPECTED_CHAR.text +"'");}
+    ;
 
 execution_plan
-    :(definition_stream|definition_table|query|partition|error)
-        (';'  (definition_stream|definition_table|query|partition|error))* ';'? 
+    :(definition_stream|definition_table|execution_element|error)
+        (';'  (definition_stream|definition_table|execution_element|error))* ';'? 
+    ;
+
+execution_element
+    :query|partition
     ;
 
 definition_stream_final
@@ -39,7 +45,7 @@ definition_stream_final
     ;
 
 definition_stream
-    : anotation * K_DEFINE K_STREAM source '(' attribute_name type (',' attribute_name type )* ')'
+    : annotation* DEFINE STREAM source '(' attribute_name attribute_type (',' attribute_name attribute_type )* ')'
     ;
 
 definition_table_final
@@ -47,15 +53,19 @@ definition_table_final
     ;
 
 definition_table
-    : anotation * K_DEFINE K_TABLE source '(' attribute_name type (',' attribute_name type )* ')'
+    : annotation* DEFINE TABLE source '(' attribute_name attribute_type (',' attribute_name attribute_type )* ')'
     ;
 
-anotation
-    : '@' name ('(' property_name '=' property_value (',' property_name '=' property_value )* ')' )?
+annotation
+    : '@' name ('(' annotation_element (',' annotation_element )* ')' )?
+    ;
+
+annotation_element
+    :(property_name '=')? property_value
     ;
 
 partition
-    : K_PARTITION K_WITH '('partition_with_stream (','partition_with_stream)* ')' K_BEGIN (query|error) (';' (query|error))* ';'? K_END 
+    : PARTITION WITH '('partition_with_stream (','partition_with_stream)* ')' BEGIN (query|error) (';' (query|error))* ';'? END 
     ;
 
 partition_final
@@ -63,54 +73,54 @@ partition_final
     ;
 
 partition_with_stream
-    :attribute K_OF stream_id
-    |condition_ranges K_OF stream_id 
+    :attribute OF stream_id
+    |condition_ranges OF stream_id 
     ;
 
 condition_ranges
-    :condition_range (K_OR condition_range)*
+    :condition_range (OR condition_range)*
     ;
 
 condition_range
-    :condition K_AS string_value
+    :expression AS string_value
     ;
 
-definition_query_final
+query_final
     : query ';'? EOF
     ;
 
 query
-    : anotation * query_input query_section? output_rate? query_output
+    : annotation* FROM query_input query_section? output_rate? query_output
     ;
 
 query_input
-    :K_FROM (standard_stream|join_stream|pattern_stream|sequence_stream)
+    : (standard_stream|join_stream|pattern_stream|sequence_stream|anonymous_stream)
     ;
 
 standard_stream
-    : source (filter | stream_function)* window? (filter | stream_function)*
+    : source pre_window_handlers=basic_source_stream_handlers? window? post_window_handlers=basic_source_stream_handlers?
     ;
 
 join_stream
-    :left_source=join_source join right_source=join_source K_UNIDIRECTIONAL (K_ON condition)? within_time?
-    |left_source=join_source join right_source=join_source (K_ON condition)? within_time?
-    |left_source=join_source K_UNIDIRECTIONAL join right_source=join_source (K_ON condition)? within_time?
+    :left_source=join_source join right_source=join_source right_unidirectional=UNIDIRECTIONAL (ON expression)? within_time?
+    |left_source=join_source join right_source=join_source (ON expression)? within_time?
+    |left_source=join_source left_unidirectional=UNIDIRECTIONAL join right_source=join_source (ON expression)? within_time?
     ;
 
 join_source
-    :source (filter | stream_function)* window? (K_AS stream_alias)?
+    :source basic_source_stream_handlers? window? (AS stream_alias)?
     ;
 
 pattern_stream
-    :every_pattern_source_chain 
+    :every_pattern_source_chain
     ;
 
 every_pattern_source_chain
     : '('every_pattern_source_chain')' within_time? 
-    | K_EVERY '('pattern_source_chain ')' within_time?   
+    | EVERY '('pattern_source_chain ')' within_time?   
     | every_pattern_source_chain  '->' every_pattern_source_chain
     | pattern_source_chain
-    | K_EVERY pattern_source within_time? 
+    | EVERY pattern_source within_time? 
     ;
 
 pattern_source_chain
@@ -124,9 +134,9 @@ pattern_source
     ;
 
 logical_stateful_source
-    :K_NOT standard_stateful_source (K_AND standard_stateful_source) ?
-    |standard_stateful_source K_AND standard_stateful_source
-    |standard_stateful_source K_OR standard_stateful_source
+    :NOT standard_stateful_source (AND standard_stateful_source) ?
+    |standard_stateful_source AND standard_stateful_source
+    |standard_stateful_source OR standard_stateful_source
     ;
 
 pattern_collection_stateful_source
@@ -138,11 +148,19 @@ standard_stateful_source
     ;
 
 basic_source
-    : source (filter | stream_function)*
+    : source basic_source_stream_handlers?
+    ;
+
+basic_source_stream_handlers
+    :(basic_source_stream_handler)+ 
+    ;
+
+basic_source_stream_handler
+    : filter | stream_function
     ;
 
 sequence_stream
-    :K_EVERY? sequence_source_chain ',' sequence_source_chain
+    :EVERY? sequence_source_chain ',' sequence_source_chain
     ;
 
 sequence_source_chain
@@ -156,11 +174,16 @@ sequence_source
     ;
 
 sequence_collection_stateful_source
-    :standard_stateful_source ('<' collect '>'|'*'|'?'|'+') 
+    :standard_stateful_source ('<' collect '>'|zero_or_more='*'|zero_or_one='?'|one_or_more='+') 
+    ;
+
+anonymous_stream
+    : '('anonymous_stream')'
+    | FROM query_input query_section? output_rate? RETURN output_event_type?
     ;
 
 filter
-    :'#'? '['condition']'
+    :'#'? '['expression']'
     ;
 
 stream_function
@@ -168,41 +191,49 @@ stream_function
     ;
 
 window
-    :'#' K_WINDOW '.' function_operation
+    :'#' WINDOW '.' function_operation
     ;
 
 query_section
-    :(K_SELECT ('*'| (output_attribute (',' output_attribute)* )))
+    :(SELECT ('*'| (output_attribute (',' output_attribute)* ))) group_by? having?
+    ;
+
+group_by
+    : GROUP BY attribute_reference+
+    ;
+
+having
+    : HAVING expression
     ;
 
 query_output
-    :K_INSERT output_event_type? K_INTO target
-    |K_DELETE target (K_FOR output_event_type)? (K_ON condition)?
-    |K_UPDATE target (K_FOR output_event_type)? (K_ON condition)?
-    |K_RETURN
+    :INSERT output_event_type? INTO target
+    |DELETE target (FOR output_event_type)? ON expression
+    |UPDATE target (FOR output_event_type)? ON expression
+    |RETURN output_event_type?
     ;
 
 output_event_type
-    : K_ALL K_EVENTS | K_ALL K_RAW K_EVENTS | K_EXPIRED K_EVENTS | K_EXPIRED K_RAW K_EVENTS | K_CURRENT? K_EVENTS   
+    : ALL EVENTS | ALL RAW EVENTS | EXPIRED EVENTS | EXPIRED RAW EVENTS | CURRENT? EVENTS   
     ;
 
 output_rate
-    : K_OUTPUT output_rate_type? K_EVERY ( time_value | NUMBER K_EVENTS )
-    | K_OUTPUT K_SNAPSHOT K_EVERY time_value
+    : OUTPUT output_rate_type? EVERY ( time_value | INT_LITERAL EVENTS )
+    | OUTPUT SNAPSHOT EVERY time_value
     ;
 
 output_rate_type
-    : K_ALL
-    | K_LAST
-    | K_FIRST
+    : ALL
+    | LAST
+    | FIRST
     ;
 
 within_time
-    :K_WITHIN time_value
+    :WITHIN time_value
     ;
 
 output_attribute
-    :attribute K_AS attribute_name
+    :attribute AS attribute_name
     |attribute_reference
     ;
 
@@ -210,68 +241,73 @@ attribute
     :math_operation
     ;
 
-condition
+expression
     :math_operation
     ;
 
-math_operation
-    :'('math_operation')'
-    |K_NOT math_operation
-    |math_operation ('*'|'/'|'%') math_operation
-    |math_operation ('+'|'-') math_operation
-    |math_operation ('>='|'<='|'>'|'<') math_operation
-    |math_operation ('=='|'!=') math_operation
-    |math_operation K_AND math_operation
-    |math_operation K_OR math_operation  
-    |function_operation
-    |null_check
-    |attribute_reference
-    |constant_value
-    ;
 
-attribute_list
-    :attribute (','attribute)*
+math_operation
+    :'('math_operation')'                         #basic_math_operation
+    |NOT math_operation                           #not_math_operation
+    |math_operation (multiply='*'|devide='/'|mod='%') math_operation    #multiplication_math_operation
+    |math_operation (add='+'|substract='-') math_operation              #addition_math_operation
+    |math_operation (gt_eq='>='|lt_eq='<='|gt='>'|lt='<') math_operation #greaterthan_lessthan_math_operation
+    |math_operation (eq='=='|not_eq='!=') math_operation                #equality_math_operation
+    |math_operation AND math_operation            #and_math_operation
+    |math_operation OR math_operation             #or_math_operation
+    |function_operation                           #basic_math_operation
+    |null_check                                   #basic_math_operation
+    |attribute_reference                          #basic_math_operation
+    |constant_value                               #basic_math_operation
     ;
 
 function_operation
     : (function_namespace ':')? function_id '('attribute_list?')'
     ;
 
+attribute_list
+    :attribute (','attribute)*
+    ;
+
 null_check
-    :(id | attribute_reference) K_IS K_NULL
+    :( stream_reference  | attribute_reference) IS NULL
+    ;
+
+stream_reference
+    :hash='#'? name ('['attribute_index']')?
     ;
 
 attribute_reference
-    :'#'? id ('['attribute_index']')? ('#'id ('['attribute_index']')?)? '.'  attribute_name
+    : hash1='#'? name1=name ('['attribute_index1=attribute_index']')? (hash2='#' name2=name ('['attribute_index2=attribute_index']')?)? '.'  attribute_name
     | attribute_name
     ;
 
 attribute_index
-    : NUMBER| K_LAST ('-' NUMBER)?| K_PREVIOUS ('-' NUMBER)?
+    : INT_LITERAL| LAST ('-' INT_LITERAL)? 
     ;
 
 function_id
-    :id
+    :name
     ;
 
 function_namespace
-    :id
+    :name
     ;
 
 stream_id
-    :id
+    :name
     ;
 
 stream_alias
-    :id
+    :name
     ;
 
 property_name
-    : id ('.'id )*
+    : name ('.' name )*
     ;
 
 attribute_name
-    :id
+    :name
     ;
 
 property_value
@@ -279,7 +315,7 @@ property_value
     ;
 
 source
-    :'#'? stream_id
+    :inner='#'? stream_id
     ;
 
 target
@@ -287,36 +323,36 @@ target
     ;
 
 event
-    :id
+    :name
     ;
 
 name
-    :id
+    :id|keyword
     ;
 
 collect
-    : NUMBER ':' NUMBER
-    | NUMBER ':'
-    | ':' NUMBER
-    | NUMBER
+    : start=INT_LITERAL ':' end=INT_LITERAL
+    | start=INT_LITERAL ':'
+    | ':' end=INT_LITERAL
+    | INT_LITERAL
     ;
 
-type
-    :K_STRING     #StringType
-    |K_INT        #IntType
-    |K_LONG       #LongType
-    |K_FLOAT      #FloatType
-    |K_DOUBLE     #DoubleType
-    |K_BOOL       #BoolType
-    |K_OBJECT     #ObjectType
+attribute_type
+    :STRING     
+    |INT        
+    |LONG       
+    |FLOAT      
+    |DOUBLE     
+    |BOOL      
+    |OBJECT     
     ;
 
 join
-    : K_LEFT K_OUTER K_JOIN
-    | K_RIGHT K_OUTER K_JOIN
-    | K_FULL K_OUTER K_JOIN
-    | K_OUTER K_JOIN
-    | K_INNER? K_JOIN
+    : LEFT OUTER JOIN
+    | RIGHT OUTER JOIN
+    | FULL OUTER JOIN
+    | OUTER JOIN
+    | INNER? JOIN
     ;
 
 
@@ -330,7 +366,72 @@ constant_value
     |string_value
     ;
 
-id: IDENTIFIER ;
+id: ID_QUOTES|ID ;
+
+keyword
+    : STREAM
+    | DEFINE
+    | TABLE
+    | FROM
+    | PARTITION
+    | WINDOW
+    | SELECT
+    | GROUP
+    | BY
+    | HAVING
+    | INSERT
+    | DELETE
+    | UPDATE
+    | RETURN
+    | EVENTS
+    | INTO
+    | OUTPUT
+    | EXPIRED
+    | CURRENT
+    | SNAPSHOT
+    | FOR
+    | RAW
+    | OF
+    | AS
+    | OR
+    | AND
+    | ON
+    | IS
+    | NOT
+    | WITHIN
+    | WITH
+    | BEGIN
+    | END
+    | NULL
+    | EVERY
+    | LAST
+    | ALL
+    | FIRST
+    | JOIN
+    | INNER
+    | OUTER
+    | RIGHT
+    | LEFT
+    | FULL
+    | UNIDIRECTIONAL
+    | YEARS
+    | MONTHS
+    | WEEKS
+    | DAYS
+    | HOURS
+    | MINUTES
+    | SECONDS
+    | MILLISECONDS
+    | FALSE
+    | TRUE
+    | STRING
+    | INT
+    | LONG
+    | FLOAT
+    | DOUBLE
+    | BOOL
+    | OBJECT
+    ;
 
 time_value
     :  year_value  ( month_value)? ( week_value)? ( day_value)? ( hour_value)? ( minute_value)? ( second_value)?  ( millisecond_value)?
@@ -344,48 +445,46 @@ time_value
     ;
 
 year_value 
-    : NUMBER K_YEAR
+    : INT_LITERAL YEARS
     ;
 
 month_value
-    : NUMBER K_MONTH
+    : INT_LITERAL MONTHS
     ;
 
 week_value
-    : NUMBER K_WEEK
+    : INT_LITERAL WEEKS
     ;
 
 day_value
-    : NUMBER K_DAY
+    : INT_LITERAL DAYS
     ;
 
 hour_value
-    : NUMBER K_HOUR
+    : INT_LITERAL HOURS
     ;
 
 minute_value
-    : NUMBER K_MINUTE
+    : INT_LITERAL MINUTES
     ;
 
 second_value
-    : NUMBER K_SECOND
+    : INT_LITERAL SECONDS
     ;
 
 millisecond_value
-    : NUMBER K_MILLISECOND
+    : INT_LITERAL MILLISECONDS
     ;
 
-signed_double_value: (negative='-' |'+')? DOUBLE_LITERAL;
-signed_long_value: (negative='-' |'+')? LONG_LITERAL;
-signed_float_value: (negative='-' |'+')? FLOAT_LITERAL;
-signed_int_value: (negative='-' |'+')? (INT_LITERAL|NUMBER);
-bool_value: K_TRUE|K_FALSE;
+signed_double_value: ('-' |'+')? DOUBLE_LITERAL;
+signed_long_value: ('-' |'+')? LONG_LITERAL;
+signed_float_value: ('-' |'+')? FLOAT_LITERAL;
+signed_int_value: ('-' |'+')? INT_LITERAL;
+bool_value: TRUE|FALSE;
 string_value: STRING_LITERAL;
 
-NUMBER : DIGIT+;
-
-INT_LITERAL
-    : DIGIT+ I?
+INT_LITERAL 
+    :  DIGIT+
     ;
 
 LONG_LITERAL
@@ -441,70 +540,68 @@ AT: '@';
 FOLLOWED_BY:'->';
 HASH:'#';
 
-K_STREAM:   S T R E A M;
-K_DEFINE:   D E F I N E;
-K_TABLE:    T A B L E;
-K_FROM:     F R O M;
-K_PARTITION:    P A R T I T I O N; 
-K_WINDOW:   W I N D O W;
-K_SELECT:   S E L E C T;
-K_INSERT:   I N S E R T;
-K_DELETE:   D E L E T E;
-K_UPDATE:   U P D A T E;
-K_RETURN:   R E T U R N;
-K_EVENTS:   E V E N T S;
-K_INTO:     I N T O;
-K_OUTPUT:   O U T P U T;
-K_EXPIRED:  E X P I R E D;
-K_CURRENT:  C U R R E N T;
-K_SNAPSHOT: S N A P S H O T;
-K_FOR:      F O R;
-K_RAW:      R A W;
-K_OF:       O F;
-K_AS:       A S;
-K_OR:       O R;
-K_AND:      A N D;
-K_ON:       O N;
-K_IS:       I S;
-K_NOT:      N O T;
-K_WITHIN:   W I T H I N;
-K_WITH:     W I T H; 
-K_BEGIN:    B E G I N;
-K_END:      E N D;
-K_NULL:     N U L L;
-K_EVERY:    E V E R Y;
-K_LAST:     L A S T;
-K_ALL:      A L L;
-K_FIRST:    F I R S T;
-K_PREVIOUS: P R E V (I O U S)?;
-K_JOIN:     J O I N;
-K_INNER:    I N N E R;
-K_OUTER:    O U T E R;
-K_RIGHT:    R I G H T;
-K_LEFT:     L E F T;
-K_FULL:     F U L L;
-K_UNIDIRECTIONAL: U N I D I R E C T I O N A L;
-K_YEAR:     Y E A R S?;
-K_MONTH:    M O N T H S?;
-K_WEEK:     W E E K S?;
-K_DAY:      D A Y S?;
-K_HOUR:     H O U R S?;
-K_MINUTE:   M I N (U T E S?)?;
-K_SECOND:  S E C (O N D S?)?;
-K_MILLISECOND: M I L L I S E C (O N D S?)?;
-K_FALSE:    F A L S E;
-K_TRUE:     T R U E;
-K_STRING:   S T R I N G;
-K_INT:  I N T;
-K_LONG:     L O N G;
-K_FLOAT:    F L O A T;
-K_DOUBLE:   D O U B L E;
-K_BOOL:     B O O L;
-K_OBJECT:   O B J E C T;
-
-IDENTIFIER
- : ID_QUOTES|ID
- ;
+STREAM:   S T R E A M;
+DEFINE:   D E F I N E;
+TABLE:    T A B L E;
+FROM:     F R O M;
+PARTITION:    P A R T I T I O N; 
+WINDOW:   W I N D O W;
+SELECT:   S E L E C T;
+GROUP:    G R O U P;
+BY:       B Y;
+HAVING:   H A V I N G;
+INSERT:   I N S E R T;
+DELETE:   D E L E T E;
+UPDATE:   U P D A T E;
+RETURN:   R E T U R N;
+EVENTS:   E V E N T S;
+INTO:     I N T O;
+OUTPUT:   O U T P U T;
+EXPIRED:  E X P I R E D;
+CURRENT:  C U R R E N T;
+SNAPSHOT: S N A P S H O T;
+FOR:      F O R;
+RAW:      R A W;
+OF:       O F;
+AS:       A S;
+OR:       O R;
+AND:      A N D;
+ON:       O N;
+IS:       I S;
+NOT:      N O T;
+WITHIN:   W I T H I N;
+WITH:     W I T H; 
+BEGIN:    B E G I N;
+END:      E N D;
+NULL:     N U L L;
+EVERY:    E V E R Y;
+LAST:     L A S T;
+ALL:      A L L;
+FIRST:    F I R S T;
+JOIN:     J O I N;
+INNER:    I N N E R;
+OUTER:    O U T E R;
+RIGHT:    R I G H T;
+LEFT:     L E F T;
+FULL:     F U L L;
+UNIDIRECTIONAL: U N I D I R E C T I O N A L;
+YEARS:     Y E A R S?;
+MONTHS:    M O N T H S?;
+WEEKS:     W E E K S?;
+DAYS:      D A Y S?;
+HOURS:     H O U R S?;
+MINUTES:   M I N (U T E S?)?;
+SECONDS:  S E C (O N D S?)?;
+MILLISECONDS: M I L L I S E C (O N D S?)?;
+FALSE:    F A L S E;
+TRUE:     T R U E;
+STRING:   S T R I N G;
+INT:  I N T;
+LONG:     L O N G;
+FLOAT:    F L O A T;
+DOUBLE:   D O U B L E;
+BOOL:     B O O L;
+OBJECT:   O B J E C T;
 
 ID_QUOTES : '`'[a-zA-Z_] [a-zA-Z_0-9]*'`' {setText(getText().substring(1, getText().length()-1));};
 

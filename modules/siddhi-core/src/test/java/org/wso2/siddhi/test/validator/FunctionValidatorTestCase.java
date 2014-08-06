@@ -18,11 +18,13 @@ import org.junit.Test;
 import org.wso2.siddhi.core.config.ExecutionPlan;
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.util.validate.QueryValidator;
-import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.execution.query.input.InputStream;
+import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.query.Query;
+import org.wso2.siddhi.query.api.expression.condition.Compare;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,18 +55,18 @@ public class FunctionValidatorTestCase {
         query = new Query();
 
         query.from(
-                Query.inputStream("StockStream").
-                        filter(Condition.and(Condition.compare(Expression.value(9.5),
-                                                Condition.Operator.GREATER_THAN,
+                InputStream.stream("StockStream").
+                        filter(Expression.and(Expression.compare(Expression.value(9.5),
+                                                Compare.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
-                                        Condition.function("isMatch", Expression.value("[^0-9]+"),
+                                        Expression.function("isMatch", Expression.value("[^0-9]+"),
                                                 Expression.variable("volume")
                                         )
                                 )
                         )
         );
         query.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price"))
         );

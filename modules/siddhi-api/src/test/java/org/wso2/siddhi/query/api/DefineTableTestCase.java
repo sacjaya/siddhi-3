@@ -17,6 +17,7 @@
 package org.wso2.siddhi.query.api;
 
 import org.junit.Test;
+import org.wso2.siddhi.query.api.annotation.Annotation;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.TableDefinition;
 import org.wso2.siddhi.query.api.exception.AttributeAlreadyExistException;
@@ -40,7 +41,7 @@ public class DefineTableTestCase {
 
     @Test
     public void testCreatingSQLTableDefinition() {
-        TableDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).with("datasource.id", "cepDataSource");
+        TableDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).annotation(Annotation.annotation("Foo").element("datasource.id", "cepDataSource"));
     }
 
 

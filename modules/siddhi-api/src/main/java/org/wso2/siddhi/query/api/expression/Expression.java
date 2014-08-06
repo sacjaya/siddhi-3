@@ -18,13 +18,14 @@ package org.wso2.siddhi.query.api.expression;
 
 
 import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.expression.condition.*;
 import org.wso2.siddhi.query.api.expression.constant.*;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import org.wso2.siddhi.query.api.expression.function.AttributeFunction;
+import org.wso2.siddhi.query.api.expression.function.AttributeFunctionExtension;
+import org.wso2.siddhi.query.api.expression.math.*;
 
 public abstract class Expression {
+
     public static StringConstant value(String value) {
         return new StringConstant(value);
     }
@@ -49,16 +50,16 @@ public abstract class Expression {
         return new BoolConstant(value);
     }
 
-    public static Variable variable(String streamId, String attributeName) {
-        return new Variable(streamId, attributeName);
+    public static Variable variable(String attributeName) {
+        return new Variable( attributeName);
     }
 
     public static Add add(Expression leftValue, Expression rightValue) {
         return new Add(leftValue, rightValue);
     }
 
-    public static Minus minus(Expression leftValue, Expression rightValue) {
-        return new Minus(leftValue, rightValue);
+    public static Subtract subtract(Expression leftValue, Expression rightValue) {
+        return new Subtract(leftValue, rightValue);
     }
 
     public static Multiply multiply(Expression leftValue, Expression rightValue) {
@@ -73,18 +74,6 @@ public abstract class Expression {
         return new Mod(leftValue, rightValue);
     }
 
-    public static Variable variable(String attributeName) {
-        return new Variable(null, attributeName);
-    }
-
-    //   public abstract Attribute.Type getType();
-
-    //  public abstract void inferType(Map<String, StreamDefinition> streamTableDefinitionMap);
-
-    public static Variable variable(String streamId, int position, String attributeName) {
-        return new Variable(streamId, position, attributeName);
-    }
-
     public static Expression function(String extensionNamespace, String extensionFunctionName,
                                       Expression... expressions) {
         return new AttributeFunctionExtension(extensionNamespace, extensionFunctionName, expressions);
@@ -94,14 +83,116 @@ public abstract class Expression {
         return new AttributeFunction(functionName, expressions);
     }
 
+    public static Expression compare(Expression leftExpression, Compare.Operator operator,
+                                    Expression rightExpression) {
+        return new Compare(leftExpression, operator, rightExpression);
+    }
+
+    public static Expression in(Expression leftExpression, String streamId) {
+        return new In(leftExpression, streamId);
+    }
+
+    public static Expression and(Expression leftExpression, Expression rightExpression) {
+        return new And(leftExpression, rightExpression);
+    }
+
+    public static Expression or(Expression leftExpression, Expression rightExpression) {
+        return new Or(leftExpression, rightExpression);
+    }
+
+    public static Expression not(Expression Expression) {
+        return new Not(Expression);
+    }
+
+    public static Expression isNull(Variable variable) {
+        return new IsNull(variable);
+    }
+
+    public static Expression isNullStream(String streamId) {
+        return new IsNull(streamId, null, false);
+    }
+
+    public static Expression isNullStream(String streamId, int streamIndex) {
+        return new IsNull(streamId, streamIndex, false);
+    }
+
+    public static Expression isNullInnerStream(String streamId) {
+        return new IsNull(streamId, null, true);
+    }
+
+    public static Expression isNullInnerStream(String streamId, int streamIndex) {
+        return new IsNull(streamId, streamIndex, true);
+    }
+
     public static Type type(Attribute.Type type) {
         return new Type(type);
     }
 
-//    protected abstract void validate(List<QueryEventSource> queryEventSources,
-//                                     String streamReferenceId, boolean processInStreamDefinition);
+    public abstract static class Time {
 
-    protected Map<String, Set<String>> getDependency() {
-        return new HashMap<String, Set<String>>();
+        public static TimeConstant milliSec(long i) {
+            return new TimeConstant((long) i);
+        }
+
+        public static TimeConstant milliSec(int i) {
+            return milliSec((long) i);
+        }
+
+        public static TimeConstant sec(long i) {
+            return new TimeConstant(((long) i) * 1000);
+        }
+
+        public static TimeConstant sec(int i) {
+            return sec((long) i);
+        }
+
+        public static TimeConstant minute(long i) {
+            return new TimeConstant(((long) i) * 60 * 1000);
+        }
+
+        public static TimeConstant minute(int i) {
+            return minute((long) i);
+        }
+
+        public static TimeConstant hour(long i) {
+            return new TimeConstant(((long) i) * 60 * 60 * 1000);
+        }
+
+        public static TimeConstant hour(int i) {
+            return hour((long) i);
+        }
+
+        public static TimeConstant day(long i) {
+            return new TimeConstant(((long) i) * 24 * 60 * 60 * 1000);
+        }
+
+        public static TimeConstant day(int i) {
+            return day((long) i);
+        }
+
+        public static TimeConstant week(long i) {
+            return new TimeConstant(((long) i) * 7 * 24 * 60 * 60 * 1000);
+        }
+
+        public static TimeConstant week(int i) {
+            return week((long) i);
+        }
+
+        public static TimeConstant month(long i) {
+            return new TimeConstant(((long) i) * 30 * 24 * 60 * 60 * 1000);
+        }
+
+        public static TimeConstant month(int i) {
+            return month((long) i);
+        }
+
+        public static TimeConstant year(long i) {
+            return new TimeConstant(((long) i) * 365 * 24 * 60 * 60 * 1000);
+        }
+
+        public static TimeConstant year(int i) {
+            return year((long) i);
+        }
+
     }
 }

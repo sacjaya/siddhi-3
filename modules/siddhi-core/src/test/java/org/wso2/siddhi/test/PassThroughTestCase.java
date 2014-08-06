@@ -32,11 +32,13 @@ import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.core.util.validate.QueryValidator;
 import org.wso2.siddhi.core.util.validate.StreamValidator;
 import org.wso2.siddhi.query.api.ExecutionPlan;
+import org.wso2.siddhi.query.api.annotation.Annotation;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.exception.CreateExecutionPlanException;
+import org.wso2.siddhi.query.api.execution.query.input.InputStream;
+import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.query.Query;
+import org.wso2.siddhi.query.api.execution.query.Query;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,7 +57,7 @@ public class PassThroughTestCase {
 
 
     @Test
-    public void streamCallbackTest() throws InterruptedException, CreateExecutionPlanException {
+    public void streamCallbackTest() throws InterruptedException {
 
         log.info("stream callback test");
 
@@ -86,7 +88,7 @@ public class PassThroughTestCase {
 
 
     @Test
-    public void testPassThroughQuery() throws InterruptedException, ValidatorException, CreateExecutionPlanException {
+    public void testPassThroughQuery() throws InterruptedException, ValidatorException {
         log.info("Pass through query");
 
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -96,10 +98,9 @@ public class PassThroughTestCase {
         executionPlan.defineStream(streamDefinition);
 
         Query query = new Query();
-        query.from(Query.inputStream("cseEventStream"));
-        query.property("name", "query1");
+        query.from(InputStream.stream("cseEventStream"));
         query.select(
-                query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -145,7 +146,7 @@ public class PassThroughTestCase {
 
 
     @Test
-    public void testPassThroughQuery2() throws InterruptedException, ValidatorException, CreateExecutionPlanException {
+    public void testPassThroughQuery2() throws InterruptedException, ValidatorException {
         log.info("Pass through query 2");
 
         SiddhiManager siddhiManager = new SiddhiManager();
@@ -155,10 +156,10 @@ public class PassThroughTestCase {
         executionPlan.defineStream(streamDefinition);
 
         Query query = new Query();
-        query.property("name","query1");
-        query.from(Query.inputStream("cseEventStream"));
+        query.annotation(Annotation.annotation("info").element("name", "query1"));
+        query.from(InputStream.stream("cseEventStream"));
         query.select(
-                query.outputSelector().
+                Selector.selector().
                         select("volume", Expression.variable("volume"))
         ) ;
         query.insertInto("StockQuote");

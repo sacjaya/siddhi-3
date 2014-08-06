@@ -5,7 +5,7 @@ import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.condition.Condition.Operator;
-import org.wso2.siddhi.query.api.partition.PartitionDefinition;
+import org.wso2.siddhi.query.api.execution.partition.PartitionDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;

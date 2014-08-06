@@ -29,12 +29,6 @@ public class DoubleConstant extends Expression implements Constant {
         return value;
     }
 
-//    @Override
-//    protected void validate(List<QueryEventSource> queryEventSources, String streamReferenceId,
-//                            boolean processInStreamDefinition) {
-//        //nothing to validate
-//    }
-
     @Override
     public String toString() {
         return "DoubleConstant{" +

@@ -20,17 +20,20 @@ package org.wso2.siddhi.core.query;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
+import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.query.output.callback.InsertIntoStreamCallback;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.PartitionHandlerProcessor;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.input.InputHandler;
+import org.wso2.siddhi.query.api.annotation.Annotation;
+import org.wso2.siddhi.query.api.annotation.Element;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.definition.TableDefinition;
-import org.wso2.siddhi.query.api.partition.Partition;
-import org.wso2.siddhi.query.api.query.Query;
+import org.wso2.siddhi.query.api.execution.partition.Partition;
+import org.wso2.siddhi.query.api.execution.query.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,11 +58,22 @@ public class PartitionRuntime {
 
 
     public PartitionRuntime(Partition partition, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, InputHandler> inputHandlerMap, SiddhiContext siddhiContext) {
-        if (partition.getPropertyValue("name") == null) {
-           partition.property("name", UUID.randomUUID().toString());
+        List<Annotation> annotations = partition.getAnnotations("info");
+        if (annotations.size() > 0) {
+            if (annotations.size() > 1) {
+                throw new QueryCreationException("Annotation @info is defined twice for the same Partition " + partition.toString());
+            }
+            List<Element> elementList = annotations.get(0).getElements("name");
+            if (elementList.size() > 0) {
+                if (elementList.size() > 1) {
+                    throw new QueryCreationException("Annotation element @info(name=...) is defined twice for the same Partition " + partition.toString());
+                }
+                this.partitionId = elementList.get(0).getValue();
+            }
         }
-
-        this.partitionId = partition.getPropertyValue("name");
+        if (partitionId == null) {
+            this.partitionId = UUID.randomUUID().toString();
+        }
         this.streamDefinitionMap = streamDefinitionMap;
         this.streamJunctionMap = streamJunctionMap;
         this.inputHandlerMap = inputHandlerMap;

@@ -15,14 +15,13 @@ package org.wso2.siddhi.core.util.validate;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.util.parser.ExecutorParser;
-import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.query.input.*;
-import org.wso2.siddhi.query.api.query.input.handler.Filter;
-import org.wso2.siddhi.query.api.query.input.handler.StreamFunction;
-import org.wso2.siddhi.query.api.query.input.handler.StreamHandler;
-import org.wso2.siddhi.query.api.query.input.handler.Window;
+import org.wso2.siddhi.query.api.execution.query.input.*;
+import org.wso2.siddhi.query.api.execution.query.input.handler.Filter;
+import org.wso2.siddhi.query.api.execution.query.input.handler.StreamFunction;
+import org.wso2.siddhi.query.api.execution.query.input.handler.StreamHandler;
+import org.wso2.siddhi.query.api.execution.query.input.handler.Window;
 
 import java.util.Map;
 
@@ -42,7 +41,7 @@ public class InStreamValidator {
             SiddhiContext mockSiddhiContext = new SiddhiContext("testID", SiddhiContext.ProcessingState.DISABLED);
             for (StreamHandler handler : ((SingleInputStream) inputStream).getStreamHandlers()) {
                 if (handler instanceof Filter) {
-                    Condition condition = ((Filter) handler).getFilterCondition();
+                    Expression condition = ((Filter) handler).getFilterExpression();
                     //ValidatorUtil.validateCondition(condition, tempDefinitionMap, defaultDefinition);
                     ExecutorParser.parseCondition(condition, defaultDefinition, mockSiddhiContext, tempDefinitionMap, null, null);
                 } else if (handler instanceof Window) {

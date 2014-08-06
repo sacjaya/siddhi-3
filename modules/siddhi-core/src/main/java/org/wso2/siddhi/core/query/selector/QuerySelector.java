@@ -29,10 +29,9 @@ import org.wso2.siddhi.core.query.selector.attribute.processor.PassThroughAttrib
 import org.wso2.siddhi.core.util.parser.ExecutorParser;
 import org.wso2.siddhi.query.api.definition.FunctionAttribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.expression.AttributeFunction;
+import org.wso2.siddhi.query.api.execution.query.selection.OutputAttribute;
+import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 import org.wso2.siddhi.query.api.expression.Variable;
-import org.wso2.siddhi.query.api.query.selection.OutputAttribute;
-import org.wso2.siddhi.query.api.query.selection.Selector;
 
 import java.util.ArrayList;
 import java.util.List;

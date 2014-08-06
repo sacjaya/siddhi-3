@@ -16,6 +16,7 @@
  */
 package org.wso2.siddhi.query.api.definition;
 
+import org.wso2.siddhi.query.api.annotation.Annotation;
 import org.wso2.siddhi.query.api.exception.AttributeAlreadyExistException;
 import org.wso2.siddhi.query.api.exception.AttributeNotExistException;
 
@@ -26,12 +27,30 @@ public abstract class AbstractDefinition {
 
     protected String id;
     protected List<Attribute> attributeList = new ArrayList<Attribute>();
+    protected List<Annotation> annotations = new ArrayList<Annotation>();
 
     protected AbstractDefinition() {
+
     }
 
     protected AbstractDefinition(String id) {
         this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public List<Attribute> getAttributeList() {
+        return attributeList;
+    }
+
+    public List<Annotation> getAnnotations() {
+        return annotations;
     }
 
     protected void checkAttribute(String attributeName) {
@@ -40,10 +59,6 @@ public abstract class AbstractDefinition {
                 throw new AttributeAlreadyExistException(attributeName + " is already defined for with type " + attribute.getType() + " for " + id);
             }
         }
-    }
-
-    public List<Attribute> getAttributeList() {
-        return attributeList;
     }
 
     public Attribute.Type getAttributeType(String attributeName) {
@@ -75,25 +90,39 @@ public abstract class AbstractDefinition {
         return attributeNameArray;
     }
 
-    public String getId() {
-        return id;
+    public static Annotation annotation(String name) {
+        return new Annotation(name);
     }
 
-    public void setId(String id) {
-        this.id = id;
+    @Override
+    public String toString() {
+        return "AbstractDefinition{" +
+                "id='" + id + '\'' +
+                ", attributeList=" + attributeList +
+                ", annotations=" + annotations +
+                '}';
     }
 
-    public boolean equals(Object obj) {
-        AbstractDefinition temp = (AbstractDefinition) obj;
-        if (!(temp.getId().equals(this.getId()))) {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AbstractDefinition)) return false;
+
+        AbstractDefinition that = (AbstractDefinition) o;
+
+        if (annotations != null ? !annotations.equals(that.annotations) : that.annotations != null) return false;
+        if (attributeList != null ? !attributeList.equals(that.attributeList) : that.attributeList != null)
             return false;
-        }
-        for (Attribute attribute : attributeList) {
-            if (!temp.getAttributeList().contains(attribute)) {
-                return false;
-            }
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
 
-        }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (attributeList != null ? attributeList.hashCode() : 0);
+        result = 31 * result + (annotations != null ? annotations.hashCode() : 0);
+        return result;
     }
 }

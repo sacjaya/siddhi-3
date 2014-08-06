@@ -16,19 +16,21 @@
  */
 package org.wso2.siddhi.query.api;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.wso2.siddhi.query.api.annotation.Annotation;
+import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.exception.AttributeAlreadyExistException;
-import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.query.api.exception.CreateExecutionPlanException;
 
 public class DefineStreamTestCase {
 
     //define stream StockStream (symbol string, price int, volume float );
 
     @Test
-    public void testCreatingStreamDefinition() throws CreateExecutionPlanException {
+    public void testCreatingStreamDefinition() {
         ExecutionPlan.executionPlan("Test").defineStream(StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT));
+
 
     }
 
@@ -39,8 +41,21 @@ public class DefineStreamTestCase {
     }
 
     @Test
-    public void testCreatingStreamDefinition2() {
+    public void testCreatingStreamDefinitionWithObject() {
         StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).attribute("data", Attribute.Type.OBJECT);
+    }
+
+    @Test
+    public void testAnnotatingStreamDefinition() {
+        ExecutionPlan.executionPlan("Test").defineStream(StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).annotation(Annotation.annotation("distribute").element("true")));
+
+    }
+
+    @Test
+    public void testAttribute() {
+        StreamDefinition streamDefinition=StreamDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT);
+        Assert.assertEquals(1, streamDefinition.getAttributePosition("price"));
+        Assert.assertEquals(Attribute.Type.FLOAT, streamDefinition.getAttributeType("volume"));
     }
 
 }

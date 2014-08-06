@@ -12,7 +12,7 @@
  */
 package org.wso2.siddhi.query.api.exception;
 
-public abstract class ExecutionPlanValidationException extends RuntimeException {
+public class ExecutionPlanValidationException extends RuntimeException {
 
     public ExecutionPlanValidationException(String message) {
         super(message);
