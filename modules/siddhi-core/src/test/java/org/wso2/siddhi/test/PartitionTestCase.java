@@ -121,11 +121,12 @@ public class PartitionTestCase {
                 with("cseEventStream", Expression.variable("symbol"));
 
         Query query = Query.query().property("name","queryyy");
-        query.from(Query.inputStream("cseEventStream").
-                filter(Condition.compare(Expression.value(700),
-                        Condition.Operator.GREATER_THAN,
-                        Expression.variable("price"))
-                )
+        query.from(Query.inputStream("cseEventStream")
+//                .
+//                filter(Condition.compare(Expression.value(700),
+//                        Condition.Operator.GREATER_THAN,
+//                        Expression.variable("price"))
+//                )
         );
         query.select(
                 Query.outputSelector().
@@ -665,7 +666,10 @@ public class PartitionTestCase {
         inputHandler3.send(new Object[]{"KLM", 75.6f, 100});
         inputHandler3.send(new Object[]{"ABC", 75.6f, 100});
 
-        Thread.sleep(20000);
+        Thread.sleep(30000);
+        siddhiManager.removeExecutionPlan(executionPlan);
+                            inputHandler3.send(new Object[]{"ABC", 75.6f, 100});
+
         siddhiManager.shutdown();
         Assert.assertEquals(16, count);
         Assert.assertEquals(8, stockStreamEventCount);
