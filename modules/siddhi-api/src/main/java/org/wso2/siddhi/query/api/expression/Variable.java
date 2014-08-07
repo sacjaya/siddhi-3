@@ -121,7 +121,7 @@ public class Variable extends Expression {
     @Override
     public String toString() {
         return "Variable{" +
-                "streamId='" + streamId + '\'' +
+                "id='" + streamId + '\'' +
                 ", isInnerStream=" + isInnerStream +
                 ", streamIndex=" + streamIndex +
                 ", functionId='" + functionId + '\'' +

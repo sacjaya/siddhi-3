@@ -137,12 +137,12 @@ public class QueryRuntime {
 
 //    public void removeQuery(ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap) {
 //        for (HandlerProcessor queryStreamProcessor : handlerProcessors) {
-//            StreamJunction junction = streamJunctionMap.get(queryStreamProcessor.getStreamId());
+//            StreamJunction junction = streamJunctionMap.get(queryStreamProcessor.getId());
 //            if (junction != null) {
 //                junction.removeEventFlow(queryStreamProcessor);
 //            }
 //        }
-//        streamDefinitionMap.remove(query.getOutputStream().getStreamId());
+//        streamDefinitionMap.remove(query.getOutputStream().getId());
 //    }
 
     public StreamDefinition getOutputStreamDefinition() {
@@ -214,7 +214,7 @@ public class QueryRuntime {
                 junction.removeEventFlow(queryStreamProcessor);
             }
         }
-        streamDefinitionMap.remove(query.getOutputStream().getStreamId());
+        streamDefinitionMap.remove(query.getOutputStream().getId());
     }
 
 }

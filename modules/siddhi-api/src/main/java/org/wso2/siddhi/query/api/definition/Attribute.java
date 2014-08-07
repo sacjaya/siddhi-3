@@ -22,7 +22,7 @@ public class Attribute {
     private Type type;
 
     public enum Type {
-        STRING, INT, LONG, FLOAT, DOUBLE, BOOL, OBJECT, TYPE
+        STRING, INT, LONG, FLOAT, DOUBLE, BOOL, OBJECT
     }
 
     public Attribute(String name, Type type) {

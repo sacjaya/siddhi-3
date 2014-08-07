@@ -18,7 +18,7 @@ package org.wso2.siddhi.query.api.definition;
  * Used in MetaStreamEvent
  */
 public class FunctionAttribute extends Attribute {
-
+           //todo check
     private Boolean isInitialized;
 
     public FunctionAttribute(Boolean initialized) {

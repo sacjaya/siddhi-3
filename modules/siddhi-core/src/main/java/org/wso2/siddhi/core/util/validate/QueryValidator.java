@@ -105,7 +105,7 @@ public class QueryValidator {
      */
     private static void validateOutStream(OutputStream outputStream, Map<String, StreamDefinition> relevantDefinitionMap, Map<String, StreamDefinition> definitionMap) throws ValidatorException {
         StreamDefinition definition = relevantDefinitionMap.get(null);
-        definition.setId(outputStream.getStreamId());
+        definition.setId(outputStream.getId());
         StreamValidator.validate(definitionMap, definition);
         definitionMap.put(definition.getId(), definition);
     }

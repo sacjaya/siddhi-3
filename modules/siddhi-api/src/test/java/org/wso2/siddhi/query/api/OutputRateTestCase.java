@@ -17,12 +17,12 @@
 package org.wso2.siddhi.query.api;
 
 import org.junit.Test;
+import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.api.execution.query.input.InputStream;
+import org.wso2.siddhi.query.api.execution.query.output.ratelimit.OutputRate;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.expression.condition.Compare;
-import org.wso2.siddhi.query.api.execution.query.Query;
-import org.wso2.siddhi.query.api.execution.query.output.Output;
 
 public class OutputRateTestCase {
 
@@ -52,7 +52,7 @@ public class OutputRateTestCase {
                         ))
         );
 
-        query.output(Output.perEvents(Expression.value(5)).output(Output.Type.ALL));
+        query.output(OutputRate.perEvents(Expression.value(5)).output(OutputRate.Type.ALL));
         query.insertInto("StockQuote");
 
     }
@@ -83,7 +83,7 @@ public class OutputRateTestCase {
                         ))
         );
 
-        query.output(Output.perTimePeriod(Expression.value(1000l)).output(Output.Type.LAST));
+        query.output(OutputRate.perTimePeriod(Expression.value(1000l)).output(OutputRate.Type.LAST));
         query.insertInto("StockQuote");
 
     }
@@ -114,7 +114,7 @@ public class OutputRateTestCase {
                         ))
         );
 
-        query.output(Output.perTimePeriod(Expression.Time.minute(1)).output(Output.Type.LAST));
+        query.output(OutputRate.perTimePeriod(Expression.Time.minute(1)).output(OutputRate.Type.LAST));
         query.insertInto("StockQuote");
 
     }
@@ -145,7 +145,7 @@ public class OutputRateTestCase {
                         ))
         );
 
-        query.output(Output.perSnapshot(Expression.Time.minute(1)));
+        query.output(OutputRate.perSnapshot(Expression.Time.minute(1)));
         query.insertInto("StockQuote");
 
     }

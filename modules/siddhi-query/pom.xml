@@ -12,6 +12,7 @@
     <packaging>bundle</packaging>
 
     <artifactId>siddhi-query</artifactId>
+    <!--todo rename query-compiler-->
     <name>Siddhi Query</name>
 
     <dependencies>

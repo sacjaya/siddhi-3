@@ -91,7 +91,7 @@ public class RangePartitionType implements PartitionType {
     @Override
     public String toString() {
         return "RangePartitionType{" +
-                "streamId='" + streamId + '\'' +
+                "id='" + streamId + '\'' +
                 ", rangePartitionProperties=" + Arrays.toString(rangePartitionProperties) +
                 '}';
     }

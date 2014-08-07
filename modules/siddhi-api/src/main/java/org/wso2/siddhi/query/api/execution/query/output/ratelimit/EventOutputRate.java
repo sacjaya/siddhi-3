@@ -15,28 +15,32 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.query.api.execution.query.output;
+package org.wso2.siddhi.query.api.execution.query.output.ratelimit;
 
-public class SnapshotOutputRate implements OutputRate {
+public class EventOutputRate extends OutputRate {
+    private Integer value;
+    private OutputRate.Type type = OutputRate.Type.ALL;
 
-    private Long value;
-    private Output.Type type = Output.Type.ALL;
-
-    public SnapshotOutputRate(Long value) {
+    public EventOutputRate(Integer value) {
         this.value = value;
     }
 
-    public Long getValue() {
+    public OutputRate output(OutputRate.Type type) {
+        this.type = type;
+        return this;
+    }
+
+    public Integer getValue() {
         return value;
     }
 
-    public Output.Type getType() {
+    public OutputRate.Type getType() {
         return type;
     }
 
     @Override
     public String toString() {
-        return "SnapshotOutputRate{" +
+        return "EventOutputRate{" +
                 "value=" + value +
                 ", type=" + type +
                 '}';
@@ -45,9 +49,9 @@ public class SnapshotOutputRate implements OutputRate {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SnapshotOutputRate)) return false;
+        if (!(o instanceof EventOutputRate)) return false;
 
-        SnapshotOutputRate that = (SnapshotOutputRate) o;
+        EventOutputRate that = (EventOutputRate) o;
 
         if (type != that.type) return false;
         if (value != null ? !value.equals(that.value) : that.value != null) return false;

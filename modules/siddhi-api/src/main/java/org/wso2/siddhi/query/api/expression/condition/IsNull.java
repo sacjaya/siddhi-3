@@ -55,7 +55,7 @@ public class IsNull extends Expression {
     @Override
     public String toString() {
         return "IsNull{" +
-                "streamId='" + streamId + '\'' +
+                "id='" + streamId + '\'' +
                 ", streamIndex=" + streamIndex +
                 ", isInnerStream=" + isInnerStream +
                 ", expression=" + expression +

@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.query.api.execution.query.output;
+package org.wso2.siddhi.query.api.execution.query.output.ratelimit;
 
 import org.wso2.siddhi.query.api.exception.UnsupportedAttributeTypeException;
 import org.wso2.siddhi.query.api.expression.constant.Constant;
@@ -23,7 +23,7 @@ import org.wso2.siddhi.query.api.expression.constant.IntConstant;
 import org.wso2.siddhi.query.api.expression.constant.LongConstant;
 import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
 
-public abstract class Output {
+public abstract class OutputRate {
 
     public enum Type {
         ALL, FIRST, LAST, SNAPSHOT
