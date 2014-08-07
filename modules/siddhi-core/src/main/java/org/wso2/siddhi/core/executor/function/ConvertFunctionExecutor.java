@@ -17,7 +17,6 @@ import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.executor.expression.ConstantExpressionExecutor;
 import org.wso2.siddhi.core.executor.expression.ExpressionExecutor;
-import org.wso2.siddhi.core.executor.expression.TypeExpressionExecutor;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
 import java.text.ParseException;
@@ -53,13 +52,13 @@ public class ConvertFunctionExecutor extends FunctionExecutor {
             throw new QueryCreationException("Convert has to have 2 to 4 expressions; attribute, to converted type and 1 or 2 optional formats, but " + attributeSize + " expressions provided!");
         }
         variableExecutor = attributeExpressionExecutors.get(0);
-        if (variableExecutor instanceof TypeExpressionExecutor) {
-            throw new QueryCreationException("Convert's 1st expression should not be the to converted type, it has to be the value that need tobe converted");
-        }
+//        if (variableExecutor instanceof TypeExpressionExecutor) {
+//            throw new QueryCreationException("Convert's 1st expression should not be the to converted type, it has to be the value that need tobe converted");
+//        }
         ExpressionExecutor typeExpression = attributeExpressionExecutors.get(1);
-        if (!(typeExpression instanceof TypeExpressionExecutor)) {
-            throw new QueryCreationException("Convert's 2nd expression should be the to converted type");
-        }
+//        if (!(typeExpression instanceof TypeExpressionExecutor)) {
+//            throw new QueryCreationException("Convert's 2nd expression should be the to converted type");
+//        }
         returnType = (Attribute.Type) typeExpression.execute(null);
 
         runningAttributes = 2;
@@ -173,8 +172,6 @@ public class ConvertFunctionExecutor extends FunctionExecutor {
                         }
                         break;
 
-                    case TYPE:
-                        throw new UnsupportedOperationException("Type not supported for Conversion ");
                     default:
                         typeConverter = new TypeConverter() {
                             @Override
@@ -281,8 +278,6 @@ public class ConvertFunctionExecutor extends FunctionExecutor {
                             }
                         };
                         break;
-                    case TYPE:
-                        throw new UnsupportedOperationException("Type not supported for Conversion ");
                 }
                 break;
             case LONG:
@@ -412,8 +407,6 @@ public class ConvertFunctionExecutor extends FunctionExecutor {
                             }
                         };
                         break;
-                    case TYPE:
-                        throw new UnsupportedOperationException("Type not supported for Conversion ");
                 }
                 break;
             case FLOAT:
@@ -511,8 +504,6 @@ public class ConvertFunctionExecutor extends FunctionExecutor {
                             }
                         };
                         break;
-                    case TYPE:
-                        throw new UnsupportedOperationException("Type not supported for Conversion ");
                 }
                 break;
             case DOUBLE:
@@ -610,8 +601,6 @@ public class ConvertFunctionExecutor extends FunctionExecutor {
                             }
                         };
                         break;
-                    case TYPE:
-                        throw new UnsupportedOperationException("Type not supported for Conversion ");
                 }
                 break;
             case BOOL:
@@ -709,12 +698,8 @@ public class ConvertFunctionExecutor extends FunctionExecutor {
                             }
                         };
                         break;
-                    case TYPE:
-                        throw new UnsupportedOperationException("Type not supported for Conversion ");
                 }
                 break;
-            case TYPE:
-                throw new UnsupportedOperationException("Type not supported for Conversion ");
         }
 
     }

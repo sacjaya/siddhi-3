@@ -17,7 +17,6 @@
 package org.wso2.siddhi.query.api.expression;
 
 
-import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.expression.condition.*;
 import org.wso2.siddhi.query.api.expression.constant.*;
 import org.wso2.siddhi.query.api.expression.function.AttributeFunction;
@@ -122,10 +121,6 @@ public abstract class Expression {
 
     public static Expression isNullInnerStream(String streamId, int streamIndex) {
         return new IsNull(streamId, streamIndex, true);
-    }
-
-    public static Type type(Attribute.Type type) {
-        return new Type(type);
     }
 
     public abstract static class Time {

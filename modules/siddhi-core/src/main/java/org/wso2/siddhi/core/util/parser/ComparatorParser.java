@@ -6,7 +6,6 @@ import org.wso2.siddhi.core.executor.condition.compare.contains.ContainsCompareC
 import org.wso2.siddhi.core.executor.condition.compare.equal.*;
 import org.wso2.siddhi.core.executor.condition.compare.greater_than.*;
 import org.wso2.siddhi.core.executor.condition.compare.greater_than_equal.*;
-import org.wso2.siddhi.core.executor.condition.compare.instance_of.InstanceOfCompareConditionExecutor;
 import org.wso2.siddhi.core.executor.condition.compare.less_than.*;
 import org.wso2.siddhi.core.executor.condition.compare.less_than_equal.*;
 import org.wso2.siddhi.core.executor.condition.compare.not_equal.*;
@@ -477,9 +476,10 @@ public class ComparatorParser {
     public static ConditionExecutor parseInstanceOfCompare(
             ExpressionExecutor leftExpressionExecutor, ExpressionExecutor rightExpressionExecutor) {
 
+        //todo remove
         switch (rightExpressionExecutor.getReturnType()) {
-            case TYPE:
-                return new InstanceOfCompareConditionExecutor(leftExpressionExecutor, rightExpressionExecutor);
+//            case TYPE:
+//                return new InstanceOfCompareConditionExecutor(leftExpressionExecutor, rightExpressionExecutor);
         }
         throw new OperationNotSupportedException(rightExpressionExecutor.getReturnType() + " cannot be used in right hand side of the instanceof comparisons");
     }
