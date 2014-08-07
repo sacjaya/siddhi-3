@@ -74,8 +74,8 @@ public class StreamParser {
             //Filter filter = (Filter) streamHandler;
             Expression condition = ((Filter) streamHandler).getFilterExpression() ;
             try {
-                return new FilterProcessor(ExecutorParser.parseCondition(condition, null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutorList)); //streamId already set at validation
-                //return new FilterProcessor(ExecutorParser.parseCondition(condition, ((BasicSingleInputStream) inputStream).getStreamId(),  siddhiContext, tempStreamDefinitionMap,metaStreamEvent,variableExpressionExecutorList));
+                return new FilterProcessor(ExecutorParser.parseCondition(condition, null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutorList)); //id already set at validation
+                //return new FilterProcessor(ExecutorParser.parseCondition(condition, ((BasicSingleInputStream) inputStream).getId(),  siddhiContext, tempStreamDefinitionMap,metaStreamEvent,variableExpressionExecutorList));
             } catch (ValidatorException e) {
                 //This will never occur
             }
@@ -110,7 +110,7 @@ public class StreamParser {
                 try {
                     FilterProcessor filterProcessor = new FilterProcessor(ExecutorParser.parseCondition(condition, ((SingleInputStream) inputStream).getStreamId(), siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutorList));
                     filterProcessors.add(filterProcessor);
-                    //return new FilterProcessor(ExecutorParser.parseCondition(condition, ((BasicSingleInputStream) inputStream).getStreamId(),  siddhiContext, tempStreamDefinitionMap,metaStreamEvent,variableExpressionExecutorList));
+                    //return new FilterProcessor(ExecutorParser.parseCondition(condition, ((BasicSingleInputStream) inputStream).getId(),  siddhiContext, tempStreamDefinitionMap,metaStreamEvent,variableExpressionExecutorList));
 
                 } catch (ValidatorException e) {
                     //This will never occur

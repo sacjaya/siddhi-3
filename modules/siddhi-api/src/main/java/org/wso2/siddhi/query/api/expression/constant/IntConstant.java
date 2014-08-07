@@ -19,6 +19,7 @@ package org.wso2.siddhi.query.api.expression.constant;
 import org.wso2.siddhi.query.api.expression.Expression;
 
 public class IntConstant extends Expression implements Constant {
+
     private Integer value;
 
     public IntConstant(int value) {

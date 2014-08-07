@@ -29,19 +29,16 @@ public class DefineTableTestCase {
     @Test
     public void testCreatingTableDefinition() {
         ExecutionPlan.executionPlan("test").defineTable(TableDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT));
-
     }
 
     @Test(expected = AttributeAlreadyExistException.class)
     public void testCreatingStreamWithDuplicateAttribute() {
         TableDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("symbol", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT);
-
     }
-
 
     @Test
     public void testCreatingSQLTableDefinition() {
-        TableDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).annotation(Annotation.annotation("Foo").element("datasource.id", "cepDataSource"));
+        TableDefinition.id("StockStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).attribute("volume", Attribute.Type.FLOAT).annotation(Annotation.annotation("From").element("datasource.id", "cepDataSource"));
     }
 
 

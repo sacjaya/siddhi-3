@@ -34,7 +34,7 @@ public class InsertIntoStream extends OutputStream {
 
     public InsertIntoStream(String streamId, boolean isInnerStream, OutputEventType outputEventType) {
         this.isInnerStream = isInnerStream;
-        this.streamId = streamId;
+        this.id = streamId;
         this.outputEventType = outputEventType;
     }
 

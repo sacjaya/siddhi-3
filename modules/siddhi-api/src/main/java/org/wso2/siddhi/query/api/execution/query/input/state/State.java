@@ -110,11 +110,11 @@ public class State {
     }
 
     public static StateElement zeroOrMany(StreamStateElement streamStateElement) {
-        return new CountStateElement(streamStateElement, 0, SiddhiConstants.UNLIMITED);
+        return new CountStateElement(streamStateElement, 0, CountStateElement.ANY);
     }
 
     public static StateElement zeroOrMany(StreamStateElement streamStateElement, TimeConstant within) {
-        return new CountStateElement(streamStateElement, 0, SiddhiConstants.UNLIMITED, within);
+        return new CountStateElement(streamStateElement, 0, CountStateElement.ANY, within);
     }
 
     public static StateElement zeroOrOne(StreamStateElement streamStateElement) {
@@ -126,11 +126,11 @@ public class State {
     }
 
     public static StateElement oneOrMany(StreamStateElement streamStateElement) {
-        return new CountStateElement(streamStateElement, 1, SiddhiConstants.UNLIMITED);
+        return new CountStateElement(streamStateElement, 1, CountStateElement.ANY);
     }
 
     public static StateElement oneOrMany(StreamStateElement streamStateElement, TimeConstant within) {
-        return new CountStateElement(streamStateElement, 1, SiddhiConstants.UNLIMITED, within);
+        return new CountStateElement(streamStateElement, 1, CountStateElement.ANY, within);
     }
 
 }

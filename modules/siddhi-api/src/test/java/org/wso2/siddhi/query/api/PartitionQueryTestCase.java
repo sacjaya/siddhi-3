@@ -55,7 +55,7 @@ public class PartitionQueryTestCase {
 
         Query query = Query.query();
         query.from(
-                InputStream.innerStream("StockStream").
+                InputStream.stream("StockStream").
                         filter(
                                 Expression.and(
                                         Expression.compare(

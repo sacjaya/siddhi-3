@@ -22,15 +22,15 @@ public abstract class OutputStream {
         EXPIRED_EVENTS, CURRENT_EVENTS, ALL_EVENTS, ALL_RAW_EVENTS, EXPIRED_RAW_EVENTS
     }
 
-    protected String streamId;
+    protected String id;
     protected OutputEventType outputEventType;
 
-    public String getStreamId() {
-        return streamId;
+    public String getId() {
+        return id;
     }
 
-    public void setStreamId(String streamId) {
-        this.streamId = streamId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public OutputEventType getOutputEventType() {
@@ -45,7 +45,7 @@ public abstract class OutputStream {
     public String toString() {
         return "OutputStream{" +
                 "outputEventType=" + outputEventType +
-                ", streamId='" + streamId + '\'' +
+                ", id='" + id + '\'' +
                 '}';
     }
 
@@ -57,7 +57,7 @@ public abstract class OutputStream {
         OutputStream that = (OutputStream) o;
 
         if (outputEventType != that.outputEventType) return false;
-        if (streamId != null ? !streamId.equals(that.streamId) : that.streamId != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
 
         return true;
     }
@@ -65,7 +65,7 @@ public abstract class OutputStream {
     @Override
     public int hashCode() {
         int result = outputEventType != null ? outputEventType.hashCode() : 0;
-        result = 31 * result + (streamId != null ? streamId.hashCode() : 0);
+        result = 31 * result + (id != null ? id.hashCode() : 0);
         return result;
     }
 }

@@ -28,7 +28,7 @@ import org.wso2.siddhi.core.query.output.rateLimit.PassThroughOutputRateManager;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.execution.query.output.OutputRate;
+import org.wso2.siddhi.query.api.execution.query.output.ratelimit.OutputRate;
 import org.wso2.siddhi.query.api.execution.query.output.stream.DeleteStream;
 import org.wso2.siddhi.query.api.execution.query.output.stream.InsertIntoStream;
 import org.wso2.siddhi.query.api.execution.query.output.stream.OutputStream;
@@ -58,7 +58,7 @@ public class QueryOutputParser {
                 expiredOn = true;
             }
 
-            id = outStream.getStreamId();
+            id = outStream.getId();
         } else {
             currentOn = true;
             expiredOn = true;
@@ -74,7 +74,7 @@ public class QueryOutputParser {
 
     public static OutputCallback constructOutputCallback(OutputStream outStream,  ConcurrentMap<String, StreamJunction> streamJunctionMap, SiddhiContext siddhiContext,
                                                          StreamDefinition outputStreamDefinition) {
-        String id = outStream.getStreamId();
+        String id = outStream.getId();
         //Construct CallBack
         if (outStream instanceof InsertIntoStream) {
             StreamJunction outputStreamJunction = streamJunctionMap.get(id);
@@ -97,7 +97,7 @@ public class QueryOutputParser {
 
     public static OutputCallback constructOutputCallback(OutputStream outStream, String key, ConcurrentMap<String, StreamJunction> streamJunctionMap, SiddhiContext siddhiContext,
                                                          StreamDefinition outputStreamDefinition) {
-        String id = outStream.getStreamId();
+        String id = outStream.getId();
         //Construct CallBack
         if (outStream instanceof InsertIntoStream) {
             StreamJunction outputStreamJunction = streamJunctionMap.get(id+key);

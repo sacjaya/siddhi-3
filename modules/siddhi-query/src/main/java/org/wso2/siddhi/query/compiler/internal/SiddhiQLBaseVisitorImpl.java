@@ -34,7 +34,7 @@ import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.api.execution.query.input.*;
 import org.wso2.siddhi.query.api.execution.query.input.handler.*;
 import org.wso2.siddhi.query.api.execution.query.input.state.*;
-import org.wso2.siddhi.query.api.execution.query.output.*;
+import org.wso2.siddhi.query.api.execution.query.output.ratelimit.*;
 import org.wso2.siddhi.query.api.execution.query.output.stream.*;
 import org.wso2.siddhi.query.api.execution.query.selection.OutputAttribute;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
@@ -1102,13 +1102,13 @@ public class SiddhiQLBaseVisitorImpl extends SiddhiQLBaseVisitor {
         } else if (ctx.time_value() != null) {
             TimeOutputRate timeOutputRate = new TimeOutputRate(((TimeConstant) visit(ctx.time_value())).value());
             if (ctx.output_rate_type() != null) {
-                timeOutputRate.output((Output.Type) visit(ctx.output_rate_type()));
+                timeOutputRate.output((OutputRate.Type) visit(ctx.output_rate_type()));
             }
             return timeOutputRate;
         } else if (ctx.EVENTS() != null) {
             EventOutputRate eventOutputRate = new EventOutputRate(Integer.parseInt(ctx.INT_LITERAL().getText()));
             if (ctx.output_rate_type() != null) {
-                eventOutputRate.output((Output.Type) visit(ctx.output_rate_type()));
+                eventOutputRate.output((OutputRate.Type) visit(ctx.output_rate_type()));
             }
             return eventOutputRate;
         } else {
@@ -1133,11 +1133,11 @@ public class SiddhiQLBaseVisitorImpl extends SiddhiQLBaseVisitor {
 //                | FIRST
 //        ;
         if (ctx.ALL() != null) {
-            return Output.Type.ALL;
+            return OutputRate.Type.ALL;
         } else if (ctx.LAST() != null) {
-            return Output.Type.LAST;
+            return OutputRate.Type.LAST;
         } else if (ctx.FIRST() != null) {
-            return Output.Type.FIRST;
+            return OutputRate.Type.FIRST;
         } else {
             throw newSiddhiParserException(ctx);
         }

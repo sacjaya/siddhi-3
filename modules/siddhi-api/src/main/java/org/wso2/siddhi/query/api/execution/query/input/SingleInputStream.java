@@ -17,9 +17,8 @@
 package org.wso2.siddhi.query.api.execution.query.input;
 
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
-import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.execution.query.input.handler.*;
-import org.wso2.siddhi.query.api.utils.StreamUsage;
+import org.wso2.siddhi.query.api.expression.Expression;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,12 +81,6 @@ public class SingleInputStream extends InputStream{
         return streamIds;
     }
 
-    public List<StreamUsage> getStreamUsages() {
-        List<StreamUsage> streamUsages = new ArrayList<StreamUsage>();
-        streamUsages.add(new StreamUsage(streamId));
-        return streamUsages;
-    }
-
 
     public SingleInputStream as(String streamReferenceId) {
         this.streamReferenceId = streamReferenceId;
@@ -136,7 +129,7 @@ public class SingleInputStream extends InputStream{
     public String toString() {
         return "SingleInputStream{" +
                 "isInnerStream=" + isInnerStream +
-                ", streamId='" + streamId + '\'' +
+                ", id='" + streamId + '\'' +
                 ", definition=" + definition +
                 ", streamReferenceId='" + streamReferenceId + '\'' +
                 ", streamHandlers=" + streamHandlers +

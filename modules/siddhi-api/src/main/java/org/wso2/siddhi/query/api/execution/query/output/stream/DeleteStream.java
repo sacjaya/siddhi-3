@@ -23,13 +23,13 @@ public class DeleteStream extends OutputStream {
     protected Expression onDeleteExpression;
 
     public DeleteStream(String tableId, OutputEventType outputEventType, Expression onDeleteExpression) {
-        this.streamId = tableId;
+        this.id = tableId;
         this.outputEventType = outputEventType;
         this.onDeleteExpression = onDeleteExpression;
     }
 
     public DeleteStream(String tableId, Expression onDeleteExpression) {
-        this.streamId = tableId;
+        this.id = tableId;
         this.outputEventType = OutputEventType.CURRENT_EVENTS;
         this.onDeleteExpression = onDeleteExpression;
     }

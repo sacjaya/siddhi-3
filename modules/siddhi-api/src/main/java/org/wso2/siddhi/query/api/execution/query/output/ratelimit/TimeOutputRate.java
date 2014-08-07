@@ -15,18 +15,18 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.query.api.execution.query.output;
+package org.wso2.siddhi.query.api.execution.query.output.ratelimit;
 
-public class TimeOutputRate implements OutputRate {
+public class TimeOutputRate extends OutputRate {
 
     private Long value;
-    private Output.Type type = Output.Type.ALL;
+    private OutputRate.Type type = OutputRate.Type.ALL;
 
     public TimeOutputRate(Long value) {
         this.value = value;
     }
 
-    public OutputRate output(Output.Type type) {
+    public OutputRate output(OutputRate.Type type) {
         this.type = type;
         return this;
     }
@@ -35,7 +35,7 @@ public class TimeOutputRate implements OutputRate {
         return value;
     }
 
-    public Output.Type getType() {
+    public OutputRate.Type getType() {
         return type;
     }
 

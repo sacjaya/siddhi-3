@@ -41,7 +41,7 @@ public class ValuePartitionType implements PartitionType {
     public String toString() {
         return "ValuePartitionType{" +
                 "expression=" + expression +
-                ", streamId='" + streamId + '\'' +
+                ", id='" + streamId + '\'' +
                 '}';
     }
 

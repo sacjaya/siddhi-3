@@ -22,13 +22,13 @@ public class UpdateStream extends OutputStream {
     protected Expression onUpdateExpression;
 
     public UpdateStream(String tableId, OutputEventType outputEventType, Expression onUpdateExpression) {
-        this.streamId = tableId;
+        this.id = tableId;
         this.outputEventType = outputEventType;
         this.onUpdateExpression = onUpdateExpression;
     }
 
     public UpdateStream(String tableId, Expression onUpdateExpression) {
-        this.streamId = tableId;
+        this.id = tableId;
         this.outputEventType = OutputEventType.CURRENT_EVENTS;
         this.onUpdateExpression = onUpdateExpression;
     }
