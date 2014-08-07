@@ -173,8 +173,6 @@ public class ConvertFunctionExecutor extends FunctionExecutor {
                         }
                         break;
 
-                    case TYPE:
-                        throw new UnsupportedOperationException("Type not supported for Conversion ");
                     default:
                         typeConverter = new TypeConverter() {
                             @Override
@@ -281,9 +279,7 @@ public class ConvertFunctionExecutor extends FunctionExecutor {
                             }
                         };
                         break;
-                    case TYPE:
-                        throw new UnsupportedOperationException("Type not supported for Conversion ");
-                }
+                    }
                 break;
             case LONG:
                 switch (variableExecutor.getReturnType()) {
@@ -412,8 +408,7 @@ public class ConvertFunctionExecutor extends FunctionExecutor {
                             }
                         };
                         break;
-                    case TYPE:
-                        throw new UnsupportedOperationException("Type not supported for Conversion ");
+
                 }
                 break;
             case FLOAT:
@@ -511,8 +506,7 @@ public class ConvertFunctionExecutor extends FunctionExecutor {
                             }
                         };
                         break;
-                    case TYPE:
-                        throw new UnsupportedOperationException("Type not supported for Conversion ");
+
                 }
                 break;
             case DOUBLE:
@@ -610,8 +604,7 @@ public class ConvertFunctionExecutor extends FunctionExecutor {
                             }
                         };
                         break;
-                    case TYPE:
-                        throw new UnsupportedOperationException("Type not supported for Conversion ");
+
                 }
                 break;
             case BOOL:
@@ -709,12 +702,10 @@ public class ConvertFunctionExecutor extends FunctionExecutor {
                             }
                         };
                         break;
-                    case TYPE:
-                        throw new UnsupportedOperationException("Type not supported for Conversion ");
+
                 }
                 break;
-            case TYPE:
-                throw new UnsupportedOperationException("Type not supported for Conversion ");
+
         }
 
     }

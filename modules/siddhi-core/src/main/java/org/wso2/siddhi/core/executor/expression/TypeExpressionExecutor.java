@@ -15,21 +15,22 @@ package org.wso2.siddhi.core.executor.expression;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
-public class TypeExpressionExecutor implements ExpressionExecutor {
-    Attribute.Type type;
-
-    public TypeExpressionExecutor(Attribute.Type type) {
-        this.type = type;
-    }
-
-    @Override
-    public Object execute(StreamEvent event) {
-        return type;
-    }
-
-    @Override
-    public Attribute.Type getReturnType() {
-        return Attribute.Type.TYPE;
-    }
+public class TypeExpressionExecutor  {
+//        implements ExpressionExecutor {
+//    Attribute.Type type;
+//
+//    public TypeExpressionExecutor(Attribute.Type type) {
+//        this.type = type;
+//    }
+//
+//    @Override
+//    public Object execute(StreamEvent event) {
+//        return type;
+//    }
+//
+//    @Override
+//    public Attribute.Type getReturnType() {
+//        return Attribute.Type.TYPE;
+//    }
 
 }

@@ -478,8 +478,9 @@ public class ComparatorParser {
             ExpressionExecutor leftExpressionExecutor, ExpressionExecutor rightExpressionExecutor) {
 
         switch (rightExpressionExecutor.getReturnType()) {
-            case TYPE:
-                return new InstanceOfCompareConditionExecutor(leftExpressionExecutor, rightExpressionExecutor);
+            //TODO remove?
+//            case TYPE:
+//                return new InstanceOfCompareConditionExecutor(leftExpressionExecutor, rightExpressionExecutor);
         }
         throw new OperationNotSupportedException(rightExpressionExecutor.getReturnType() + " cannot be used in right hand side of the instanceof comparisons");
     }
