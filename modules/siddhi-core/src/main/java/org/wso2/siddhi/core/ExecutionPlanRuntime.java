@@ -41,7 +41,7 @@ public class ExecutionPlanRuntime {
     private ConcurrentMap<String, InputHandler> inputHandlerMap = new ConcurrentHashMap<String, InputHandler>();
     private ConcurrentMap<String, QueryRuntime> queryProcessorMap = new ConcurrentHashMap<String, QueryRuntime>();
     private ConcurrentMap<String, StreamJunction> streamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains stream junctions
-    private ConcurrentMap<String, PartitionRuntime> partitionList = new ConcurrentHashMap<String, PartitionRuntime>(); //contains partitions
+    private ConcurrentMap<String, PartitionRuntime> partitionMap = new ConcurrentHashMap<String, PartitionRuntime>(); //contains partitions
     private SiddhiContext siddhiContext;
 
     public ExecutionPlanRuntime(SiddhiContext siddhiContext) {
@@ -67,7 +67,7 @@ public class ExecutionPlanRuntime {
 
     public void definePartition(Partition partition) {
         PartitionRuntime partitionRuntime = new PartitionRuntime(partition, streamDefinitionMap,streamJunctionMap,inputHandlerMap,siddhiContext);
-        partitionList.put(partitionRuntime.getPartitionId(), partitionRuntime);
+        partitionMap.put(partitionRuntime.getPartitionId(), partitionRuntime);
     }
 
     public String addQuery(Query query) {
@@ -108,4 +108,27 @@ public class ExecutionPlanRuntime {
         return inputHandlerMap.get(streamId);
     }
 
+    public void removeQuery(Query query) {
+        QueryRuntime queryRuntime = queryProcessorMap.remove(query.getPropertyValue("name"));
+        if (queryRuntime != null) {
+            queryRuntime.removeQuery(streamJunctionMap, streamDefinitionMap);
+        }
+    }
+
+    public void removeStreams() {
+        for(String streamId:streamJunctionMap.keySet()){
+            streamJunctionMap.get(streamId).removeEventFlows();
+        }
+        streamDefinitionMap.clear();
+        streamJunctionMap.clear();
+        inputHandlerMap.clear();
+
+    }
+
+    public void removePartition(Partition partition){
+        PartitionRuntime partitionRuntime = partitionMap.remove(partition.getPropertyValue("name"));
+        if (partitionRuntime != null) {
+            partitionRuntime.removePartition(streamJunctionMap, streamDefinitionMap);
+        }
+    }
 }

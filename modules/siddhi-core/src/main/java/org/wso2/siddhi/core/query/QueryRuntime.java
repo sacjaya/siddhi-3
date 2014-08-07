@@ -190,4 +190,16 @@ public class QueryRuntime {
     public OutputRateManager getOutputRateManager() {
         return this.outputRateManager;
     }
+
+    public void removeQuery(ConcurrentMap<String, StreamJunction> streamJunctionMap,
+                            ConcurrentMap<String, AbstractDefinition> streamDefinitionMap) {
+        for (HandlerProcessor queryStreamProcessor : handlerProcessors) {
+            StreamJunction junction = streamJunctionMap.get(queryStreamProcessor.getStreamId());
+            if (junction != null) {
+                junction.removeEventFlow(queryStreamProcessor);
+            }
+        }
+        streamDefinitionMap.remove(query.getOutputStream().getStreamId());
+    }
+
 }

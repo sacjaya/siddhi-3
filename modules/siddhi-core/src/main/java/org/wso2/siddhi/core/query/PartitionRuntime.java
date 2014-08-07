@@ -175,7 +175,7 @@ public class PartitionRuntime {
      * @param key
      * @return
      */
-    public synchronized List<QueryRuntime> clone(String key){
+    public synchronized void clone(String key){
         PartitionInstanceRuntime partitionInstance = this.getPartitionInstanceRuntime(key);
         if (partitionInstance == null) {
             List<QueryRuntime> queryRuntimeList = new ArrayList<QueryRuntime>();
@@ -192,9 +192,9 @@ public class PartitionRuntime {
 
             addPartitionInstance(key, new PartitionInstanceRuntime(key,queryRuntimeList));
             updateHandlers(key);
-            return partitionedQueryRuntimeList;
+
         }
-        return null;
+
     }
 
     public List<QueryRuntime> test(){
@@ -210,4 +210,24 @@ public class PartitionRuntime {
 
     }
 
+    public void removePartition(ConcurrentMap<String,StreamJunction> streamJunctionMap, ConcurrentMap<String,AbstractDefinition> streamDefinitionMap) {
+
+        for(PartitionInstanceRuntime partitionInstanceRuntime :partitionInstanceRuntimeMap.values()){
+            partitionInstanceRuntime.remove(streamJunctionMap,streamDefinitionMap);
+        }
+
+        for(String streamId:localStreamJunctionMap.keySet()){
+            localStreamJunctionMap.get(streamId).removeEventFlows();
+        }
+        localStreamDefinitionMap.clear();
+        localStreamJunctionMap.clear();
+
+
+        for (HandlerProcessor queryStreamProcessor : handlerProcessors) {
+            StreamJunction junction = streamJunctionMap.get(queryStreamProcessor.getStreamId());
+            if (junction != null) {
+                junction.removeEventFlow(queryStreamProcessor);
+            }
+        }
+    }
 }

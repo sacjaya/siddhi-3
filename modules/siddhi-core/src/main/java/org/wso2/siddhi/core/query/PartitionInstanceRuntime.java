@@ -18,7 +18,11 @@
 
 package org.wso2.siddhi.core.query;
 
+import org.wso2.siddhi.core.stream.StreamJunction;
+import org.wso2.siddhi.query.api.definition.AbstractDefinition;
+
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 public class PartitionInstanceRuntime {
     private String key;
@@ -29,8 +33,10 @@ public class PartitionInstanceRuntime {
         this.queryRuntimeList = queryRuntimeList;
     }
 
-    public String getKey(){
-        return key;
-    }
 
+    public void remove(ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap) {
+        for(QueryRuntime queryRuntime: queryRuntimeList){
+            queryRuntime.removeQuery(streamJunctionMap,streamDefinitionMap);
+        }
+    }
 }

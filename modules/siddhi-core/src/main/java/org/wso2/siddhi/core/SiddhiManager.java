@@ -33,6 +33,8 @@ import org.wso2.siddhi.query.api.partition.Partition;
 import org.wso2.siddhi.query.api.query.Query;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.*;
 
 
@@ -106,8 +108,20 @@ public class SiddhiManager {
         return executionPlanRuntime;
     }
 
-    public void removeExecutionPlan(String name) throws SiddhiParserException {
-        executionPlanRuntimeMap.remove(name);
+    public void removeExecutionPlan(ExecutionPlan executionPlan) throws SiddhiParserException {
+        ExecutionPlanRuntime executionPlanRuntime = executionPlanRuntimeMap.remove(executionPlan.getName());
+        Collections.reverse(executionPlan.getExecutionElementList());
+        if (executionPlan.getExecutionElementList() != null) {
+            for (ExecutionElement executionElement : executionPlan.getExecutionElementList()) {
+                if (executionElement instanceof Query){
+                    executionPlanRuntime.removeQuery((Query) executionElement);
+                } else {
+                    executionPlanRuntime.removePartition((Partition) executionElement);
+                }
+
+            }
+        }
+        executionPlanRuntime.removeStreams();
     }
 
     public void shutdown() {
