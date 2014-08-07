@@ -6,7 +6,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * WITHOUT WARRANTIES OR ExpressionS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
@@ -21,16 +21,21 @@ import org.wso2.siddhi.core.util.validate.InStreamValidator;
 import org.wso2.siddhi.core.util.validate.QueryValidator;
 import org.wso2.siddhi.core.util.validate.SelectorValidator;
 import org.wso2.siddhi.core.util.validate.StreamValidator;
-import org.wso2.siddhi.query.api.condition.Condition;
+import org.wso2.siddhi.query.api.annotation.Annotation;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.execution.query.input.InputStream;
+import org.wso2.siddhi.query.api.execution.query.input.JoinInputStream;
+import org.wso2.siddhi.query.api.execution.query.output.stream.OutputStream;
+import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.input.JoinInputStream;
-import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
-import org.wso2.siddhi.query.api.query.selection.Selector;
+import org.wso2.siddhi.query.api.expression.condition.Compare;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SimpleQueryValidatorTestCase {
     static final Logger log = Logger.getLogger(SimpleQueryValidatorTestCase.class);
@@ -67,41 +72,41 @@ public class SimpleQueryValidatorTestCase {
         query = new Query();
 
         query.
-                property("name", "Query1").property("summary", "Test Query").
+                annotation(Annotation.annotation("info").element("name", "Query1").element("summary", "Test Query")).
                 from(
-                        Query.joinInputStream(
-                                Query.inputStream("StockStream").
+                        InputStream.joinStream(
+                                InputStream.stream("StockStream").
                                         window("lengthBatch", Expression.value(50)),
                                 JoinInputStream.Type.JOIN,
-                                Query.inputStream("TwitterStream").
+                                InputStream.stream("TwitterStream").
                                         filter(
-                                                Condition.compare(
+                                                Expression.compare(
                                                         Expression.value(50),
-                                                        Condition.Operator.GREATER_THAN,
-                                                        Expression.variable("TwitterStream", "wordCount")
+                                                        Compare.Operator.GREATER_THAN,
+                                                        Expression.variable("wordCount").ofStream("TwitterStream")
                                                 )
 
 
                                         ).window("lengthBatch", Expression.value(50)),
-                                Condition.compare(
-                                        Expression.variable("StockStream", "symbol"),
-                                        Condition.Operator.EQUAL,
-                                        Expression.variable("TwitterStream", "symbol"))
+                                Expression.compare(
+                                        Expression.variable("symbol").ofStream("StockStream"),
+                                        Compare.Operator.EQUAL,
+                                        Expression.variable("symbol").ofStream("TwitterStream"))
                         )
                 ).
                 select(
-                        Query.outputSelector().
-                                select("symbol", Expression.variable("StockStream", "symbol")).
-                                select("price", Expression.variable(null, "price")).
-                                groupBy("StockStream", "symbol").
+                        Selector.selector().
+                                select("symbol", Expression.variable("symbol").ofStream("StockStream")).
+                                select("price", Expression.variable("price")).
+                                groupBy(Expression.variable("symbol").ofStream("StockStream")).
                                 having(
-                                        Condition.compare(
+                                        Expression.compare(
                                                 Expression.value(50),
-                                                Condition.Operator.GREATER_THAN,
-                                                Expression.variable(null, "price"))
+                                                Compare.Operator.GREATER_THAN,
+                                                Expression.variable("price"))
                                 )
                 ).
-                insertInto("OutStockStream", OutputStream.OutputEventsFor.EXPIRED_EVENTS);
+                insertInto("OutStockStream", OutputStream.OutputEventType.EXPIRED_EVENTS);
 
 
         /*executionPlan = new ExecutionPlan("testExecutionPlan");
@@ -145,7 +150,7 @@ public class SimpleQueryValidatorTestCase {
 
     @Test(expected = ValidatorException.class)
     public void SelectorValidatorInvalidTest() throws ValidatorException {
-        Selector selector = Query.outputSelector().
+        Selector selector = Selector.selector().
                 select("symbol", Expression.variable("symbol1")).
                 select("price", Expression.variable("price"));
         Map<String, StreamDefinition> sampleRenameMap = new HashMap<String, StreamDefinition>();

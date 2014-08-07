@@ -19,23 +19,26 @@
 package org.wso2.siddhi.core.query;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.query.creator.QueryCreator;
 import org.wso2.siddhi.core.query.creator.QueryCreatorFactory;
-import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
+import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.PartitionHandlerProcessor;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.util.parser.QueryOutputParser;
+import org.wso2.siddhi.query.api.annotation.Annotation;
+import org.wso2.siddhi.query.api.annotation.Element;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.partition.Partition;
-import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.input.JoinInputStream;
-import org.wso2.siddhi.query.api.query.input.SingleInputStream;
-import org.wso2.siddhi.query.api.query.output.stream.InsertIntoStream;
+import org.wso2.siddhi.query.api.execution.partition.Partition;
+import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.execution.query.input.JoinInputStream;
+import org.wso2.siddhi.query.api.execution.query.input.SingleInputStream;
+import org.wso2.siddhi.query.api.execution.query.output.stream.InsertIntoStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,10 +61,22 @@ public class QueryRuntime {
     }
 
     public QueryRuntime(Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap, Partition partition, SiddhiContext siddhiContext, PartitionRuntime partitionRuntime) {
-        if (query.getPropertyValue("name") == null) {
-            query.property("name", UUID.randomUUID().toString());
+        List<Annotation> annotations = query.getAnnotations("info");
+        if (annotations.size() > 0) {
+            if (annotations.size() > 1) {
+                throw new QueryCreationException("Annotation @info is defined twice for the same Query " + query.toString());
+            }
+            List<Element> elementList = annotations.get(0).getElements("name");
+            if (elementList.size() > 0) {
+                if (elementList.size() > 1) {
+                    throw new QueryCreationException("Annotation element @info(name=...) is defined twice for the same Query " + query.toString());
+                }
+                this.queryId = elementList.get(0).getValue();
+            }
         }
-        this.queryId = query.getPropertyValue("name");
+        if (queryId == null) {
+            this.queryId = UUID.randomUUID().toString();
+        }
         this.query = query;
         this.siddhiContext = siddhiContext;
         outputRateManager = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
@@ -72,14 +87,14 @@ public class QueryRuntime {
             localStreamJunctionMap = partitionRuntime.getLocalStreamJunctionMap();
         }
 
-        QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap,localStreamDefinitionMap, outputRateManager, siddhiContext);
+        QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap, localStreamDefinitionMap, outputRateManager, siddhiContext);
 
-        QueryPartitioner queryPartitioner = new QueryPartitioner(partition, queryCreator,siddhiContext);
+        QueryPartitioner queryPartitioner = new QueryPartitioner(partition, queryCreator, siddhiContext);
 
         List<HandlerProcessor> handlerProcessorList = queryPartitioner.constructPartition(outputRateManager);
 
         outputStreamDefinition = queryCreator.getOutputStreamDefinition();
-        if (query.getOutputStream() instanceof InsertIntoStream && ((InsertIntoStream) query.getOutputStream()).isPartitioned()) {
+        if (query.getOutputStream() instanceof InsertIntoStream && ((InsertIntoStream) query.getOutputStream()).isInnerStream()) {
             toLocalStream = true;
             outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), localStreamJunctionMap, siddhiContext, outputStreamDefinition);
             outputRateManager.setOutputCallback(outputCallback);
@@ -90,11 +105,11 @@ public class QueryRuntime {
         }
 
         if (partitionRuntime == null) {
-               handlerProcessors = handlerProcessorList;
+            handlerProcessors = handlerProcessorList;
             for (HandlerProcessor handlerProcessor : handlerProcessors) {
                 streamJunctionMap.get(handlerProcessor.getStreamId()).addEventFlow(handlerProcessor);
             }
-        } else if (((SingleInputStream) query.getInputStream()).isPartitioned() /*TODO: for joins*/) {
+        } else if (((SingleInputStream) query.getInputStream()).isInnerStream() /*TODO: for joins*/) {
             handlerProcessors = handlerProcessorList;
         } else {
             List<List<PartitionExecutor>> partitionExecutors = queryPartitioner.getPartitionExecutors();
@@ -144,16 +159,16 @@ public class QueryRuntime {
 
     public boolean isFromLocalStream() {
         if (query.getInputStream() instanceof SingleInputStream) {
-            return ((SingleInputStream) query.getInputStream()).isPartitioned();
-        } else if(query.getInputStream() instanceof JoinInputStream){
+            return ((SingleInputStream) query.getInputStream()).isInnerStream();
+        } else if (query.getInputStream() instanceof JoinInputStream) {
             //TODO for join ,pattern and sequence streams
         }
         return false;
     }
 
-    public QueryRuntime clone(String streamId,String key) {
+    public QueryRuntime clone(String streamId, String key) {
         QueryRuntime queryRuntime = new QueryRuntime();
-        queryRuntime.queryId = query.getPropertyValue("name") + key;
+        queryRuntime.queryId = this.queryId + key;
         queryRuntime.outputRateManager = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
         queryRuntime.toLocalStream = this.toLocalStream;
         queryRuntime.query = this.query;
@@ -170,13 +185,13 @@ public class QueryRuntime {
 
         }
 
-        if(this.isFromLocalStream()){
+        if (this.isFromLocalStream()) {
             queryRuntime.handlerProcessors = this.handlerProcessors;
             for (HandlerProcessor handlerProcessor : this.handlerProcessors) {
-                StreamJunction streamJunction = localStreamJunctionMap.get(streamId+key);
-                if (streamJunction == null){
-                    streamJunction = new StreamJunction(streamId+key, siddhiContext.getThreadPoolExecutor());
-                    localStreamJunctionMap.putIfAbsent(streamId+key,streamJunction);
+                StreamJunction streamJunction = localStreamJunctionMap.get(streamId + key);
+                if (streamJunction == null) {
+                    streamJunction = new StreamJunction(streamId + key, siddhiContext.getThreadPoolExecutor());
+                    localStreamJunctionMap.putIfAbsent(streamId + key, streamJunction);
                 }
                 streamJunction.addEventFlow(handlerProcessor);
 

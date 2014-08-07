@@ -22,16 +22,13 @@ import org.wso2.siddhi.core.event.MetaStreamEvent;
 import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
-import org.wso2.siddhi.core.util.Constants;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.core.util.parser.QueryOutputParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
-import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
-import org.wso2.siddhi.query.api.query.input.InputStream;
-import org.wso2.siddhi.query.api.query.input.SingleInputStream;
-import org.wso2.siddhi.query.api.query.Query;
+import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.execution.query.input.InputStream;
+import org.wso2.siddhi.query.api.execution.query.input.SingleInputStream;
 
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +58,7 @@ public abstract class QueryCreator {
         this.siddhiContext = siddhiContext;
         if(getInputStream() instanceof SingleInputStream){
             String streamId = ((SingleInputStream) getInputStream()).getStreamId();
-            if(((SingleInputStream) getInputStream()).isPartitioned())    {
+            if(((SingleInputStream) getInputStream()).isInnerStream())    {
                 this.defaultDefinition = (StreamDefinition) localStreamDefinitionMap.get(streamId);
             }  else {
                 this.defaultDefinition = (StreamDefinition) streamDefinitionMap.get(streamId);

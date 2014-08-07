@@ -17,6 +17,7 @@
 package org.wso2.siddhi.query.api.definition;
 
 public class Attribute {
+
     private String name;
     private Type type;
 
@@ -40,9 +41,9 @@ public class Attribute {
     @Override
     public String toString() {
         return "Attribute{" +
-               "id='" + name + '\'' +
-               ", type=" + type +
-               '}';
+                "id='" + name + '\'' +
+                ", type=" + type +
+                '}';
     }
 
     @Override

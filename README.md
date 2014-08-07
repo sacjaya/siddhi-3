@@ -40,7 +40,7 @@ Features Supported
     - Identifies pattern occurrences within streams
     - Supports "every" conditions
     - Can process two inputStream at a time via "and" and "or" conditions (currently only works on two simple streams)
-    - Can collect events, with min and max limit, using "collect" condition (currently only works on a simple inputStream)
+    - Can collect events, with min and max limit, using "collect" expression (currently only works on a simple inputStream)
  - Sequence processing
     - Identifies continuous sequences with in streams
     - Supports "or" conditions on streams (currently only works on two simple streams)

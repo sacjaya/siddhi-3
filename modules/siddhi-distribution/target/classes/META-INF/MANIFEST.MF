@@ -18,30 +18,29 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  "org.wso2.siddhi.query.api.definition,org.wso2.siddhi.core.event,org.ws
  o2.siddhi.core.executor.expression";version="3.0.0.SNAPSHOT",org.wso2.s
  iddhi.core.snapshot;uses:="org.wso2.siddhi.core.util,org.wso2.siddhi.co
- re.config,org.wso2.siddhi.core.query";version="3.0.0.SNAPSHOT",org.wso2
- .siddhi.query.api.query.output;uses:="org.wso2.siddhi.query.api.excepti
+ re.config,org.wso2.siddhi.core.query";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.execution.query.output;uses:="org.wso2.siddhi.query.api.excepti
  on,org.wso2.siddhi.query.api.expression.constant";version="3.0.0.SNAPSH
  OT",org.wso2.siddhi.core.util.statemachine.statelist;uses:="org.wso2.si
  ddhi.core.event,org.wso2.siddhi.core.config";version="3.0.0.SNAPSHOT",o
  rg.wso2.siddhi.core.query.selector.attribute.handler.count;uses:="org.w
  so2.siddhi.query.api.definition,org.wso2.siddhi.core.query.selector.att
  ribute.handler";version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.query.sta
- temachine.sequence;uses:="org.wso2.siddhi.query.api.query.input,org.wso
+ temachine.sequence;uses:="org.wso2.siddhi.query.api.execution.query.input,org.wso
  2.siddhi.core.query.statemachine";version="3.0.0.SNAPSHOT",org.wso2.sid
- dhi.core.query.statemachine;uses:="org.wso2.siddhi.query.api.query.inpu
- t";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.query.output.stre
- am;uses:="org.wso2.siddhi.query.api.condition";version="3.0.0.SNAPSHOT"
+ dhi.core.query.statemachine;uses:="org.wso2.siddhi.query.api.execution.query.inpu
+ t";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.execution.query.output.stre
+ am;uses:="org.wso2.siddhi.query.api.expression";version="3.0.0.SNAPSHOT"
  ,org.wso2.siddhi.query.api.expression;uses:="org.wso2.siddhi.query.api.
  query,org.wso2.siddhi.query.api.definition,org.wso2.siddhi.query.api.ex
  pression.constant,org.wso2.siddhi.query.api.extension,org.wso2.siddhi.q
  uery.api.exception";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api;
- uses:="org.wso2.siddhi.query.api.query,org.wso2.siddhi.query.api.condit
- ion,org.wso2.siddhi.query.api.partition,org.wso2.siddhi.quer
- y.api.query.input.sequence.element,org.wso2.siddhi.query.api.query.inpu
- t.sequence,org.wso2.siddhi.query.api.query.selection,org.wso2.siddhi.qu
- ery.api.definition,org.wso2.siddhi.query.api.query.input.pattern.elemen
+ uses:="org.wso2.siddhi.query.api.execution.query,org.wso2.siddhi.query.api.condit
+ ion,org.wso2.siddhi.query.api.execution.partition,org.wso2.siddhi.quer
+ y.api.query.input.sequence.element,org.wso2.siddhi.query.api.execution.query.inpu
+ t.sequence,org.wso2.siddhi.query.api.execution.query.selection,org.wso2.siddhi.qu
+ ery.api.definition,org.wso2.siddhi.query.api.execution.query.input.pattern.elemen
  t,org.wso2.siddhi.query.api.expression.constant,org.wso2.siddhi.query.a
- pi.query.input,org.wso2.siddhi.query.api.query.input.pattern";version="
+ pi.query.input,org.wso2.siddhi.query.api.execution.query.input.pattern";version="
  3.0.0.SNAPSHOT",org.wso2.siddhi.core.query.selector.attribute.factory;u
  ses:="org.wso2.siddhi.query.api.definition,org.wso2.siddhi.core.query.s
  elector.attribute.handler,org.wso2.siddhi.core.util.parser";version="3.
@@ -54,9 +53,9 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  rg.wso2.siddhi.core.query,org.wso2.siddhi.core.util.collection.queue.sc
  heduler,org.wso2.siddhi.core.query.processor.handler,org.wso2.siddhi.co
  re.query.processor,org.wso2.siddhi.core.query.selector,org.wso2.siddhi.
- query.api.query.input";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.partition;uses:="org.wso2.siddhi.query.api,org.wso2.siddh
- i.query.api.condition,org.wso2.siddhi.query.api.expression";version="3.
- 0.0.SNAPSHOT",org.wso2.siddhi.core.executor.expression.minus;uses:="org
+ query.api.query.input";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.execution.partition;uses:="org.wso2.siddhi.query.api,org.wso2.siddh
+ i.query.api.expression,org.wso2.siddhi.query.api.expression";version="3.
+ 0.0.SNAPSHOT",org.wso2.siddhi.core.executor.expression.Subtract;uses:="org
  .wso2.siddhi.query.api.definition,org.wso2.siddhi.core.event,org.wso2.s
  iddhi.core.executor.expression";version="3.0.0.SNAPSHOT",org.wso2.siddh
  i.core.util.parser;uses:="org.wso2.siddhi.query.api.definition,org.wso2
@@ -68,9 +67,9 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  g.wso2.siddhi.core.executor.conditon.compare.greater_than_equal,org.wso
  2.siddhi.core.executor.conditon.compare.less_than,org.wso2.siddhi.core.
  executor.conditon.compare.instance_of,org.wso2.siddhi.core.executor.con
- diton,org.wso2.siddhi.query.api.query,org.wso2.siddhi.core.executor.exp
- ression.add,org.wso2.siddhi.query.api.query.input.handler,org.wso2.sidd
- hi.core.extension,org.wso2.siddhi.query.api.condition,org.wso2.siddhi.c
+ diton,org.wso2.siddhi.query.api.execution.query,org.wso2.siddhi.core.executor.exp
+ ression.add,org.wso2.siddhi.query.api.execution.query.input.handler,org.wso2.sidd
+ hi.core.extension,org.wso2.siddhi.query.api.expression,org.wso2.siddhi.c
  ore.executor.expression.multiply,org.wso2.siddhi.core.extension.holder,
  org.wso2.siddhi.query.api.extension,org.wso2.siddhi.core.util,org.wso2.
  siddhi.core.executor.expression.mod,org.wso2.siddhi.core.config,org.wso
@@ -83,22 +82,22 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  e.query.selector.attribute.handler.sum,org.wso2.siddhi.core.query.selec
  tor.attribute.handler.count,org.wso2.siddhi.core.query.selector.attribu
  te.handler.max,org.wso2.siddhi.core.partition.executor,org.wso2.siddhi.
- query.api.definition.partition,org.wso2.siddhi.query.api.query.output,o
+ query.api.definition.partition,org.wso2.siddhi.query.api.execution.query.output,o
  rg.wso2.siddhi.core.query.output.ratelimit,org.wso2.siddhi.core.query.o
- utput.ratelimit.time,org.wso2.siddhi.query.api.query.output.stream,org.
+ utput.ratelimit.time,org.wso2.siddhi.query.api.execution.query.output.stream,org.
  wso2.siddhi.core.stream,org.wso2.siddhi.core.tracer,org.wso2.siddhi.cor
- e.query.output.ratelimit.event,org.wso2.siddhi.query.api.query.selectio
+ e.query.output.ratelimit.event,org.wso2.siddhi.query.api.execution.query.selectio
  n,org.wso2.siddhi.core.query.output.callback,org.wso2.siddhi.core.query
  .selector,org.wso2.siddhi.core.query.output.ratelimit.snapshot,org.wso2
  .siddhi.core.query.statemachine.sequence,org.wso2.siddhi.core.query.pro
  cessor.handler.pattern,org.wso2.siddhi.core.query.statemachine,org.wso2
  .siddhi.core.query.processor.handler.sequence,org.wso2.siddhi.core.util
- .statemachine,org.wso2.siddhi.query.api.query.input.sequence.element,or
+ .statemachine,org.wso2.siddhi.query.api.execution.query.input.sequence.element,or
  g.wso2.siddhi.query.api.query.input.pattern.element,org.wso2.siddhi.cor
  e.query.statemachine.pattern,org.wso2.siddhi.core.query.processor.handl
- er,org.wso2.siddhi.query.api.query.input,org.wso2.siddhi.query.api.quer
+ er,org.wso2.siddhi.query.api.execution.query.input,org.wso2.siddhi.query.api.quer
  y.input.pattern,org.wso2.siddhi.core.query.processor.transform,org.wso2
- .siddhi.core.snapshot,org.wso2.siddhi.query.api.query.input.sequence,or
+ .siddhi.core.snapshot,org.wso2.siddhi.query.api.execution.query.input.sequence,or
  g.wso2.siddhi.core.query.processor.filter,org.wso2.siddhi.core.query,or
  g.wso2.siddhi.core.query.processor.window,org.wso2.siddhi.core.util.gen
  erator,org.wso2.siddhi.core.query.processor.join";version="3.0.0.SNAPSH
@@ -118,14 +117,14 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  2.siddhi.core.executor.conditon.compare.instance_of;uses:="org.wso2.sid
  dhi.query.api.definition,org.wso2.siddhi.core.executor.expression,org.w
  so2.siddhi.core.executor.conditon.compare";version="3.0.0.SNAPSHOT",org
- .wso2.siddhi.core.query.selector;uses:="org.wso2.siddhi.query.api.query
+ .wso2.siddhi.core.query.selector;uses:="org.wso2.siddhi.query.api.execution.query
  ,org.wso2.siddhi.core.event,org.wso2.siddhi.core.executor.expression,or
  g.wso2.siddhi.core.util.parser,org.wso2.siddhi.core.config,org.wso2.sid
- dhi.query.api.expression,org.wso2.siddhi.query.api.query.input.handler,
+ dhi.query.api.expression,org.wso2.siddhi.query.api.execution.query.input.handler,
  org.wso2.siddhi.core.query.output.ratelimit,org.wso2.siddhi.query.api.c
  ondition,org.wso2.siddhi.core.extension.holder,org.wso2.siddhi.core.uti
- l,org.wso2.siddhi.query.api.query.selection.attribute,org.wso2.siddhi.c
- ore.snapshot,org.wso2.siddhi.query.api.query.selection,org.wso2.siddhi.
+ l,org.wso2.siddhi.query.api.execution.query.selection.attribute,org.wso2.siddhi.c
+ ore.snapshot,org.wso2.siddhi.query.api.execution.query.selection,org.wso2.siddhi.
  core.table,org.wso2.siddhi.core.exception,org.wso2.siddhi.core.query,or
  g.wso2.siddhi.query.api.extension,org.wso2.siddhi.core.event.in,org.wso
  2.siddhi.core.event.remove,org.wso2.siddhi.query.api.definition,org.wso
@@ -136,14 +135,14 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  api.query,org.wso2.siddhi.query.api.definition,org.wso2.siddhi.query.ap
  i,org.wso2.siddhi.query.compiler.exception,org.wso2.siddhi.query.api.de
  finition.partition,org.wso2.siddhi.query.api.extension,org.wso2.siddhi.
- query.api.condition,org.wso2.siddhi.query.api.expression,org.wso2.siddh
- i.query.api.query.input.handler,org.wso2.siddhi.query.api.query.selecti
- on.attribute,org.wso2.siddhi.query.api.query.output.stream,org.wso2.sid
+ query.api.expression,org.wso2.siddhi.query.api.expression,org.wso2.siddh
+ i.query.api.query.input.handler,org.wso2.siddhi.query.api.execution.query.selecti
+ on.attribute,org.wso2.siddhi.query.api.execution.query.output.stream,org.wso2.sid
  dhi.query.api.query.input.sequence.element,org.wso2.siddhi.query.api.qu
- ery.input.sequence,org.wso2.siddhi.query.api.query.selection,org.wso2.s
+ ery.input.sequence,org.wso2.siddhi.query.api.execution.query.selection,org.wso2.s
  iddhi.query.api.query.input.pattern.element,org.wso2.siddhi.query.api.q
  uery.output,org.wso2.siddhi.query.api.expression.constant,org.wso2.sidd
- hi.query.api.query.input,org.wso2.siddhi.query.api.query.input.pattern"
+ hi.query.api.query.input,org.wso2.siddhi.query.api.execution.query.input.pattern"
  ;version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.util.collection.queue.sc
  heduler;uses:="org.wso2.siddhi.core.util.collection.queue,org.wso2.sidd
  hi.core.config";version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.config;us
@@ -153,15 +152,15 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  i.core.table.predicate;version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.qu
  ery.processor.handler;uses:="org.wso2.siddhi.core.stream,org.wso2.siddh
  i.core.event,org.wso2.siddhi.core.query,org.wso2.siddhi.core.partition.
- executor,org.wso2.siddhi.query.api.query,org.wso2.siddhi.core.query.pro
+ executor,org.wso2.siddhi.query.api.execution.query,org.wso2.siddhi.core.query.pro
  cessor,org.wso2.siddhi.core.util.collection.queue.scheduler,org.wso2.si
  ddhi.core.query.processor.transform,org.wso2.siddhi.core.event.in,org.w
  so2.siddhi.core.config,org.wso2.siddhi.core.snapshot,org.wso2.siddhi.co
  re.query.processor.filter,org.wso2.siddhi.core.query.selector";version=
- "3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.query;uses:="org.wso2.siddhi
+ "3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.execution.query;uses:="org.wso2.siddhi
  .query.api.query.selection,org.wso2.siddhi.query.api,org.wso2.siddhi.qu
- ery.api.condition,org.wso2.siddhi.query.api.query.output,org.wso2.siddh
- i.query.api.query.output.stream,org.wso2.siddhi.query.api.query.input,o
+ ery.api.expression,org.wso2.siddhi.query.api.execution.query.output,org.wso2.siddh
+ i.query.api.query.output.stream,org.wso2.siddhi.query.api.execution.query.input,o
  rg.wso2.siddhi.query.api.query.input.handler,org.wso2.siddhi.query.api.
  definition";version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.executor.cond
  iton.compare.less_than_equal;uses:="org.wso2.siddhi.core.executor.expre
@@ -178,15 +177,14 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  3.0.0.SNAPSHOT",org.wso2.siddhi.core.executor.expression;uses:="org.wso
  2.siddhi.query.api.definition,org.wso2.siddhi.core.event,org.wso2.siddh
  i.query.api.query,org.wso2.siddhi.core.table.predicate,org.wso2.siddhi.
- core.event.in";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.query
- .input.sequence;uses:="org.wso2.siddhi.query.api.query.input,org.wso2.s
+ core.event.in";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.execution.query.input.sequence;uses:="org.wso2.siddhi.query.api.execution.query.input,org.wso2.s
  iddhi.query.api.query.input.sequence.element,org.wso2.siddhi.query.api.
  query,org.wso2.siddhi.query.api.definition,org.wso2.siddhi.query.api.ex
  pression.constant";version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.event;
  uses:="org.wso2.siddhi.core.event.in,org.wso2.siddhi.core.event.remove"
  ;version="3.0.0.SNAPSHOT",org.wso2.siddhi.core;uses:="org.wso2.siddhi.c
  ore.extension,org.wso2.siddhi.query.compiler,org.wso2.siddhi.core.util,
- org.wso2.siddhi.query.api.partition,org.wso2.siddhi.core.con
+ org.wso2.siddhi.query.api.execution.partition,org.wso2.siddhi.core.con
  fig,org.wso2.siddhi.core.snapshot,org.wso2.siddhi.core.tracer,org.wso2.
  siddhi.core.stream.input,org.wso2.siddhi.core.table,org.wso2.siddhi.cor
  e.stream.output,org.wso2.siddhi.core.persistence,org.wso2.siddhi.query.
@@ -207,8 +205,7 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  ,org.wso2.siddhi.core.query.selector,org.wso2.siddhi.core.event.remove"
  ;version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.executor.conditon.compar
  e.contains;uses:="org.wso2.siddhi.core.executor.expression,org.wso2.sid
- dhi.core.executor.conditon.compare";version="3.0.0.SNAPSHOT",org.wso2.s
- iddhi.query.api.query.input.handler;uses:="org.wso2.siddhi.query.api.co
+ dhi.core.executor.conditon.compare";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.execution.query.input.handler;uses:="org.wso2.siddhi.query.api.co
  ndition,org.wso2.siddhi.query.api.extension,org.wso2.siddhi.query.api.e
  xpression";version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.query.output.r
  atelimit.within;uses:="org.wso2.siddhi.core.event,org.wso2.siddhi.core.qu
@@ -229,8 +226,7 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  .0.SNAPSHOT",org.wso2.siddhi.core.executor.conditon.compare.greater_tha
  n_equal;uses:="org.wso2.siddhi.core.executor.expression,org.wso2.siddhi
  .core.executor.conditon.compare";version="3.0.0.SNAPSHOT",org.wso2.sidd
- hi.query.api.extension.annotation;version="3.0.0.SNAPSHOT",org.wso2.sid
- dhi.query.api.query.input.pattern.element;uses:="org.wso2.siddhi.query.
+ hi.query.api.extension.annotation;version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.execution.query.input.pattern.element;uses:="org.wso2.siddhi.query.
  api.query.input";version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.query.ou
  tput.ratelimit.snapshot;uses:="org.wso2.siddhi.core.event,org.wso2.sidd
  hi.core.event.in,org.wso2.siddhi.core.query.output.ratelimit,org.wso2.s
@@ -249,8 +245,7 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  .wso2.siddhi.core.query,org.wso2.siddhi.core.executor.expression,org.ws
  o2.siddhi.core.event.in,org.wso2.siddhi.core.config,org.wso2.siddhi.que
  ry.api.expression,org.wso2.siddhi.core.snapshot,org.wso2.siddhi.query.a
- pi.definition,org.wso2.siddhi.core.event";version="3.0.0.SNAPSHOT",org.
- wso2.siddhi.query.api.query.input.sequence.element;uses:="org.wso2.sidd
+ pi.definition,org.wso2.siddhi.core.event";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.execution.query.input.sequence.element;uses:="org.wso2.sidd
  hi.query.api.query.input";version="3.0.0.SNAPSHOT",org.wso2.siddhi.core
  .query.output.ratelimit.event;uses:="org.wso2.siddhi.core.event,org.wso
  2.siddhi.core.query.output.ratelimit,org.wso2.siddhi.core.event.in";ver
@@ -262,21 +257,20 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  rg.wso2.siddhi.core.config,org.wso2.siddhi.core.stream,org.wso2.siddhi.
  core.tracer";version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.persistence;
  uses:="org.wso2.siddhi.core.exception,org.wso2.siddhi.core.config,org.w
- so2.siddhi.core.snapshot";version="3.0.0.SNAPSHOT",org.wso2.siddhi.quer
- y.api.query.input.pattern;uses:="org.wso2.siddhi.query.api.query.input.
+ so2.siddhi.core.snapshot";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.execution.query.input.pattern;uses:="org.wso2.siddhi.query.api.execution.query.input.
  pattern.element,org.wso2.siddhi.query.api.expression.constant,org.wso2.
- siddhi.query.api.query.input,org.wso2.siddhi.query.api.query,org.wso2.s
+ siddhi.query.api.query.input,org.wso2.siddhi.query.api.execution.query,org.wso2.s
  iddhi.query.api.definition";version="3.0.0.SNAPSHOT",org.wso2.siddhi.co
- re.query;uses:="org.wso2.siddhi.query.api.query,org.wso2.siddhi.core.qu
- ery.output.ratelimit,org.wso2.siddhi.query.api.query.output.stream,org.
+ re.query;uses:="org.wso2.siddhi.query.api.execution.query,org.wso2.siddhi.core.qu
+ ery.output.ratelimit,org.wso2.siddhi.query.api.execution.query.output.stream,org.
  wso2.siddhi.query.api.definition.partition,org.wso2.siddhi.core.config,
  org.wso2.siddhi.core.stream,org.wso2.siddhi.core.query.creator,org.wso2
  .siddhi.query.api.query.selection,org.wso2.siddhi.query.api.definition,
  org.wso2.siddhi.core.query.output.callback,org.wso2.siddhi.core.table,o
- rg.wso2.siddhi.core.util.parser,org.wso2.siddhi.query.api.query.output,
- org.wso2.siddhi.core.query.selector,org.wso2.siddhi.query.api.query.inp
+ rg.wso2.siddhi.core.util.parser,org.wso2.siddhi.query.api.execution.query.output,
+ org.wso2.siddhi.core.query.selector,org.wso2.siddhi.query.api.execution.query.inp
  ut,org.wso2.siddhi.core.query.output.ratelimit.snapshot,org.wso2.siddhi
- .core.query.processor.handler,org.wso2.siddhi.query.api.condition,org.w
+ .core.query.processor.handler,org.wso2.siddhi.query.api.expression,org.w
  so2.siddhi.core.exception,org.wso2.siddhi.core.executor.expression,org.
  wso2.siddhi.core.query.processor,org.wso2.siddhi.core.util,org.wso2.sid
  dhi.query.api.expression,org.wso2.siddhi.core.executor.conditon,org.wso
@@ -297,15 +291,14 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  HOT",org.wso2.siddhi.core.executor.conditon;uses:="org.wso2.siddhi.quer
  y.api.definition,org.wso2.siddhi.core.event,org.wso2.siddhi.core.table.
  predicate,org.wso2.siddhi.core.exception,org.wso2.siddhi.core.executor.
- expression,org.wso2.siddhi.core.table";version="3.0.0.SNAPSHOT",org.wso
- 2.siddhi.query.api.query.input;uses:="org.wso2.siddhi.query.api.query,o
+ expression,org.wso2.siddhi.core.table";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.execution.query.input;uses:="org.wso2.siddhi.query.api.execution.query,o
  rg.wso2.siddhi.query.api.query.input.handler,org.wso2.siddhi.query.api.
- definition,org.wso2.siddhi.query.api.condition,org.wso2.siddhi.query.ap
+ definition,org.wso2.siddhi.query.api.expression,org.wso2.siddhi.query.ap
  i.exception,org.wso2.siddhi.query.api.expression,org.wso2.siddhi.query.
- api.expression.constant,org.wso2.siddhi.query.api.query.input.pattern.e
- lement,org.wso2.siddhi.query.api.query.input.sequence.element";version=
+ api.expression.constant,org.wso2.siddhi.query.api.execution.query.input.pattern.e
+ lement,org.wso2.siddhi.query.api.execution.query.input.sequence.element";version=
  "3.0.0.SNAPSHOT",org.wso2.siddhi.core.query.selector.attribute.processo
- r;uses:="org.wso2.siddhi.query.api.query,org.wso2.siddhi.core.extension
+ r;uses:="org.wso2.siddhi.query.api.execution.query,org.wso2.siddhi.core.extension
  ,org.wso2.siddhi.core.executor.expression,org.wso2.siddhi.core.event.re
  move,org.wso2.siddhi.core.config,org.wso2.siddhi.query.api.expression,o
  rg.wso2.siddhi.core.snapshot,org.wso2.siddhi.query.api.definition,org.w
@@ -321,24 +314,23 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  i.query.api.query,org.wso2.siddhi.core.query.output.ratelimit,org.wso2.
  siddhi.core.util,org.wso2.siddhi.core.config,org.wso2.siddhi.query.api.
  definition,org.wso2.siddhi.core.table,org.wso2.siddhi.core.util.parser,
- org.wso2.siddhi.core.query.selector,org.wso2.siddhi.query.api.query.inp
- ut,org.wso2.siddhi.query.api.query.selection,org.wso2.siddhi.query.api.
+ org.wso2.siddhi.core.query.selector,org.wso2.siddhi.query.api.execution.query.inp
+ ut,org.wso2.siddhi.query.api.execution.query.selection,org.wso2.siddhi.query.api.
  query.input.pattern.element,org.wso2.siddhi.core.query.statemachine.pat
- tern,org.wso2.siddhi.query.api.query.input.pattern,org.wso2.siddhi.quer
- y.api.query.output.stream,org.wso2.siddhi.query.api.query.selection.att
+ tern,org.wso2.siddhi.query.api.execution.query.input.pattern,org.wso2.siddhi.quer
+ y.api.query.output.stream,org.wso2.siddhi.query.api.execution.query.selection.att
  ribute,org.wso2.siddhi.query.api.expression,org.wso2.siddhi.core.query.
  output.ratelimit.snapshot,org.wso2.siddhi.core.exception,org.wso2.siddh
- i.core.stream,org.wso2.siddhi.query.api.query.input.sequence,org.wso2.s
- iddhi.core.query.statemachine.sequence,org.wso2.siddhi.query.api.query.
+ i.core.stream,org.wso2.siddhi.query.api.execution.query.input.sequence,org.wso2.s
+ iddhi.core.query.statemachine.sequence,org.wso2.siddhi.query.api.execution.query.
  input.sequence.element";version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.u
  til.collection.map;uses:="org.wso2.siddhi.core.exception,org.wso2.siddh
- i.core.config";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.query
- .selection;uses:="org.wso2.siddhi.query.api.condition,org.wso2.siddhi.q
- uery.api.exception,org.wso2.siddhi.query.api.query.selection.attribute,
+ i.core.config";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.execution.query.selection;uses:="org.wso2.siddhi.query.api.expression,org.wso2.siddhi.q
+ uery.api.exception,org.wso2.siddhi.query.api.execution.query.selection.attribute,
  org.wso2.siddhi.query.api.expression";version="3.0.0.SNAPSHOT",org.wso2
- .siddhi.core.table;uses:="org.wso2.siddhi.query.api.query,org.wso2.sidd
+ .siddhi.core.table;uses:="org.wso2.siddhi.query.api.execution.query,org.wso2.sidd
  hi.query.api.definition,org.wso2.siddhi.core.event,org.wso2.siddhi.core
- .executor.conditon,org.wso2.siddhi.query.api.query.input.handler,org.ws
+ .executor.conditon,org.wso2.siddhi.query.api.execution.query.input.handler,org.ws
  o2.siddhi.core.event.in,org.wso2.siddhi.core.event.remove,org.wso2.sidd
  hi.core.config,org.wso2.siddhi.core.snapshot,org.wso2.siddhi.core.util.
  generator,org.wso2.siddhi.core.util.collection.list,org.wso2.siddhi.cor
@@ -356,7 +348,7 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  ddhi.core.table.predicate,org.wso2.siddhi.core.executor.conditon";versi
  on="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.definition;uses:="org.wso
  2.siddhi.query.api,org.wso2.siddhi.query.api.exception";version="3.0.0.
- SNAPSHOT",org.wso2.siddhi.query.api.condition;uses:="org.wso2.siddhi.qu
+ SNAPSHOT",org.wso2.siddhi.query.api.expression;uses:="org.wso2.siddhi.qu
  ery.api.query,org.wso2.siddhi.query.api.definition,org.wso2.siddhi.quer
  y.api.expression,org.wso2.siddhi.query.api.exception,org.wso2.siddhi.qu
  ery.api.expression.constant,org.wso2.siddhi.query.api.extension,org.wso
@@ -377,8 +369,8 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  ore.event.in,org.wso2.siddhi.core.snapshot,org.wso2.siddhi.core.util,or
  g.wso2.siddhi.core.query,org.wso2.siddhi.core.util.collection.queue.sch
  eduler,org.wso2.siddhi.core.query.processor.handler,org.wso2.siddhi.cor
- e.query.processor,org.wso2.siddhi.query.api.query.input";version="3.0.0
- .SNAPSHOT",org.wso2.siddhi.query.api.query.selection.attribute;uses:="o
+ e.query.processor,org.wso2.siddhi.query.api.execution.query.input";version="3.0.0
+ .SNAPSHOT",org.wso2.siddhi.query.api.execution.query.selection.attribute;uses:="o
  rg.wso2.siddhi.query.api.expression,org.wso2.siddhi.query.api.extension
  ";version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.executor.conditon.compa
  re.greater_than;uses:="org.wso2.siddhi.core.executor.expression,org.wso
@@ -388,7 +380,7 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  filter;uses:="org.wso2.siddhi.core.event,org.wso2.siddhi.core.executor.
  conditon";version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.exception;
  version="3.0.0.SNAPSHOT",org.wso2.siddhi.query.api.expression.constant;
- uses:="org.wso2.siddhi.query.api.query,org.wso2.siddhi.query.api.expres
+ uses:="org.wso2.siddhi.query.api.execution.query,org.wso2.siddhi.query.api.expres
  sion";version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.query.processor.win
  dow;uses:="org.wso2.siddhi.core.query,org.wso2.siddhi.core.util,org.wso
  2.siddhi.core.event.in,org.wso2.siddhi.core.event.remove,org.wso2.siddh
@@ -404,7 +396,7 @@ Export-Package: org.wso2.siddhi.core.query.output.ratelimit;uses:="org.w
  .siddhi.core.query,org.wso2.siddhi.core.query.selector";version="3.0.0.
  SNAPSHOT",org.wso2.siddhi.core.table.predicate.sql;uses:="org.wso2.sidd
  hi.core.table.predicate";version="3.0.0.SNAPSHOT",org.wso2.siddhi.core.
- query.statemachine.pattern;uses:="org.wso2.siddhi.query.api.query.input
+ query.statemachine.pattern;uses:="org.wso2.siddhi.query.api.execution.query.input
  ,org.wso2.siddhi.core.query.statemachine";version="3.0.0.SNAPSHOT"
 Import-Package: com.mchange.v2.c3p0;resolution:=optional,com.sun.jdmk.co
  mm;resolution:=optional,javax.annotation;resolution:=optional,javax.cry

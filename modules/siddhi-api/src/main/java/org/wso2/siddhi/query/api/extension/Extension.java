@@ -19,7 +19,6 @@ package org.wso2.siddhi.query.api.extension;
 
 public interface Extension {
 
-
     public String getNamespace() ;
 
     public String getFunction() ;

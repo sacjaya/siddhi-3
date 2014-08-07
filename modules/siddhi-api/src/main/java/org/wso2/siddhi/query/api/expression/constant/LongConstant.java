@@ -19,7 +19,8 @@ package org.wso2.siddhi.query.api.expression.constant;
 import org.wso2.siddhi.query.api.expression.Expression;
 
 public class LongConstant extends Expression implements Constant {
-    private Long value;
+
+    protected Long value;
 
     public LongConstant(long value) {
         this.value = value;
@@ -28,12 +29,6 @@ public class LongConstant extends Expression implements Constant {
     public Long getValue() {
         return value;
     }
-//
-//    @Override
-//    protected void validate(List<QueryEventSource> queryEventSources, String streamReferenceId,
-//                            boolean processInStreamDefinition) {
-//        //nothing to validate
-//    }
 
     @Override
     public String toString() {

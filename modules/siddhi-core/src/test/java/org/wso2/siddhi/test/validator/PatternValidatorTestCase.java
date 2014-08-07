@@ -14,16 +14,10 @@ package org.wso2.siddhi.test.validator;
 
 import org.apache.log4j.Logger;
 import org.junit.Before;
-import org.junit.Test;
 import org.wso2.siddhi.core.config.ExecutionPlan;
-import org.wso2.siddhi.core.exception.ValidatorException;
-import org.wso2.siddhi.core.util.validate.QueryValidator;
-import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.input.pattern.Pattern;
+import org.wso2.siddhi.query.api.execution.query.Query;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,11 +60,11 @@ public class PatternValidatorTestCase {
 
         /*query.from(
                 Query.patternInputStream(
-                        Pattern.followedBy(
+                        Pattern.next(
                                 Query.inputStream("StockStream", "e1").filter(Condition.compare(Expression.variable("price"),
                                         Condition.Operator.GREATER_THAN_EQUAL,
                                         Expression.value(30))),
-                                Pattern.followedBy(Query.inputStream("StockStream", "e2").filter(Condition.compare(Expression.variable("price"),
+                                Pattern.next(Query.inputStream("StockStream", "e2").filter(Condition.compare(Expression.variable("price"),
                                                 Condition.Operator.GREATER_THAN_EQUAL,
                                                 Expression.value(20))),
                                         Query.inputStream("TwitterStream", "e3").filter(Condition.compare(Expression.variable("wordCount"),

@@ -8,23 +8,23 @@ import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.exception.ValidatorException;
-import org.wso2.siddhi.core.query.QueryRuntime;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.core.util.validate.QueryValidator;
 import org.wso2.siddhi.core.util.validate.StreamValidator;
 import org.wso2.siddhi.query.api.ExecutionPlan;
-import org.wso2.siddhi.query.api.condition.Condition;
+import org.wso2.siddhi.query.api.annotation.Annotation;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.execution.partition.Partition;
+import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.execution.query.input.InputStream;
+import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.partition.Partition;
-import org.wso2.siddhi.query.api.query.Query;
+import org.wso2.siddhi.query.api.expression.condition.Compare;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 public class PartitionTestCase {
     static final Logger log = Logger.getLogger(FilterTestCase.class);
@@ -56,15 +56,15 @@ public class PartitionTestCase {
         Partition partition = Partition.partition().
                 with("cseEventStream1", Expression.variable("symbol"));
 
-        Query query = Query.query().property("name","queryyy");
-        query.from(Query.inputStream("cseEventStream").
-                filter(Condition.compare(Expression.value(700),
-                        Condition.Operator.GREATER_THAN,
+        Query query = Query.query().annotation(Annotation.annotation("info").element("name", "queryyy"));
+        query.from(InputStream.stream("cseEventStream").
+                filter(Expression.compare(Expression.value(700),
+                        Compare.Operator.GREATER_THAN,
                         Expression.variable("price"))
                 )
         );
         query.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -120,16 +120,17 @@ public class PartitionTestCase {
         Partition partition = Partition.partition().
                 with("cseEventStream", Expression.variable("symbol"));
 
-        Query query = Query.query().property("name","queryyy");
-        query.from(Query.inputStream("cseEventStream")
-//                .
-//                filter(Condition.compare(Expression.value(700),
-//                        Condition.Operator.GREATER_THAN,
-//                        Expression.variable("price"))
-//                )
+
+        Query query = Query.query().annotation(Annotation.annotation("info").element("name", "queryyy"));
+        query.from(InputStream.stream("cseEventStream").
+                filter(Expression.compare(Expression.value(700),
+                        Compare.Operator.GREATER_THAN,
+                        Expression.variable("price"))
+                )
+
         );
         query.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -189,14 +190,14 @@ public class PartitionTestCase {
         ;
 
         Query query = Query.query();
-        query.from(Query.inputStream("cseEventStream").
-                filter(Condition.compare(Expression.value(700),
-                        Condition.Operator.GREATER_THAN,
+        query.from(InputStream.stream("cseEventStream").
+                filter(Expression.compare(Expression.value(700),
+                        Compare.Operator.GREATER_THAN,
                         Expression.variable("price"))
                 )
         );
         query.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -255,22 +256,22 @@ public class PartitionTestCase {
                 with("cseEventStream", Expression.variable("symbol"));
 
         Query query = Query.query();
-        query.from(Query.inputStream("cseEventStream"));
+        query.from(InputStream.stream("cseEventStream"));
         query.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
 
         );
-        query.insertIntoPartitioned("StockStream");
+        query.insertIntoInner("StockStream");
 
 
 
         Query query1 = Query.query();
-        query1.from(Query.partitionedInputStream("StockStream"));
+        query1.from(InputStream.innerStream("StockStream"));
         query1.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -332,22 +333,22 @@ public class PartitionTestCase {
                 with("cseEventStream", Expression.variable("symbol"));
 
         Query query = Query.query();
-        query.from(Query.inputStream("cseEventStream"));
+        query.from(InputStream.stream("cseEventStream"));
         query.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
 
         );
-        query.insertIntoPartitioned("StockStream");
+        query.insertIntoInner("StockStream");
 
 
 
         Query query1 = Query.query();
-        query1.from(Query.partitionedInputStream("StockStream"));
+        query1.from(InputStream.innerStream("StockStream"));
         query1.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -363,22 +364,22 @@ public class PartitionTestCase {
                 with("cseEventStream1", Expression.variable("symbol"));
 
         Query query2 = Query.query();
-        query2.from(Query.inputStream("cseEventStream1"));
+        query2.from(InputStream.stream("cseEventStream1"));
         query2.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
 
         );
-        query2.insertIntoPartitioned("StockStream");
+        query2.insertIntoInner("StockStream");
 
 
 
         Query query3 = Query.query();
-        query3.from(Query.partitionedInputStream("StockStream"));
+        query3.from(InputStream.innerStream("StockStream"));
         query3.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -469,22 +470,22 @@ public class PartitionTestCase {
                 with("cseEventStream", Expression.variable("symbol"));
 
         Query query = Query.query();
-        query.from(Query.inputStream("cseEventStream")).property("name","query");
+        query.from(InputStream.stream("cseEventStream")).annotation(Annotation.annotation("info").element("name", "query"));
         query.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
 
         );
-        query.insertIntoPartitioned("StockStream");
+        query.insertIntoInner("StockStream");
 
 
 //
         Query query1 = Query.query();
-        query1.from(Query.partitionedInputStream("StockStream")).property("name","query1");
+        query1.from(InputStream.innerStream("StockStream")).annotation(Annotation.annotation("info").element("name", "query1"));
         query1.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -500,22 +501,22 @@ public class PartitionTestCase {
                 with("cseEventStream1", Expression.variable("symbol"));
 
         Query query2 = Query.query();
-        query2.from(Query.inputStream("cseEventStream1")).property("name", "query2");
+        query2.from(InputStream.stream("cseEventStream1")).annotation(Annotation.annotation("info").element("name",  "query2"));
         query2.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
 
         );
-        query2.insertIntoPartitioned("StockStream");
+        query2.insertIntoInner("StockStream");
 
 
 
         Query query3 = Query.query();
-        query3.from(Query.partitionedInputStream("StockStream")).property("name","query3");
+        query3.from(InputStream.innerStream("StockStream")).annotation(Annotation.annotation("info").element("name", "query3"));
         query3.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -527,9 +528,9 @@ public class PartitionTestCase {
 
 
         Query query4 = Query.query();
-        query4.from(Query.inputStream("StockStream")).property("name","query4");
+        query4.from(InputStream.stream("StockStream")).annotation(Annotation.annotation("info").element("name", "query4"));
         query4.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -539,9 +540,9 @@ public class PartitionTestCase {
 
 
         Query query5 = Query.query();
-        query5.from(Query.partitionedInputStream("StockStream")).property("name","query5");
+        query5.from(InputStream.innerStream("StockStream")).annotation(Annotation.annotation("info").element("name", "query5"));
         query5.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -697,20 +698,20 @@ public class PartitionTestCase {
                 with("cseEventStream", Expression.variable("symbol")).with("cseEventStream1", Expression.variable("symbol"));
 
         Query query = Query.query();
-        query.from(Query.inputStream("cseEventStream")).property("name","query");
+        query.from(InputStream.stream("cseEventStream")).annotation(Annotation.annotation("info").element("name", "query"));
         query.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
 
         );
-        query.insertIntoPartitioned("StockStream");
+        query.insertIntoInner("StockStream");
 
         Query query1 = Query.query();
-        query1.from(Query.partitionedInputStream("StockStream")).property("name","query1");
+        query1.from(InputStream.innerStream("StockStream")).annotation(Annotation.annotation("info").element("name", "query1"));
         query1.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -719,22 +720,22 @@ public class PartitionTestCase {
         query1.insertInto("OutStockStream");
 
         Query query2 = Query.query();
-        query2.from(Query.inputStream("cseEventStream1")).property("name", "query2");
+        query2.from(InputStream.stream("cseEventStream1")).annotation(Annotation.annotation("info").element("name",  "query2"));
         query2.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
 
         );
-        query2.insertIntoPartitioned("StockStream1");
+        query2.insertIntoInner("StockStream1");
 
 
 
         Query query3 = Query.query();
-        query3.from(Query.partitionedInputStream("StockStream1")).property("name","query3");
+        query3.from(InputStream.innerStream("StockStream1")).annotation(Annotation.annotation("info").element("name", "query3"));
         query3.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -811,22 +812,22 @@ public class PartitionTestCase {
                 with("cseEventStream", Expression.variable("symbol")).with("StockStream", Expression.variable("symbol"));
 
         Query query = Query.query();
-        query.from(Query.inputStream("cseEventStream"));
+        query.from(InputStream.stream("cseEventStream"));
         query.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
 
         );
-        query.insertIntoPartitioned("StockStream");
+        query.insertIntoInner("StockStream");
 
 
 
         Query query1 = Query.query();
-        query1.from(Query.partitionedInputStream("StockStream"));
+        query1.from(InputStream.innerStream("StockStream"));
         query1.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price")).
                         select("volume", Expression.variable("volume"))
@@ -835,9 +836,9 @@ public class PartitionTestCase {
         query1.insertInto("OutStockStream");
 
         Query query2 = Query.query();
-        query2.from(Query.inputStream("StockStream"));
+        query2.from(InputStream.stream("StockStream"));
         query2.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.value(12.5f)).
                         select("volume", Expression.variable("volume"))

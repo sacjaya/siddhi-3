@@ -18,10 +18,12 @@ package org.wso2.siddhi.query.api;
 
 
 import org.junit.Test;
-import org.wso2.siddhi.query.api.condition.Condition;
+import org.wso2.siddhi.query.api.execution.query.input.InputStream;
+import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.input.sequence.Sequence;
+import org.wso2.siddhi.query.api.expression.condition.Compare;
+import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.execution.query.input.state.State;
 
 public class SequenceQueryTestCase {
 
@@ -35,20 +37,20 @@ public class SequenceQueryTestCase {
     public void testCreatingFilterPatternQuery() {
         Query query = Query.query();
         query.from(
-                Query.sequenceInputStream(
-                        Sequence.next(Query.inputStream("e1", "Stream1"),
-                                Query.inputStream("e2", "Stream1")),
-                        Expression.value(2000)
-                ));
+                InputStream.sequenceStream(
+                        State.next(State.stream(InputStream.stream("e1", "Stream1")),
+                                State.stream(InputStream.stream("e2", "Stream1")),
+                                Expression.Time.day(1)
+                        )));
         query.insertInto("OutputStream");
         query.select(
-                Query.outputSelector().
-                        select("symbol", Expression.variable("e1", "symbol")).
-                        select("avgPrice", Expression.function("avg", Expression.variable("e2",0, "price"))).
-                        groupBy("e1", "symbol").
-                        having(Condition.compare(Expression.variable("avgPrice"),
-                                                 Condition.Operator.GREATER_THAN,
-                                                 Expression.value(50)))
+                Selector.selector().
+                        select("symbol", Expression.variable("symbol").ofStream("e1")).
+                        select("avgPrice", Expression.function("avg", Expression.variable("price").ofStream("e2", 0))).
+                        groupBy(Expression.variable("symbol").ofStream("e1")).
+                        having(Expression.compare(Expression.variable("avgPrice"),
+                                Compare.Operator.GREATER_THAN,
+                                Expression.value(50)))
 
 
         );

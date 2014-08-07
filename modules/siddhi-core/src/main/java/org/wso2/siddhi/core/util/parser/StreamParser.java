@@ -26,14 +26,13 @@ import org.wso2.siddhi.core.query.processor.filter.FilterProcessor;
 import org.wso2.siddhi.core.query.processor.filter.PassThroughFilterProcessor;
 import org.wso2.siddhi.core.query.processor.handler.SimpleHandlerProcessor;
 import org.wso2.siddhi.core.util.QueryPartComposite;
-import org.wso2.siddhi.query.api.condition.Condition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.execution.query.input.InputStream;
+import org.wso2.siddhi.query.api.execution.query.input.SingleInputStream;
+import org.wso2.siddhi.query.api.execution.query.input.handler.Filter;
+import org.wso2.siddhi.query.api.execution.query.input.handler.StreamHandler;
+import org.wso2.siddhi.query.api.execution.query.input.handler.Window;
 import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.query.input.InputStream;
-import org.wso2.siddhi.query.api.query.input.SingleInputStream;
-import org.wso2.siddhi.query.api.query.input.handler.Filter;
-import org.wso2.siddhi.query.api.query.input.handler.StreamHandler;
-import org.wso2.siddhi.query.api.query.input.handler.Window;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +72,7 @@ public class StreamParser {
     private static Processor generateProcessor(StreamHandler streamHandler, Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutorList) {
         if (streamHandler instanceof Filter) {
             //Filter filter = (Filter) streamHandler;
-            Condition condition = ((Filter) streamHandler).getFilterCondition();
+            Expression condition = ((Filter) streamHandler).getFilterExpression() ;
             try {
                 return new FilterProcessor(ExecutorParser.parseCondition(condition, null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutorList)); //streamId already set at validation
                 //return new FilterProcessor(ExecutorParser.parseCondition(condition, ((BasicSingleInputStream) inputStream).getStreamId(),  siddhiContext, tempStreamDefinitionMap,metaStreamEvent,variableExpressionExecutorList));
@@ -107,7 +106,7 @@ public class StreamParser {
         for (StreamHandler streamHandler : streamHandlers) {
             if (streamHandler instanceof Filter) {
                 //Filter filter = (Filter) streamHandler;
-                Condition condition = ((Filter) streamHandler).getFilterCondition();
+                Expression condition = ((Filter) streamHandler).getFilterExpression();
                 try {
                     FilterProcessor filterProcessor = new FilterProcessor(ExecutorParser.parseCondition(condition, ((SingleInputStream) inputStream).getStreamId(), siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutorList));
                     filterProcessors.add(filterProcessor);

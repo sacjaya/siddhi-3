@@ -16,19 +16,16 @@
  */
 package org.wso2.siddhi.query.api.definition;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import org.wso2.siddhi.query.api.annotation.Annotation;
 
 public class TableDefinition extends AbstractDefinition {
-
-    private ExternalTable externalTable = null;
 
     protected TableDefinition(String id) {
         super(id);
     }
 
     public static TableDefinition id(String id) {
-       return new TableDefinition(id);
+        return new TableDefinition(id);
     }
 
     public TableDefinition attribute(String attributeName, Attribute.Type type) {
@@ -37,57 +34,18 @@ public class TableDefinition extends AbstractDefinition {
         return this;
     }
 
-    public String getTableId() {
-        return id;
-    }
-
-    public ExternalTable getExternalTable() {
-        return externalTable;
+    public TableDefinition annotation(Annotation annotation) {
+        annotations.add(annotation);
+        return this;
     }
 
     @Override
     public String toString() {
         return "TableDefinition{" +
-                "tableId='" + id + '\'' +
-                ", attributeList=" + attributeList + '\'' +
-                ", externalTable=" + externalTable + '\'' +
-                "} ";
+                "id='" + id + '\'' +
+                ", attributeList=" + attributeList +
+                ", annotations=" + annotations +
+                '}';
     }
 
-
-    public TableDefinition with(String paramName, String paramValue) {
-        if (externalTable == null) {
-            externalTable = new ExternalTable();
-        }
-        externalTable.parameter(paramName, paramValue);
-        return this;
-    }
-
-    public class ExternalTable {
-
-        private Map<String, String> tableParameters;
-
-        public ExternalTable() {
-            tableParameters = new ConcurrentHashMap<String, String>(4);
-        }
-
-        public void parameter(String parameterName, String parameterValue) {
-            this.tableParameters.put(parameterName, parameterValue);
-        }
-
-        public String getParameter(String parameterName) {
-            return this.tableParameters.get(parameterName);
-        }
-
-        public Map<String, String> getParameters() {
-            return this.tableParameters;
-        }
-
-        @Override
-        public String toString() {
-            return "ExternalTable{" +
-                    this.tableParameters.toString() +
-                    '}';
-        }
-    }
 }

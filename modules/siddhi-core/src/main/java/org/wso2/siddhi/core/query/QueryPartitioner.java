@@ -28,12 +28,11 @@ import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.core.util.parser.ExecutorParser;
-import org.wso2.siddhi.query.api.expression.ExpressionValidator;
-import org.wso2.siddhi.query.api.partition.Partition;
-import org.wso2.siddhi.query.api.partition.PartitionType;
-import org.wso2.siddhi.query.api.partition.ValuePartitionType;
-import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
-import org.wso2.siddhi.query.api.query.input.InputStream;
+import org.wso2.siddhi.query.api.execution.partition.Partition;
+import org.wso2.siddhi.query.api.execution.partition.PartitionType;
+import org.wso2.siddhi.query.api.execution.partition.ValuePartitionType;
+import org.wso2.siddhi.query.api.execution.query.input.BasicSingleInputStream;
+import org.wso2.siddhi.query.api.execution.query.input.InputStream;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,9 +55,10 @@ public class QueryPartitioner {
                 ArrayList<PartitionExecutor> executorList = new ArrayList<PartitionExecutor>();
                 partitionExecutors.add(executorList);
                 for (PartitionType partitionType : partition.getPartitionTypeList()) {
-                    Map<String, Set<String>> dependencyMap;
+                    Map<String, Set<String>> dependencyMap =null;
                     if (partitionType instanceof ValuePartitionType) {
-                        dependencyMap = ExpressionValidator.getDependency(((ValuePartitionType) partitionType).getExpression());
+                        //todo fix get dependency
+                       // dependencyMap = ExpressionValidator.getDependency(((ValuePartitionType) partitionType).getExpression());
                         if (dependencyMap.isEmpty() ||  ((ValuePartitionType) partitionType).getStreamId().equals(((BasicSingleInputStream) inputStream).getStreamId())) {
                             try {
                                 executorList.add(new ValuePartitionExecutor(ExecutorParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(), siddhiContext, queryCreator.getTempStreamDefinitionMap(), null,null)));//TODO: handle null arguments

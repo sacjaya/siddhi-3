@@ -16,6 +16,8 @@
  */
 package org.wso2.siddhi.query.api.definition;
 
+import org.wso2.siddhi.query.api.annotation.Annotation;
+
 public class StreamDefinition extends AbstractDefinition {
 
     public StreamDefinition() {
@@ -35,11 +37,18 @@ public class StreamDefinition extends AbstractDefinition {
         return this;
     }
 
+    public StreamDefinition annotation(Annotation annotation) {
+        annotations.add(annotation);
+        return this;
+    }
+
+
     @Override
     public String toString() {
         return "StreamDefinition{" +
                 "id='" + id + '\'' +
                 ", attributeList=" + attributeList +
+                ", annotations=" + annotations +
                 '}';
     }
 

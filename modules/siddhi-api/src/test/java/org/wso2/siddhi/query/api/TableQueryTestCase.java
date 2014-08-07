@@ -18,10 +18,12 @@ package org.wso2.siddhi.query.api;
 
 
 import org.junit.Test;
-import org.wso2.siddhi.query.api.condition.Condition;
+import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.execution.query.input.InputStream;
+import org.wso2.siddhi.query.api.execution.query.output.stream.OutputStream;
+import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
+import org.wso2.siddhi.query.api.expression.condition.Compare;
 
 public class TableQueryTestCase {
 
@@ -29,25 +31,24 @@ public class TableQueryTestCase {
     public void testCreatingDeleteQuery() {
         Query query = Query.query();
         query.from(
-                Query.inputStream("cseEventStream").
+                InputStream.stream("cseEventStream").
                         filter(
-                                Condition.and(
-                                        Condition.compare(
+                                Expression.and(
+                                        Expression.compare(
                                                 Expression.add(Expression.value(7), Expression.value(9.5)),
-                                                Condition.Operator.GREATER_THAN,
+                                                Compare.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
-                                        Condition.compare(Expression.value(100),
-                                                Condition.Operator.GREATER_THAN_EQUAL,
+                                        Expression.compare(Expression.value(100),
+                                                Compare.Operator.GREATER_THAN_EQUAL,
                                                 Expression.variable("volume")
                                         )
                                 )
                         ).window("lengthBatch", Expression.value(50))
         );
-        query.deleteBy("StockQuote", Condition.compare(
+        query.deleteBy("StockQuote", Expression.compare(
                 Expression.variable("symbol"),
-                Condition.Operator.EQUAL,
-                Expression.variable("StockQuote", "symbol")));
-
+                Compare.Operator.EQUAL,
+                Expression.variable("symbol").ofStream("StockQuote")));
 
     }
 
@@ -56,22 +57,22 @@ public class TableQueryTestCase {
     public void testCreatingDeleteByTypeQuery() {
         Query query = Query.query();
         query.from(
-                Query.inputStream("cseEventStream").
-                        filter(Condition.and(Condition.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
-                                                Condition.Operator.GREATER_THAN,
+                InputStream.stream("cseEventStream").
+                        filter(Expression.and(Expression.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
+                                                Compare.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
-                                        Condition.compare(Expression.value(100),
-                                                Condition.Operator.GREATER_THAN_EQUAL,
+                                        Expression.compare(Expression.value(100),
+                                                Compare.Operator.GREATER_THAN_EQUAL,
                                                 Expression.variable("volume")
                                         )
                                 )
                         ).window("lengthBatch", Expression.value(50))
         );
-        query.deleteBy("StockQuote", OutputStream.OutputEventsFor.ALL_EVENTS,
-                Condition.compare(
+        query.deleteBy("StockQuote", OutputStream.OutputEventType.ALL_EVENTS,
+                Expression.compare(
                         Expression.variable("symbol"),
-                        Condition.Operator.EQUAL,
-                        Expression.variable("StockQuote", "symbol"))
+                        Compare.Operator.EQUAL,
+                        Expression.variable("symbol").ofStream("StockQuote"))
         );
 
     }
@@ -80,53 +81,52 @@ public class TableQueryTestCase {
     public void testCreatingUpdateByQuery() {
         Query query = Query.query();
         query.from(
-                Query.inputStream("cseEventStream").
-                        filter(Condition.and(Condition.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
-                                                Condition.Operator.GREATER_THAN,
+                InputStream.stream("cseEventStream").
+                        filter(Expression.and(Expression.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
+                                                Compare.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
-                                        Condition.compare(Expression.value(100),
-                                                Condition.Operator.GREATER_THAN_EQUAL,
+                                        Expression.compare(Expression.value(100),
+                                                Compare.Operator.GREATER_THAN_EQUAL,
                                                 Expression.variable("volume")
                                         )
                                 )
                         ).window("lengthBatch", Expression.value(50))
         );
         query.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price"))
         );
-        query.updateBy("StockQuote", Condition.compare(
+        query.updateBy("StockQuote", Expression.compare(
                 Expression.variable("symbol"),
-                Condition.Operator.EQUAL,
-                Expression.variable("StockQuote", "symbol")));
+                Compare.Operator.EQUAL,
+                Expression.variable("symbol").ofStream("StockQuote")));
     }
 
     @Test
     public void testCreatingUpdateByTypeQuery() {
         Query query = Query.query();
         query.from(
-                Query.inputStream("cseEventStream").
-                        filter(Condition.and(Condition.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
-                                                Condition.Operator.GREATER_THAN,
+                InputStream.stream("cseEventStream").
+                        filter(Expression.and(Expression.compare(Expression.add(Expression.value(7), Expression.value(9.5)),
+                                                Compare.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
-                                        Condition.compare(Expression.value(100),
-                                                Condition.Operator.GREATER_THAN_EQUAL,
+                                        Expression.compare(Expression.value(100),
+                                                Compare.Operator.GREATER_THAN_EQUAL,
                                                 Expression.variable("volume")
                                         )
                                 )
                         ).window("lengthBatch", Expression.value(50))
         );
         query.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("price", Expression.variable("price"))
         );
-        query.updateBy("StockQuote", OutputStream.OutputEventsFor.ALL_EVENTS, Condition.compare(
+        query.updateBy("StockQuote", OutputStream.OutputEventType.ALL_EVENTS, Expression.compare(
                 Expression.variable("symbol"),
-                Condition.Operator.EQUAL,
-                Expression.variable("StockQuote", "symbol")));
-
+                Compare.Operator.EQUAL,
+                Expression.variable("symbol").ofStream("StockQuote")));
 
     }
 
@@ -135,16 +135,16 @@ public class TableQueryTestCase {
     public void testCreatingInQuery() {
         Query query = Query.query();
         query.from(
-                Query.inputStream("cseEventStream").
+                InputStream.stream("cseEventStream").
                         filter(
-                                Condition.and(
-                                        Condition.compare(
+                                Expression.and(
+                                        Expression.compare(
                                                 Expression.add(Expression.value(7), Expression.value(9.5)),
-                                                Condition.Operator.GREATER_THAN,
+                                                Compare.Operator.GREATER_THAN,
                                                 Expression.variable("price")),
-                                        Condition.in(
-                                                Condition.compare(Expression.value(9.5),
-                                                        Condition.Operator.GREATER_THAN,
+                                        Expression.in(
+                                                Expression.compare(Expression.value(9.5),
+                                                        Compare.Operator.GREATER_THAN,
                                                         Expression.variable("price")),
                                                 "eventTable"
                                         )
@@ -152,18 +152,17 @@ public class TableQueryTestCase {
                         ).window("lengthBatch", Expression.value(50))
         );
         query.select(
-                Query.outputSelector().
+                Selector.selector().
                         select("symbol", Expression.variable("symbol")).
                         select("avgPrice", Expression.function("avg", Expression.variable("symbol"))).
-                        groupBy("symbol").
-                        having(Condition.compare(Expression.variable("avgPrice"),
-                                Condition.Operator.GREATER_THAN_EQUAL,
+                        groupBy(Expression.variable("symbol")).
+                        having(Expression.compare(Expression.variable("avgPrice"),
+                                Compare.Operator.GREATER_THAN_EQUAL,
                                 Expression.value(50)
                         ))
         );
         query.insertInto("StockQuote");
 
     }
-
 
 }

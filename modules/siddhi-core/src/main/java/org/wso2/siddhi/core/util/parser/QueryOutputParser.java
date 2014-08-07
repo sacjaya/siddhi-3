@@ -28,12 +28,12 @@ import org.wso2.siddhi.core.query.output.rateLimit.PassThroughOutputRateManager;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.query.output.OutputRate;
-import org.wso2.siddhi.query.api.query.output.stream.DeleteStream;
-import org.wso2.siddhi.query.api.query.output.stream.InsertIntoStream;
-import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
-import org.wso2.siddhi.query.api.query.output.stream.UpdateStream;
-import org.wso2.siddhi.query.api.query.selection.Selector;
+import org.wso2.siddhi.query.api.execution.query.output.OutputRate;
+import org.wso2.siddhi.query.api.execution.query.output.stream.DeleteStream;
+import org.wso2.siddhi.query.api.execution.query.output.stream.InsertIntoStream;
+import org.wso2.siddhi.query.api.execution.query.output.stream.OutputStream;
+import org.wso2.siddhi.query.api.execution.query.output.stream.UpdateStream;
+import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 
 
 import java.util.List;
@@ -51,10 +51,10 @@ public class QueryOutputParser {
         String id = null;
 
         if (outStream != null) {
-            if (outStream.getOutputEventsFor() == OutputStream.OutputEventsFor.CURRENT_EVENTS || outStream.getOutputEventsFor() == OutputStream.OutputEventsFor.ALL_EVENTS) {
+            if (outStream.getOutputEventType() == OutputStream.OutputEventType.CURRENT_EVENTS || outStream.getOutputEventType() == OutputStream.OutputEventType.ALL_EVENTS) {
                 currentOn = true;
             }
-            if (outStream.getOutputEventsFor() == OutputStream.OutputEventsFor.EXPIRED_EVENTS || outStream.getOutputEventsFor() == OutputStream.OutputEventsFor.ALL_EVENTS) {
+            if (outStream.getOutputEventType() == OutputStream.OutputEventType.EXPIRED_EVENTS || outStream.getOutputEventType() == OutputStream.OutputEventType.ALL_EVENTS) {
                 expiredOn = true;
             }
 
@@ -64,7 +64,7 @@ public class QueryOutputParser {
             expiredOn = true;
         }
         if (outStream instanceof InsertIntoStream) {
-            isPartitioned = ((InsertIntoStream) outStream).isPartitioned();
+            isPartitioned = ((InsertIntoStream) outStream).isInnerStream();
         }
 
         return new QuerySelector(id, selector, outputRateManager, siddhiContext, currentOn, expiredOn, isPartitioned, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors);

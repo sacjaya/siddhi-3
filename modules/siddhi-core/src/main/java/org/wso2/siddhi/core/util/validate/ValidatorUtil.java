@@ -15,11 +15,15 @@ package org.wso2.siddhi.core.util.validate;
 import org.wso2.siddhi.core.exception.OperationNotSupportedException;
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.util.Constants;
-import org.wso2.siddhi.query.api.condition.*;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.expression.*;
+import org.wso2.siddhi.query.api.expression.Expression;
+import org.wso2.siddhi.query.api.expression.Variable;
+import org.wso2.siddhi.query.api.expression.condition.And;
+import org.wso2.siddhi.query.api.expression.condition.Compare;
+import org.wso2.siddhi.query.api.expression.condition.Or;
 import org.wso2.siddhi.query.api.expression.constant.*;
+import org.wso2.siddhi.query.api.expression.math.*;
 
 import java.util.Map;
 
@@ -44,9 +48,9 @@ public class ValidatorUtil {
         } else if (expression instanceof Divide) {
             validateCompareExpression(((Divide) expression).getLeftValue(), streamDefinitionMap, defaultDefinition);
             validateCompareExpression(((Divide) expression).getRightValue(), streamDefinitionMap, defaultDefinition);
-        } else if (expression instanceof Minus) {
-            validateCompareExpression(((Minus) expression).getLeftValue(), streamDefinitionMap, defaultDefinition);
-            validateCompareExpression(((Minus) expression).getRightValue(), streamDefinitionMap, defaultDefinition);
+        } else if (expression instanceof Subtract) {
+            validateCompareExpression(((Subtract) expression).getLeftValue(), streamDefinitionMap, defaultDefinition);
+            validateCompareExpression(((Subtract) expression).getRightValue(), streamDefinitionMap, defaultDefinition);
         } else if (expression instanceof Mod) {
             validateCompareExpression(((Mod) expression).getLeftValue(), streamDefinitionMap, defaultDefinition);
             validateCompareExpression(((Mod) expression).getRightValue(), streamDefinitionMap, defaultDefinition);
@@ -114,23 +118,23 @@ public class ValidatorUtil {
      * @param defaultDefinition
      * @throws ValidatorException
      */
-    public static void validateCondition(Condition condition, Map<String, StreamDefinition> streamDefinitionMap, String defaultDefinition) throws ValidatorException {
+    public static void validateCondition(Expression condition, Map<String, StreamDefinition> streamDefinitionMap, String defaultDefinition) throws ValidatorException {
 
         if (condition instanceof Compare) {
             validateCompareExpression(((Compare) condition).getLeftExpression(), streamDefinitionMap, defaultDefinition);
             validateCompareExpression(((Compare) condition).getRightExpression(), streamDefinitionMap, defaultDefinition);
-        } else if (condition instanceof AndCondition) {
-            validateCondition(((AndCondition) condition).getLeftCondition(), streamDefinitionMap, defaultDefinition);
-            validateCondition(((AndCondition) condition).getRightCondition(), streamDefinitionMap, defaultDefinition);
-        } else if (condition instanceof BooleanCondition) {
-            //TODO: validate BooleanCondition
-        } else if (condition instanceof InCondition) {
-            //TODO: validate InCondition
-        } else if (condition instanceof NotCondition) {
-            //TODO: validate NotCondition
-        } else if (condition instanceof OrCondition) {
-            validateCondition(((OrCondition) condition).getLeftCondition(), streamDefinitionMap, defaultDefinition);
-            validateCondition(((OrCondition) condition).getRightCondition(), streamDefinitionMap, defaultDefinition);
+        } else if (condition instanceof And) {
+            validateCondition(((And) condition).getLeftExpression(), streamDefinitionMap, defaultDefinition);
+            validateCondition(((And) condition).getRightExpression(), streamDefinitionMap, defaultDefinition);
+//        } else if (condition instanceof BooleanCondition) {
+//            TODO: validate BooleanCondition
+//        } else if (condition instanceof InCondition) {
+//            TODO: validate InCondition
+//        } else if (condition instanceof NotCondition) {
+//            TODO: validate NotCondition
+        } else if (condition instanceof Or) {
+            validateCondition(((Or) condition).getLeftExpression(), streamDefinitionMap, defaultDefinition);
+            validateCondition(((Or) condition).getRightExpression(), streamDefinitionMap, defaultDefinition);
         }
 
     }
@@ -193,9 +197,9 @@ public class ValidatorUtil {
             Attribute.Type left = getExpressionReturnType(((Divide) expression).getLeftValue(), streamDefinitionMap);
             Attribute.Type right = getExpressionReturnType(((Divide) expression).getRightValue(), streamDefinitionMap);
             return getArithmaticOperationReturnType(left, right);
-        } else if (expression instanceof Minus) {
-            Attribute.Type left = getExpressionReturnType(((Minus) expression).getLeftValue(), streamDefinitionMap);
-            Attribute.Type right = getExpressionReturnType(((Minus) expression).getRightValue(), streamDefinitionMap);
+        } else if (expression instanceof Subtract) {
+            Attribute.Type left = getExpressionReturnType(((Subtract) expression).getLeftValue(), streamDefinitionMap);
+            Attribute.Type right = getExpressionReturnType(((Subtract) expression).getRightValue(), streamDefinitionMap);
             return getArithmaticOperationReturnType(left, right);
         } else if (expression instanceof Mod) {
             Attribute.Type left = getExpressionReturnType(((Mod) expression).getLeftValue(), streamDefinitionMap);

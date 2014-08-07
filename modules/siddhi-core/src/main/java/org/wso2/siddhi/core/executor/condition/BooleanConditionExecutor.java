@@ -30,7 +30,7 @@ public class BooleanConditionExecutor implements ConditionExecutor {
 
     public BooleanConditionExecutor(ExpressionExecutor expressionExecutor) {
         if (expressionExecutor.getReturnType() != Attribute.Type.BOOL) {
-            throw new OperationNotSupportedException("Boolean condition cannot handle non boolean values");
+            throw new OperationNotSupportedException("Boolean onDeleteExpression cannot handle non boolean values");
         }
         this.expressionExecutor = expressionExecutor;
     }

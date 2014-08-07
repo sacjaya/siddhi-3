@@ -3,8 +3,8 @@ package org.wso2.siddhi.query.test;
 import junit.framework.Assert;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
-import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.input.JoinStream;
+import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.execution.query.input.JoinStream;
 import org.wso2.siddhi.query.compiler.SiddhiCompiler;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 

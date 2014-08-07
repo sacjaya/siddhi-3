@@ -14,16 +14,10 @@ package org.wso2.siddhi.core.util.validate;
 
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.query.Query;
-import org.wso2.siddhi.query.api.query.input.BasicSingleInputStream;
-import org.wso2.siddhi.query.api.query.input.InputStream;
-import org.wso2.siddhi.query.api.query.input.JoinInputStream;
-import org.wso2.siddhi.query.api.query.input.SingleInputStream;
-import org.wso2.siddhi.query.api.query.input.pattern.PatternInputStream;
-import org.wso2.siddhi.query.api.query.input.pattern.element.FollowedByElement;
-import org.wso2.siddhi.query.api.query.input.pattern.element.PatternElement;
-import org.wso2.siddhi.query.api.query.output.stream.OutputStream;
-import org.wso2.siddhi.query.api.query.selection.Selector;
+import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.execution.query.input.*;
+import org.wso2.siddhi.query.api.execution.query.output.stream.OutputStream;
+import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,27 +63,28 @@ public class QueryValidator {
             if (((JoinInputStream) inputStream).getOnCompare() != null) {
                 ValidatorUtil.validateCondition(((JoinInputStream) inputStream).getOnCompare(), tempDefinitionMap, null);
             }
-        } else if (inputStream instanceof PatternInputStream) {
-            handlePatternElement(((PatternInputStream) inputStream).getPatternElement(), definitionMap, tempDefinitionMap);
+        } else if (inputStream instanceof StateInputStream) {
+            //todo handle
+//            handlePatternElement(((PatternInputStream) inputStream).getPatternElement(), definitionMap, tempDefinitionMap);
         }
         return tempDefinitionMap;
     }
 
-    /**
-     * Method to handle patterns input stream. Will decompose pattern stream recursively
-     * @param patternElement pattern element to be handled
-     * @param definitionMap full definition map
-     * @param tempDefinitionMap relevant definition map
-     * @throws ValidatorException
-     */
-    private static void handlePatternElement(PatternElement patternElement, Map<String, StreamDefinition> definitionMap, Map<String, StreamDefinition> tempDefinitionMap) throws ValidatorException {
-        if (patternElement instanceof FollowedByElement) {
-            handlePatternElement(((FollowedByElement) patternElement).getPatternElement(), definitionMap, tempDefinitionMap);
-            handlePatternElement(((FollowedByElement) patternElement).getFollowedByPatternElement(), definitionMap, tempDefinitionMap);
-        } else if (patternElement instanceof BasicSingleInputStream) {
-            InStreamValidator.validate((BasicSingleInputStream) patternElement, definitionMap, tempDefinitionMap);
-        }
-    }
+//    /**
+//     * Method to handle patterns input stream. Will decompose pattern stream recursively
+//     * @param patternElement pattern element to be handled
+//     * @param definitionMap full definition map
+//     * @param tempDefinitionMap relevant definition map
+//     * @throws ValidatorException
+//     */
+//    private static void handlePatternElement(PatternElement patternElement, Map<String, StreamDefinition> definitionMap, Map<String, StreamDefinition> tempDefinitionMap) throws ValidatorException {
+//        if (patternElement instanceof FollowedByElement) {
+//            handlePatternElement(((FollowedByElement) patternElement).getPatternElement(), definitionMap, tempDefinitionMap);
+//            handlePatternElement(((FollowedByElement) patternElement).getFollowedByPatternElement(), definitionMap, tempDefinitionMap);
+//        } else if (patternElement instanceof BasicSingleInputStream) {
+//            InStreamValidator.validate((BasicSingleInputStream) patternElement, definitionMap, tempDefinitionMap);
+//        }
+//    }
 
     private static void getRelevantDefinitionMap(Map<String, Object> relevantDefinitionMap, List<String> streamIds, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
         for (String streamId : streamIds) {

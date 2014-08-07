@@ -28,13 +28,15 @@ import org.wso2.siddhi.core.util.validate.QueryValidator;
 import org.wso2.siddhi.core.util.validate.StreamValidator;
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.execution.element.ExecutionElement;
-import org.wso2.siddhi.query.api.partition.Partition;
-import org.wso2.siddhi.query.api.query.Query;
+import org.wso2.siddhi.query.api.execution.ExecutionElement;
+import org.wso2.siddhi.query.api.execution.partition.Partition;
+import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
-import java.util.Collection;
+
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.*;
 
 
@@ -50,7 +52,7 @@ public class SiddhiManager {
     public SiddhiManager(SiddhiConfiguration siddhiConfiguration) {
 
 
-        this.siddhiContext = new SiddhiContext(siddhiConfiguration.getExecutionPlanIdentifier(), SiddhiContext.ProcessingState.DISABLED);
+        this.siddhiContext = new SiddhiContext(siddhiConfiguration.getSiddhiInstanceIdentifier(), SiddhiContext.ProcessingState.DISABLED);
         this.siddhiContext.setEventBatchSize(siddhiConfiguration.getEventBatchSize());
         this.siddhiContext.setSiddhiExtensions(siddhiConfiguration.getSiddhiExtensions());
         this.siddhiContext.setThreadBarrier(new ThreadBarrier());
@@ -62,8 +64,23 @@ public class SiddhiManager {
                 new SiddhiThreadFactory("Executor")));
         this.siddhiContext.setScheduledExecutorService(Executors.newScheduledThreadPool(siddhiConfiguration.getThreadSchedulerCorePoolSize(), new SiddhiThreadFactory("Scheduler")));
         this.siddhiContext.setSnapshotService(new SnapshotService(siddhiContext));
+    }
 
 
+    public void validateExecutionPlan(ExecutionPlan executionPlan) throws ValidatorException {
+        Map<String, StreamDefinition> tempMap = new HashMap<String, StreamDefinition>();
+        for (StreamDefinition definition : executionPlan.getStreamDefinitionMap().values()) {
+            StreamValidator.validate(tempMap, definition);
+        }
+        for (ExecutionElement executionElement : executionPlan.getExecutionElementList()) {
+            if (executionElement instanceof Query) {
+                QueryValidator.validate((Query) executionElement, tempMap);
+
+            } else if (executionElement instanceof Partition) {
+                //todo  ParttionValidator.validate((Partition)executionElement, tempMap);
+
+            }
+        }
     }
 
 //    public void validateExecutionPlan(ExecutionPlan executionPlan) throws ValidatorException {
@@ -82,6 +99,7 @@ public class SiddhiManager {
 
     /**
      * add stream definitions, partitions and queries of an execution plan
+     *
      * @param executionPlan
      * @return
      * @throws SiddhiParserException
@@ -95,7 +113,7 @@ public class SiddhiManager {
         }
         if (executionPlan.getExecutionElementList() != null) {
             for (ExecutionElement executionElement : executionPlan.getExecutionElementList()) {
-                if (executionElement instanceof Query){
+                if (executionElement instanceof Query) {
                     executionPlanRuntime.addQuery((Query) executionElement);
                 } else {
                     executionPlanRuntime.definePartition((Partition) executionElement);
@@ -104,7 +122,7 @@ public class SiddhiManager {
             }
         }
 
-        executionPlanRuntimeMap.put(executionPlan.getName(),executionPlanRuntime);
+        executionPlanRuntimeMap.put(executionPlan.getName(), executionPlanRuntime);
         return executionPlanRuntime;
     }
 

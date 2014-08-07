@@ -1,4 +1,18 @@
 
+from  ( from StockStream[StockStream.price >= 20][ StockStream.price is null]
+                        select symbol, avg(price) as avgPrice
+                        return )
+                        select symbol, avgPrice
+                        insert into OutStockStream
+
+/**
+from  StockStream[price>3]#window.lenght(50)
+                        select symbol, avg(price) as avgPrice
+                        group by symbol
+                        having (price >= 20)
+                        insert all events into StockQuote;
+
+
 from `Stream1`[price> 5.0d and symbol == 'IBM' or volume <= 5f+3.3/6E45 or false]
 --from Stream1[price> 6E45 and symbol == 'IBM' or volume <= 5f+3.3/6.0]
 insert into Stream2;
@@ -11,7 +25,7 @@ begin
 end;
 
 from every a1=StreamA within 6 min , a3=Test*, not Beta within 2 min
-select a3[0].symbol, a3[last-2].price
+select a3[0].symbol, a3[last-2].price, select
 insert into StreamC;
 
 from every a1=StreamA within 6 min ->  a3=Test<:4> -> not Beta within 2 min
@@ -50,7 +64,6 @@ define stream Test (symbol string, price double);
 
 
 
-/**
 define stream Test (symbol string, price double);
 
 define table Test (symbol string, price double);
