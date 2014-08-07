@@ -14,7 +14,7 @@
 package org.wso2.siddhi.core.event;
 
 import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.query.api.definition.FunctionAttribute;
+import org.wso2.siddhi.core.executor.function.attribute.FunctionAttribute;
 
 import java.util.ArrayList;
 import java.util.List;

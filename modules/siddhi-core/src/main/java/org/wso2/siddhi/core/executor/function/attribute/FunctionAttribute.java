@@ -11,7 +11,9 @@
  * limitations under the License.
  */
 
-package org.wso2.siddhi.query.api.definition;
+package org.wso2.siddhi.core.executor.function.attribute;
+
+import org.wso2.siddhi.query.api.definition.Attribute;
 
 /**
  * Class to hold output attributes of a function.

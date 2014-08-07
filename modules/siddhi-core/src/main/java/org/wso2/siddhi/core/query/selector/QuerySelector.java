@@ -27,7 +27,7 @@ import org.wso2.siddhi.core.query.selector.attribute.processor.AttributeProcesso
 import org.wso2.siddhi.core.query.selector.attribute.processor.NonGroupingAttributeProcessor;
 import org.wso2.siddhi.core.query.selector.attribute.processor.PassThroughAttributeProcessor;
 import org.wso2.siddhi.core.util.parser.ExecutorParser;
-import org.wso2.siddhi.query.api.definition.FunctionAttribute;
+import org.wso2.siddhi.core.executor.function.attribute.FunctionAttribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.selection.OutputAttribute;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
