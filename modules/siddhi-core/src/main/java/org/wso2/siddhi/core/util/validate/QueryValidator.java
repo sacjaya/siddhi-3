@@ -15,7 +15,7 @@ package org.wso2.siddhi.core.util.validate;
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.Query;
-import org.wso2.siddhi.query.api.execution.query.input.*;
+import org.wso2.siddhi.query.api.execution.query.input.stream.*;
 import org.wso2.siddhi.query.api.execution.query.output.stream.OutputStream;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 

@@ -17,7 +17,6 @@ import org.wso2.siddhi.core.event.InnerStreamEvent;
 import org.wso2.siddhi.core.event.MetaStreamEvent;
 import org.wso2.siddhi.core.util.Constants;
 import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.query.api.definition.FunctionAttribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.ArrayList;

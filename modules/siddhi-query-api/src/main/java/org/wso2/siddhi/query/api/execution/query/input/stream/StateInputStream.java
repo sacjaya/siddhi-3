@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.siddhi.query.api.execution.query.input;
+package org.wso2.siddhi.query.api.execution.query.input.stream;
 
 import org.wso2.siddhi.query.api.execution.query.input.state.CountStateElement;
 import org.wso2.siddhi.query.api.execution.query.input.state.LogicalStateElement;

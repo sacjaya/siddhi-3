@@ -31,8 +31,8 @@ import org.wso2.siddhi.core.util.parser.ExecutorParser;
 import org.wso2.siddhi.query.api.execution.partition.Partition;
 import org.wso2.siddhi.query.api.execution.partition.PartitionType;
 import org.wso2.siddhi.query.api.execution.partition.ValuePartitionType;
-import org.wso2.siddhi.query.api.execution.query.input.BasicSingleInputStream;
-import org.wso2.siddhi.query.api.execution.query.input.InputStream;
+import org.wso2.siddhi.query.api.execution.query.input.stream.BasicSingleInputStream;
+import org.wso2.siddhi.query.api.execution.query.input.stream.InputStream;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

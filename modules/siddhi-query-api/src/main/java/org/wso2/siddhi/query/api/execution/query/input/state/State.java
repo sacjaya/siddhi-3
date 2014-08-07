@@ -17,8 +17,7 @@
 package org.wso2.siddhi.query.api.execution.query.input.state;
 
 import org.wso2.siddhi.query.api.expression.constant.TimeConstant;
-import org.wso2.siddhi.query.api.execution.query.input.BasicSingleInputStream;
-import org.wso2.siddhi.query.api.utils.SiddhiConstants;
+import org.wso2.siddhi.query.api.execution.query.input.stream.BasicSingleInputStream;
 
 public class State {
 
