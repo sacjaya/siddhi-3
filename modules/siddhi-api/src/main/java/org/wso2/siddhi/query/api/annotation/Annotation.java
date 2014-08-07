@@ -44,11 +44,11 @@ public class Annotation {
     public List<Element> getElements(String key) {
         List<Element> elementList = new ArrayList<Element>();
         for (Element element : elements) {
-            if (name == null) {
+            if (key == null) {
                 if (element.getKey() == null) {
                     elementList.add(element);
                 }
-            } else if (name.equals(element.getKey())) {
+            } else if (key.equals(element.getKey())) {
                 elementList.add(element);
 
             }

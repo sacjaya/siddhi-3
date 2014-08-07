@@ -58,8 +58,8 @@ public class QueryPartitioner {
                     Map<String, Set<String>> dependencyMap =null;
                     if (partitionType instanceof ValuePartitionType) {
                         //todo fix get dependency
-                       // dependencyMap = ExpressionValidator.getDependency(((ValuePartitionType) partitionType).getExpression());
-                        if (dependencyMap.isEmpty() ||  ((ValuePartitionType) partitionType).getStreamId().equals(((BasicSingleInputStream) inputStream).getStreamId())) {
+//                       dependencyMap = ExpressionValidator.getDependency(((ValuePartitionType) partitionType).getExpression());
+                        if (/*dependencyMap.isEmpty() ||*/  partitionType.getStreamId().equals(((BasicSingleInputStream) inputStream).getStreamId())) {
                             try {
                                 executorList.add(new ValuePartitionExecutor(ExecutorParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(), siddhiContext, queryCreator.getTempStreamDefinitionMap(), null,null)));//TODO: handle null arguments
                             } catch (ValidatorException e) {
