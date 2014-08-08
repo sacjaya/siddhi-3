@@ -54,7 +54,7 @@ public class QueryPartitioner {
             if(inputStream instanceof BasicSingleInputStream){
                 ArrayList<PartitionExecutor> executorList = new ArrayList<PartitionExecutor>();
                 partitionExecutors.add(executorList);
-                for (PartitionType partitionType : partition.getPartitionTypeList()) {
+                for (PartitionType partitionType : partition.getPartitionTypeMap().values()) {
                     Map<String, Set<String>> dependencyMap =null;
                     if (partitionType instanceof ValuePartitionType) {
                         //todo fix get dependency

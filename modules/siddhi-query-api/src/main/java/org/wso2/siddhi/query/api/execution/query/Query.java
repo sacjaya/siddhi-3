@@ -129,16 +129,6 @@ public class Query implements ExecutionElement {
         return annotations;
     }
 
-    public List<Annotation> getAnnotations(String name) {
-        List<Annotation> annotationList=new ArrayList<Annotation>();
-        for(Annotation annotation: annotations){
-            if(name.equals(annotation.getName())){
-                annotationList.add( annotation);
-            }
-        }
-        return annotationList;
-    }
-
     @Override
     public String toString() {
         return "Query{" +

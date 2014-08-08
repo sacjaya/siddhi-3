@@ -20,6 +20,7 @@ package org.wso2.siddhi.core.query;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
+import org.wso2.siddhi.core.exception.DuplicateAnnotationException;
 import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.query.output.callback.InsertIntoStreamCallback;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
@@ -27,7 +28,7 @@ import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.PartitionHandlerProcessor;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.input.InputHandler;
-import org.wso2.siddhi.query.api.annotation.Annotation;
+import org.wso2.siddhi.core.util.AnnotationHelper;
 import org.wso2.siddhi.query.api.annotation.Element;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -58,18 +59,14 @@ public class PartitionRuntime {
 
 
     public PartitionRuntime(Partition partition, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, InputHandler> inputHandlerMap, SiddhiContext siddhiContext) {
-        List<Annotation> annotations = partition.getAnnotations("info");
-        if (annotations.size() > 0) {
-            if (annotations.size() > 1) {
-                throw new QueryCreationException("Annotation @info is defined twice for the same Partition " + partition.toString());
+        try {
+            Element element = AnnotationHelper.getAnnotationElement("info", "name", partition.getAnnotations());
+            if (element != null) {
+                this.partitionId = element.getValue();
+
             }
-            List<Element> elementList = annotations.get(0).getElements("name");
-            if (elementList.size() > 0) {
-                if (elementList.size() > 1) {
-                    throw new QueryCreationException("Annotation element @info(name=...) is defined twice for the same Partition " + partition.toString());
-                }
-                this.partitionId = elementList.get(0).getValue();
-            }
+        } catch (DuplicateAnnotationException e) {
+            throw new QueryCreationException(e.getMessage() + " for the same Query " + partition.toString());
         }
         if (partitionId == null) {
             this.partitionId = UUID.randomUUID().toString();
