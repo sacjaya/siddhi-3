@@ -78,8 +78,8 @@ public class FilterTestCase {
         query.insertInto("StockQuote");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
