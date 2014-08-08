@@ -27,8 +27,8 @@ import org.wso2.siddhi.core.util.parser.QueryOutputParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.Query;
-import org.wso2.siddhi.query.api.execution.query.input.InputStream;
-import org.wso2.siddhi.query.api.execution.query.input.SingleInputStream;
+import org.wso2.siddhi.query.api.execution.query.input.stream.InputStream;
+import org.wso2.siddhi.query.api.execution.query.input.stream.SingleInputStream;
 
 import java.util.HashMap;
 import java.util.List;
