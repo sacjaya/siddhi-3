@@ -116,7 +116,7 @@ public class SiddhiManager {
                 if (executionElement instanceof Query) {
                     executionPlanRuntime.addQuery((Query) executionElement);
                 } else {
-                    executionPlanRuntime.definePartition((Partition) executionElement);
+                    executionPlanRuntime.addPartition((Partition) executionElement);
                 }
 
             }

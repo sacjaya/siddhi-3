@@ -55,6 +55,7 @@ public class QueryRuntime {
     private boolean toLocalStream;
     private SiddhiContext siddhiContext;
     private ConcurrentMap<String, StreamJunction> localStreamJunctionMap;
+    private QueryPartitioner queryPartitioner;
 
     private QueryRuntime() {
 
@@ -89,8 +90,8 @@ public class QueryRuntime {
 
         QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap, localStreamDefinitionMap, outputRateManager, siddhiContext);
 
-        QueryPartitioner queryPartitioner = new QueryPartitioner(partition, queryCreator, siddhiContext);
-
+//        QueryPartitioner queryPartitioner = new QueryPartitioner(partition, queryCreator, siddhiContext);
+        queryPartitioner = new QueryPartitioner(partition, queryCreator, siddhiContext);
         List<HandlerProcessor> handlerProcessorList = queryPartitioner.constructPartition(outputRateManager);
 
         outputStreamDefinition = queryCreator.getOutputStreamDefinition();
@@ -186,8 +187,9 @@ public class QueryRuntime {
         }
 
         if (this.isFromLocalStream()) {
-            queryRuntime.handlerProcessors = this.handlerProcessors;
-            for (HandlerProcessor handlerProcessor : this.handlerProcessors) {
+            List<HandlerProcessor> handlerProcessorList = queryPartitioner.cloneHandlerProcessors(queryRuntime.outputRateManager);
+            queryRuntime.handlerProcessors = handlerProcessorList;
+            for (HandlerProcessor handlerProcessor : handlerProcessorList) {
                 StreamJunction streamJunction = localStreamJunctionMap.get(streamId + key);
                 if (streamJunction == null) {
                     streamJunction = new StreamJunction(streamId + key, siddhiContext.getThreadPoolExecutor());

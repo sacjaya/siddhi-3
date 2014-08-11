@@ -65,8 +65,8 @@ public class ExecutionPlanRuntime {
 
     }
 
-    public void definePartition(Partition partition) {
-        PartitionRuntime partitionRuntime = new PartitionRuntime(partition, streamDefinitionMap,streamJunctionMap,inputHandlerMap,siddhiContext);
+    public void addPartition(Partition partition) {
+        PartitionRuntime partitionRuntime = new PartitionRuntime(this,partition, streamDefinitionMap,streamJunctionMap,inputHandlerMap,siddhiContext);
         partitionMap.put(partitionRuntime.getPartitionId(), partitionRuntime);
     }
 
