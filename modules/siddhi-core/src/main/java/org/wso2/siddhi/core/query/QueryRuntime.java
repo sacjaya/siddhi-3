@@ -19,7 +19,7 @@
 package org.wso2.siddhi.core.query;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.exception.DuplicateAnnotationException;
+import org.wso2.siddhi.query.api.exception.DuplicateAnnotationException;
 import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.query.creator.QueryCreator;
@@ -30,7 +30,7 @@ import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.PartitionHandlerProcessor;
 import org.wso2.siddhi.core.stream.StreamJunction;
-import org.wso2.siddhi.core.util.AnnotationHelper;
+import org.wso2.siddhi.query.api.util.AnnotationHelper;
 import org.wso2.siddhi.core.util.parser.QueryOutputParser;
 import org.wso2.siddhi.query.api.annotation.Element;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
