@@ -23,21 +23,21 @@ import org.wso2.siddhi.core.event.converter.EventConverter;
 import org.wso2.siddhi.core.query.processor.PreSelectProcessingElement;
 import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
+import org.wso2.siddhi.core.stream.StreamReceiver;
 
-public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProcessingElement {
+public class SingleHandlerProcessor extends BasicHandlerProcessor {
 
     private Disruptor[] disruptors;
-    private QuerySelector next;
     private Processor processor;
     private String streamId;
     private EventConverter eventConverter;
 
-    public SimpleHandlerProcessor(Processor processor, String streamId) {
+    public SingleHandlerProcessor(Processor processor, String streamId) {
         this.processor = processor;
         this.streamId = streamId;
     }
 
-    public SimpleHandlerProcessor(String streamId) {
+    public SingleHandlerProcessor(String streamId) {
         this.streamId = streamId;
     }
 
@@ -52,7 +52,7 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
     private void processHandler(String key, StreamEvent streamEvent) {
         streamEvent = processor.process(streamEvent);
         if (streamEvent != null) {
-            next.process(streamEvent);
+            this.selector.process(streamEvent);
         }
     }
 
@@ -69,7 +69,7 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
     protected void processHandler(StreamEvent streamEvent) {
         streamEvent = processor.process(streamEvent);
         if (streamEvent != null) {
-            next.process(streamEvent);
+            selector.process(streamEvent);
         }
     }
 
@@ -78,8 +78,7 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
         return disruptors;
     }
 
-    @Override
-    public Processor getProcessor() {
+    public Processor getProcessorChain() {
         return processor;
     }
 
@@ -88,22 +87,12 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
         this.eventConverter = eventConverter;
     }
 
-    @Override
-    public void setSelector(QuerySelector querySelector) {
-        this.next = querySelector;
-    }
-
-    public void setNext(QuerySelector querySelector) {
-        this.next = querySelector;
-    }
-
 
     @Override
     public int getDisruptorsSize() {
         return 1;
     }
 
-    @Override
     public void setProcessorChain(Processor processor) {
         this.processor = processor;
 
