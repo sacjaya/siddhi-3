@@ -49,6 +49,13 @@ public interface HandlerProcessor extends StreamReceiver {
      */
     void setSelector(QuerySelector querySelector);
 
+    /**
+     * Set executor processor chain for particular handler processor
+     *
+     * @param processor Next processor to be add to processor chain
+     */
+    void setProcessorChain(Processor processor);
+
 
 
 }

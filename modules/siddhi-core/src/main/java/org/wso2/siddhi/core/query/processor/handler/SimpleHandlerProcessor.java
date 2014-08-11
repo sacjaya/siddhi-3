@@ -103,7 +103,8 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
         return 1;
     }
 
-    public void setProcessor(Processor processor) {
+    @Override
+    public void setProcessorChain(Processor processor) {
         this.processor = processor;
 
     }
