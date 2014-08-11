@@ -28,34 +28,12 @@ public interface HandlerProcessor extends StreamReceiver {
     public int getDisruptorsSize();
 
     /**
-     * Get first Processor of Processor chain
-     *
-     * @return
-     */
-    Processor getProcessor();
-
-    /**
      * Set eventConverter to Handler Processor which does
      * Stream event to InnerStreamEvent conversion
      *
      * @param eventConverter
      */
     void setEventConverter(EventConverter eventConverter);
-
-    /**
-     * Set the QuerySelector of the handler
-     *
-     * @param querySelector
-     */
-    void setSelector(QuerySelector querySelector);
-
-    /**
-     * Set executor processor chain for particular handler processor
-     *
-     * @param processor Next processor to be add to processor chain
-     */
-    void setProcessorChain(Processor processor);
-
 
 
 }

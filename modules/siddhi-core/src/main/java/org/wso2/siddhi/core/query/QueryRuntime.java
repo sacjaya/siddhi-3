@@ -19,6 +19,7 @@
 package org.wso2.siddhi.core.query;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.query.processor.handler.BasicHandlerProcessor;
 import org.wso2.siddhi.query.api.exception.DuplicateAnnotationException;
 import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
@@ -52,7 +53,7 @@ public class QueryRuntime {
     private StreamDefinition outputStreamDefinition;
     private OutputCallback outputCallback = null;
     private OutputRateManager outputRateManager;
-    private List<HandlerProcessor> handlerProcessors = new ArrayList<HandlerProcessor>();
+    private List<BasicHandlerProcessor> handlerProcessors = new ArrayList<BasicHandlerProcessor>();
     private boolean toLocalStream;
     private SiddhiContext siddhiContext;
     private ConcurrentMap<String, StreamJunction> localStreamJunctionMap;
@@ -89,7 +90,7 @@ public class QueryRuntime {
 
 //        QueryPartitioner queryPartitioner = new QueryPartitioner(partition, queryCreator, siddhiContext);
         queryPartitioner = new QueryPartitioner(partition, queryCreator, siddhiContext);
-        List<HandlerProcessor> handlerProcessorList = queryPartitioner.constructPartition(outputRateManager);
+        List<BasicHandlerProcessor> handlerProcessorList = queryPartitioner.constructPartition(outputRateManager);
 
         outputStreamDefinition = queryCreator.getOutputStreamDefinition();
         if (query.getOutputStream() instanceof InsertIntoStream && ((InsertIntoStream) query.getOutputStream()).isInnerStream()) {
@@ -184,7 +185,7 @@ public class QueryRuntime {
         }
 
         if (this.isFromLocalStream()) {
-            List<HandlerProcessor> handlerProcessorList = queryPartitioner.cloneHandlerProcessors(queryRuntime.outputRateManager);
+            List<BasicHandlerProcessor> handlerProcessorList = queryPartitioner.cloneHandlerProcessors(queryRuntime.outputRateManager);
             queryRuntime.handlerProcessors = handlerProcessorList;
             for (HandlerProcessor handlerProcessor : handlerProcessorList) {
                 StreamJunction streamJunction = localStreamJunctionMap.get(streamId + key);

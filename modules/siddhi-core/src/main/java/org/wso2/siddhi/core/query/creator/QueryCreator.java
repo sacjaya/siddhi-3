@@ -21,6 +21,7 @@ import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.MetaStreamEvent;
 import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
+import org.wso2.siddhi.core.query.processor.handler.BasicHandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.util.QueryPartComposite;
@@ -57,11 +58,11 @@ public abstract class QueryCreator {
         this.localStreamDefinitionMap = localStreamDefinitionMap;
         this.outputRateManager = outputRateManager;
         this.siddhiContext = siddhiContext;
-        if(getInputStream() instanceof SingleInputStream){
+        if (getInputStream() instanceof SingleInputStream) {
             String streamId = ((SingleInputStream) getInputStream()).getStreamId();
-            if(((SingleInputStream) getInputStream()).isInnerStream())    {
+            if (((SingleInputStream) getInputStream()).isInnerStream()) {
                 this.defaultDefinition = (StreamDefinition) localStreamDefinitionMap.get(streamId);
-            }  else {
+            } else {
                 this.defaultDefinition = (StreamDefinition) streamDefinitionMap.get(streamId);
             }
         } //TODO other streams
@@ -86,9 +87,9 @@ public abstract class QueryCreator {
     }
 
 
-    public abstract QueryPartComposite constructQuery(OutputRateManager outputRateManager) ;
+    public abstract QueryPartComposite constructQuery(OutputRateManager outputRateManager);
 
-    public abstract List<HandlerProcessor> cloneHandlers(OutputRateManager outputRateManager, QueryPartComposite queryPartComposite);
+    public abstract List<BasicHandlerProcessor> cloneHandlers(OutputRateManager outputRateManager, QueryPartComposite queryPartComposite);
 
 
 //    public abstract QueryPartComposite constructQuery();

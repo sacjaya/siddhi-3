@@ -22,6 +22,7 @@ import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.event.converter.EventConverter;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
+import org.wso2.siddhi.core.query.PartitionInstanceRuntime;
 import org.wso2.siddhi.core.query.PartitionRuntime;
 import org.wso2.siddhi.core.query.QueryPartitioner;
 
@@ -50,7 +51,6 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
 
     private ConcurrentHashMap<String, HandlerProcessor> partitionedHandlerMap = new ConcurrentHashMap<String, HandlerProcessor>();
     private EventConverter eventConverter;
-    private QuerySelector next;     //TODO: review. added to implement HandlerProcessor.setQuerySelector()
 
 
     public PartitionHandlerProcessor(SiddhiContext siddhiContext, String streamId, QueryPartitioner queryPartitioner, int handlerId, List<PartitionExecutor> partitionExecutors, PartitionRuntime partitionRuntime) {
@@ -64,13 +64,12 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
 
     @Override
     public void receive(StreamEvent streamEvent) {
+        for (PartitionExecutor partitionExecutor : partitionExecutors) {
+            String key = partitionExecutor.execute((streamEvent));
+            send(key, streamEvent);
+        }
         if (partitionExecutors.isEmpty()) {
             send(streamEvent);
-        } else {
-            for (PartitionExecutor partitionExecutor : partitionExecutors) {
-                String key = partitionExecutor.execute((streamEvent));
-                send(key, streamEvent);
-            }
         }
     }
 
@@ -94,7 +93,7 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
         getStreamJunction(streamId).send(event);
 //        StreamJunction streamJunction = partitionRuntime.getStreamJunction(streamId);
 //        if (streamJunction == null) {
-//            streamJunction = new StreamJunction(streamId, siddhiContext.getExecutorService());
+//            streamJunction = new StreamJunction(streamId, siddhiContext.getThreadPoolExecutor());
 //            partitionRuntime.addStreamJunction(streamId,streamJunction);
 //        }
 //        streamJunction.send(event);
@@ -142,18 +141,8 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
     }
 
     @Override
-    public Processor getProcessor() { //TODO: figure out what to do. Needed for setting event converter
-        return null;
-    }
-
-    @Override
     public void setEventConverter(EventConverter eventConverter) {
         this.eventConverter = eventConverter;
-    }
-
-    @Override
-    public void setSelector(QuerySelector querySelector) {
-        this.next = querySelector;
     }
 
     public int getDisruptorsSize() {

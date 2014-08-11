@@ -18,42 +18,31 @@
 package org.wso2.siddhi.core.util;
 
 import org.wso2.siddhi.core.query.processor.PreSelectProcessingElement;
-import org.wso2.siddhi.core.query.processor.Processor;
+import org.wso2.siddhi.core.query.processor.handler.BasicHandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
-import org.wso2.siddhi.core.query.processor.handler.SimpleHandlerProcessor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
-import org.wso2.siddhi.core.stream.StreamReceiver;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class QueryPartComposite {
     private List<PreSelectProcessingElement> preSelectProcessingElementList = new ArrayList<PreSelectProcessingElement>();
-    private List<HandlerProcessor> handlerProcessorList = new ArrayList<HandlerProcessor>();
-    private QuerySelector querySelector;
-    private HandlerProcessor handlerProcessor;
+    private List<BasicHandlerProcessor> handlerProcessorList = new ArrayList<BasicHandlerProcessor>();//TODO review and remove
+    private BasicHandlerProcessor handlerProcessor;
 
     public List<PreSelectProcessingElement> getPreSelectProcessingElementList() {
         return preSelectProcessingElementList;
     }
 
-    public List<HandlerProcessor> getHandlerProcessorList() {
+    public List<BasicHandlerProcessor> getHandlerProcessorList() {
         return handlerProcessorList;
     }
 
-    public void setQuerySelector(QuerySelector querySelector) {
-        this.querySelector = querySelector;
-    }
-
-    public QuerySelector getQuerySelector() {
-        return querySelector;
-    }
-
-    public void setHandlerProcessor(HandlerProcessor handlerProcessor) {
+    public void setHandlerProcessor(BasicHandlerProcessor handlerProcessor) {
         this.handlerProcessor = handlerProcessor;
     }
 
-    public HandlerProcessor getHandlerProcessor() {
+    public BasicHandlerProcessor getHandlerProcessor() {
         return handlerProcessor;
     }
 

@@ -24,6 +24,7 @@ import org.wso2.siddhi.core.partition.executor.ValuePartitionExecutor;
 import org.wso2.siddhi.core.query.creator.QueryCreator;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.processor.PreSelectProcessingElement;
+import org.wso2.siddhi.core.query.processor.handler.BasicHandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.util.QueryPartComposite;
@@ -40,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class QueryPartitioner {
     private final QueryCreator queryCreator;
     private List<List<PartitionExecutor>> partitionExecutors = new ArrayList<List<PartitionExecutor>>();
-    private ConcurrentHashMap<String, List<HandlerProcessor>> partitionMap = new ConcurrentHashMap<String, List<HandlerProcessor>>();
+    private ConcurrentHashMap<String, List<BasicHandlerProcessor>> partitionMap = new ConcurrentHashMap<String, List<BasicHandlerProcessor>>();
     private QueryPartComposite queryPartComposite;
 
     public QueryPartitioner(Partition partition, QueryCreator queryCreator,
@@ -76,7 +77,7 @@ public class QueryPartitioner {
     }
 
 
-    public List<HandlerProcessor> constructPartition(OutputRateManager outputRateManager) {
+    public List<BasicHandlerProcessor> constructPartition(OutputRateManager outputRateManager) {
         queryPartComposite = queryCreator.constructQuery(outputRateManager);
         return Arrays.asList(queryPartComposite.getHandlerProcessor()); //TODO: discuss and fix handlerProcessorList/processor
     }
@@ -87,7 +88,7 @@ public class QueryPartitioner {
     }
 
     public HandlerProcessor newPartition(int handlerId, String partitionKey, OutputRateManager outputRateManager) {
-        List<HandlerProcessor> handlerProcessorList = partitionMap.get(partitionKey);
+        List<BasicHandlerProcessor> handlerProcessorList = partitionMap.get(partitionKey);
         if (handlerProcessorList == null) {
             handlerProcessorList = cloneHandlerProcessors(outputRateManager);
             partitionMap.put(partitionKey, handlerProcessorList);
@@ -96,7 +97,7 @@ public class QueryPartitioner {
     }
 
 
-    public List<HandlerProcessor> cloneHandlerProcessors(OutputRateManager outputRateManager){
+    public List<BasicHandlerProcessor> cloneHandlerProcessors(OutputRateManager outputRateManager) {
        return queryCreator.cloneHandlers(outputRateManager,queryPartComposite);
     }
 }
