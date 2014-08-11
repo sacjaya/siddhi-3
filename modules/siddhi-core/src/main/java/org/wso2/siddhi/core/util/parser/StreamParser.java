@@ -52,7 +52,7 @@ public class StreamParser {
                     processor = generateProcessor(handler, tempStreamDefinitionMap, siddhiContext, metaStreamEvent, variableExpressionExecutorList);
                     i++;
                 } else {
-                    processor.addToNext(generateProcessor(handler, tempStreamDefinitionMap, siddhiContext, metaStreamEvent, variableExpressionExecutorList));
+                    processor.addToLast(generateProcessor(handler, tempStreamDefinitionMap, siddhiContext, metaStreamEvent, variableExpressionExecutorList));
                 }
             }
         } else {
@@ -60,12 +60,10 @@ public class StreamParser {
 
         }
 
-        SimpleHandlerProcessor simpleHandlerProcessor =                                                                                       //TODO
-                new SimpleHandlerProcessor(inputStream.getStreamIds().get(0));
-        simpleHandlerProcessor.setProcessor(processor);
+        SimpleHandlerProcessor simpleHandlerProcessor = new SimpleHandlerProcessor(inputStream.getStreamIds().get(0));
         //queryPartComposite.getPreSelectProcessingElementList().add(simpleHandlerProcessor);
         //queryPartComposite.setProcessorChain(processor);
-        queryPartComposite.setHandlerProcessor(simpleHandlerProcessor);
+        queryPartComposite.setHandlerProcessor(simpleHandlerProcessor); //TODO remove QPC
         return queryPartComposite;
     }
 

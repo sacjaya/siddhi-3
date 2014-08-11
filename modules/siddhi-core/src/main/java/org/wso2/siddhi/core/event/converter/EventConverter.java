@@ -15,9 +15,9 @@ package org.wso2.siddhi.core.event.converter;
 
 import org.wso2.siddhi.core.event.InnerStreamEvent;
 import org.wso2.siddhi.core.event.MetaStreamEvent;
+import org.wso2.siddhi.core.query.selector.attribute.ComplexAttribute;
 import org.wso2.siddhi.core.util.Constants;
 import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.core.executor.function.attribute.FunctionAttribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class EventConverter {
             if (currentDataList != null) {
                 int i = 0;
                 for (Attribute attribute : currentDataList) {           //Only variable slots will be filled.
-                    if (!(attribute instanceof FunctionAttribute)) {
+                    if (!(attribute instanceof ComplexAttribute)) {
                         ConverterMetaElement converterMetaElement = new ConverterMetaElement();
                         int[] position = new int[2];
                         converterMetaElement.setFromPosition(defaultDefinition.getAttributePosition(attribute.getName()));
