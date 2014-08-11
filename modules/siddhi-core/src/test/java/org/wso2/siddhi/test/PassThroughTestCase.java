@@ -98,6 +98,7 @@ public class PassThroughTestCase {
         executionPlan.defineStream(streamDefinition);
 
         Query query = new Query();
+        query.annotation(Annotation.annotation("info").element("name", "query1"));
         query.from(InputStream.stream("cseEventStream"));
         query.select(
                 Selector.selector().
@@ -108,8 +109,8 @@ public class PassThroughTestCase {
         query.insertInto("StockQuote");
 
         streamDefinitionMap.put("cseEventStream",streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query,streamDefinitionMap);
+        // StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query,streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
@@ -166,8 +167,8 @@ public class PassThroughTestCase {
 
 
         streamDefinitionMap.put("cseEventStream",streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query,streamDefinitionMap);
+        // StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query,streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
