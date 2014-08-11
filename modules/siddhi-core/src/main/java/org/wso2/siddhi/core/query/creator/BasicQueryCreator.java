@@ -27,6 +27,7 @@ import org.wso2.siddhi.core.util.parser.StreamParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.execution.query.input.stream.InputStream;
 import org.wso2.siddhi.query.api.execution.query.input.stream.SingleInputStream;
 
 import java.util.LinkedList;
@@ -39,19 +40,18 @@ public class BasicQueryCreator extends QueryCreator {
 
     public BasicQueryCreator(String queryId, Query query, ConcurrentMap<String, AbstractDefinition> streamTableDefinitionMap, ConcurrentMap<String, AbstractDefinition> localStreamTableDefinitionMap, OutputRateManager outputRateManager, SiddhiContext siddhiContext) {
         super(queryId, query, streamTableDefinitionMap, localStreamTableDefinitionMap, outputRateManager, siddhiContext);
-        constructTempStreamDefinitionMap();
+        constructTempStreamDefinitionMap(query.getInputStream());
     }
 
 
     public QueryPartComposite constructQuery(OutputRateManager outputRateManager) {
         List<VariableExpressionExecutor> variableExpressionExecutorList = new LinkedList<VariableExpressionExecutor>();
-        constructTempStreamDefinitionMap();
-        QueryPartComposite queryPartComposite = StreamParser.parseSingleStream(getInputStream(), this.tempStreamDefinitionMap, siddhiContext, metaStreamEvent, variableExpressionExecutorList);
-        metaStreamEvent.intializeAfterWindowData();
+        QueryPartComposite queryPartComposite = StreamParser.parseSingleStream(getInputStream(),
+                this.tempStreamDefinitionMap, siddhiContext, metaStreamEvent, variableExpressionExecutorList);
         metaStreamEvent.intializeOutData();
         this.querySelector = constructQuerySelector(outputRateManager, metaStreamEvent, variableExpressionExecutorList);
         this.outputStreamDefinition = querySelector.getOutputStreamDefinition();
-        queryPartComposite.setQuerySelector(querySelector);
+        //queryPartComposite.setQuerySelector(querySelector); //TODO:check usage. SInce we are already setting Selector to Handler processor
         queryPartComposite.getHandlerProcessor().setSelector(querySelector);
         MetaStreamEventHelper.updateVariablePosition(metaStreamEvent, variableExpressionExecutorList);
         queryPartComposite.getHandlerProcessor().setEventConverter(getEventConverter());
@@ -67,14 +67,7 @@ public class BasicQueryCreator extends QueryCreator {
           return  eventConverter;
     }
 
-    private void constructTempStreamDefinitionMap(){
-        if (((SingleInputStream) getInputStream()).isInnerStream()) {
-            tempStreamDefinitionMap.put(((SingleInputStream) getInputStream()).getStreamId(), (StreamDefinition) localStreamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId()));
-        } else {
-            tempStreamDefinitionMap.put(((SingleInputStream) getInputStream()).getStreamId(), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId()));
-        }
 
-    }
 
 
 }
