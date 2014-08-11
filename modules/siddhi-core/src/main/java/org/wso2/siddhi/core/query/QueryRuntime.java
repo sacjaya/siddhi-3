@@ -19,6 +19,7 @@
 package org.wso2.siddhi.core.query;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.query.api.exception.DuplicateAnnotationException;
 import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.query.creator.QueryCreator;
@@ -29,8 +30,8 @@ import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.PartitionHandlerProcessor;
 import org.wso2.siddhi.core.stream.StreamJunction;
+import org.wso2.siddhi.query.api.util.AnnotationHelper;
 import org.wso2.siddhi.core.util.parser.QueryOutputParser;
-import org.wso2.siddhi.query.api.annotation.Annotation;
 import org.wso2.siddhi.query.api.annotation.Element;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -55,24 +56,21 @@ public class QueryRuntime {
     private boolean toLocalStream;
     private SiddhiContext siddhiContext;
     private ConcurrentMap<String, StreamJunction> localStreamJunctionMap;
+    private QueryPartitioner queryPartitioner;
 
     private QueryRuntime() {
 
     }
 
     public QueryRuntime(Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap, Partition partition, SiddhiContext siddhiContext, PartitionRuntime partitionRuntime) {
-        List<Annotation> annotations = query.getAnnotations("info");
-        if (annotations.size() > 0) {
-            if (annotations.size() > 1) {
-                throw new QueryCreationException("Annotation @info is defined twice for the same Query " + query.toString());
+        try {
+            Element element = AnnotationHelper.getAnnotationElement("info", "name", query.getAnnotations());
+            if (element != null) {
+                this.queryId = element.getValue();
+
             }
-            List<Element> elementList = annotations.get(0).getElements("name");
-            if (elementList.size() > 0) {
-                if (elementList.size() > 1) {
-                    throw new QueryCreationException("Annotation element @info(name=...) is defined twice for the same Query " + query.toString());
-                }
-                this.queryId = elementList.get(0).getValue();
-            }
+        } catch (DuplicateAnnotationException e) {
+            throw new QueryCreationException(e.getMessage() + " for the same Query " + query.toString());
         }
         if (queryId == null) {
             this.queryId = UUID.randomUUID().toString();
@@ -89,8 +87,8 @@ public class QueryRuntime {
 
         QueryCreator queryCreator = QueryCreatorFactory.constructQueryCreator(queryId, query, streamDefinitionMap, localStreamDefinitionMap, outputRateManager, siddhiContext);
 
-        QueryPartitioner queryPartitioner = new QueryPartitioner(partition, queryCreator, siddhiContext);
-
+//        QueryPartitioner queryPartitioner = new QueryPartitioner(partition, queryCreator, siddhiContext);
+        queryPartitioner = new QueryPartitioner(partition, queryCreator, siddhiContext);
         List<HandlerProcessor> handlerProcessorList = queryPartitioner.constructPartition(outputRateManager);
 
         outputStreamDefinition = queryCreator.getOutputStreamDefinition();
@@ -186,8 +184,9 @@ public class QueryRuntime {
         }
 
         if (this.isFromLocalStream()) {
-            queryRuntime.handlerProcessors = this.handlerProcessors;
-            for (HandlerProcessor handlerProcessor : this.handlerProcessors) {
+            List<HandlerProcessor> handlerProcessorList = queryPartitioner.cloneHandlerProcessors(queryRuntime.outputRateManager);
+            queryRuntime.handlerProcessors = handlerProcessorList;
+            for (HandlerProcessor handlerProcessor : handlerProcessorList) {
                 StreamJunction streamJunction = localStreamJunctionMap.get(streamId + key);
                 if (streamJunction == null) {
                     streamJunction = new StreamJunction(streamId + key, siddhiContext.getThreadPoolExecutor());

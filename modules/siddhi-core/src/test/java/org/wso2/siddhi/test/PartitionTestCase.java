@@ -73,11 +73,11 @@ public class PartitionTestCase {
         query.insertInto("OutStockStream");
 
 
-        streamDefinitionMap.put("cseEventStream", streamDefinition);
-        streamDefinitionMap.put("cseEventStream1", streamDefinition1);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
-
+//        streamDefinitionMap.put("cseEventStream", streamDefinition);
+//        streamDefinitionMap.put("cseEventStream1", streamDefinition1);
+//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        QueryValidator.validate(query, streamDefinitionMap);
+//
 
         partition.addQuery(query);
 
@@ -139,10 +139,10 @@ public class PartitionTestCase {
         query.insertInto("OutStockStream");
 
 
-        streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
-
+//        streamDefinitionMap.put("cseEventStream", streamDefinition);
+//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        QueryValidator.validate(query, streamDefinitionMap);
+//
 
         partition.addQuery(query);
 
@@ -207,9 +207,9 @@ public class PartitionTestCase {
 
 
 
-        streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+//        streamDefinitionMap.put("cseEventStream", streamDefinition);
+//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        QueryValidator.validate(query, streamDefinitionMap);
 
 
         partition.addQuery(query);
@@ -281,10 +281,10 @@ public class PartitionTestCase {
 
 
 
-        streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
-        QueryValidator.validate(query1, streamDefinitionMap);
+//        streamDefinitionMap.put("cseEventStream", streamDefinition);
+//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        QueryValidator.validate(query, streamDefinitionMap);
+//        QueryValidator.validate(query1, streamDefinitionMap);
 
 
         partition.addQuery(query);
@@ -400,10 +400,10 @@ public class PartitionTestCase {
 
 
 
-        streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
-        QueryValidator.validate(query1, streamDefinitionMap);
+//        streamDefinitionMap.put("cseEventStream", streamDefinition);
+//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        QueryValidator.validate(query, streamDefinitionMap);
+//        QueryValidator.validate(query1, streamDefinitionMap);
 
 
         partition.addQuery(query);
@@ -556,17 +556,17 @@ public class PartitionTestCase {
 
 
 
-        streamDefinitionMap.put("cseEventStream", streamDefinition);
-        streamDefinitionMap.put("cseEventStream1", streamDefinition1);
-        streamDefinitionMap.put("StockStream", streamDefinition2);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
-        QueryValidator.validate(query1, streamDefinitionMap);
-        QueryValidator.validate(query2, streamDefinitionMap);
-        QueryValidator.validate(query3, streamDefinitionMap);
-        QueryValidator.validate(query4, streamDefinitionMap);
-        QueryValidator.validate(query5, streamDefinitionMap);
-
+//        streamDefinitionMap.put("cseEventStream", streamDefinition);
+//        streamDefinitionMap.put("cseEventStream1", streamDefinition1);
+//        streamDefinitionMap.put("StockStream", streamDefinition2);
+//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        QueryValidator.validate(query, streamDefinitionMap);
+//        QueryValidator.validate(query1, streamDefinitionMap);
+//        QueryValidator.validate(query2, streamDefinitionMap);
+//        QueryValidator.validate(query3, streamDefinitionMap);
+//        QueryValidator.validate(query4, streamDefinitionMap);
+//        QueryValidator.validate(query5, streamDefinitionMap);
+//
 
 
         partition.addQuery(query);
@@ -743,14 +743,14 @@ public class PartitionTestCase {
         );
         query3.insertInto("OutStockStream");
 
-        streamDefinitionMap.put("cseEventStream", streamDefinition);
-        streamDefinitionMap.put("cseEventStream1", streamDefinition1);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
-        QueryValidator.validate(query1, streamDefinitionMap);
-        QueryValidator.validate(query2, streamDefinitionMap);
-        QueryValidator.validate(query3, streamDefinitionMap);
-
+//        streamDefinitionMap.put("cseEventStream", streamDefinition);
+//        streamDefinitionMap.put("cseEventStream1", streamDefinition1);
+//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        QueryValidator.validate(query, streamDefinitionMap);
+//        QueryValidator.validate(query1, streamDefinitionMap);
+//        QueryValidator.validate(query2, streamDefinitionMap);
+//        QueryValidator.validate(query3, streamDefinitionMap);
+//
 
 
         partition.addQuery(query);

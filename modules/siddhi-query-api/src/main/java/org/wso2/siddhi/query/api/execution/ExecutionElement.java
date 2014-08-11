@@ -16,8 +16,15 @@
  */
 package org.wso2.siddhi.query.api.execution;
 
+import org.wso2.siddhi.query.api.annotation.Annotation;
+
+import java.util.List;
+
 /**
  * Created by suho on 8/1/14.
  */
 public interface ExecutionElement {
+
+    public List<Annotation> getAnnotations();
+
 }

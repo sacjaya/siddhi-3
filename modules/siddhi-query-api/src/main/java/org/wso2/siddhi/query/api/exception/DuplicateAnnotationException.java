@@ -15,10 +15,24 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.query.api.utils;
+package org.wso2.siddhi.query.api.exception;
 
-public class SiddhiConstants {
+public class DuplicateAnnotationException extends Exception {
 
-    public static final String EVENT_TRACE_LOGGER = "EVENT_TRACE_LOGGER";
+    public DuplicateAnnotationException() {
+        super();
+    }
+
+    public DuplicateAnnotationException(String message) {
+        super(message);
+    }
+
+    public DuplicateAnnotationException(String message, Throwable throwable) {
+        super(message, throwable);
+    }
+
+    public DuplicateAnnotationException(Throwable throwable) {
+        super(throwable);
+    }
 
 }

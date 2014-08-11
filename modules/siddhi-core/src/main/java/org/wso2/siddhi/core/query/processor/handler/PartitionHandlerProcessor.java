@@ -40,12 +40,13 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
 
     private final String streamId;
     private QueryPartitioner queryPartitioner;
-    private int disruptorsSize = 5;
+    private int disruptorsSize = 3;
     private Disruptor[] disruptors;
     private SiddhiContext siddhiContext;
     private final int handlerId;
     private PartitionRuntime partitionRuntime;
     private List<PartitionExecutor> partitionExecutors;
+    private ConcurrentHashMap<String,StreamJunction> cachedStreamJunctionMap = new ConcurrentHashMap<String, StreamJunction>();
 
 
     private ConcurrentHashMap<String, HandlerProcessor> partitionedHandlerMap = new ConcurrentHashMap<String, HandlerProcessor>();
@@ -83,31 +84,37 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
         }
 
         partitionRuntime.clone(key);
+        getStreamJunction(streamId+key).send(event);
+    }
 
-        StreamJunction streamJunction = partitionRuntime.getStreamJunction(streamId + key);
-        if (streamJunction == null) {
-            streamJunction = new StreamJunction(streamId+key, siddhiContext.getThreadPoolExecutor());
-            partitionRuntime.addStreamJunction(streamId+key,streamJunction);
-        }
-        streamJunction.send(event);
 
+
+
+    private void send(StreamEvent event) {
+        getStreamJunction(streamId).send(event);
+//        StreamJunction streamJunction = partitionRuntime.getStreamJunction(streamId);
+//        if (streamJunction == null) {
+//            streamJunction = new StreamJunction(streamId, siddhiContext.getThreadPoolExecutor());
+//            partitionRuntime.addStreamJunction(streamId,streamJunction);
+//        }
+//        streamJunction.send(event);
 
     }
 
-    private void send(StreamEvent event) {
-        StreamJunction streamJunction = partitionRuntime.getStreamJunction(streamId);
+    private StreamJunction getStreamJunction(String streamJunctionName){
+        StreamJunction streamJunction = cachedStreamJunctionMap.get(streamJunctionName);
         if (streamJunction == null) {
-            streamJunction = new StreamJunction(streamId, siddhiContext.getThreadPoolExecutor());
-            partitionRuntime.addStreamJunction(streamId,streamJunction);
+            streamJunction = new StreamJunction(streamJunctionName, siddhiContext.getThreadPoolExecutor());
+            partitionRuntime.addStreamJunction(streamJunctionName,streamJunction);
+            cachedStreamJunctionMap.putIfAbsent(streamJunctionName, streamJunction);
         }
-        streamJunction.send(event);
-
+        return streamJunction;
     }
 
 
     public void addStreamJunction(String key, List<QueryRuntime> queryRuntimeList) {
         if (!partitionExecutors.isEmpty()) {
-            StreamJunction streamJunction = partitionRuntime.getStreamJunction(streamId + key);
+            StreamJunction streamJunction = cachedStreamJunctionMap.get(streamId + key);
             if (streamJunction == null) {
                 for (QueryRuntime queryRuntime : queryRuntimeList) {
                     if (queryRuntime.getInputStreamId().get(0).equals(streamId)) {
@@ -116,6 +123,7 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
                         streamJunction = new StreamJunction(streamId + key, siddhiContext.getThreadPoolExecutor());
                         streamJunction.addEventFlow(handlerProcessor);
                         partitionRuntime.addStreamJunction(streamId + key, streamJunction);
+                        cachedStreamJunctionMap.put(streamId + key, streamJunction);
 
 
                     }

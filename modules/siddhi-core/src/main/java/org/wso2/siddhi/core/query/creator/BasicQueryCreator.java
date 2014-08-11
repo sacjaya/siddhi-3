@@ -21,6 +21,8 @@ import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.converter.EventConverter;
 import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
+import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
+import org.wso2.siddhi.core.query.processor.handler.SimpleHandlerProcessor;
 import org.wso2.siddhi.core.util.MetaStreamEventHelper;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.core.util.parser.StreamParser;
@@ -30,6 +32,7 @@ import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.api.execution.query.input.stream.InputStream;
 import org.wso2.siddhi.query.api.execution.query.input.stream.SingleInputStream;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -56,6 +59,26 @@ public class BasicQueryCreator extends QueryCreator {
         MetaStreamEventHelper.updateVariablePosition(metaStreamEvent, variableExpressionExecutorList);
         queryPartComposite.getHandlerProcessor().setEventConverter(getEventConverter());
         return queryPartComposite;
+    }
+
+    public List<HandlerProcessor> cloneHandlers(OutputRateManager outputRateManager,QueryPartComposite queryPartComposite) {
+        List<HandlerProcessor> handlerProcessors = new ArrayList<HandlerProcessor>();
+        List<VariableExpressionExecutor> variableExpressionExecutorList = new LinkedList<VariableExpressionExecutor>();
+        this.querySelector = constructQuerySelector(outputRateManager, metaStreamEvent, variableExpressionExecutorList);
+        this.outputStreamDefinition = querySelector.getOutputStreamDefinition();
+        HandlerProcessor handlerProcessor = queryPartComposite.getHandlerProcessor();
+        if(handlerProcessor instanceof SimpleHandlerProcessor){
+                SimpleHandlerProcessor simpleHandlerProcessor = new SimpleHandlerProcessor(handlerProcessor.getStreamId());
+                simpleHandlerProcessor.setProcessor(handlerProcessor.getProcessor());//TODO:check
+                simpleHandlerProcessor.setSelector(querySelector);
+                simpleHandlerProcessor.setEventConverter(getEventConverter());
+                handlerProcessors.add(simpleHandlerProcessor);
+            } else{
+            //TODO : else
+            }
+
+        return handlerProcessors;
+
     }
 
 
