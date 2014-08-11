@@ -96,6 +96,14 @@ public abstract class QueryCreator {
     public MetaStreamEvent getMetaStreamEvent() {
         return metaStreamEvent;
     }
-//>>>>>>> 8af6f64acc63e5bfdbd4dcda1917b303043aa3a5
+
+    protected void constructTempStreamDefinitionMap(InputStream inputStream) {
+        if (((SingleInputStream) inputStream).isInnerStream()) {
+            tempStreamDefinitionMap.put(((SingleInputStream) getInputStream()).getStreamId(), (StreamDefinition) localStreamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId()));
+        } else {
+            tempStreamDefinitionMap.put(((SingleInputStream) getInputStream()).getStreamId(), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) getInputStream()).getStreamId()));
+        }
+
+    }
 
 }
