@@ -98,8 +98,8 @@ public class PassThroughTestCase {
         executionPlan.defineStream(streamDefinition);
 
         Query query = new Query();
-        query.annotation(Annotation.annotation("info").element("name", "query1"));
         query.from(InputStream.stream("cseEventStream"));
+        query.annotation(Annotation.annotation("info").element("name", "query1"));
         query.select(
                 Selector.selector().
                         select("symbol", Expression.variable("symbol")).

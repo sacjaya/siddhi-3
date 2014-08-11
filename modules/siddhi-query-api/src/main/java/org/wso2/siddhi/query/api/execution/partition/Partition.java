@@ -19,12 +19,15 @@
 package org.wso2.siddhi.query.api.execution.partition;
 
 import org.wso2.siddhi.query.api.annotation.Annotation;
+import org.wso2.siddhi.query.api.exception.ExecutionPlanValidationException;
 import org.wso2.siddhi.query.api.execution.ExecutionElement;
 import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.api.expression.Expression;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * {@linkplain Partition} class is used to represent the definition of
@@ -32,7 +35,7 @@ import java.util.List;
  */
 public class Partition implements ExecutionElement {
 
-    private List<PartitionType> partitionTypeList = new ArrayList<PartitionType>();
+    private Map<String,PartitionType> partitionTypeMap = new HashMap<String,PartitionType>();
     private List<Query> queryList = new ArrayList<Query>();
     private List<Annotation> annotations = new ArrayList<Annotation>();
 
@@ -40,27 +43,24 @@ public class Partition implements ExecutionElement {
         return new Partition();
     }
 
-    public List<PartitionType> getPartitionTypeList() {
-        return partitionTypeList;
+    public Map<String,PartitionType> getPartitionTypeMap() {
+        return partitionTypeMap;
     }
 
     public Partition with(String streamId, Expression expression) {
         ValuePartitionType valuePartitionType = new ValuePartitionType(streamId, expression);
-        partitionTypeList.add(valuePartitionType);
-        //todo handle duplicate
+        addPartitionType(valuePartitionType);
         return this;
     }
 
     public Partition with(String streamId, RangePartitionType.RangePartitionProperty... rangePartitionProperties) {
         PartitionType rangePartitionType = new RangePartitionType(streamId, rangePartitionProperties);
-        partitionTypeList.add(rangePartitionType);
-        //todo handle duplicate
+        addPartitionType(rangePartitionType);
         return this;
     }
 
     public Partition with(PartitionType partitionType) {
-        partitionTypeList.add(partitionType);
-        //todo handle duplicate
+        addPartitionType(partitionType);
         return this;
     }
 
@@ -68,6 +68,14 @@ public class Partition implements ExecutionElement {
         //todo validate
         queryList.add(query);
         return this;
+    }
+
+    private void addPartitionType(PartitionType partitionType) {
+        String partitionedStream =   partitionType.getStreamId();
+        if(partitionTypeMap.containsKey(partitionedStream)) {
+            throw new ExecutionPlanValidationException("Duplicate partition for Stream "+partitionedStream+"!, "+partitionType.toString()+" cannot be added as "+partitionTypeMap.get(partitionType.getStreamId())+" already exist.");
+        }
+        partitionTypeMap.put(partitionType.getStreamId(),partitionType);
     }
 
     public List<Query> getQueryList(){
@@ -87,20 +95,10 @@ public class Partition implements ExecutionElement {
         return annotations;
     }
 
-    public List<Annotation> getAnnotations(String name) {
-        List<Annotation> annotationList=new ArrayList<Annotation>();
-        for(Annotation annotation: annotations){
-            if(name.equals(annotation.getName())){
-                annotationList.add( annotation);
-            }
-        }
-        return annotationList;
-    }
-
     @Override
     public String toString() {
         return "Partition{" +
-                "partitionTypeList=" + partitionTypeList +
+                "partitionTypeMap=" + partitionTypeMap +
                 ", queryList=" + queryList +
                 ", annotations=" + annotations +
                 '}';
@@ -115,7 +113,7 @@ public class Partition implements ExecutionElement {
 
         if (annotations != null ? !annotations.equals(partition.annotations) : partition.annotations != null)
             return false;
-        if (partitionTypeList != null ? !partitionTypeList.equals(partition.partitionTypeList) : partition.partitionTypeList != null)
+        if (partitionTypeMap != null ? !partitionTypeMap.equals(partition.partitionTypeMap) : partition.partitionTypeMap != null)
             return false;
         if (queryList != null ? !queryList.equals(partition.queryList) : partition.queryList != null) return false;
 
@@ -124,7 +122,7 @@ public class Partition implements ExecutionElement {
 
     @Override
     public int hashCode() {
-        int result = partitionTypeList != null ? partitionTypeList.hashCode() : 0;
+        int result = partitionTypeMap != null ? partitionTypeMap.hashCode() : 0;
         result = 31 * result + (queryList != null ? queryList.hashCode() : 0);
         result = 31 * result + (annotations != null ? annotations.hashCode() : 0);
         return result;

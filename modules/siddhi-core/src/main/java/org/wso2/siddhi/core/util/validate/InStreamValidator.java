@@ -56,7 +56,7 @@ public class InStreamValidator {
                 }
             }
             ((SingleInputStream) inputStream).setDefinition(streamDefinitionMap.get(((SingleInputStream) inputStream).getStreamId()));  //set the definition
-            if (!(((SingleInputStream) inputStream).getStreamReferenceId().equals(((SingleInputStream) inputStream).getStreamId()))) { //if ref id is provided
+            if ((((SingleInputStream) inputStream).getStreamReferenceId() != null) && !(((SingleInputStream) inputStream).getStreamId()).equals(((SingleInputStream) inputStream).getStreamReferenceId())) { //if ref id is provided
                 StreamDefinition temp = tempDefinitionMap.remove(((SingleInputStream) inputStream).getStreamId());                  //remove original definition from temp map
                 tempDefinitionMap.put(((SingleInputStream) inputStream).getStreamReferenceId(), temp);
             }

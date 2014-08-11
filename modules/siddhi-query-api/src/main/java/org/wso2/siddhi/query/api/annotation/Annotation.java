@@ -41,21 +41,6 @@ public class Annotation {
         return this;
     }
 
-    public List<Element> getElements(String key) {
-        List<Element> elementList = new ArrayList<Element>();
-        for (Element element : elements) {
-            if (key == null) {
-                if (element.getKey() == null) {
-                    elementList.add(element);
-                }
-            } else if (key.equals(element.getKey())) {
-                elementList.add(element);
-
-            }
-        }
-        return elementList;
-    }
-
     public String getName() {
         return name;
     }
