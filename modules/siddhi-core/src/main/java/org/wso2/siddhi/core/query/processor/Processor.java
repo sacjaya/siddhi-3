@@ -23,7 +23,7 @@ public interface Processor {
      *
      * @param processor
      */
-    void addToNext(Processor processor);
+    void addToLast(Processor processor);
 
     /**
      * To process incoming event
