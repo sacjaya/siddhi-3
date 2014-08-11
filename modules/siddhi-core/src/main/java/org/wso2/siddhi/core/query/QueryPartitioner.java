@@ -76,12 +76,12 @@ public class QueryPartitioner {
     }
 
     public List<HandlerProcessor> constructPartition(OutputRateManager outputRateManager) {
-        QueryPartComposite queryPartComposite = queryCreator.constructQuery(outputRateManager);
-        querySelectorList.add(queryPartComposite.getQuerySelector());
-        for (PreSelectProcessingElement preSelectProcessingElement : queryPartComposite.getPreSelectProcessingElementList()) {
+        QueryPartComposite queryPartComposite = queryCreator.constructQuery(outputRateManager); //ATM we only transfer HandlerProcessor using QPC
+        //querySelectorList.add(queryPartComposite.getQuerySelector());
+        /*for (PreSelectProcessingElement preSelectProcessingElement : queryPartComposite.getPreSelectProcessingElementList()) {
             preSelectProcessingElement.setNext(queryPartComposite.getQuerySelector());
-        }
-        //return queryPartComposite.getHandlerProcessorList();
+        }*/
+        //return queryPartComposite.getHandlerProcessorList();      //TODO: review and remove
         return Arrays.asList(queryPartComposite.getHandlerProcessor()); //TODO: discuss and fix handlerProcessorList/processor
     }
 
