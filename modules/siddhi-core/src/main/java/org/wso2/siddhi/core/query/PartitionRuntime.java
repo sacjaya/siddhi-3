@@ -145,7 +145,7 @@ public class PartitionRuntime {
             localStreamDefinitionMap.put(streamDefinition.getId(), streamDefinition);
             StreamJunction streamJunction = localStreamJunctionMap.get(streamDefinition.getId());
             if (streamJunction == null) {
-                streamJunction = new StreamJunction(streamDefinition.getId(), siddhiContext.getThreadPoolExecutor());
+                streamJunction = new StreamJunction(streamDefinition.getId(), siddhiContext.getExecutorService());
                 localStreamJunctionMap.putIfAbsent(streamDefinition.getId(), streamJunction);
             }
         }

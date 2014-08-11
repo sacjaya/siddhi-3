@@ -24,21 +24,6 @@ import java.util.UUID;
 public class SiddhiConfiguration {
 
     /**
-     * Core pool size of the Siddhi thread executor
-     */
-    private int threadExecutorCorePoolSize;
-
-    /**
-     * Max pool size of the Siddhi thread executor
-     */
-    private int threadExecutorMaxPoolSize;
-
-    /**
-     * Core pool size of the Siddhi thread scheduler
-     */
-    private int threadSchedulerCorePoolSize;
-
-    /**
      * Number of max events bundled when event rates are high
      */
     private int eventBatchSize;
@@ -55,39 +40,9 @@ public class SiddhiConfiguration {
 
     public SiddhiConfiguration() {
 
-        threadExecutorCorePoolSize = Runtime.getRuntime().availableProcessors();
-        threadExecutorMaxPoolSize = 50;
-        threadSchedulerCorePoolSize = 20;
         eventBatchSize = 50;
         siddhiInstanceIdentifier = UUID.randomUUID().toString();
 
-    }
-
-    public int getThreadExecutorCorePoolSize() {
-        return threadExecutorCorePoolSize;
-    }
-
-    public SiddhiConfiguration setThreadExecutorCorePoolSize(int threadExecutorCorePoolSize) {
-        this.threadExecutorCorePoolSize = threadExecutorCorePoolSize;
-        return this;
-    }
-
-    public int getThreadExecutorMaxPoolSize() {
-        return threadExecutorMaxPoolSize;
-    }
-
-    public SiddhiConfiguration setThreadExecutorMaxPoolSize(int threadExecutorMaxPoolSize) {
-        this.threadExecutorMaxPoolSize = threadExecutorMaxPoolSize;
-        return this;
-    }
-
-    public int getThreadSchedulerCorePoolSize() {
-        return threadSchedulerCorePoolSize;
-    }
-
-    public SiddhiConfiguration setThreadSchedulerCorePoolSize(int threadSchedulerCorePoolSize) {
-        this.threadSchedulerCorePoolSize = threadSchedulerCorePoolSize;
-        return this;
     }
 
     public int getEventBatchSize() {

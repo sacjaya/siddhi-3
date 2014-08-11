@@ -189,7 +189,7 @@ public class QueryRuntime {
             for (HandlerProcessor handlerProcessor : handlerProcessorList) {
                 StreamJunction streamJunction = localStreamJunctionMap.get(streamId + key);
                 if (streamJunction == null) {
-                    streamJunction = new StreamJunction(streamId + key, siddhiContext.getThreadPoolExecutor());
+                    streamJunction = new StreamJunction(streamId + key, siddhiContext.getExecutorService());
                     localStreamJunctionMap.putIfAbsent(streamId + key, streamJunction);
                 }
                 streamJunction.addEventFlow(handlerProcessor);
