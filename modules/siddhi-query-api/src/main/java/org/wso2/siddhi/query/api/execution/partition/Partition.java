@@ -19,10 +19,14 @@
 package org.wso2.siddhi.query.api.execution.partition;
 
 import org.wso2.siddhi.query.api.annotation.Annotation;
+import org.wso2.siddhi.query.api.annotation.Element;
+import org.wso2.siddhi.query.api.exception.DuplicateAnnotationException;
 import org.wso2.siddhi.query.api.exception.ExecutionPlanValidationException;
 import org.wso2.siddhi.query.api.execution.ExecutionElement;
 import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.api.expression.Expression;
+import org.wso2.siddhi.query.api.util.AnnotationHelper;
+import org.wso2.siddhi.query.api.util.SiddhiConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +41,7 @@ public class Partition implements ExecutionElement {
 
     private Map<String,PartitionType> partitionTypeMap = new HashMap<String,PartitionType>();
     private List<Query> queryList = new ArrayList<Query>();
+    private List<String> queryNameList = new ArrayList<String>();
     private List<Annotation> annotations = new ArrayList<Annotation>();
 
     public static Partition partition() {
@@ -65,8 +70,24 @@ public class Partition implements ExecutionElement {
     }
 
     public Partition addQuery(Query query) {
-        //todo validate
-        queryList.add(query);
+        if (query == null) {
+            throw new ExecutionPlanValidationException("Query should not be null");
+        }
+        String name = null;
+        try {
+            Element element = AnnotationHelper.getAnnotationElement(SiddhiConstants.EXECUTION_ELEMENT_INFO,
+                    SiddhiConstants.EXECUTION_ELEMENT_NAME, query.getAnnotations());
+            if (element != null) {
+                name = element.getValue();
+            }
+        } catch (DuplicateAnnotationException e) {
+            throw new ExecutionPlanValidationException(e.getMessage(), e);
+        }
+        if (name != null && queryNameList.contains(name)) {
+            throw new ExecutionPlanValidationException("Cannot add Query as another Execution Element already uses its name=" + name +" within the same Partition");
+        }
+        queryNameList.add(name);
+        this.queryList.add(query);
         return this;
     }
 

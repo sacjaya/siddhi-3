@@ -26,14 +26,14 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class SiddhiContext {
 
     private int eventBatchSize;
     private SnapshotService snapshotService;
-    private ThreadPoolExecutor threadPoolExecutor;
+    private ExecutorService executorService;
     private ScheduledExecutorService scheduledExecutorService;
     private String siddhiInstanceIdentifier;
     private List<Class> siddhiExtensions;
@@ -66,16 +66,16 @@ public class SiddhiContext {
         return snapshotService;
     }
 
-    public void setThreadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
-        this.threadPoolExecutor = threadPoolExecutor;
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
     }
 
     public void setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
         this.scheduledExecutorService = scheduledExecutorService;
     }
 
-    public ThreadPoolExecutor getThreadPoolExecutor() {
-        return threadPoolExecutor;
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 
     public ScheduledExecutorService getScheduledExecutorService() {

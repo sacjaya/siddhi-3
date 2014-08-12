@@ -291,7 +291,7 @@ public class FilterTestCase {
 
     }
 
-    @Test
+    /*@Test
     public void testFilterQuery6() throws InterruptedException, ValidatorException {
         log.info("Filter test6");
 
@@ -341,7 +341,7 @@ public class FilterTestCase {
 
         siddhiManager.shutdown();
 
-    }
+    }*/
 
     @Test
     public void testFilterQuery7() throws InterruptedException, ValidatorException {

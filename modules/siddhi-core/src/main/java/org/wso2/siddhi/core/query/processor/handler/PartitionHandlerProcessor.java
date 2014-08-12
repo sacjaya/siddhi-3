@@ -51,7 +51,6 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
 
     private ConcurrentHashMap<String, HandlerProcessor> partitionedHandlerMap = new ConcurrentHashMap<String, HandlerProcessor>();
     private EventConverter eventConverter;
-    private QuerySelector next;     //TODO: review. added to implement HandlerProcessor.setQuerySelector()
 
 
     public PartitionHandlerProcessor(SiddhiContext siddhiContext, String streamId, QueryPartitioner queryPartitioner, int handlerId, List<PartitionExecutor> partitionExecutors, PartitionRuntime partitionRuntime) {
@@ -104,7 +103,7 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
     private StreamJunction getStreamJunction(String streamJunctionName){
         StreamJunction streamJunction = cachedStreamJunctionMap.get(streamJunctionName);
         if (streamJunction == null) {
-            streamJunction = new StreamJunction(streamJunctionName, siddhiContext.getThreadPoolExecutor());
+            streamJunction = new StreamJunction(streamJunctionName, siddhiContext.getExecutorService());
             partitionRuntime.addStreamJunction(streamJunctionName,streamJunction);
             cachedStreamJunctionMap.putIfAbsent(streamJunctionName, streamJunction);
         }
@@ -120,7 +119,7 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
                     if (queryRuntime.getInputStreamId().get(0).equals(streamId)) {
 
                         HandlerProcessor handlerProcessor = queryPartitioner.newPartition(handlerId, key, queryRuntime.getOutputRateManager());
-                        streamJunction = new StreamJunction(streamId + key, siddhiContext.getThreadPoolExecutor());
+                        streamJunction = new StreamJunction(streamId + key, siddhiContext.getExecutorService());
                         streamJunction.addEventFlow(handlerProcessor);
                         partitionRuntime.addStreamJunction(streamId + key, streamJunction);
                         cachedStreamJunctionMap.put(streamId + key, streamJunction);
@@ -142,18 +141,8 @@ public class PartitionHandlerProcessor implements HandlerProcessor {
     }
 
     @Override
-    public Processor getProcessor() { //TODO: figure out what to do. Needed for setting event converter
-        return null;
-    }
-
-    @Override
     public void setEventConverter(EventConverter eventConverter) {
         this.eventConverter = eventConverter;
-    }
-
-    @Override
-    public void setSelector(QuerySelector querySelector) {
-        this.next = querySelector;
     }
 
     public int getDisruptorsSize() {

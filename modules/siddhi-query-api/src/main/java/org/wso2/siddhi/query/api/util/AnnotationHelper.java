@@ -1,8 +1,8 @@
-package org.wso2.siddhi.core.util;
+package org.wso2.siddhi.query.api.util;
 
-import org.wso2.siddhi.core.exception.DuplicateAnnotationException;
 import org.wso2.siddhi.query.api.annotation.Annotation;
 import org.wso2.siddhi.query.api.annotation.Element;
+import org.wso2.siddhi.query.api.exception.DuplicateAnnotationException;
 
 import java.util.List;
 

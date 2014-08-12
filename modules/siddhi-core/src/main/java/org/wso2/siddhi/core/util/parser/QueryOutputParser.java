@@ -79,7 +79,7 @@ public class QueryOutputParser {
         if (outStream instanceof InsertIntoStream) {
             StreamJunction outputStreamJunction = streamJunctionMap.get(id);
             if (outputStreamJunction == null) {
-                outputStreamJunction = new StreamJunction(id, siddhiContext.getThreadPoolExecutor());
+                outputStreamJunction = new StreamJunction(id, siddhiContext.getExecutorService());
                 streamJunctionMap.putIfAbsent(id, outputStreamJunction);
             }
             return new InsertIntoStreamCallback(outputStreamJunction, outputStreamDefinition);
@@ -102,7 +102,7 @@ public class QueryOutputParser {
         if (outStream instanceof InsertIntoStream) {
             StreamJunction outputStreamJunction = streamJunctionMap.get(id+key);
             if (outputStreamJunction == null) {
-                outputStreamJunction = new StreamJunction(id+key, siddhiContext.getThreadPoolExecutor());
+                outputStreamJunction = new StreamJunction(id+key, siddhiContext.getExecutorService());
                 streamJunctionMap.putIfAbsent(id+key, outputStreamJunction);
             }
             return new InsertIntoStreamCallback(outputStreamJunction, outputStreamDefinition);

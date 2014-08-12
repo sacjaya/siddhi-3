@@ -23,20 +23,23 @@ public class MetaStreamEventHelper {
 
     public static void updateVariablePosition(MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutorList) {
         //Position[array ID, index] : Array ID -> outData = 2; afterWindowData = 1; beforeWindowData = 0;
-        refactorMetaStreamEvent(metaStreamEvent);
+        refactorMetaStreamEvent(metaStreamEvent);       //can remove this and call separately so that we can stop calling repeatedly in partition creation. But then we can't enforce refactoring.
         for (VariableExpressionExecutor variableExpressionExecutor : variableExpressionExecutorList) {
             if (metaStreamEvent.getOutData().contains(variableExpressionExecutor.getAttribute())) {
-                variableExpressionExecutor.setPosition(new int[]{Constants.OUT_DATA_INDEX, metaStreamEvent.getOutData().indexOf(variableExpressionExecutor.getAttribute())});
+                variableExpressionExecutor.setPosition(new int[]{Constants.OUT_DATA_INDEX, metaStreamEvent.getOutData()
+                        .indexOf(variableExpressionExecutor.getAttribute())});
             } else if (metaStreamEvent.getAfterWindowData().contains(variableExpressionExecutor.getAttribute())) {
-                variableExpressionExecutor.setPosition(new int[]{Constants.AFTER_WINDOW_DATA_INDEX, metaStreamEvent.getAfterWindowData().indexOf(variableExpressionExecutor.getAttribute())});
+                variableExpressionExecutor.setPosition(new int[]{Constants.AFTER_WINDOW_DATA_INDEX, metaStreamEvent
+                        .getAfterWindowData().indexOf(variableExpressionExecutor.getAttribute())});
             } else if (metaStreamEvent.getBeforeWindowData().contains(variableExpressionExecutor.getAttribute())) {
-                variableExpressionExecutor.setPosition(new int[]{Constants.BEFORE_WINDOW_DATA_INDEX, metaStreamEvent.getBeforeWindowData().indexOf(variableExpressionExecutor.getAttribute())});
+                variableExpressionExecutor.setPosition(new int[]{Constants.BEFORE_WINDOW_DATA_INDEX, metaStreamEvent
+                        .getBeforeWindowData().indexOf(variableExpressionExecutor.getAttribute())});
             }
         }
 
     }
 
-    public static void refactorMetaStreamEvent(MetaStreamEvent metaStreamEvent) {
+    public synchronized static void refactorMetaStreamEvent(MetaStreamEvent metaStreamEvent) {
         for (Attribute attribute : metaStreamEvent.getOutData()) {
             if (metaStreamEvent.getBeforeWindowData().contains(attribute)) {
                 metaStreamEvent.getBeforeWindowData().remove(attribute);

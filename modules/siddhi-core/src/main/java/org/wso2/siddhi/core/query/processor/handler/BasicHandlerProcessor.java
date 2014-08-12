@@ -11,29 +11,34 @@
  * limitations under the License.
  */
 
-package org.wso2.siddhi.core.query.processor;
+package org.wso2.siddhi.core.query.processor.handler;
 
-import org.wso2.siddhi.core.event.StreamEvent;
-import org.wso2.siddhi.core.event.converter.EventConverter;
-import org.wso2.siddhi.core.query.QueryProcessingElement;
+import org.wso2.siddhi.core.query.selector.QuerySelector;
 
-public abstract class Processor  implements QueryProcessingElement{
+/**
+ * Super class for Single/Join/Pattern Handler Processors.
+ */
+public abstract class BasicHandlerProcessor implements HandlerProcessor {
+
+    protected QuerySelector selector;
 
     /**
-     * To construct the Processor chain specifying the
-     * next processor which will handle event
-     * @param processor
-     */
-    public  abstract void addToLast(QueryProcessingElement processor);
-
-   /**
-     * To process incoming event
+     * Set the QuerySelector of the handler processor
      *
-     * @param streamEvent
+     * @param querySelector
+     */
+    public void setSelector(QuerySelector querySelector) {
+        this.selector = querySelector;
+    }
+
+    /**
+     * Get querySelector of this Handler Processor
+     *
      * @return
      */
-    public  abstract void process(StreamEvent streamEvent);
+    public QuerySelector getSelector() {
+        return selector;
+    }
 
 
-    public abstract QueryProcessingElement getNext();
 }

@@ -18,7 +18,6 @@
 package org.wso2.siddhi.core.query.processor.filter;
 
 import org.wso2.siddhi.core.event.StreamEvent;
-import org.wso2.siddhi.core.event.converter.EventConverter;
 import org.wso2.siddhi.core.executor.condition.ConditionExecutor;
 import org.wso2.siddhi.core.query.QueryProcessingElement;
 import org.wso2.siddhi.core.query.processor.Processor;
@@ -47,12 +46,12 @@ public class FilterProcessor extends Processor {
         return next;
     }
 
-    @Override
-    public void addToNext(QueryProcessingElement processor) {
+
+    public void addToLast(QueryProcessingElement processor) { //TODO: AddToLast
         if (next == null) {
             this.next = processor;
         } else {
-            ((Processor)this.next).addToNext(processor);
+            ((Processor)this.next).addToLast(processor);
         }
     }
 

@@ -13,8 +13,8 @@
 
 package org.wso2.siddhi.core.event;
 
+import org.wso2.siddhi.core.query.selector.attribute.ComplexAttribute;
 import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.core.executor.function.attribute.FunctionAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +46,7 @@ public class MetaStreamEvent {
         if (outData != null) {
             return outData;
         } else {
-            return  new ArrayList<Attribute>();  //return empty arraylist to avoid NPE
+            return new ArrayList<Attribute>();  //return empty arraylist to avoid NPE
         }
     }
 
@@ -57,6 +57,9 @@ public class MetaStreamEvent {
     }
 
     public void intializeOutData() {
+        if (afterWindowData == null) {
+            afterWindowData = new ArrayList<Attribute>();
+        }
         if (outData == null) {
             outData = new ArrayList<Attribute>();
         }
@@ -71,8 +74,8 @@ public class MetaStreamEvent {
      */
     public void addData(Attribute attribute) {
         if (outData != null) {
-            if (outData.size() > 0 && outData.get(outData.size() - 1) instanceof FunctionAttribute) {
-                if (!((FunctionAttribute) outData.get(outData.size() - 1)).isInitialized()) {   //if last element is a not initialized function attribute,
+            if (outData.size() > 0 && outData.get(outData.size() - 1) instanceof ComplexAttribute) {
+                if (!((ComplexAttribute) outData.get(outData.size() - 1)).isInitialized()) {   //if last element is a not initialized function attribute,
                     afterWindowData.add(attribute);                                             //then reserve that spot for result of function and
                 } else {                                                                        //allocate position for actual variable
                     outData.add(attribute);

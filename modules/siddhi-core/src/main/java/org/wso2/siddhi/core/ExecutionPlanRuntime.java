@@ -53,7 +53,7 @@ public class ExecutionPlanRuntime {
             streamDefinitionMap.put(streamDefinition.getId(), streamDefinition);
             StreamJunction streamJunction = streamJunctionMap.get(streamDefinition.getId());
             if (streamJunction == null) {
-                streamJunction = new StreamJunction(streamDefinition.getId(), siddhiContext.getThreadPoolExecutor());
+                streamJunction = new StreamJunction(streamDefinition.getId(), siddhiContext.getExecutorService());
                 streamJunctionMap.put(streamDefinition.getId(), streamJunction);
             }
             InputHandler inputHandler = new InputHandler(streamDefinition.getId(), streamJunction, siddhiContext);
@@ -87,7 +87,7 @@ public class ExecutionPlanRuntime {
         streamCallback.setStreamId(streamId);
         StreamJunction streamJunction = streamJunctionMap.get(streamId);
         if (streamJunction == null) {
-            streamJunction = new StreamJunction(streamId, siddhiContext.getThreadPoolExecutor());
+            streamJunction = new StreamJunction(streamId, siddhiContext.getExecutorService());
             streamJunctionMap.put(streamId, streamJunction);
         }
         streamJunction.addEventFlow(streamCallback);

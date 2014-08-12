@@ -24,8 +24,8 @@ import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.query.processor.filter.FilterProcessor;
 import org.wso2.siddhi.core.query.processor.filter.PassThroughFilterProcessor;
-import org.wso2.siddhi.core.query.processor.handler.SimpleHandlerProcessor;
 import org.wso2.siddhi.core.query.processor.window.WindowProcessor;
+import org.wso2.siddhi.core.query.processor.handler.SingleHandlerProcessor;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.core.util.SiddhiClassLoader;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 public class StreamParser {
-    //QueryPartComposite queryPartComposite = new QueryPartComposite();
+
 
     public static QueryPartComposite parseSingleStream(InputStream inputStream, Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutorList) {
         QueryPartComposite queryPartComposite = new QueryPartComposite();
@@ -54,7 +54,7 @@ public class StreamParser {
                     processor = generateProcessor(handler, tempStreamDefinitionMap, siddhiContext, metaStreamEvent, variableExpressionExecutorList);
                     i++;
                 } else {
-                    processor.addToNext(generateProcessor(handler, tempStreamDefinitionMap, siddhiContext, metaStreamEvent, variableExpressionExecutorList));
+                    processor.addToLast(generateProcessor(handler, tempStreamDefinitionMap, siddhiContext, metaStreamEvent, variableExpressionExecutorList));
                 }
             }
         } else {
@@ -62,23 +62,19 @@ public class StreamParser {
 
         }
 
-        SimpleHandlerProcessor simpleHandlerProcessor =                                                                                       //TODO
-                new SimpleHandlerProcessor(inputStream.getStreamIds().get(0));
-        simpleHandlerProcessor.setProcessor(processor);
 
-
-
-
+        SingleHandlerProcessor singleHandlerProcessor = new SingleHandlerProcessor(inputStream.getStreamIds().get(0));
+        singleHandlerProcessor.setProcessorChain(processor);
         //queryPartComposite.getPreSelectProcessingElementList().add(simpleHandlerProcessor);
         //queryPartComposite.setProcessorChain(processor);
-        queryPartComposite.setHandlerProcessor(simpleHandlerProcessor);
+        queryPartComposite.setHandlerProcessor(singleHandlerProcessor); //TODO remove QPC
         return queryPartComposite;
     }
 
     private static Processor generateProcessor(StreamHandler streamHandler, Map<String, StreamDefinition> tempStreamDefinitionMap, SiddhiContext siddhiContext, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutorList) {
         if (streamHandler instanceof Filter) {
             //Filter filter = (Filter) streamHandler;
-            Expression condition = ((Filter) streamHandler).getFilterExpression() ;
+            Expression condition = ((Filter) streamHandler).getFilterExpression();
             try {
                 return new FilterProcessor(ExecutorParser.parseCondition(condition, null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutorList)); //id already set at validation
                 //return new FilterProcessor(ExecutorParser.parseCondition(condition, ((BasicSingleInputStream) inputStream).getId(),  siddhiContext, tempStreamDefinitionMap,metaStreamEvent,variableExpressionExecutorList));

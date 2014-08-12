@@ -56,13 +56,8 @@ public class SiddhiManager {
         this.siddhiContext.setEventBatchSize(siddhiConfiguration.getEventBatchSize());
         this.siddhiContext.setSiddhiExtensions(siddhiConfiguration.getSiddhiExtensions());
         this.siddhiContext.setThreadBarrier(new ThreadBarrier());
-        this.siddhiContext.setThreadPoolExecutor(new ThreadPoolExecutor(siddhiConfiguration.getThreadExecutorCorePoolSize(),
-                siddhiConfiguration.getThreadExecutorMaxPoolSize(),
-                50,
-                TimeUnit.MICROSECONDS,
-                new LinkedBlockingQueue<Runnable>(),
-                new SiddhiThreadFactory("Executor")));
-        this.siddhiContext.setScheduledExecutorService(Executors.newScheduledThreadPool(siddhiConfiguration.getThreadSchedulerCorePoolSize(), new SiddhiThreadFactory("Scheduler")));
+        this.siddhiContext.setExecutorService(Executors.newCachedThreadPool(new SiddhiThreadFactory("Siddhi-Executor")));
+        this.siddhiContext.setScheduledExecutorService(Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors(), new SiddhiThreadFactory("Siddhi-Scheduler")));
         this.siddhiContext.setSnapshotService(new SnapshotService(siddhiContext));
     }
 
@@ -82,20 +77,6 @@ public class SiddhiManager {
             }
         }
     }
-
-//    public void validateExecutionPlan(ExecutionPlan executionPlan) throws ValidatorException {
-//        Map<String, StreamDefinition> tempMap = new HashMap<String, StreamDefinition>();
-//        if (executionPlan.getStreamDefinitionMap() != null) {
-//            for (StreamDefinition definition : executionPlan.getStreamDefinitionMap().values()) {
-//                StreamValidator.validate(tempMap, definition);
-//            }
-//            if (executionPlan.getQueryList() != null) {
-//                for (Query query : executionPlan.getQueryList()) {
-//                    QueryValidator.validate(query, tempMap);
-//                }
-//            }
-//        }
-//    }
 
     /**
      * add stream definitions, partitions and queries of an execution plan
@@ -143,7 +124,7 @@ public class SiddhiManager {
     }
 
     public void shutdown() {
-        siddhiContext.getThreadPoolExecutor().shutdown();
+        siddhiContext.getExecutorService().shutdown();
         siddhiContext.getScheduledExecutorService().shutdownNow();
 
     }

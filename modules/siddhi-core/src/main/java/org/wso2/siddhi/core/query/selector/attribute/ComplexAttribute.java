@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package org.wso2.siddhi.core.executor.function.attribute;
+package org.wso2.siddhi.core.query.selector.attribute;
 
 import org.wso2.siddhi.query.api.definition.Attribute;
 
@@ -19,11 +19,11 @@ import org.wso2.siddhi.query.api.definition.Attribute;
  * Class to hold output attributes of a function.
  * Used in MetaStreamEvent
  */
-public class FunctionAttribute extends Attribute {
+public class ComplexAttribute extends Attribute {
            //todo check
     private Boolean isInitialized;
 
-    public FunctionAttribute(Boolean initialized) {
+    public ComplexAttribute(Boolean initialized) {
         super("", null);                             //initializing dummy attribute to be used later by Function Executor
         this.isInitialized = initialized;
     }
