@@ -78,8 +78,8 @@ public class FilterTestCase {
         query.insertInto("StockQuote");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
@@ -122,8 +122,8 @@ public class FilterTestCase {
 
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
@@ -167,8 +167,8 @@ public class FilterTestCase {
         query.insertInto("StockQuote");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
@@ -218,8 +218,8 @@ public class FilterTestCase {
         query.insertInto("StockQuote");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
@@ -266,8 +266,8 @@ public class FilterTestCase {
         query.insertInto("StockQuote");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
@@ -316,8 +316,8 @@ public class FilterTestCase {
         query.insertInto("OutputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
@@ -360,8 +360,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
@@ -401,8 +401,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
@@ -441,8 +441,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
@@ -484,8 +484,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
@@ -524,8 +524,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
 
@@ -563,8 +563,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
 
         executionPlan.addQuery(query);
@@ -602,8 +602,8 @@ public class FilterTestCase {
         query.select(Selector.selector().select("symbol", Expression.variable("symbol")).select("price", Expression.variable("price")).select("volume", Expression.variable("volume")));
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan);
@@ -640,8 +640,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan);
@@ -680,8 +680,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan);
@@ -720,8 +720,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan);
@@ -760,8 +760,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan);
@@ -800,8 +800,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan);
@@ -839,8 +839,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan);
@@ -878,8 +878,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan);
@@ -917,8 +917,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
         for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 
         }
@@ -958,8 +958,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan);
@@ -997,8 +997,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
 
         executionPlan.addQuery(query);
@@ -1038,8 +1038,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
 
         executionPlan.addQuery(query);
@@ -1079,8 +1079,8 @@ public class FilterTestCase {
         query.insertInto("outputStream");
 
         streamDefinitionMap.put("cseEventStream", streamDefinition);
-        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-        QueryValidator.validate(query, streamDefinitionMap);
+        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+        // QueryValidator.validate(query, streamDefinitionMap);
 
         executionPlan.addQuery(query);
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan);
@@ -1114,8 +1114,8 @@ public class FilterTestCase {
 //        query.insertInto("outputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1150,8 +1150,8 @@ public class FilterTestCase {
 //        query.insertInto("outputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1187,8 +1187,8 @@ public class FilterTestCase {
 //        query.insertInto("outputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1224,8 +1224,8 @@ public class FilterTestCase {
 //        query.insertInto("outputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1261,8 +1261,8 @@ public class FilterTestCase {
 //        query.insertInto("outputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1303,8 +1303,8 @@ public class FilterTestCase {
 //        query.insertInto("outputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1339,8 +1339,8 @@ public class FilterTestCase {
 //        query.insertInto("outputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1376,8 +1376,8 @@ public class FilterTestCase {
 //        query.insertInto("outputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1413,8 +1413,8 @@ public class FilterTestCase {
 //        query.insertInto("outputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1453,8 +1453,8 @@ public class FilterTestCase {
 //        query.insertInto("outputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1490,8 +1490,8 @@ public class FilterTestCase {
 //        query.insertInto("outputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1527,8 +1527,8 @@ public class FilterTestCase {
 //        query.insertInto("outputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1564,8 +1564,8 @@ public class FilterTestCase {
 //        query.insertInto("outputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1612,8 +1612,8 @@ public class FilterTestCase {
 //        query.insertInto("OutputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1662,8 +1662,8 @@ public class FilterTestCase {
 //        query.insertInto("OutputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1710,8 +1710,8 @@ public class FilterTestCase {
 //        query.insertInto("OutputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1756,8 +1756,8 @@ public class FilterTestCase {
 //        query.insertInto("OutputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1805,8 +1805,8 @@ public class FilterTestCase {
 //        query.insertInto("OutputStream");
 //
 //        streamDefinitionMap.put("cseEventStream", streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query, streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query, streamDefinitionMap);
 //        for (StreamDefinition streamDef : streamDefinitionMap.values()) {
 //            
 //        }
@@ -1857,8 +1857,8 @@ public class FilterTestCase {
 //        query.insertInto("StockQuote");
 //
 //        streamDefinitionMap.put("cseEventStream",streamDefinition);
-//        StreamValidator.validate(streamDefinitionMap, streamDefinition);
-//        QueryValidator.validate(query,streamDefinitionMap);
+//        //StreamValidator.validate(streamDefinitionMap, streamDefinition);
+//        // QueryValidator.validate(query,streamDefinitionMap);
 //        for(StreamDefinition streamDef: streamDefinitionMap.values()){
 //            
 //
