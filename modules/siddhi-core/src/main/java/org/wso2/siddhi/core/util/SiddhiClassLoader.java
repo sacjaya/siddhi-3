@@ -19,18 +19,20 @@ import org.wso2.siddhi.query.api.extension.Extension;
 
 public class SiddhiClassLoader {
 
-    public static Object loadProcessor(String name, Extension extension, Class interfaze,
-                                       AbstractExtensionHolder extensionHolder) {
+    public static Object loadProcessor(String name, Class interfaze) {
 
-        if (name != null && extension != null) {
-            throw new QueryCreationException("Wrongly formatted window, window has both name & extension as " + name + " " + extension);
-        } else if (name == null && extension == null) {
-            throw new QueryCreationException("Wrongly formatted window, window has no name or extension");
-        } else if (name != null) {
+//        if (name != null && extension != null) {
+//            throw new QueryCreationException("Wrongly formatted window, window has both name & extension as " + name + " " + extension);
+//        } else if (name == null && extension == null) {
+//            throw new QueryCreationException("Wrongly formatted window, window has no name or extension");
+//        } else
+        if (name != null) {
             return loadSiddhiImplementation(name, interfaze);
-        } else {
-            return loadExtensionImplementation(extension, extensionHolder);
         }
+//        else {
+//            return loadExtensionImplementation(extension, extensionHolder);
+//        }
+        return null;
 
     }
 

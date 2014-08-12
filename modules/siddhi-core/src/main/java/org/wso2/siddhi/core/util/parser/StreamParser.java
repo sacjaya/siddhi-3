@@ -25,7 +25,9 @@ import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.query.processor.filter.FilterProcessor;
 import org.wso2.siddhi.core.query.processor.filter.PassThroughFilterProcessor;
 import org.wso2.siddhi.core.query.processor.handler.SimpleHandlerProcessor;
+import org.wso2.siddhi.core.query.processor.window.WindowProcessor;
 import org.wso2.siddhi.core.util.QueryPartComposite;
+import org.wso2.siddhi.core.util.SiddhiClassLoader;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.input.stream.InputStream;
 import org.wso2.siddhi.query.api.execution.query.input.stream.SingleInputStream;
@@ -63,6 +65,10 @@ public class StreamParser {
         SimpleHandlerProcessor simpleHandlerProcessor =                                                                                       //TODO
                 new SimpleHandlerProcessor(inputStream.getStreamIds().get(0));
         simpleHandlerProcessor.setProcessor(processor);
+
+
+
+
         //queryPartComposite.getPreSelectProcessingElementList().add(simpleHandlerProcessor);
         //queryPartComposite.setProcessorChain(processor);
         queryPartComposite.setHandlerProcessor(simpleHandlerProcessor);
@@ -81,14 +87,16 @@ public class StreamParser {
             }
         } else if (streamHandler instanceof Window) {
             metaStreamEvent.intializeAfterWindowData();
-            for (Expression expression : ((Window) streamHandler).getParameters()) {
-                try {
-                    ExecutorParser.parseExpression(expression, null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutorList);
-                } catch (ValidatorException e) {
-                    //This will never occur
-                }
-            }
-            return null; //TODO Window processor impl
+
+            Window window = (Window) streamHandler;
+            WindowProcessor windowProcessor = (WindowProcessor) SiddhiClassLoader.loadProcessor(window.getFunction(),WindowProcessor.class);
+            windowProcessor.setSiddhiContext(siddhiContext);
+            windowProcessor.setParameters(window.getParameters());
+            windowProcessor.initWindow();
+
+
+            return windowProcessor;
+
         } else {
             //TODO: else
         }

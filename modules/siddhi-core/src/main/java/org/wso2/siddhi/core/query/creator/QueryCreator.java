@@ -88,7 +88,7 @@ public abstract class QueryCreator {
 
     public abstract QueryPartComposite constructQuery(OutputRateManager outputRateManager) ;
 
-    public abstract List<HandlerProcessor> cloneHandlers(OutputRateManager outputRateManager, QueryPartComposite queryPartComposite);
+    public abstract HandlerProcessor cloneHandlers(OutputRateManager outputRateManager);
 
 
 //    public abstract QueryPartComposite constructQuery();

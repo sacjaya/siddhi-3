@@ -18,10 +18,13 @@
 package org.wso2.siddhi.core.query.selector;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.event.InnerStreamEvent;
 import org.wso2.siddhi.core.event.MetaStreamEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
+import org.wso2.siddhi.core.event.remove.RemoveStream;
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
+import org.wso2.siddhi.core.query.QueryProcessingElement;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.selector.attribute.processor.AttributeProcessor;
 import org.wso2.siddhi.core.query.selector.attribute.processor.NonGroupingAttributeProcessor;
@@ -37,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class QuerySelector {
+public class QuerySelector implements QueryProcessingElement{
 
     private StreamDefinition outputStreamDefinition;
     private Selector selector;
@@ -69,6 +72,14 @@ public class QuerySelector {
 
 
     public void process(StreamEvent streamEvent) {
+        if ((!(streamEvent instanceof InnerStreamEvent) || !currentOn) && (!(streamEvent instanceof RemoveStream) || !expiredOn)) {
+                //TODO: aggregateAttributes
+//            for (AttributeProcessor attributeProcessor : aggregateAttributeProcessorList) {
+//                processOutputAttributeGenerator(atomicEvent, groupByKey, attributeProcessor);
+//            }
+            return;
+        }
+
         Object[] data = new Object[outputSize];
         for (int i = 0; i < outputSize; i++) {
             AttributeProcessor attributeProcessor = attributeProcessorList.get(i);

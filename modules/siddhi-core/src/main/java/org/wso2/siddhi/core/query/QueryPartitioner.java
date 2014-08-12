@@ -97,6 +97,6 @@ public class QueryPartitioner {
 
 
     public List<HandlerProcessor> cloneHandlerProcessors(OutputRateManager outputRateManager){
-       return queryCreator.cloneHandlers(outputRateManager,queryPartComposite);
+       return Arrays.asList(queryCreator.cloneHandlers(outputRateManager));
     }
 }

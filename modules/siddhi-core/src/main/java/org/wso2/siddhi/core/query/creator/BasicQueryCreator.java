@@ -21,8 +21,8 @@ import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.converter.EventConverter;
 import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
+import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
-import org.wso2.siddhi.core.query.processor.handler.SimpleHandlerProcessor;
 import org.wso2.siddhi.core.util.MetaStreamEventHelper;
 import org.wso2.siddhi.core.util.QueryPartComposite;
 import org.wso2.siddhi.core.util.parser.StreamParser;
@@ -31,7 +31,6 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.api.execution.query.input.stream.SingleInputStream;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -45,6 +44,7 @@ public class BasicQueryCreator extends QueryCreator {
         constructTempStreamDefinitionMap();
     }
 
+    //TODO extract common parts of constructQuery and cloneHandlers
 
     public QueryPartComposite constructQuery(OutputRateManager outputRateManager) {
         List<VariableExpressionExecutor> variableExpressionExecutorList = new LinkedList<VariableExpressionExecutor>();
@@ -54,33 +54,35 @@ public class BasicQueryCreator extends QueryCreator {
         metaStreamEvent.intializeOutData();
         this.querySelector = constructQuerySelector(outputRateManager, metaStreamEvent, variableExpressionExecutorList);
         this.outputStreamDefinition = querySelector.getOutputStreamDefinition();
-        queryPartComposite.setQuerySelector(querySelector);
-        queryPartComposite.getHandlerProcessor().setSelector(querySelector);
+        updateQueryPartComposite(queryPartComposite);
+
         MetaStreamEventHelper.updateVariablePosition(metaStreamEvent, variableExpressionExecutorList);
-        queryPartComposite.getHandlerProcessor().setEventConverter(getEventConverter());
         return queryPartComposite;
     }
 
-    public List<HandlerProcessor> cloneHandlers(OutputRateManager outputRateManager,QueryPartComposite queryPartComposite) {
-        List<HandlerProcessor> handlerProcessors = new ArrayList<HandlerProcessor>();
+    public HandlerProcessor cloneHandlers(OutputRateManager outputRateManager) {
         List<VariableExpressionExecutor> variableExpressionExecutorList = new LinkedList<VariableExpressionExecutor>();
+        QueryPartComposite queryPartComposite = StreamParser.parseSingleStream(getInputStream(), this.tempStreamDefinitionMap, siddhiContext, metaStreamEvent, variableExpressionExecutorList);
         this.querySelector = constructQuerySelector(outputRateManager, metaStreamEvent, variableExpressionExecutorList);
         this.outputStreamDefinition = querySelector.getOutputStreamDefinition();
-        HandlerProcessor handlerProcessor = queryPartComposite.getHandlerProcessor();
-        if(handlerProcessor instanceof SimpleHandlerProcessor){
-                SimpleHandlerProcessor simpleHandlerProcessor = new SimpleHandlerProcessor(handlerProcessor.getStreamId());
-                simpleHandlerProcessor.setProcessor(handlerProcessor.getProcessor());//TODO:check
-                simpleHandlerProcessor.setSelector(querySelector);
-                simpleHandlerProcessor.setEventConverter(getEventConverter());
-                handlerProcessors.add(simpleHandlerProcessor);
-            } else{
-            //TODO : else
-            }
 
-        return handlerProcessors;
+        updateQueryPartComposite(queryPartComposite);
 
+        return queryPartComposite.getHandlerProcessor();
     }
 
+    private void updateQueryPartComposite(QueryPartComposite queryPartComposite){
+        queryPartComposite.setQuerySelector(querySelector);
+        queryPartComposite.getHandlerProcessor().setSelector(querySelector);
+        queryPartComposite.getHandlerProcessor().setEventConverter(getEventConverter());
+        Processor processor =  queryPartComposite.getHandlerProcessor().getProcessor();
+        Processor lastProcessor = null;
+        while (processor!=null){
+            lastProcessor = processor;
+            processor = (Processor) processor.getNext();
+        }
+        lastProcessor.addToNext(this.querySelector);
+    }
 
 
     private synchronized  EventConverter getEventConverter(){

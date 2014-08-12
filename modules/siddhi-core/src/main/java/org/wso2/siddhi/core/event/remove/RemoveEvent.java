@@ -15,19 +15,31 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.core.query.processor.filter;
+package org.wso2.siddhi.core.event.remove;
 
+import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.StreamEvent;
 
-public class PassThroughFilterProcessor extends FilterProcessor {
+public class RemoveEvent extends StreamEvent implements RemoveStream {
 
-    public PassThroughFilterProcessor() {
-        super(null);
+    long expiryTime = 0L;
+
+    public RemoveEvent(long timeStamp, Object[] data, long expiryTime) {
+        super(timeStamp, data);
+        this.expiryTime = expiryTime;
     }
 
-    public void process(StreamEvent streamEvent) {
-        next.process(streamEvent);
+    public RemoveEvent(StreamEvent event, long expiryTime) {
+        super(event.getTimestamp(), event.getData());
+        this.expiryTime = expiryTime;
     }
 
+    @Override
+    public long getExpiryTime() {
+        return expiryTime;
+    }
 
+    public void setExpiryTime(long expiryTime) {
+        this.expiryTime = expiryTime;
+    }
 }

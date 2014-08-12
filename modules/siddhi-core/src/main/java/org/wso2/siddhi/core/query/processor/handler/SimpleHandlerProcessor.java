@@ -50,10 +50,10 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
     }
 
     private void processHandler(String key, StreamEvent streamEvent) {
-        streamEvent = processor.process(streamEvent);
-        if (streamEvent != null) {
-            next.process(streamEvent);
-        }
+        processor.process(streamEvent);
+//        if (streamEvent != null) {
+//            next.process(streamEvent);
+//        }
     }
 
     @Override
@@ -67,10 +67,7 @@ public class SimpleHandlerProcessor implements HandlerProcessor, PreSelectProces
     }
 
     protected void processHandler(StreamEvent streamEvent) {
-        streamEvent = processor.process(streamEvent);
-        if (streamEvent != null) {
-            next.process(streamEvent);
-        }
+        processor.process(streamEvent);
     }
 
     @Override

@@ -15,15 +15,16 @@ package org.wso2.siddhi.core.query.processor;
 
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.event.converter.EventConverter;
+import org.wso2.siddhi.core.query.QueryProcessingElement;
 
-public interface Processor {
+public abstract class Processor  implements QueryProcessingElement{
     /**
      * To construct the Processor chain specifying the
      * next processor which will handle event
      *
-     * @param processor
+     * @param processingElement
      */
-    void addToNext(Processor processor);
+    public  abstract void addToNext(QueryProcessingElement processingElement);
 
     /**
      * To process incoming event
@@ -31,5 +32,7 @@ public interface Processor {
      * @param streamEvent
      * @return
      */
-    StreamEvent process(StreamEvent streamEvent);
+    public  abstract void process(StreamEvent streamEvent);
+
+    public abstract QueryProcessingElement getNext();
 }
