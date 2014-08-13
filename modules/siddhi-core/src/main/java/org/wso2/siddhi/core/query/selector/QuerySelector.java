@@ -54,6 +54,8 @@ public class QuerySelector implements QueryProcessingElement{
     private List<AttributeProcessor> aggregateAttributeProcessorList;
     private Map<String, StreamDefinition> tempStreamDefinitionMap;
     private boolean partitionedStream = false;
+    public OutputGroupByKeyGenerator groupByKeyGenerator = null;
+    private boolean groupBy = false;
     public boolean currentOn = false;
     public boolean expiredOn = false;
 
@@ -71,6 +73,12 @@ public class QuerySelector implements QueryProcessingElement{
         this.partitionedStream = isPartitioned;
         attributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
         aggregateAttributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
+
+//        if (selector.getGroupByList().size() > 0) {
+//            groupBy = true;
+//            groupByKeyGenerator = new OutputGroupByKeyGenerator(selector.getGroupByList(),tempStreamDefinitionMap,metaStreamEvent,
+//                    variableExpressionExecutors,siddhiContext);
+//        }
         populateAttributeProcessorList(siddhiContext, metaStreamEvent, variableExpressionExecutors);
 
 
@@ -78,6 +86,10 @@ public class QuerySelector implements QueryProcessingElement{
 
 
     public void process(StreamEvent streamEvent) {
+//        String groupByKey = null;
+//        if (groupBy) {
+//            groupByKey = groupByKeyGenerator.constructEventKey(streamEvent);
+//        }
 
         if ((!(streamEvent instanceof InnerStreamEvent) || !currentOn) && (!(streamEvent instanceof RemoveStream) || !expiredOn)) {
             for (AttributeProcessor attributeProcessor : aggregateAttributeProcessorList) {
