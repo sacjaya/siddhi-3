@@ -22,20 +22,23 @@ import org.wso2.siddhi.core.event.InnerStreamEvent;
 import org.wso2.siddhi.core.event.MetaStreamEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.event.remove.RemoveStream;
+import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.executor.expression.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.QueryProcessingElement;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateManager;
 import org.wso2.siddhi.core.query.selector.attribute.ComplexAttribute;
-import org.wso2.siddhi.core.query.selector.attribute.processor.AttributeProcessor;
-import org.wso2.siddhi.core.query.selector.attribute.processor.ComplexAttributeProcessor;
-import org.wso2.siddhi.core.query.selector.attribute.processor.NonGroupingAttributeProcessor;
-import org.wso2.siddhi.core.query.selector.attribute.processor.PassThroughAttributeProcessor;
+import org.wso2.siddhi.core.query.selector.attribute.factory.OutputAttributeAggregatorFactory;
+import org.wso2.siddhi.core.query.selector.attribute.processor.*;
+import org.wso2.siddhi.core.util.SiddhiClassLoader;
 import org.wso2.siddhi.core.util.parser.ExecutorParser;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.selection.OutputAttribute;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
+import org.wso2.siddhi.query.api.expression.Expression;
 import org.wso2.siddhi.query.api.expression.Variable;
+import org.wso2.siddhi.query.api.expression.constant.Constant;
+import org.wso2.siddhi.query.api.expression.function.AttributeFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +51,7 @@ public class QuerySelector implements QueryProcessingElement{
     private final OutputRateManager outputRateManager;
     private int outputSize;
     private ArrayList<AttributeProcessor> attributeProcessorList;
+    private List<AttributeProcessor> aggregateAttributeProcessorList;
     private Map<String, StreamDefinition> tempStreamDefinitionMap;
     private boolean partitionedStream = false;
     public boolean currentOn = false;
@@ -66,6 +70,7 @@ public class QuerySelector implements QueryProcessingElement{
         this.outputRateManager = outputRateManager;
         this.partitionedStream = isPartitioned;
         attributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
+        aggregateAttributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
         populateAttributeProcessorList(siddhiContext, metaStreamEvent, variableExpressionExecutors);
 
 
@@ -75,19 +80,21 @@ public class QuerySelector implements QueryProcessingElement{
     public void process(StreamEvent streamEvent) {
 
         if ((!(streamEvent instanceof InnerStreamEvent) || !currentOn) && (!(streamEvent instanceof RemoveStream) || !expiredOn)) {
-                //TODO: aggregateAttributes
-//            for (AttributeProcessor attributeProcessor : aggregateAttributeProcessorList) {
-//                processOutputAttributeGenerator(atomicEvent, groupByKey, attributeProcessor);
-//            }
+            for (AttributeProcessor attributeProcessor : aggregateAttributeProcessorList) {
+                processOutputAttributeGenerator(streamEvent, attributeProcessor);
+            }
             return;
         }
 
 
-        Object[] data = streamEvent.getData();      //Returns outData array from meta stream event
+        Object[] data = new Object[streamEvent.getData().length];      //Returns outData array from meta stream event
+        for(int i=0;i<streamEvent.getData().length;i++){
+           data[i] = streamEvent.getData()[i];
+        }
 
         for (int i = 0; i < outputSize; i++) {
             AttributeProcessor attributeProcessor = attributeProcessorList.get(i);
-            if (attributeProcessor instanceof ComplexAttributeProcessor) {        //only processing complex attributes.
+            if (attributeProcessor instanceof AggregationAttributeProcessor) {        //only processing complex attributes.
                 data[i] = processOutputAttributeGenerator(streamEvent, attributeProcessor);
             }   //else data is already filled
 
@@ -121,13 +128,28 @@ public class QuerySelector implements QueryProcessingElement{
         for (OutputAttribute outputAttribute : selector.getSelectionList()) {
             try {
                 if (!(outputAttribute.getExpression() instanceof Variable)) {
-                    metaStreamEvent.addData(new ComplexAttribute(false));
-                    //TODO: implement function attribute processor. Below code need to change accordingly
-                    PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(outputAttribute.getExpression(),
-                            null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors));//TODO: handle null args
-                    attributeProcessorList.add(attributeGenerator);
-                    outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
-                    ((ComplexAttribute) metaStreamEvent.getOutData().get(metaStreamEvent.getOutData().size() - 1)).setIsInitialized(true);    //set isInitialed true after processing
+                    if(outputAttribute.getExpression() instanceof Constant){
+                        metaStreamEvent.addData(new ComplexAttribute(false));
+                        PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(outputAttribute.getExpression(),
+                                null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors));//TODO: handle null args
+                        attributeProcessorList.add(attributeGenerator);
+                        outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
+                        ((ComplexAttribute) metaStreamEvent.getOutData().get(metaStreamEvent.getOutData().size() - 1)).setIsInitialized(true);    //set isInitialed true after processing
+                    } else if(outputAttribute.getExpression() instanceof AttributeFunction){
+                        OutputAttributeAggregatorFactory outputAttributeAggregatorFactory;
+
+                      outputAttributeAggregatorFactory = (OutputAttributeAggregatorFactory) SiddhiClassLoader.loadSiddhiImplementation(((AttributeFunction) outputAttribute.getExpression()).getFunction(), OutputAttributeAggregatorFactory.class);
+                        Expression[] expressions = null;
+
+                            expressions = ((AttributeFunction) outputAttribute.getExpression()).getParameters();
+
+                        AttributeProcessor attributeProcessor = AttributeProcessorFactory.createAttributeProcessor(expressions, tempStreamDefinitionMap,metaStreamEvent, variableExpressionExecutors,outputAttributeAggregatorFactory,siddhiContext);
+
+                        aggregateAttributeProcessorList.add(attributeProcessor);
+                        attributeProcessorList.add(attributeProcessor);
+                        outputStreamDefinition.attribute(outputAttribute.getRename(), attributeProcessor.getOutputType());
+
+                    }
                 } else {
                     PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(outputAttribute.getExpression(),
                             null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors));//TODO: handle null args

@@ -85,6 +85,7 @@ public class BasicQueryCreator extends QueryCreator {
         this.querySelector = constructQuerySelector(outputRateManager, metaStreamEvent, variableExpressionExecutorList);
         this.outputStreamDefinition = querySelector.getOutputStreamDefinition();
 
+        MetaStreamEventHelper.updateVariablePosition(metaStreamEvent, variableExpressionExecutorList);
         updateQueryPartCompositer(queryPartComposite);
 
         return Arrays.asList(queryPartComposite.getHandlerProcessor());
