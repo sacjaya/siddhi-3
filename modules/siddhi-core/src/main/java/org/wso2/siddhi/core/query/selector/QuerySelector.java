@@ -18,7 +18,6 @@
 package org.wso2.siddhi.core.query.selector;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.event.InnerStreamEvent;
 import org.wso2.siddhi.core.event.MetaStreamEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.event.remove.RemoveStream;
@@ -52,15 +51,12 @@ public class QuerySelector implements QueryProcessingElement {
     private ArrayList<AttributeProcessor> attributeProcessorList;
     private List<AttributeProcessor> aggregateAttributeProcessorList;
     private Map<String, StreamDefinition> tempStreamDefinitionMap;
-    private boolean partitionedStream = false;
-    public OutputGroupByKeyGenerator groupByKeyGenerator = null;
-    private boolean groupBy = false;
     public boolean currentOn = false;
     public boolean expiredOn = false;
 
 
     public QuerySelector(String outputStreamId, Selector selector,
-                         OutputRateManager outputRateManager, SiddhiContext siddhiContext, boolean currentOn, boolean expiredOn, boolean isPartitioned, Map<String, StreamDefinition> tempStreamDefinitionMap, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutors) {
+                         OutputRateManager outputRateManager, SiddhiContext siddhiContext, boolean currentOn, boolean expiredOn, Map<String, StreamDefinition> tempStreamDefinitionMap, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutors) {
         this.currentOn = currentOn;
         this.expiredOn = expiredOn;
         this.selector = selector;
@@ -69,15 +65,9 @@ public class QuerySelector implements QueryProcessingElement {
         this.outputStreamDefinition = new StreamDefinition();
         this.outputStreamDefinition.setId(outputStreamId);
         this.outputRateManager = outputRateManager;
-        this.partitionedStream = isPartitioned;
         attributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
         aggregateAttributeProcessorList = new ArrayList<AttributeProcessor>(outputSize);
 
-//        if (selector.getGroupByList().size() > 0) {
-//            groupBy = true;
-//            groupByKeyGenerator = new OutputGroupByKeyGenerator(selector.getGroupByList(),tempStreamDefinitionMap,metaStreamEvent,
-//                    variableExpressionExecutors,siddhiContext);
-//        }
         populateAttributeProcessorList(siddhiContext, metaStreamEvent, variableExpressionExecutors);
 
 
@@ -85,12 +75,9 @@ public class QuerySelector implements QueryProcessingElement {
 
 
     public void process(StreamEvent streamEvent) {
-//        String groupByKey = null;
-//        if (groupBy) {
-//            groupByKey = groupByKeyGenerator.constructEventKey(streamEvent);
-//        }
 
-        if ((!(streamEvent instanceof InnerStreamEvent) || !currentOn) && (!(streamEvent instanceof RemoveStream) || !expiredOn)) {
+        //TODO: review the if condition
+        if(streamEvent instanceof RemoveStream){
             for (AttributeProcessor attributeProcessor : aggregateAttributeProcessorList) {
                 processOutputAttributeGenerator(streamEvent, attributeProcessor);
             }
@@ -131,35 +118,29 @@ public class QuerySelector implements QueryProcessingElement {
         return outputStreamDefinition;
     }
 
-    public boolean isPartitioned() {
-        return partitionedStream;
-    }
-
     private void populateAttributeProcessorList(SiddhiContext siddhiContext, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutors) {
         for (OutputAttribute outputAttribute : selector.getSelectionList()) {
             try {
-                if (!(outputAttribute.getExpression() instanceof Variable)) {
-                    if (outputAttribute.getExpression() instanceof Constant) {
-                        PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(outputAttribute.getExpression(),
-                                null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors));//TODO: handle null args
-                        attributeProcessorList.add(attributeGenerator);
-                        outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
-                        ((ComplexAttribute) metaStreamEvent.getOutData().get(metaStreamEvent.getOutData().size() - 1)).setIsInitialized(true);    //set isInitialed true after processing
-                    } else if (outputAttribute.getExpression() instanceof AttributeFunction) {
-                        metaStreamEvent.addData(new ComplexAttribute(false));
 
-                        OutputAttributeAggregatorFactory outputAttributeAggregatorFactory;
-                        outputAttributeAggregatorFactory = (OutputAttributeAggregatorFactory) SiddhiClassLoader.loadSiddhiImplementation(((AttributeFunction) outputAttribute.getExpression()).getFunction(), OutputAttributeAggregatorFactory.class);
-                        Expression[] expressions = null;
-                        expressions = ((AttributeFunction) outputAttribute.getExpression()).getParameters();
-                        AttributeProcessor attributeProcessor = AttributeProcessorFactory.createAttributeProcessor(
-                                expressions, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors, outputAttributeAggregatorFactory, siddhiContext);
+                if (outputAttribute.getExpression() instanceof Constant) {
+                    PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(outputAttribute.getExpression(),
+                            null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors));//TODO: handle null args
+                    attributeProcessorList.add(attributeGenerator);
+                    outputStreamDefinition.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
+                } else if (outputAttribute.getExpression() instanceof AttributeFunction) {
+                    metaStreamEvent.addData(new ComplexAttribute(false));
 
-                        aggregateAttributeProcessorList.add(attributeProcessor);
-                        attributeProcessorList.add(attributeProcessor);
-                        outputStreamDefinition.attribute(outputAttribute.getRename(), attributeProcessor.getOutputType());
-                    }
-                } else {
+                    OutputAttributeAggregatorFactory outputAttributeAggregatorFactory;
+                    outputAttributeAggregatorFactory = (OutputAttributeAggregatorFactory) SiddhiClassLoader.loadSiddhiImplementation(((AttributeFunction) outputAttribute.getExpression()).getFunction(), OutputAttributeAggregatorFactory.class);
+                    Expression[] expressions = null;
+                    expressions = ((AttributeFunction) outputAttribute.getExpression()).getParameters();
+                    AttributeProcessor attributeProcessor = AttributeProcessorFactory.createAttributeProcessor(
+                            expressions, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors, outputAttributeAggregatorFactory, siddhiContext);
+
+                    aggregateAttributeProcessorList.add(attributeProcessor);
+                    attributeProcessorList.add(attributeProcessor);
+                    outputStreamDefinition.attribute(outputAttribute.getRename(), attributeProcessor.getOutputType());
+                } else if (outputAttribute.getExpression() instanceof Variable) {
                     PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExecutorParser.parseExpression(outputAttribute.getExpression(),
                             null, siddhiContext, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors));//TODO: handle null args
                     attributeProcessorList.add(attributeGenerator);

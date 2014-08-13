@@ -18,6 +18,7 @@
 package org.wso2.siddhi.core.query.processor.window;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.event.InnerStreamEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.event.remove.RemoveEvent;
 import org.wso2.siddhi.core.query.QueryProcessingElement;
@@ -39,7 +40,9 @@ public class LengthWindowProcessor extends WindowProcessor {
     protected void processEvent(StreamEvent event) {
         acquireLock();
         try {
-            window.add(new RemoveEvent(event, System.currentTimeMillis()));
+            RemoveEvent removeEvent = new RemoveEvent(event,System.currentTimeMillis());
+            removeEvent.setOnAfterWindowData(((InnerStreamEvent)event).getOnAfterWindowData());
+            window.add(removeEvent);
             if (window.size() > lengthToKeep) {
                 next.process(window.remove(0));
             }

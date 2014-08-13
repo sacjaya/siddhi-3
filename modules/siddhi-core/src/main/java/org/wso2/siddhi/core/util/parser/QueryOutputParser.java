@@ -47,7 +47,6 @@ public class QueryOutputParser {
             , SiddhiContext siddhiContext, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutors) {
         boolean currentOn = false;
         boolean expiredOn = false;
-        boolean isPartitioned = false;
         String id = null;
 
         if (outStream != null) {
@@ -63,11 +62,7 @@ public class QueryOutputParser {
             currentOn = true;
             expiredOn = true;
         }
-        if (outStream instanceof InsertIntoStream) {
-            isPartitioned = ((InsertIntoStream) outStream).isInnerStream();
-        }
-
-        return new QuerySelector(id, selector, outputRateManager, siddhiContext, currentOn, expiredOn, isPartitioned, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors);
+        return new QuerySelector(id, selector, outputRateManager, siddhiContext, currentOn, expiredOn, tempStreamDefinitionMap, metaStreamEvent, variableExpressionExecutors);
 
 
     }

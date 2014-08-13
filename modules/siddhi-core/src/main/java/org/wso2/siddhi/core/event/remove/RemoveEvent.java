@@ -18,19 +18,22 @@
 package org.wso2.siddhi.core.event.remove;
 
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.event.InnerStreamEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
 
-public class RemoveEvent extends StreamEvent implements RemoveStream {
+public class RemoveEvent extends InnerStreamEvent implements RemoveStream {
 
     long expiryTime = 0L;
 
     public RemoveEvent(long timeStamp, Object[] data, long expiryTime) {
-        super(timeStamp, data);
+        this.timestamp = timeStamp;
+        this.data = data;
         this.expiryTime = expiryTime;
     }
 
     public RemoveEvent(StreamEvent event, long expiryTime) {
-        super(event.getTimestamp(), event.getData());
+        this.timestamp = event.getTimestamp();
+        this.data = event.getData();
         this.expiryTime = expiryTime;
     }
 
