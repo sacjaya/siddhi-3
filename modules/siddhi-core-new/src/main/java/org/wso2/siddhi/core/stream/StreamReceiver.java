@@ -15,13 +15,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.wso2.siddhi.core.stream;
 
-package org.wso2.siddhi.core;
+import com.lmax.disruptor.dsl.Disruptor;
+import org.wso2.siddhi.core.event.StreamEvent;
+
+public interface StreamReceiver {
+
+    void receive(StreamEvent streamEvent) ;
 
 
-
-
-public class SiddhiManager {
-
+    String getStreamId();
 
 }
