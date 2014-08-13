@@ -19,6 +19,7 @@ package org.wso2.siddhi.core.event;
 
 import java.util.Arrays;
 
+
 /**
  * Basic processing event class implementation.
  * Disruptors will have StreamEvents and after acquired
@@ -26,8 +27,10 @@ import java.util.Arrays;
  */
 public class StreamEvent implements Event, ComplexEvent {
 
+
     protected long timestamp = -1;
-    protected Object[] data = new Object[1];
+    protected Object[] data;
+
     protected boolean isExpired = false;
     protected StreamEvent next = null;
 
@@ -56,7 +59,6 @@ public class StreamEvent implements Event, ComplexEvent {
         return data[i];
     }
 
-    @Override
     public boolean isExpired() {
         return isExpired;
     }
@@ -73,6 +75,7 @@ public class StreamEvent implements Event, ComplexEvent {
     public StreamEvent[] toArray() { //TODO: review and remove
         return new StreamEvent[]{this};
     }
+
 
     public void setData(Object[] data) {
         this.data = data;
@@ -92,6 +95,13 @@ public class StreamEvent implements Event, ComplexEvent {
 
     public void setNext(StreamEvent next) {
         this.next = next;
+    }
+
+    public void copyFrom(StreamEvent streamEvent) {
+        timestamp = streamEvent.timestamp;
+        System.arraycopy(streamEvent.data, 0, data, 0, data.length);
+        isExpired = streamEvent.isExpired;
+
     }
 
 
