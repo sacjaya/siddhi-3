@@ -22,7 +22,7 @@ import java.util.Arrays;
 public class StreamEvent {
 
     protected long timestamp = -1;
-    protected Object[] data = new Object[1];
+    protected Object[] data;
     protected boolean isExpired = false;
     protected StreamEvent next = null;
 
@@ -32,6 +32,7 @@ public class StreamEvent {
     }
 
     public StreamEvent() {
+        data = new Object[0];
     }
 
     public StreamEvent(int dataSize) {
@@ -64,10 +65,6 @@ public class StreamEvent {
                 '}';
     }
 
-    public StreamEvent[] toArray() { //TODO: review and remove
-        return new StreamEvent[]{this};
-    }
-
     public void setData(Object[] data) {
         this.data = data;
     }
@@ -88,5 +85,11 @@ public class StreamEvent {
         this.next = next;
     }
 
+    public void copyFrom(StreamEvent streamEvent) {
+        timestamp = streamEvent.timestamp;
+        System.arraycopy(streamEvent.data, 0, data, 0, data.length);
+        isExpired = streamEvent.isExpired;
+
+    }
 
 }
