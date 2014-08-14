@@ -75,8 +75,8 @@ public class Partition implements ExecutionElement {
         }
         String name = null;
         try {
-            Element element = AnnotationHelper.getAnnotationElement(SiddhiConstants.EXECUTION_ELEMENT_INFO,
-                    SiddhiConstants.EXECUTION_ELEMENT_NAME, query.getAnnotations());
+            Element element = AnnotationHelper.getAnnotationElement(SiddhiConstants.ANNOTATION_INFO,
+                    SiddhiConstants.ANNOTATION_ELEMENT_NAME, query.getAnnotations());
             if (element != null) {
                 name = element.getValue();
             }

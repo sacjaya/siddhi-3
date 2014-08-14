@@ -25,7 +25,12 @@ import com.lmax.disruptor.dsl.ProducerType;
 import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventFactory;
+import org.wso2.siddhi.core.exception.QueryCreationException;
+import org.wso2.siddhi.core.util.SiddhiConstants;
+import org.wso2.siddhi.query.api.annotation.Element;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.exception.DuplicateAnnotationException;
+import org.wso2.siddhi.query.api.util.AnnotationHelper;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -75,31 +80,51 @@ public class StreamJunction {
     }
 
     public synchronized void startProcessing() {
-        //todo check from annotation config(async=true)
+        if (receivers.size() > 0) {
 
-        if (publishers.size() > 1) {
-            disruptor = new Disruptor<StreamEvent>(new StreamEventFactory(streamDefinition.getAttributeList().size()),
-                    bufferSize, executorService, ProducerType.MULTI, new SleepingWaitStrategy());
-        } else if (publishers.size() == 1) {
-            disruptor = new Disruptor<StreamEvent>(new StreamEventFactory(streamDefinition.getAttributeList().size()),
-                    bufferSize, executorService, ProducerType.SINGLE, new SleepingWaitStrategy());
+            Boolean asyncEnabled = null;
+            try {
+                Element element = AnnotationHelper.getAnnotationElement(SiddhiConstants.ANNOTATION_CONFIG,
+                        SiddhiConstants.ANNOTATION_ELEMENT_ASYNC,
+                        streamDefinition.getAnnotations());
+
+                if (element != null) {
+                    asyncEnabled = SiddhiConstants.TRUE.equalsIgnoreCase(element.getValue());
+                }
+
+            } catch (DuplicateAnnotationException e) {
+                throw new QueryCreationException(e.getMessage() + " for the same Stream Definition " +
+                        streamDefinition.toString());
+            }
+
+            if (asyncEnabled != null && asyncEnabled || asyncEnabled == null && publishers.size() > 1) {
+
+                ProducerType producerType = ProducerType.SINGLE;
+                if (publishers.size() > 1) {
+                    producerType = ProducerType.MULTI;
+                }
+
+                disruptor = new Disruptor<StreamEvent>(new StreamEventFactory(streamDefinition.getAttributeList().size()),
+                        bufferSize, executorService, producerType, new SleepingWaitStrategy());
+
+                for (Receiver receiver : receivers) {
+                    disruptor.handleEventsWith(new StreamHandler(receiver));
+                }
+
+                ringBuffer = disruptor.getRingBuffer();
+
+                disruptor.start();
+            }
         }
-        for (Receiver receiver : receivers) {
-            disruptor.handleEventsWith(new StreamHandler(receiver));
-        }
-
-        ringBuffer = disruptor.getRingBuffer();
-
-        disruptor.start();
-
-
     }
 
     public synchronized void stopProcessing() {
         for (Publisher publisher : publishers) {
             publisher.setStreamJunction(null);
         }
-        disruptor.shutdown();
+        if (disruptor != null) {
+            disruptor.shutdown();
+        }
     }
 
     public synchronized Publisher constructPublisher() {
