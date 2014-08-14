@@ -111,9 +111,8 @@ public class StreamJunction {
                     disruptor.handleEventsWith(new StreamHandler(receiver));
                 }
 
-                ringBuffer = disruptor.getRingBuffer();
+                ringBuffer =  disruptor.start();
 
-                disruptor.start();
             }
         }
     }

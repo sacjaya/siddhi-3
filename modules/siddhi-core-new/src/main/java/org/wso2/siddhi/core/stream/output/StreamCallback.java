@@ -25,9 +25,8 @@ import java.util.ArrayList;
 
 public abstract class StreamCallback implements StreamJunction.Receiver {
 
-
     private String streamId;
-   private ArrayList<StreamEvent> eventBuffer= new ArrayList<StreamEvent>();
+    private ArrayList<StreamEvent> eventBuffer = new ArrayList<StreamEvent>();
 
     public void setStreamId(String streamId) {
         this.streamId = streamId;
@@ -46,8 +45,8 @@ public abstract class StreamCallback implements StreamJunction.Receiver {
     @Override
     public void receive(StreamEvent streamEvent, boolean endOfBatch) {
         eventBuffer.add(streamEvent);
-        if(endOfBatch){
-            receive((StreamEvent[])eventBuffer.toArray());
+        if (endOfBatch) {
+            receive(eventBuffer.toArray(new StreamEvent[eventBuffer.size()]));
             eventBuffer.clear();
         }
     }
