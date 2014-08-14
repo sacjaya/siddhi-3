@@ -32,6 +32,12 @@ public class EventTest {
     public void testEventCreation() {
         StreamEventFactory streamEventFactory = new StreamEventFactory(2);
         Assert.assertEquals(2, streamEventFactory.newInstance().getData().length);
+
+        InnerStreamEventFactory innerStreamEventFactory = new InnerStreamEventFactory(2, 3, 4);
+        InnerStreamEvent innerStreamEvent = innerStreamEventFactory.newInstance();
+        Assert.assertEquals(2, innerStreamEvent.getBeforeWindowData().length);
+        Assert.assertEquals(3, innerStreamEvent.getOnAfterWindowData().length);
+        Assert.assertEquals(4, innerStreamEvent.getOutputData().length);
     }
 
     @Test
