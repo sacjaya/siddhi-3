@@ -21,10 +21,13 @@ import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.stream.StreamJunction;
 
+import java.util.ArrayList;
+
 public abstract class StreamCallback implements StreamJunction.Receiver {
 
 
     private String streamId;
+   private ArrayList<StreamEvent> eventBuffer= new ArrayList<StreamEvent>();
 
     public void setStreamId(String streamId) {
         this.streamId = streamId;
@@ -37,12 +40,16 @@ public abstract class StreamCallback implements StreamJunction.Receiver {
 
     @Override
     public void receive(InnerStreamEvent innerStreamEvent) {
-        receive(new StreamEvent[]{new StreamEvent(innerStreamEvent.getOutputData().length).copyFrom(innerStreamEvent)});    //Todo fix as array and Event
+        receive(new StreamEvent[]{new StreamEvent(innerStreamEvent.getOutputData().length).copyFrom(innerStreamEvent)});
     }
 
     @Override
     public void receive(StreamEvent streamEvent, boolean endOfBatch) {
-        receive(new StreamEvent[]{streamEvent});    //Todo fix as array and Event
+        eventBuffer.add(streamEvent);
+        if(endOfBatch){
+            receive((StreamEvent[])eventBuffer.toArray());
+            eventBuffer.clear();
+        }
     }
 
     public abstract void receive(StreamEvent[] streamEvents);
