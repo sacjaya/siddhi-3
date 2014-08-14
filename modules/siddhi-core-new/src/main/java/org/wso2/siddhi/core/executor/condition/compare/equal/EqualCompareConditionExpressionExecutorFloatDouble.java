@@ -17,7 +17,6 @@ import org.wso2.siddhi.core.executor.ExpressionExecutor;
 public class EqualCompareConditionExpressionExecutorFloatDouble extends
         EqualCompareConditionExpressionExecutor {
 
-
     public EqualCompareConditionExpressionExecutorFloatDouble(
             ExpressionExecutor leftExpressionExecutor,
             ExpressionExecutor rightExpressionExecutor) {
