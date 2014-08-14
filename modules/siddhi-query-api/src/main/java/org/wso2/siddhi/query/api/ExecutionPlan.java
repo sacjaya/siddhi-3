@@ -104,8 +104,8 @@ public class ExecutionPlan {
         }
         String name = null;
         try {
-            Element element = AnnotationHelper.getAnnotationElement(SiddhiConstants.EXECUTION_ELEMENT_INFO,
-                    SiddhiConstants.EXECUTION_ELEMENT_NAME, query.getAnnotations());
+            Element element = AnnotationHelper.getAnnotationElement(SiddhiConstants.ANNOTATION_INFO,
+                    SiddhiConstants.ANNOTATION_ELEMENT_NAME, query.getAnnotations());
             if (element != null) {
                 name = element.getValue();
             }
@@ -126,8 +126,8 @@ public class ExecutionPlan {
         }
         String name = null;
         try {
-            Element element = AnnotationHelper.getAnnotationElement(SiddhiConstants.EXECUTION_ELEMENT_INFO,
-                    SiddhiConstants.EXECUTION_ELEMENT_NAME, partition.getAnnotations());
+            Element element = AnnotationHelper.getAnnotationElement(SiddhiConstants.ANNOTATION_INFO,
+                    SiddhiConstants.ANNOTATION_ELEMENT_NAME, partition.getAnnotations());
             if (element != null) {
                 name = element.getValue();
             }

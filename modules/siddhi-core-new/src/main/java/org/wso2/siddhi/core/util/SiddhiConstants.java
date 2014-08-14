@@ -23,4 +23,11 @@ public final class SiddhiConstants {
     public static final int AFTER_WINDOW_DATA_INDEX = 1;
     public static final int OUTPUT_DATA_INDEX = 2;
 
+    public static final String ANNOTATION_CONFIG = "config";
+    public static final String ANNOTATION_ELEMENT_ASYNC = "async";
+
+    public static final String TRUE = "true";
+
+
+
 }
