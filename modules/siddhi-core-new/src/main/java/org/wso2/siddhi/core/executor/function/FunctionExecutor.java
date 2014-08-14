@@ -41,7 +41,7 @@ public abstract class FunctionExecutor implements ExpressionExecutor {
     }
 
     @Override
-    public Object execute(InnerStreamEvent event) { //TODO: clarify event type
+    public Object execute(InnerStreamEvent event) {
 
         if (attributeSize > 1) {
             Object[] data = new Object[attributeExpressionExecutors.size()];
