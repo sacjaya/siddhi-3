@@ -15,28 +15,28 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.core.event.stream;
+package org.wso2.siddhi.core.stream;
 
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
+import org.wso2.siddhi.core.event.inner.StreamEvent;
 
 import java.util.Arrays;
 
-public class StreamEvent {
+public class Event {
 
     protected long timestamp = -1;
     protected Object[] data;
     protected boolean isExpired = false;
 
-    public StreamEvent(long timestamp, Object[] data) {
+    public Event(long timestamp, Object[] data) {
         this.timestamp = timestamp;
         this.data = data;
     }
 
-    public StreamEvent() {
+    public Event() {
         data = new Object[0];
     }
 
-    public StreamEvent(int dataSize) {
+    public Event(int dataSize) {
         this.data = new Object[dataSize];
     }
 
@@ -45,8 +45,16 @@ public class StreamEvent {
         return timestamp;
     }
 
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
     public Object[] getData() {
         return data;
+    }
+
+    public void setData(Object[] data) {
+        this.data = data;
     }
 
     public Object getData(int i) {
@@ -66,29 +74,21 @@ public class StreamEvent {
                 '}';
     }
 
-    public void setData(Object[] data) {
-        this.data = data;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
     public void setIsExpired(Boolean isExpired) {
         this.isExpired = isExpired;
     }
 
-    public StreamEvent copyFrom(StreamEvent streamEvent) {
-        timestamp = streamEvent.timestamp;
-        System.arraycopy(streamEvent.data, 0, data, 0, data.length);
-        isExpired = streamEvent.isExpired;
+    public Event copyFrom(Event event) {
+        timestamp = event.timestamp;
+        System.arraycopy(event.data, 0, data, 0, data.length);
+        isExpired = event.isExpired;
         return this;
     }
 
-    public StreamEvent copyFrom(InnerStreamEvent innerStreamEventList) {
-        timestamp = innerStreamEventList.getTimestamp();
-        System.arraycopy(innerStreamEventList.getOutputData(), 0, data, 0, data.length);
-        isExpired = innerStreamEventList.isExpired();
+    public Event copyFrom(StreamEvent streamEventList) {
+        timestamp = streamEventList.getTimestamp();
+        System.arraycopy(streamEventList.getOutputData(), 0, data, 0, data.length);
+        isExpired = streamEventList.isExpired();
         return this;
     }
 }

@@ -12,7 +12,7 @@
  */
 package org.wso2.siddhi.core.executor.math.mod;
 
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
+import org.wso2.siddhi.core.event.inner.StreamEvent;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
@@ -28,7 +28,7 @@ public class ModExpressionExecutorDouble implements ExpressionExecutor {
     }
 
     @Override
-    public Object execute(InnerStreamEvent event) {
+    public Object execute(StreamEvent event) {
         return ((Number) leftExpressionExecutor.execute(event)).doubleValue() % ((Number) rightExpressionExecutor.execute(event)).doubleValue();
 
     }

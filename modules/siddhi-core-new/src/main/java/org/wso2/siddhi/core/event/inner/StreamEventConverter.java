@@ -17,7 +17,7 @@
 */
 package org.wso2.siddhi.core.event.inner;
 
-import org.wso2.siddhi.core.event.stream.StreamEvent;
+import org.wso2.siddhi.core.stream.Event;
 import org.wso2.siddhi.core.query.selector.attribute.ComplexAttribute;
 import org.wso2.siddhi.core.util.SiddhiConstants;
 import org.wso2.siddhi.query.api.definition.Attribute;
@@ -27,39 +27,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The converter class that converts event into InnerStreamEvent
+ * The converter class that converts event into StreamEvent
  */
-public class InnerStreamEventConverter {
+public class StreamEventConverter {
+
     private ArrayList<ConverterElement> converterElements;       //List to hold information needed for conversion
 
     private int beforeWindowDataSize;
     private int onAfterWindowDataSize;
     private int outputDataSize;
 
-
     /**
      * Creation and initialization of EventConverter. This will create
      * relevant infrastructure for event conversion.
      *
-     * @param metaInnerStreamEvent
+     * @param metaStreamEvent
      * @param defaultDefinition
      */
-    public InnerStreamEventConverter(MetaInnerStreamEvent metaInnerStreamEvent, StreamDefinition defaultDefinition) {
-        this.beforeWindowDataSize = metaInnerStreamEvent.getBeforeWindowData().size();
-        this.onAfterWindowDataSize = metaInnerStreamEvent.getAfterWindowData().size();
-        this.outputDataSize = metaInnerStreamEvent.getOutputData().size();
+    public StreamEventConverter(MetaStreamEvent metaStreamEvent, StreamDefinition defaultDefinition) {
+        this.beforeWindowDataSize = metaStreamEvent.getBeforeWindowData().size();
+        this.onAfterWindowDataSize = metaStreamEvent.getAfterWindowData().size();
+        this.outputDataSize = metaStreamEvent.getOutputData().size();
 
-        int size = metaInnerStreamEvent.getBeforeWindowData().size() + metaInnerStreamEvent.getAfterWindowData().size() + metaInnerStreamEvent.getOutputData().size();
+        int size = metaStreamEvent.getBeforeWindowData().size() + metaStreamEvent.getAfterWindowData().size() + metaStreamEvent.getOutputData().size();
         converterElements = new ArrayList<ConverterElement>(size);
 
         for (int j = 0; j < 3; j++) {
             List<Attribute> currentDataList = null;
             if (j == 0) {
-                currentDataList = metaInnerStreamEvent.getBeforeWindowData();
+                currentDataList = metaStreamEvent.getBeforeWindowData();
             } else if (j == 1) {
-                currentDataList = metaInnerStreamEvent.getAfterWindowData();
+                currentDataList = metaStreamEvent.getAfterWindowData();
             } else if (j == 2) {
-                currentDataList = metaInnerStreamEvent.getOutputData();
+                currentDataList = metaStreamEvent.getOutputData();
             }
             if (currentDataList != null) {
                 int i = 0;
@@ -80,45 +80,45 @@ public class InnerStreamEventConverter {
     }
 
     /**
-     * Converts events to InnerStreamEvent
+     * Converts events to StreamEvent
      *
      * @param data
      * @param isExpected
      * @param timestamp
-     * @return InnerStreamEvent
+     * @return StreamEvent
      */
-    public InnerStreamEvent convertToInnerStreamEvent(Object[] data, boolean isExpected, long timestamp) {
+    public StreamEvent convertToInnerStreamEvent(Object[] data, boolean isExpected, long timestamp) {
 
-        InnerStreamEvent innerStreamEvent = new InnerStreamEvent(beforeWindowDataSize, onAfterWindowDataSize, outputDataSize);  //todo get from pool
+        StreamEvent streamEvent = new StreamEvent(beforeWindowDataSize, onAfterWindowDataSize, outputDataSize);  //todo get from pool
 
         for (ConverterElement converterElement : converterElements) {
             if (converterElement.getToPosition()[0] == SiddhiConstants.BEFORE_WINDOW_DATA_INDEX) {
-                innerStreamEvent.getBeforeWindowData()[converterElement.getToPosition()[1]] = data[converterElement.getFromPosition()];
+                streamEvent.getBeforeWindowData()[converterElement.getToPosition()[1]] = data[converterElement.getFromPosition()];
             } else if (converterElement.getToPosition()[0] == SiddhiConstants.AFTER_WINDOW_DATA_INDEX) {
-                innerStreamEvent.getOnAfterWindowData()[converterElement.getToPosition()[1]] = data[converterElement.getFromPosition()];
+                streamEvent.getOnAfterWindowData()[converterElement.getToPosition()[1]] = data[converterElement.getFromPosition()];
             } else if (converterElement.getToPosition()[0] == SiddhiConstants.OUTPUT_DATA_INDEX) {
-                innerStreamEvent.getOutputData()[converterElement.getToPosition()[1]] = data[converterElement.getFromPosition()];
+                streamEvent.getOutputData()[converterElement.getToPosition()[1]] = data[converterElement.getFromPosition()];
             }
         }
 
-        innerStreamEvent.setExpired(isExpected);
-        innerStreamEvent.setTimestamp(timestamp);
+        streamEvent.setExpired(isExpected);
+        streamEvent.setTimestamp(timestamp);
 
-        return innerStreamEvent;
+        return streamEvent;
     }
 
     /**
-     * Converts events to InnerStreamEvent
+     * Converts events to StreamEvent
      *
-     * @param streamEvent will be converted
-     * @return InnerStreamEvent
+     * @param event will be converted
+     * @return StreamEvent
      */
-    public InnerStreamEvent convertToInnerStreamEvent(StreamEvent streamEvent) {
-        return convertToInnerStreamEvent(streamEvent.getData(), streamEvent.isExpired(), streamEvent.getTimestamp());
+    public StreamEvent convertToStreamEvent(Event event) {
+        return convertToInnerStreamEvent(event.getData(), event.isExpired(), event.getTimestamp());
     }
 
-    public InnerStreamEvent convertToInnerStreamEvent(InnerStreamEvent innerStreamEvent) {
-        return convertToInnerStreamEvent(innerStreamEvent.getOutputData(), innerStreamEvent.isExpired(), innerStreamEvent.getTimestamp());
+    public StreamEvent convertToStreamEvent(StreamEvent streamEvent) {
+        return convertToInnerStreamEvent(streamEvent.getOutputData(), streamEvent.isExpired(), streamEvent.getTimestamp());
     }
 
     /**
@@ -126,7 +126,7 @@ public class InnerStreamEventConverter {
      */
     public class ConverterElement {
         private int fromPosition;               //position in StreamEvent/data[]
-        private int[] toPosition = new int[2];  //new position in InnerStreamEvent
+        private int[] toPosition = new int[2];  //new position in StreamEvent
 
         public int[] getToPosition() {
             return toPosition;

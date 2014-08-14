@@ -17,8 +17,8 @@
 */
 package org.wso2.siddhi.core.stream.output;
 
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
-import org.wso2.siddhi.core.event.stream.StreamEvent;
+import org.wso2.siddhi.core.event.inner.StreamEvent;
+import org.wso2.siddhi.core.stream.Event;
 import org.wso2.siddhi.core.stream.StreamJunction;
 
 import java.util.ArrayList;
@@ -26,31 +26,31 @@ import java.util.ArrayList;
 public abstract class StreamCallback implements StreamJunction.Receiver {
 
     private String streamId;
-    private ArrayList<StreamEvent> eventBuffer = new ArrayList<StreamEvent>();
-
-    public void setStreamId(String streamId) {
-        this.streamId = streamId;
-    }
+    private ArrayList<Event> eventBuffer = new ArrayList<Event>();
 
     @Override
     public String getStreamId() {
         return streamId;
     }
 
-    @Override
-    public void receive(InnerStreamEvent innerStreamEvent) {
-        receive(new StreamEvent[]{new StreamEvent(innerStreamEvent.getOutputData().length).copyFrom(innerStreamEvent)});
+    public void setStreamId(String streamId) {
+        this.streamId = streamId;
     }
 
     @Override
-    public void receive(StreamEvent streamEvent, boolean endOfBatch) {
-        eventBuffer.add(streamEvent);
+    public void receive(StreamEvent streamEvent) {
+        receive(new Event[]{new Event(streamEvent.getOutputData().length).copyFrom(streamEvent)});
+    }
+
+    @Override
+    public void receive(Event event, boolean endOfBatch) {
+        eventBuffer.add(event);
         if (endOfBatch) {
-            receive(eventBuffer.toArray(new StreamEvent[eventBuffer.size()]));
+            receive(eventBuffer.toArray(new Event[eventBuffer.size()]));
             eventBuffer.clear();
         }
     }
 
-    public abstract void receive(StreamEvent[] streamEvents);
+    public abstract void receive(Event[] events);
 
 }

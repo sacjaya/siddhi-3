@@ -18,30 +18,30 @@
 package org.wso2.siddhi.core.event.inner;
 
 /**
- * Event pool containing InnerStreamEvent for reuse
+ * Event pool containing StreamEvent for reuse
  * This is not a thread safe implementation
  */
-public class InnerStreamEventPool {
+public class StreamEventPool {
 
-    private InnerStreamEventFactory eventFactory;
+    private StreamEventFactory eventFactory;
     private int size;
     private int index = 0;
-    private InnerStreamEvent innerStreamEventList;
+    private StreamEvent streamEventList;
 
-    public InnerStreamEventPool(InnerStreamEventFactory eventFactory, int size) {
+    public StreamEventPool(StreamEventFactory eventFactory, int size) {
         this.eventFactory = eventFactory;
         this.size = size;
     }
 
     /**
-     * Borrowing an InnerStreamEvent
+     * Borrowing an StreamEvent
      *
-     * @return if InnerStreamEvent exist in the pool an existing event if not a new InnerStreamEvent will be returned
+     * @return if StreamEvent exist in the pool an existing event if not a new StreamEvent will be returned
      */
-    public InnerStreamEvent borrowEvent() {
+    public StreamEvent borrowEvent() {
         if (index > 0) {
-            InnerStreamEvent event = innerStreamEventList;
-            innerStreamEventList = innerStreamEventList.getNext();
+            StreamEvent event = streamEventList;
+            streamEventList = streamEventList.getNext();
             event.setNext(null);
             index--;
             return event;
@@ -54,18 +54,17 @@ public class InnerStreamEventPool {
      * Collects the used InnerStreamEvents
      * If the pool has space the returned event will be added to the pool else it will be dropped
      *
-     * @param innerStreamEvent used event
+     * @param streamEvent used event
      */
-    public void returnEvent(InnerStreamEvent innerStreamEvent) {
+    public void returnEvent(StreamEvent streamEvent) {
         if (index < size) {
-            innerStreamEvent.setNext(innerStreamEventList);
-            innerStreamEventList = innerStreamEvent;
+            streamEvent.setNext(streamEventList);
+            streamEventList = streamEvent;
             index++;
         }
     }
 
     /**
-     *
      * @return Occupied buffer size
      */
     public int getBufferedEventsSize() {

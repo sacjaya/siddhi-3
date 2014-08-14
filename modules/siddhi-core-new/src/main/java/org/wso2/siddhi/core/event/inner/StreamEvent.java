@@ -18,19 +18,19 @@
 package org.wso2.siddhi.core.event.inner;
 
 /**
- * Standard processing event inside Siddhi. InnerStreamEvent will be created
+ * Standard processing event inside Siddhi. StreamEvent will be created
  * from StreamEvent before sending to relevant Queries.
  */
-public class InnerStreamEvent {
+public class StreamEvent {
 
     protected long timestamp = -1;
-    private Object[] beforeWindowData;          //Attributes before window execution
-    private Object[] onAfterWindowData;         //Attributes on and after window execution
     protected Object[] outputData;              //Attributes to sent as output
     protected boolean isExpired = false;
-    private InnerStreamEvent next;
+    private Object[] beforeWindowData;          //Attributes before window execution
+    private Object[] onAfterWindowData;         //Attributes on and after window execution
+    private StreamEvent next;
 
-    public InnerStreamEvent(int beforeWindowDataSize, int onAfterWindowDataSize, int outputDataSize) {
+    public StreamEvent(int beforeWindowDataSize, int onAfterWindowDataSize, int outputDataSize) {
         beforeWindowData = new Object[beforeWindowDataSize];
         onAfterWindowData = new Object[onAfterWindowDataSize];
         outputData = new Object[outputDataSize];
@@ -76,11 +76,11 @@ public class InnerStreamEvent {
         this.isExpired = isExpired;
     }
 
-    public InnerStreamEvent getNext() {
+    public StreamEvent getNext() {
         return next;
     }
 
-    public void setNext(InnerStreamEvent next) {
+    public void setNext(StreamEvent next) {
         this.next = next;
     }
 }
