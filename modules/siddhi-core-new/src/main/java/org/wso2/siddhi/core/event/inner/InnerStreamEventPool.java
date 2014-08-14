@@ -17,6 +17,10 @@
 */
 package org.wso2.siddhi.core.event.inner;
 
+/**
+ * Event pool containing InnerStreamEvent for reuse
+ * This is not a thread safe implementation
+ */
 public class InnerStreamEventPool {
 
     private InnerStreamEventFactory eventFactory;
@@ -29,6 +33,11 @@ public class InnerStreamEventPool {
         this.size = size;
     }
 
+    /**
+     * Borrowing an InnerStreamEvent
+     *
+     * @return if InnerStreamEvent exist in the pool an existing event if not a new InnerStreamEvent will be returned
+     */
     public InnerStreamEvent borrowEvent() {
         if (index > 0) {
             InnerStreamEvent event = innerStreamEventList;
@@ -41,6 +50,12 @@ public class InnerStreamEventPool {
         }
     }
 
+    /**
+     * Collects the used InnerStreamEvents
+     * If the pool has space the returned event will be added to the pool else it will be dropped
+     *
+     * @param innerStreamEvent used event
+     */
     public void returnEvent(InnerStreamEvent innerStreamEvent) {
         if (index < size) {
             innerStreamEvent.setNext(innerStreamEventList);
@@ -49,7 +64,11 @@ public class InnerStreamEventPool {
         }
     }
 
-    public int getBufferedEventsSize(){
+    /**
+     *
+     * @return Occupied buffer size
+     */
+    public int getBufferedEventsSize() {
         return index;
     }
 }
