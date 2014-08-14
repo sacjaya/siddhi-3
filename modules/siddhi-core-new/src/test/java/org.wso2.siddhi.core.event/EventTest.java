@@ -19,14 +19,9 @@ package org.wso2.siddhi.core.event;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
-import org.wso2.siddhi.core.event.inner.InnerStreamEventConverter;
-import org.wso2.siddhi.core.event.inner.MetaInnerStreamEvent;
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
-import org.wso2.siddhi.core.event.inner.InnerStreamEventFactory;
-import org.wso2.siddhi.core.event.stream.StreamEventFactory;
-import org.wso2.siddhi.core.event.inner.InnerStreamEventPool;
+import org.wso2.siddhi.core.event.inner.*;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEventFactory;
 import org.wso2.siddhi.core.query.selector.attribute.ComplexAttribute;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -41,7 +36,7 @@ public class EventTest {
 
     @Test
     public void testEventPool() {
-        InnerStreamEventFactory eventFactory = new InnerStreamEventFactory(2,3,1);
+        InnerStreamEventFactory eventFactory = new InnerStreamEventFactory(2, 3, 1);
         InnerStreamEventPool innerStreamEventPool = new InnerStreamEventPool(eventFactory, 4);
 
         InnerStreamEvent[] innerStreamEvents = new InnerStreamEvent[5];
@@ -59,27 +54,6 @@ public class EventTest {
         Assert.assertEquals(3, innerStreamEventPool.getBufferedEventsSize());
 
     }
-//    @Test
-//    public void testEventPool() {
-//        StreamEventFactory streamEventFactory = new StreamEventFactory(2);
-//        InnerStreamEventPool innerStreamEventPool = new InnerStreamEventPool(streamEventFactory, 4);
-//
-//        StreamEvent[] streamEvents = new StreamEvent[5];
-//        for (int i = 0; i < 5; i++) {
-//            streamEvents[i] = innerStreamEventPool.borrowEvent();
-//        }
-//        Assert.assertEquals(0, innerStreamEventPool.getBufferedEventsSize());
-//
-//        for (int i = 0; i < 5; i++) {
-//            innerStreamEventPool.returnEvent(streamEvents[i]);
-//        }
-//        Assert.assertEquals(4, innerStreamEventPool.getBufferedEventsSize());
-//
-//        innerStreamEventPool.borrowEvent();
-//        Assert.assertEquals(3, innerStreamEventPool.getBufferedEventsSize());
-//
-//    }
-
 
     @Test
     public void testEventConverter() {
