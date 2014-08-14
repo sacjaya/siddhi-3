@@ -77,18 +77,21 @@ public class StreamJunction {
     public synchronized void startProcessing() {
         //todo check from annotation config(async=true)
 
-        if (publishers.size() > 1 || receivers.size() > 1) {
+        if (publishers.size() > 1) {
             disruptor = new Disruptor<StreamEvent>(new StreamEventFactory(streamDefinition.getAttributeList().size()),
                     bufferSize, executorService, ProducerType.MULTI, new SleepingWaitStrategy());
-
-            for (Receiver receiver : receivers) {
-                disruptor.handleEventsWith(new StreamHandler(receiver));
-            }
-
-            ringBuffer = disruptor.getRingBuffer();
-
-            disruptor.start();
+        } else if (publishers.size() == 1) {
+            disruptor = new Disruptor<StreamEvent>(new StreamEventFactory(streamDefinition.getAttributeList().size()),
+                    bufferSize, executorService, ProducerType.SINGLE, new SleepingWaitStrategy());
         }
+        for (Receiver receiver : receivers) {
+            disruptor.handleEventsWith(new StreamHandler(receiver));
+        }
+
+        ringBuffer = disruptor.getRingBuffer();
+
+        disruptor.start();
+
 
     }
 
@@ -99,14 +102,14 @@ public class StreamJunction {
         disruptor.shutdown();
     }
 
-    private synchronized Publisher constructPublisher() {
+    public synchronized Publisher constructPublisher() {
         Publisher publisher = new Publisher();
         publisher.setStreamJunction(this);
         publishers.add(publisher);
         return publisher;
     }
 
-    private synchronized void subscribe(Receiver receiver) {
+    public synchronized void subscribe(Receiver receiver) {
         //to have reverse order at the sequence/pattern processors
         receivers.add(0, receiver);
     }
