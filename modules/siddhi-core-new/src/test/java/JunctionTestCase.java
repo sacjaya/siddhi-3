@@ -426,12 +426,41 @@ public class JunctionTestCase {
         };
 
 
+        final boolean[] eventsArrived = {false,false,false,false,false,false,false,false,false,false,false,false};
+
+
         StreamCallback streamCallbackC = new StreamCallback() {
             @Override
             public void receive(StreamEvent[] streamEvents) {
                 count++;
                 eventArrived = true;
-                Assert.assertTrue(((String)streamEvents[0].getData()[0]).matches("(WSO2|IBM)(A)(1|2|3)(B)(1|2)"));
+                Object symbol = streamEvents[0].getData()[0];
+                if (symbol.equals("IBMA1B1")) {
+                    eventsArrived[0] = true;
+                } else if (symbol.equals("IBMA1B2")) {
+                    eventsArrived[1] = true;
+                } else if (symbol.equals("IBMA2B1")) {
+                    eventsArrived[2] = true;
+                } else if (symbol.equals("IBMA2B2")) {
+                    eventsArrived[3] = true;
+                } else if (symbol.equals("IBMA3B1")) {
+                    eventsArrived[4] = true;
+                } else if (symbol.equals("IBMA3B2")) {
+                    eventsArrived[5] = true;
+                }    if (symbol.equals("WSO2A1B1")) {
+                    eventsArrived[6] = true;
+                } else if (symbol.equals("WSO2A1B2")) {
+                    eventsArrived[7] = true;
+                } else if (symbol.equals("WSO2A2B1")) {
+                    eventsArrived[8] = true;
+                } else if (symbol.equals("WSO2A2B2")) {
+                    eventsArrived[9] = true;
+                } else if (symbol.equals("WSO2A3B1")) {
+                    eventsArrived[10] = true;
+                } else if (symbol.equals("WSO2A3B2")) {
+                    eventsArrived[11] = true;
+                }
+
             }
         };
 
@@ -460,6 +489,9 @@ public class JunctionTestCase {
         Thread.sleep(200);
         Assert.assertTrue(eventArrived);
         Assert.assertEquals(12,count);
+        for (boolean arrived: eventsArrived){
+            Assert.assertTrue(arrived);
+        }
 
     }
 }
