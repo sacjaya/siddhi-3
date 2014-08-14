@@ -19,18 +19,33 @@ package org.wso2.siddhi.core.event.inner;
 
 import com.lmax.disruptor.EventFactory;
 
+/**
+ * Event Factory to create new InnerStreamEvents
+ */
 public class InnerStreamEventFactory implements EventFactory<InnerStreamEvent> {
 
     private int beforeWindowDataSize;
     private int onAfterWindowDataSize;
     private int outputDataSize;
 
+    /**
+     * Initialization of the factory with event data sizes
+     *
+     * @param beforeWindowDataSize
+     * @param onAfterWindowDataSize
+     * @param outputDataSize
+     */
     public InnerStreamEventFactory(int beforeWindowDataSize, int onAfterWindowDataSize, int outputDataSize) {
         this.beforeWindowDataSize = beforeWindowDataSize;
         this.onAfterWindowDataSize = onAfterWindowDataSize;
         this.outputDataSize = outputDataSize;
     }
 
+    /**
+     * Constructs new Events
+     *
+     * @return InnerStreamEvent
+     */
     public InnerStreamEvent newInstance() {
         return new InnerStreamEvent(beforeWindowDataSize, onAfterWindowDataSize, outputDataSize);
     }
