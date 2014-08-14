@@ -16,6 +16,7 @@ import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
 public interface ExpressionExecutor {
+
     public Object execute(StreamEvent event);
 
     public Attribute.Type getReturnType();

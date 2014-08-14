@@ -15,7 +15,11 @@ package org.wso2.siddhi.core.executor.function;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.OperationNotSupportedException;
+import org.wso2.siddhi.core.executor.ExpressionExecutor;
 import org.wso2.siddhi.query.api.definition.Attribute;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by seshika on 4/29/14.
@@ -23,14 +27,26 @@ import org.wso2.siddhi.query.api.definition.Attribute;
 public class SinFunctionExecutor extends FunctionExecutor {
 
     @Override
-    public void init(Attribute.Type[] attributeTypes, SiddhiContext siddhiContext) {
+    public void init(List<ExpressionExecutor> attributeExpressionExecutors, SiddhiContext siddhiContext) {
         if (attributeSize != 1) {
-            throw new OperationNotSupportedException("Sin function has to have exactly 1 parameter, currently " + attributeSize + " parameters provided");
+            throw new OperationNotSupportedException("Sin function has to have exactly 1 parameter, currently " +
+                    attributeSize + " parameters provided");
         }
     }
 
+    /**
+     * The main executions method which will be called upon event arrival
+     *
+     * @param data the runtime values of the attributeExpressionExecutors
+     * @return
+     */
     @Override
-    protected Object process(Object data) {
+    protected Object execute(Object[] data) {
+        throw new IllegalStateException("sin cannot execute two data " + Arrays.deepToString(data));
+    }
+
+    @Override
+    protected Object execute(Object data) {
         return Math.sin(Double.parseDouble(data.toString()));
     }
 

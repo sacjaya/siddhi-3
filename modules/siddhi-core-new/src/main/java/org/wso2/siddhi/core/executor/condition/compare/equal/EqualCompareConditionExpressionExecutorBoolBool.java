@@ -22,7 +22,7 @@ public class EqualCompareConditionExpressionExecutorBoolBool extends EqualCompar
 
 
     @Override
-    protected Boolean process(Object left, Object right) {
+    protected Boolean execute(Object left, Object right) {
         return ((Boolean) left).booleanValue() == ((Boolean) right).booleanValue();
     }
 }

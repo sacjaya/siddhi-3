@@ -23,9 +23,10 @@ import org.wso2.siddhi.query.api.definition.Attribute;
 public abstract class ConditionExpressionExecutor implements ExpressionExecutor {
     protected int PREDICATE_LEVEL = -1;
 
-    public abstract Boolean execute(StreamEvent event);
-
     public Attribute.Type getReturnType() {
         return Attribute.Type.BOOL;
     }
+
+    public abstract Boolean execute(StreamEvent event);
+
 }

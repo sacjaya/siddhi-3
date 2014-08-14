@@ -25,7 +25,7 @@ public class InstanceOfCompareConditionExpressionExecutor extends CompareConditi
     }
 
     @Override
-    protected Boolean process(Object left, Object right) {
+    protected Boolean execute(Object left, Object right) {
         Attribute.Type type = (Attribute.Type) right;
         switch (type) {
             case STRING:

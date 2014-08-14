@@ -25,7 +25,7 @@ public class GreaterThanEqualCompareConditionExpressionExecutorLongLong extends
     }
 
     @Override
-    protected Boolean process(Object left, Object right) {
+    protected Boolean execute(Object left, Object right) {
         return (Long) left >= (Long) right;
 
     }

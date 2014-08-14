@@ -22,7 +22,7 @@ public class NotEqualCompareConditionExpressionExecutorBoolBool extends NotEqual
 
 
     @Override
-    protected Boolean process(Object left, Object right) {
+    protected Boolean execute(Object left, Object right) {
         return ((Boolean) left).booleanValue() != ((Boolean) right).booleanValue();
     }
 }

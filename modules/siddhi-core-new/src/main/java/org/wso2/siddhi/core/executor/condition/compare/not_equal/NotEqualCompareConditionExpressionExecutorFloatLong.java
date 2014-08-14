@@ -26,7 +26,7 @@ public class NotEqualCompareConditionExpressionExecutorFloatLong extends
 
 
     @Override
-    protected Boolean process(Object left, Object right) {
+    protected Boolean execute(Object left, Object right) {
         return ((Float) left).doubleValue() != ((Long) right).doubleValue();
 
     }

@@ -13,7 +13,10 @@
 package org.wso2.siddhi.core.executor.function;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.executor.ExpressionExecutor;
 import org.wso2.siddhi.query.api.definition.Attribute;
+
+import java.util.List;
 
 public class ConcatFunctionExecutor extends FunctionExecutor {
 
@@ -26,21 +29,20 @@ public class ConcatFunctionExecutor extends FunctionExecutor {
 
 
     @Override
-    public void init(Attribute.Type[] attributeTypes, SiddhiContext siddhiContext) {
+    public void init(List<ExpressionExecutor> attributeExpressionExecutors, SiddhiContext siddhiContext) {
     }
 
-    protected Object process(Object obj) { //TODO: clarify execute vs process
-
-        if (obj instanceof Object[]) {
-            StringBuffer sb = new StringBuffer();
-            for (Object aObj : (Object[]) obj) {
-                sb.append(aObj);
-            }
-            return sb.toString();
-        } else {
-            return obj.toString();
+    protected Object execute(Object[] obj) {
+        StringBuilder sb = new StringBuilder();
+        for (Object aObj : obj) {
+            sb.append(aObj);
         }
+        return sb.toString();
+    }
 
+    @Override
+    protected Object execute(Object data) {
+        return data;
     }
 
 }

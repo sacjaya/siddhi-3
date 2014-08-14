@@ -19,6 +19,8 @@ import org.wso2.siddhi.core.executor.ConstantExpressionExecutor;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,19 +30,38 @@ public class IsMatchFunctionExecutor extends FunctionExecutor {
     private ExpressionExecutor expressionExecutor;
 
     @Override
-    public void init(Attribute.Type[] attributeTypes, SiddhiContext siddhiContext) {
+    public void init(List<ExpressionExecutor> attributeExpressionExecutors, SiddhiContext siddhiContext) {
         if (attributeSize != 2) {
-            throw new OperationNotSupportedException("IsMatch has to have 2 expressions regex and the attribute, currently " + attributeSize + " expressions provided");
+            throw new OperationNotSupportedException("IsMatch has to have 2 expressions regex and the attribute, " +
+                    "currently " + attributeSize + " expressions provided");
         }
         ExpressionExecutor regexExecutor = attributeExpressionExecutors.get(0);
-        if (regexExecutor.getReturnType() != Attribute.Type.STRING && regexExecutor instanceof ConstantExpressionExecutor) {
-            throw new OperationNotSupportedException("IsMatch expects regex string input expression but found " + regexExecutor.getReturnType());
+        if (regexExecutor.getReturnType() != Attribute.Type.STRING &&
+                regexExecutor instanceof ConstantExpressionExecutor) {
+            throw new OperationNotSupportedException("IsMatch expects regex string input expression but found " +
+                    regexExecutor.getReturnType());
         }
         expressionExecutor = attributeExpressionExecutors.get(1);
 
-//        patternString = (String) expressionExecutor.execute(null);
         pattern = Pattern.compile((String) regexExecutor.execute(null));
 
+    }
+
+    /**
+     * The main executions method which will be called upon event arrival
+     *
+     * @param data the runtime values of the attributeExpressionExecutors
+     * @return
+     */
+    @Override
+    protected Object execute(Object[] data) {
+        throw new IllegalStateException("isMatch cannot execute two data " + Arrays.deepToString(data));
+    }
+
+    @Override
+    protected Object execute(Object data) {
+        Matcher matcher = pattern.matcher(data.toString());
+        return matcher.matches();
     }
 
     @Override
@@ -50,12 +71,8 @@ public class IsMatchFunctionExecutor extends FunctionExecutor {
 
     @Override
     public Object execute(StreamEvent event) {
-        return process(expressionExecutor.execute(event));
+        return execute(expressionExecutor.execute(event));
     }
 
-    protected Object process(Object obj) {
-        Matcher matcher = pattern.matcher(obj.toString());
-        return matcher.matches();
-    }
 
 }

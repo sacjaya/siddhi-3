@@ -23,7 +23,7 @@ public class ContainsCompareConditionExpressionExecutor extends CompareCondition
     }
 
     @Override
-    protected Boolean process(Object left, Object right) {
+    protected Boolean execute(Object left, Object right) {
         return ((String) left).contains((String) right);
 
     }

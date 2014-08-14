@@ -24,7 +24,7 @@ public class NotEqualCompareConditionExpressionExecutorFloatFloat extends
         super(leftExpressionExecutor, rightExpressionExecutor);
     }
 
-    protected Boolean process(Object left, Object right) {
+    protected Boolean execute(Object left, Object right) {
         return ((Float) left).floatValue() != ((Float) right).floatValue();
     }
 

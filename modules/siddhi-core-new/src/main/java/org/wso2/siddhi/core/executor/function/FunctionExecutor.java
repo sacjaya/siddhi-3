@@ -15,7 +15,6 @@ package org.wso2.siddhi.core.executor.function;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
-import org.wso2.siddhi.query.api.definition.Attribute;
 
 import java.util.List;
 
@@ -24,8 +23,6 @@ public abstract class FunctionExecutor implements ExpressionExecutor {
     protected List<ExpressionExecutor> attributeExpressionExecutors;
     protected SiddhiContext siddhiContext;
     protected int attributeSize;
-    protected Attribute.Type[] attributeTypes;
-
 
     public void setSiddhiContext(SiddhiContext siddhiContext) {
         this.siddhiContext = siddhiContext;
@@ -34,11 +31,19 @@ public abstract class FunctionExecutor implements ExpressionExecutor {
     public void setAttributeExpressionExecutors(List<ExpressionExecutor> attributeExpressionExecutors) {
         this.attributeExpressionExecutors = attributeExpressionExecutors;
         attributeSize = attributeExpressionExecutors.size();
-        attributeTypes = new Attribute.Type[attributeExpressionExecutors.size()];
-        for (int i = 0; i < attributeExpressionExecutors.size(); i++) {
-            attributeTypes[i] = attributeExpressionExecutors.get(i).getReturnType();
-        }
     }
+
+    public void init() {
+        init(attributeExpressionExecutors, siddhiContext);
+    }
+
+    /**
+     * The initialization method for FunctionExecutor
+     *
+     * @param attributeExpressionExecutors are the executors of each attributes in the function
+     * @param siddhiContext                SiddhiContext
+     */
+    public abstract void init(List<ExpressionExecutor> attributeExpressionExecutors, SiddhiContext siddhiContext);
 
     @Override
     public Object execute(StreamEvent event) {
@@ -48,24 +53,12 @@ public abstract class FunctionExecutor implements ExpressionExecutor {
             for (int i = 0, size = data.length; i < size; i++) {
                 data[i] = attributeExpressionExecutors.get(i).execute(event);
             }
-            return process(data);
+            return execute(data);
         } else {
-            return process(attributeExpressionExecutors.get(0).execute(event));
+            return execute(attributeExpressionExecutors.get(0).execute(event));
         }
     }
 
-
-    public void init() {
-        init(attributeTypes, siddhiContext);
-    }
-
-    /**
-     * The initialization method for FunctionExecutor
-     *
-     * @param attributeTypes are the type if the  attributes to the executor function
-     * @param siddhiContext  SiddhiContext
-     */
-    public abstract void init(Attribute.Type[] attributeTypes, SiddhiContext siddhiContext);
 
     /**
      * The main executions method which will be called upon event arrival
@@ -73,6 +66,8 @@ public abstract class FunctionExecutor implements ExpressionExecutor {
      * @param data the runtime values of the attributeExpressionExecutors
      * @return
      */
-    protected abstract Object process(Object data);
+    protected abstract Object execute(Object[] data);
+
+    protected abstract Object execute(Object data);
 
 }

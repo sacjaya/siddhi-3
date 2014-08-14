@@ -24,7 +24,7 @@ public class GreaterThanCompareConditionExpressionExecutorLongFloat
     }
 
     @Override
-    protected Boolean process(Object left, Object right) {
+    protected Boolean execute(Object left, Object right) {
         return (Long) left > (Float) right;
 
     }

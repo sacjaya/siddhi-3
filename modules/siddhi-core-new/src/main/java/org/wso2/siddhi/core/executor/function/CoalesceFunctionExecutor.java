@@ -17,6 +17,8 @@ import org.wso2.siddhi.core.exception.OperationNotSupportedException;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
+import java.util.List;
+
 public class CoalesceFunctionExecutor extends FunctionExecutor {
 
     Attribute.Type returnType;
@@ -28,7 +30,7 @@ public class CoalesceFunctionExecutor extends FunctionExecutor {
 
 
     @Override
-    public void init(Attribute.Type[] attributeTypes, SiddhiContext siddhiContext) {
+    public void init(List<ExpressionExecutor> attributeExpressionExecutors, SiddhiContext siddhiContext) {
         Attribute.Type type = attributeExpressionExecutors.get(0).getReturnType();
         for (ExpressionExecutor expressionExecutor : attributeExpressionExecutors) {
             if (type != expressionExecutor.getReturnType()) {
@@ -38,18 +40,18 @@ public class CoalesceFunctionExecutor extends FunctionExecutor {
         returnType = type;
     }
 
-    protected Object process(Object obj) { //TODO: clarify execute vs process
-        if (obj instanceof Object[]) {
-            for (Object aObj : (Object[]) obj) {
-                if (aObj != null) {
-                    return aObj;
-                }
+    protected Object execute(Object[] obj) {
+        for (Object aObj : obj) {
+            if (aObj != null) {
+                return aObj;
             }
-            return null;
-        } else {
-            return obj;
         }
+        return null;
+    }
 
+    @Override
+    protected Object execute(Object data) {
+        return data;
     }
 
 }

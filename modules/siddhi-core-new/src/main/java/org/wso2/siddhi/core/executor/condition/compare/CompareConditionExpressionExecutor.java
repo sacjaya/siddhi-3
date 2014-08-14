@@ -32,10 +32,8 @@ public abstract class CompareConditionExpressionExecutor extends ConditionExpres
     public Boolean execute(StreamEvent event) {
         Object left = leftExpressionExecutor.execute(event);
         Object right = rightExpressionExecutor.execute(event);
-        return !(left == null || right == null) && process(left, right);
+        return !(left == null || right == null) && execute(left, right);
     }
-
-    protected abstract Boolean process(Object left, Object right);
 
     protected String convertOperator(String operator, int level) {
         if (level == PREDICATE_LEVEL && operator.contains("==")) {
@@ -43,5 +41,7 @@ public abstract class CompareConditionExpressionExecutor extends ConditionExpres
         }
         return operator;
     }
+
+    protected abstract Boolean execute(Object left, Object right);
 
 }
