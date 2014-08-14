@@ -15,27 +15,24 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.core.event.pool;
+package org.wso2.siddhi.core.event.inner;
 
-import org.wso2.siddhi.core.event.StreamEvent;
-import org.wso2.siddhi.core.event.factory.StreamEventFactory;
+public class InnerStreamEventPool {
 
-public class StreamEventPool {
-
-    private StreamEventFactory eventFactory;
+    private InnerStreamEventFactory eventFactory;
     private int size;
     private int index = 0;
-    private StreamEvent streamEventList;
+    private InnerStreamEvent innerStreamEventList;
 
-    public StreamEventPool(StreamEventFactory eventFactory, int size) {
+    public InnerStreamEventPool(InnerStreamEventFactory eventFactory, int size) {
         this.eventFactory = eventFactory;
         this.size = size;
     }
 
-    public StreamEvent borrowEvent() {
+    public InnerStreamEvent borrowEvent() {
         if (index > 0) {
-            StreamEvent event = streamEventList;
-            streamEventList = streamEventList.getNext();
+            InnerStreamEvent event = innerStreamEventList;
+            innerStreamEventList = innerStreamEventList.getNext();
             event.setNext(null);
             index--;
             return event;
@@ -44,10 +41,10 @@ public class StreamEventPool {
         }
     }
 
-    public void returnEvent(StreamEvent streamEvent) {
+    public void returnEvent(InnerStreamEvent innerStreamEvent) {
         if (index < size) {
-            streamEvent.setNext(streamEventList);
-            streamEventList = streamEvent;
+            innerStreamEvent.setNext(innerStreamEventList);
+            innerStreamEventList = innerStreamEvent;
             index++;
         }
     }

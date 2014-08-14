@@ -15,24 +15,17 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.core.event;
+package org.wso2.siddhi.core.event.stream;
+
+import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
 
 import java.util.Arrays;
 
-
-/**
- * Basic processing event class implementation.
- * Disruptors will have StreamEvents and after acquired
- * by a handler will converted into InnerStreamEvent
- */
-public class StreamEvent implements Event, ComplexEvent {
-
+public class StreamEvent {
 
     protected long timestamp = -1;
     protected Object[] data;
-
     protected boolean isExpired = false;
-    protected StreamEvent next = null;
 
     public StreamEvent(long timestamp, Object[] data) {
         this.timestamp = timestamp;
@@ -40,6 +33,7 @@ public class StreamEvent implements Event, ComplexEvent {
     }
 
     public StreamEvent() {
+        data = new Object[0];
     }
 
     public StreamEvent(int dataSize) {
@@ -72,11 +66,6 @@ public class StreamEvent implements Event, ComplexEvent {
                 '}';
     }
 
-    public StreamEvent[] toArray() { //TODO: review and remove
-        return new StreamEvent[]{this};
-    }
-
-
     public void setData(Object[] data) {
         this.data = data;
     }
@@ -89,20 +78,17 @@ public class StreamEvent implements Event, ComplexEvent {
         this.isExpired = isExpired;
     }
 
-    public StreamEvent getNext() {
-        return next;
-    }
-
-    public void setNext(StreamEvent next) {
-        this.next = next;
-    }
-
-    public void copyFrom(StreamEvent streamEvent) {
+    public StreamEvent copyFrom(StreamEvent streamEvent) {
         timestamp = streamEvent.timestamp;
         System.arraycopy(streamEvent.data, 0, data, 0, data.length);
         isExpired = streamEvent.isExpired;
-
+        return this;
     }
 
-
+    public StreamEvent copyFrom(InnerStreamEvent innerStreamEventList) {
+        timestamp = innerStreamEventList.getTimestamp();
+        System.arraycopy(innerStreamEventList.getOutputData(), 0, data, 0, data.length);
+        isExpired = innerStreamEventList.isExpired();
+        return this;
+    }
 }

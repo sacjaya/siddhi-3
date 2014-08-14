@@ -16,21 +16,24 @@
  * under the License.
  */
 
-package org.wso2.siddhi.core.event.factory;
+package org.wso2.siddhi.core.event.inner;
 
 import com.lmax.disruptor.EventFactory;
-import org.wso2.siddhi.core.event.StreamEvent;
 
-public class StreamEventFactory implements EventFactory<StreamEvent> {
+public class InnerStreamEventFactory implements EventFactory<InnerStreamEvent> {
 
-    private int dataSize;
+    private int beforeWindowDataSize;
+    private int onAfterWindowDataSize;
+    private int outputDataSize;
 
-    public StreamEventFactory(int dataSize) {
-        this.dataSize = dataSize;
+    public InnerStreamEventFactory(int beforeWindowDataSize, int onAfterWindowDataSize, int outputDataSize) {
+        this.beforeWindowDataSize = beforeWindowDataSize;
+        this.onAfterWindowDataSize = onAfterWindowDataSize;
+        this.outputDataSize = outputDataSize;
     }
 
-
-    public StreamEvent newInstance() {
-        return new StreamEvent(dataSize);
+    public InnerStreamEvent newInstance() {
+        return new InnerStreamEvent(beforeWindowDataSize, onAfterWindowDataSize, outputDataSize);
     }
+
 }

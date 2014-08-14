@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -15,17 +15,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.siddhi.core.stream;
 
-import com.lmax.disruptor.dsl.Disruptor;
-import org.wso2.siddhi.core.event.StreamEvent;
+package org.wso2.siddhi.core.event.stream;
 
-public interface StreamReceiver {
+import com.lmax.disruptor.EventFactory;
 
-    void receive(StreamEvent streamEvent) ;
+public class StreamEventFactory implements EventFactory<StreamEvent> {
 
+    private int dataSize;
 
-    String getStreamId();
+    public StreamEventFactory(int dataSize) {
+        this.dataSize = dataSize;
+    }
 
-
+    public StreamEvent newInstance() {
+        return new StreamEvent(dataSize);
+    }
 }

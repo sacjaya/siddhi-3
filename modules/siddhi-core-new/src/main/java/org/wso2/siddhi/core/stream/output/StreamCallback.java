@@ -17,35 +17,34 @@
 */
 package org.wso2.siddhi.core.stream.output;
 
-import com.lmax.disruptor.dsl.Disruptor;
-import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.core.event.StreamEvent;
-import org.wso2.siddhi.core.stream.StreamReceiver;
+import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
+import org.wso2.siddhi.core.stream.StreamJunction;
 
-public abstract class StreamCallback implements StreamReceiver {
+public abstract class StreamCallback implements StreamJunction.Receiver {
+
 
     private String streamId;
-
-
-
-    public void receive(StreamEvent streamEvent) {
-        send(streamEvent);
-    }
-
-    private void send(StreamEvent event) {
-       receive(event.toArray());
-    }
-
-    public abstract void receive(Event[] events);
 
     public void setStreamId(String streamId) {
         this.streamId = streamId;
     }
 
+    @Override
     public String getStreamId() {
         return streamId;
     }
 
+    @Override
+    public void receive(InnerStreamEvent innerStreamEvent) {
+        receive(new StreamEvent[]{new StreamEvent(innerStreamEvent.getOutputData().length).copyFrom(innerStreamEvent)});    //Todo fix as array and Event
+    }
 
+    @Override
+    public void receive(StreamEvent streamEvent, boolean endOfBatch) {
+        receive(new StreamEvent[]{streamEvent});    //Todo fix as array and Event
+    }
+
+    public abstract void receive(StreamEvent[] streamEvents);
 
 }

@@ -1,6 +1,6 @@
 package org.wso2.siddhi.core;
 
-import org.wso2.siddhi.core.event.pool.StreamEventPool;
+import org.wso2.siddhi.core.event.inner.InnerStreamEventPool;
 
 /**
  * Created by suho on 8/13/14.
@@ -8,17 +8,17 @@ import org.wso2.siddhi.core.event.pool.StreamEventPool;
 public class SiddhiThreadLocalContext {
 
 
-    public static final ThreadLocal<StreamEventPool> threadLocalStreamEventPool = new ThreadLocal<StreamEventPool>();
+    public static final ThreadLocal<InnerStreamEventPool> threadLocalStreamEventPool = new ThreadLocal<InnerStreamEventPool>();
 
-    public static void setStreamEventPool(StreamEventPool streamEventPool) {
-        threadLocalStreamEventPool.set(streamEventPool);
+    public static void setStreamEventPool(InnerStreamEventPool innerStreamEventPool) {
+        threadLocalStreamEventPool.set(innerStreamEventPool);
     }
 
     public static void clear() {
         threadLocalStreamEventPool.remove();
     }
 
-    public static StreamEventPool getStreamEventPool() {
+    public static InnerStreamEventPool getStreamEventPool() {
         return threadLocalStreamEventPool.get();
     }
 

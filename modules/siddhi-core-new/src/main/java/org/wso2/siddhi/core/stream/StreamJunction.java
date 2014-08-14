@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -17,12 +17,15 @@
  */
 package org.wso2.siddhi.core.stream;
 
+import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.SleepingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
-import org.wso2.siddhi.core.event.StreamEvent;
-import org.wso2.siddhi.core.event.util.SiddhiEventFactory;
+import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEventFactory;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -30,57 +33,126 @@ import java.util.concurrent.ExecutorService;
 
 public class StreamJunction {
 
-    private List<StreamReceiver> streamReceivers = new CopyOnWriteArrayList<StreamReceiver>();
+    private List<Receiver> receivers = new CopyOnWriteArrayList<Receiver>();
+    private List<Publisher> publishers = new CopyOnWriteArrayList<Publisher>();
+
+    private StreamDefinition streamDefinition;
     private ExecutorService executorService;
-    private SiddhiEventFactory factory = new SiddhiEventFactory();
-    int bufferSize = 1024;
+    private int bufferSize;
+
     private Disruptor<StreamEvent> disruptor;
-    private boolean disruptorEnabled = false;
-    private String streamId;
-    RingBuffer<StreamEvent> ringBuffer;
 
+    private RingBuffer<StreamEvent> ringBuffer;
 
-    //TODO     disruptor.start();
-
-    public StreamJunction(String streamId, ExecutorService executorService,ProducerType producerType) {
-        this.streamId = streamId;
+    public StreamJunction(StreamDefinition streamDefinition, ExecutorService executorService, int defaultBufferSize) {
+        this.streamDefinition = streamDefinition;
+        bufferSize = defaultBufferSize;
         this.executorService = executorService;
-        disruptor = new Disruptor<StreamEvent>(factory, bufferSize, executorService, producerType, new SleepingWaitStrategy());
     }
 
-    public void send(StreamEvent event) {
-        ringBuffer = disruptor.start();
+    public void sendEvent(InnerStreamEvent innerStreamEvent) {
 
-        if (disruptorEnabled) {
-            long sequenceNo = ringBuffer.next();
-            StreamEvent streamEvent = ringBuffer.get(sequenceNo);
-            streamEvent.setData(event.getData());
-            streamEvent.setTimestamp(event.getTimestamp());
-            streamEvent.setIsExpired(event.isExpired());
+        InnerStreamEvent innerStreamEventList = innerStreamEvent;
+        if (disruptor != null) {
 
-            ringBuffer.publish(sequenceNo);
+            while (innerStreamEventList != null) {
+                long sequenceNo = ringBuffer.next();
+                try {
+                    StreamEvent existingStreamEvent = ringBuffer.get(sequenceNo);
+                    existingStreamEvent.copyFrom(innerStreamEventList);
+                } finally {
+                    ringBuffer.publish(sequenceNo);
+                }
+                innerStreamEventList = innerStreamEventList.getNext();
+            }
+
         } else {
-            for (StreamReceiver streamReceiver : streamReceivers) {
-                streamReceiver.receive(event);
+            for (Receiver receiver : receivers) {
+                receiver.receive(innerStreamEvent);
             }
         }
 
     }
 
-    public synchronized void addEventFlow(StreamReceiver streamReceiver) {
-        if (disruptorEnabled) {
-            disruptor.handleEventsWith(new StreamHandler(streamReceiver));
+    public synchronized void startProcessing() {
+        //todo check from annotation config(async=true)
+
+        if (publishers.size() > 1 || receivers.size() > 1) {
+            disruptor = new Disruptor<StreamEvent>(new StreamEventFactory(streamDefinition.getAttributeList().size()),
+                    bufferSize, executorService, ProducerType.MULTI, new SleepingWaitStrategy());
+
+            for (Receiver receiver : receivers) {
+                disruptor.handleEventsWith(new StreamHandler(receiver));
+            }
+
+            ringBuffer = disruptor.getRingBuffer();
+
+            disruptor.start();
         }
-        streamReceivers.add(0, streamReceiver);
+
     }
 
+    public synchronized void stopProcessing() {
+        for (Publisher publisher : publishers) {
+            publisher.setStreamJunction(null);
+        }
+        disruptor.shutdown();
+    }
+
+    private synchronized Publisher constructPublisher() {
+        Publisher publisher = new Publisher();
+        publisher.setStreamJunction(this);
+        publishers.add(publisher);
+        return publisher;
+    }
+
+    private synchronized void subscribe(Receiver receiver) {
+        //to have reverse order at the sequence/pattern processors
+        receivers.add(0, receiver);
+    }
 
     public String getStreamId() {
-        return streamId;
+        return streamDefinition.getId();
     }
 
-    public void setDisruptorEnabled(boolean enabled) {
-        disruptorEnabled = enabled;
+    public class StreamHandler implements EventHandler<StreamEvent> {
+
+        private Receiver receiver;
+
+        public StreamHandler(Receiver receiver) {
+            this.receiver = receiver;
+        }
+
+        public void onEvent(StreamEvent event, long sequence, boolean endOfBatch) {
+            receiver.receive(event, endOfBatch);
+        }
+
     }
 
+    public interface Receiver {
+
+        public String getStreamId();
+
+        public void receive(InnerStreamEvent innerStreamEvent);
+
+        public void receive(StreamEvent event, boolean endOfBatch);
+    }
+
+    public class Publisher {
+        private StreamJunction streamJunction;
+
+        public void setStreamJunction(StreamJunction streamJunction) {
+            this.streamJunction = streamJunction;
+        }
+
+        public void send(InnerStreamEvent innerStreamEvent) {
+            if (streamJunction != null) {
+                streamJunction.sendEvent(innerStreamEvent);
+            }
+        }
+
+        public String getStreamId() {
+            return streamJunction.getStreamId();
+        }
+    }
 }
