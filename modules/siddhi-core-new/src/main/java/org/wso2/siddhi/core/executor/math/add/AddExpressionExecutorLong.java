@@ -12,7 +12,7 @@
  */
 package org.wso2.siddhi.core.executor.math.add;
 
-import org.wso2.siddhi.core.event.inner.StreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
@@ -29,7 +29,8 @@ public class AddExpressionExecutorLong implements ExpressionExecutor {
 
     @Override
     public Object execute(StreamEvent event) {
-        return ((Number) leftExpressionExecutor.execute(event)).longValue() + ((Number) rightExpressionExecutor.execute(event)).longValue();
+        return ((Number) leftExpressionExecutor.execute(event)).longValue() +
+                ((Number) rightExpressionExecutor.execute(event)).longValue();
 
     }
 

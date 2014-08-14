@@ -15,9 +15,9 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.core.event.inner;
+package org.wso2.siddhi.core.event.stream;
 
-import org.wso2.siddhi.core.stream.Event;
+import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.query.selector.attribute.ComplexAttribute;
 import org.wso2.siddhi.core.util.SiddhiConstants;
 import org.wso2.siddhi.query.api.definition.Attribute;

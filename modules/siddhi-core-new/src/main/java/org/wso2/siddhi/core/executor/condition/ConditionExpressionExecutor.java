@@ -12,7 +12,7 @@
  */
 package org.wso2.siddhi.core.executor.condition;
 
-import org.wso2.siddhi.core.event.inner.StreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
 import org.wso2.siddhi.query.api.definition.Attribute;
 

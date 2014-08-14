@@ -12,7 +12,7 @@
  */
 package org.wso2.siddhi.core.executor;
 
-import org.wso2.siddhi.core.event.inner.StreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.util.SiddhiConstants;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;

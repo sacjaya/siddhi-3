@@ -12,7 +12,7 @@
  */
 package org.wso2.siddhi.core.executor;
 
-import org.wso2.siddhi.core.event.inner.StreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
 public class ConstantExpressionExecutor implements ExpressionExecutor {

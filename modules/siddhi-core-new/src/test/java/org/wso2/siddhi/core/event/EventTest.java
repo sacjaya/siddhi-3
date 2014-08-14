@@ -19,9 +19,7 @@ package org.wso2.siddhi.core.event;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.wso2.siddhi.core.event.inner.*;
-import org.wso2.siddhi.core.stream.Event;
-import org.wso2.siddhi.core.stream.EventFactory;
+import org.wso2.siddhi.core.event.stream.*;
 import org.wso2.siddhi.core.query.selector.attribute.ComplexAttribute;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;

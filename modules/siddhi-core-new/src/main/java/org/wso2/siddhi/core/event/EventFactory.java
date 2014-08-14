@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.core.stream;
+package org.wso2.siddhi.core.event;
 
 public class EventFactory implements com.lmax.disruptor.EventFactory<Event> {
 

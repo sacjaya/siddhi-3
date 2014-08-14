@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.core.event.inner;
+package org.wso2.siddhi.core.event.stream;
 
 /**
  * Event pool containing StreamEvent for reuse

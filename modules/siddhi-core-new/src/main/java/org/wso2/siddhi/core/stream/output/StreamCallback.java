@@ -17,8 +17,8 @@
 */
 package org.wso2.siddhi.core.stream.output;
 
-import org.wso2.siddhi.core.event.inner.StreamEvent;
-import org.wso2.siddhi.core.stream.Event;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
+import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.stream.StreamJunction;
 
 import java.util.ArrayList;
