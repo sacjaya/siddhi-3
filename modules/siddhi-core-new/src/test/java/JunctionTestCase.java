@@ -21,6 +21,8 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
+import org.wso2.siddhi.core.event.inner.InnerStreamEventFactory;
+import org.wso2.siddhi.core.event.inner.InnerStreamEventPool;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
@@ -237,7 +239,9 @@ public class JunctionTestCase {
             public void receive(StreamEvent[] streamEvents) {
                 InnerStreamEvent innerStreamEvent = new InnerStreamEvent(2,2,2);
                 innerStreamEvent.setTimestamp(streamEvents[0].getTimestamp());
-                innerStreamEvent.setOutputData(streamEvents[0].getData());
+               Object[] data = new Object[]{streamEvents[0].getData()[0],streamEvents[0].getData()[1]};
+                data[0] = ((String)data[0]).concat("A1");
+                innerStreamEvent.setOutputData(data);
                 streamPublisherB_1.send(innerStreamEvent);
             }
         };
@@ -247,7 +251,9 @@ public class JunctionTestCase {
             public void receive(StreamEvent[] streamEvents) {
                 InnerStreamEvent innerStreamEvent = new InnerStreamEvent(2,2,2);
                 innerStreamEvent.setTimestamp(streamEvents[0].getTimestamp());
-                innerStreamEvent.setOutputData(streamEvents[0].getData());
+               Object[] data = new Object[]{streamEvents[0].getData()[0],streamEvents[0].getData()[1]};
+                data[0] = ((String)data[0]).concat("A2");
+                innerStreamEvent.setOutputData(data);
                 streamPublisherB_2.send(innerStreamEvent);
             }
         };
@@ -257,7 +263,9 @@ public class JunctionTestCase {
             public void receive(StreamEvent[] streamEvents) {
                 InnerStreamEvent innerStreamEvent = new InnerStreamEvent(2,2,2);
                 innerStreamEvent.setTimestamp(streamEvents[0].getTimestamp());
-                innerStreamEvent.setOutputData(streamEvents[0].getData());
+               Object[] data = new Object[]{streamEvents[0].getData()[0],streamEvents[0].getData()[1]};
+                data[0] = ((String)data[0]).concat("A3");
+                innerStreamEvent.setOutputData(data);
                 streamPublisherB_3.send(innerStreamEvent);
             }
         };
@@ -268,7 +276,9 @@ public class JunctionTestCase {
             public void receive(StreamEvent[] streamEvents) {
                 InnerStreamEvent innerStreamEvent = new InnerStreamEvent(2,2,2);
                 innerStreamEvent.setTimestamp(streamEvents[0].getTimestamp());
-                innerStreamEvent.setOutputData(streamEvents[0].getData());
+                Object[] data = new Object[]{streamEvents[0].getData()[0],streamEvents[0].getData()[1]};
+                data[0] = ((String)data[0]).concat("B1");
+                innerStreamEvent.setOutputData(data);
                 streamPublisherC_1.send(innerStreamEvent);
             }
         };
@@ -278,7 +288,9 @@ public class JunctionTestCase {
             public void receive(StreamEvent[] streamEvents) {
                 InnerStreamEvent innerStreamEvent = new InnerStreamEvent(2,2,2);
                 innerStreamEvent.setTimestamp(streamEvents[0].getTimestamp());
-                innerStreamEvent.setOutputData(streamEvents[0].getData());
+               Object[] data = new Object[]{streamEvents[0].getData()[0],streamEvents[0].getData()[1]};
+                data[0] = ((String)data[0]).concat("B2");
+                innerStreamEvent.setOutputData(data);
                 streamPublisherC_2.send(innerStreamEvent);
             }
         };
@@ -289,7 +301,7 @@ public class JunctionTestCase {
             public void receive(StreamEvent[] streamEvents) {
                 count++;
                 eventArrived = true;
-                Assert.assertTrue(streamEvents[0].getData()[0].equals("IBM")||(streamEvents[0].getData()[0].equals("WSO2")));
+                Assert.assertTrue(((String)streamEvents[0].getData()[0]).matches("(WSO2|IBM)(A)(1|2|3)(B)(1|2)"));
             }
         };
 
@@ -316,6 +328,136 @@ public class JunctionTestCase {
         streamPublisherA.send(innerStreamEvent1);
         streamPublisherA.send(innerStreamEvent2);
         Thread.sleep(100);
+        Assert.assertTrue(eventArrived);
+        Assert.assertEquals(12,count);
+
+    }
+
+
+    @Test
+    public void MultiThreadedWithEventPoolTest() throws InterruptedException {
+        log.info("multi threaded test using event pool");
+
+        InnerStreamEventFactory eventFactory = new InnerStreamEventFactory(2, 2, 2);
+        final InnerStreamEventPool innerStreamEventPool_A_1 = new InnerStreamEventPool(eventFactory, 4);
+        final InnerStreamEventPool innerStreamEventPool_A_2 = new InnerStreamEventPool(eventFactory, 4);
+        final InnerStreamEventPool innerStreamEventPool_A_3 = new InnerStreamEventPool(eventFactory, 4);
+        final InnerStreamEventPool innerStreamEventPool_B_1 = new InnerStreamEventPool(eventFactory, 4);
+        final InnerStreamEventPool innerStreamEventPool_B_2 = new InnerStreamEventPool(eventFactory, 4);
+
+
+        StreamDefinition streamA = new StreamDefinition("streamA").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).
+                annotation(Annotation.annotation("config").element("async", "true"));
+        StreamJunction streamJunctionA = new StreamJunction(streamA,executorService,1024);
+        StreamJunction.Publisher streamPublisherA = streamJunctionA.constructPublisher();
+
+        StreamDefinition streamB = new StreamDefinition("streamB").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).
+                annotation(Annotation.annotation("config").element("async", "true"));
+        StreamJunction streamJunctionB = new StreamJunction(streamB,executorService,1024);
+        final StreamJunction.Publisher streamPublisherB_1 = streamJunctionB.constructPublisher();
+        final StreamJunction.Publisher streamPublisherB_2 = streamJunctionB.constructPublisher();
+        final StreamJunction.Publisher streamPublisherB_3 = streamJunctionB.constructPublisher();
+
+        StreamDefinition streamC = new StreamDefinition("streamC").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).
+                annotation(Annotation.annotation("config").element("async", "true"));
+        StreamJunction streamJunctionC = new StreamJunction(streamC,executorService,1024);
+        final StreamJunction.Publisher streamPublisherC_1 = streamJunctionC.constructPublisher();
+        final StreamJunction.Publisher streamPublisherC_2 = streamJunctionC.constructPublisher();
+
+        StreamCallback streamCallbackA_1 = new StreamCallback() {
+            @Override
+            public void receive(StreamEvent[] streamEvents) {
+                InnerStreamEvent innerStreamEvent = innerStreamEventPool_A_1.borrowEvent();
+                innerStreamEvent.setTimestamp(streamEvents[0].getTimestamp());
+                Object[] data = new Object[]{streamEvents[0].getData()[0],streamEvents[0].getData()[1]};
+                data[0] = ((String)data[0]).concat("A1");
+                innerStreamEvent.setOutputData(data);
+                streamPublisherB_1.send(innerStreamEvent);
+            }
+        };
+
+        StreamCallback streamCallbackA_2 = new StreamCallback() {
+            @Override
+            public void receive(StreamEvent[] streamEvents) {
+                InnerStreamEvent innerStreamEvent = innerStreamEventPool_A_2.borrowEvent();
+                innerStreamEvent.setTimestamp(streamEvents[0].getTimestamp());
+                Object[] data = new Object[]{streamEvents[0].getData()[0],streamEvents[0].getData()[1]};
+                data[0] = ((String)data[0]).concat("A2");
+                innerStreamEvent.setOutputData(data);
+                streamPublisherB_2.send(innerStreamEvent);
+            }
+        };
+
+        StreamCallback streamCallbackA_3 = new StreamCallback() {
+            @Override
+            public void receive(StreamEvent[] streamEvents) {
+                InnerStreamEvent innerStreamEvent = innerStreamEventPool_A_3.borrowEvent();
+                innerStreamEvent.setTimestamp(streamEvents[0].getTimestamp());
+                Object[] data = new Object[]{streamEvents[0].getData()[0],streamEvents[0].getData()[1]};
+                data[0] = ((String)data[0]).concat("A3");
+                innerStreamEvent.setOutputData(data);
+                streamPublisherB_3.send(innerStreamEvent);
+            }
+        };
+
+
+        StreamCallback streamCallbackB_1 = new StreamCallback() {
+            @Override
+            public void receive(StreamEvent[] streamEvents) {
+                InnerStreamEvent innerStreamEvent = innerStreamEventPool_B_1.borrowEvent();
+                innerStreamEvent.setTimestamp(streamEvents[0].getTimestamp());
+                Object[] data = new Object[]{streamEvents[0].getData()[0],streamEvents[0].getData()[1]};
+                data[0] = ((String)data[0]).concat("B1");
+                innerStreamEvent.setOutputData(data);
+                streamPublisherC_1.send(innerStreamEvent);
+            }
+        };
+
+        StreamCallback streamCallbackB_2 = new StreamCallback() {
+            @Override
+            public void receive(StreamEvent[] streamEvents) {
+                InnerStreamEvent innerStreamEvent = innerStreamEventPool_B_2.borrowEvent();
+                innerStreamEvent.setTimestamp(streamEvents[0].getTimestamp());
+                Object[] data = new Object[]{streamEvents[0].getData()[0],streamEvents[0].getData()[1]};
+                data[0] = ((String)data[0]).concat("B2");
+                innerStreamEvent.setOutputData(data);
+                streamPublisherC_2.send(innerStreamEvent);
+            }
+        };
+
+
+        StreamCallback streamCallbackC = new StreamCallback() {
+            @Override
+            public void receive(StreamEvent[] streamEvents) {
+                count++;
+                eventArrived = true;
+                Assert.assertTrue(((String)streamEvents[0].getData()[0]).matches("(WSO2|IBM)(A)(1|2|3)(B)(1|2)"));
+            }
+        };
+
+        streamJunctionA.subscribe(streamCallbackA_1);
+        streamJunctionA.subscribe(streamCallbackA_2);
+        streamJunctionA.subscribe(streamCallbackA_3);
+        streamJunctionA.startProcessing();
+
+        streamJunctionB.subscribe(streamCallbackB_1);
+        streamJunctionB.subscribe(streamCallbackB_2);
+        streamJunctionB.startProcessing();
+
+        streamJunctionC.subscribe(streamCallbackC);
+        streamJunctionB.startProcessing();
+
+        InnerStreamEvent innerStreamEvent1 = new InnerStreamEvent(2,2,2);
+        innerStreamEvent1.setTimestamp(System.currentTimeMillis());
+        innerStreamEvent1.setOutputData(new Object[]{"IBM", 12});
+
+        InnerStreamEvent innerStreamEvent2 = new InnerStreamEvent(2,2,2);
+        innerStreamEvent2.setTimestamp(System.currentTimeMillis());
+        innerStreamEvent2.setOutputData(new Object[]{"WSO2", 112});
+
+        streamPublisherA.send(innerStreamEvent1);
+        streamPublisherA.send(innerStreamEvent2);
+        Thread.sleep(200);
         Assert.assertTrue(eventArrived);
         Assert.assertEquals(12,count);
 
