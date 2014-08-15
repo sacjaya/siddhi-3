@@ -12,7 +12,7 @@
  */
 package org.wso2.siddhi.core.executor.condition;
 
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
 
 public class OrConditionExpressionExecutor extends ConditionExpressionExecutor {
@@ -26,7 +26,7 @@ public class OrConditionExpressionExecutor extends ConditionExpressionExecutor {
         this.rightConditionExecutor = rightConditionExecutor;
     }
 
-    public Boolean execute(InnerStreamEvent event) {
+    public Boolean execute(StreamEvent event) {
         return (Boolean) leftConditionExecutor.execute(event) || (Boolean) rightConditionExecutor.execute(event);
     }
 

@@ -12,7 +12,7 @@
  */
 package org.wso2.siddhi.core.executor.condition;
 
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
@@ -23,7 +23,7 @@ import org.wso2.siddhi.query.api.definition.Attribute;
 public abstract class ConditionExpressionExecutor implements ExpressionExecutor {
     protected int PREDICATE_LEVEL = -1;
 
-    public abstract Boolean execute(InnerStreamEvent event);
+    public abstract Boolean execute(StreamEvent event);
 
     public Attribute.Type getReturnType() {
         return Attribute.Type.BOOL;

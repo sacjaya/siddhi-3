@@ -25,7 +25,7 @@ import org.wso2.siddhi.query.api.definition.Attribute;
  */
 public class ComplexAttribute extends Attribute {
 
-    private Boolean isInitialized=false;
+    private Boolean isInitialized = false;
 
     public ComplexAttribute() {
         super("", null);          //dummy attribute to be used later by Complex selector operations

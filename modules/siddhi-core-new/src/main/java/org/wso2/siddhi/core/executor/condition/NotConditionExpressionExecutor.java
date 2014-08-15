@@ -12,7 +12,7 @@
  */
 package org.wso2.siddhi.core.executor.condition;
 
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
 
 public class NotConditionExpressionExecutor extends ConditionExpressionExecutor {
@@ -23,7 +23,7 @@ public class NotConditionExpressionExecutor extends ConditionExpressionExecutor 
         this.conditionExecutor = conditionExecutor;
     }
 
-    public Boolean execute(InnerStreamEvent event) {
+    public Boolean execute(StreamEvent event) {
         return !(Boolean) conditionExecutor.execute(event);
     }
 

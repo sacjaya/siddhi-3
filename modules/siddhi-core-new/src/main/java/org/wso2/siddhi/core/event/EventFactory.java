@@ -15,18 +15,17 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.core.util;
+package org.wso2.siddhi.core.event;
 
-public final class SiddhiConstants {
+public class EventFactory implements com.lmax.disruptor.EventFactory<Event> {
 
-    public static final int BEFORE_WINDOW_DATA_INDEX = 0;
-    public static final int AFTER_WINDOW_DATA_INDEX = 1;
-    public static final int OUTPUT_DATA_INDEX = 2;
+    private int dataSize;
 
-    public static final String ANNOTATION_CONFIG = "config";
-    public static final String ANNOTATION_ELEMENT_ASYNC = "async";
+    public EventFactory(int dataSize) {
+        this.dataSize = dataSize;
+    }
 
-    public static final String TRUE = "true";
-
-
+    public Event newInstance() {
+        return new Event(dataSize);
+    }
 }

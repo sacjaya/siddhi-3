@@ -12,7 +12,7 @@
  */
 package org.wso2.siddhi.core.executor;
 
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.util.SiddhiConstants;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -44,7 +44,7 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
     }
 
     @Override
-    public Object execute(InnerStreamEvent event) {
+    public Object execute(StreamEvent event) {
         switch (position[0]) {
             case (SiddhiConstants.BEFORE_WINDOW_DATA_INDEX):
                 return event.getBeforeWindowData()[position[1]];

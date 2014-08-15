@@ -13,7 +13,7 @@
 package org.wso2.siddhi.core.executor.function;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
@@ -41,7 +41,7 @@ public abstract class FunctionExecutor implements ExpressionExecutor {
     }
 
     @Override
-    public Object execute(InnerStreamEvent event) {
+    public Object execute(StreamEvent event) {
 
         if (attributeSize > 1) {
             Object[] data = new Object[attributeExpressionExecutors.size()];

@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.siddhi.core.event.inner;
+package org.wso2.siddhi.core.event.stream;
 
 import org.wso2.siddhi.core.query.selector.attribute.ComplexAttribute;
 import org.wso2.siddhi.query.api.definition.Attribute;
@@ -26,10 +26,10 @@ import java.util.List;
 
 /**
  * Class to hold mapping between StreamEvent
- * and InnerStreamEvent. This will be eventually
+ * and StreamEvent. This will be eventually
  * used to update variable positions on Variable executors
  */
-public class MetaInnerStreamEvent {
+public class MetaStreamEvent {
     private List<Attribute> beforeWindowData = new ArrayList<Attribute>();
     private List<Attribute> afterWindowData = null;
     private List<Attribute> outputData = null;

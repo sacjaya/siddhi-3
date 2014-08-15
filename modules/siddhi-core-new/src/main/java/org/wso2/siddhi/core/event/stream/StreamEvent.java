@@ -17,78 +17,70 @@
 */
 package org.wso2.siddhi.core.event.stream;
 
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
-
-import java.util.Arrays;
-
+/**
+ * Standard processing event inside Siddhi. StreamEvent will be created
+ * from StreamEvent before sending to relevant Queries.
+ */
 public class StreamEvent {
 
     protected long timestamp = -1;
-    protected Object[] data;
+    protected Object[] outputData;              //Attributes to sent as output
     protected boolean isExpired = false;
+    private Object[] beforeWindowData;          //Attributes before window execution
+    private Object[] onAfterWindowData;         //Attributes on and after window execution
+    private StreamEvent next;
 
-    public StreamEvent(long timestamp, Object[] data) {
-        this.timestamp = timestamp;
-        this.data = data;
+    public StreamEvent(int beforeWindowDataSize, int onAfterWindowDataSize, int outputDataSize) {
+        beforeWindowData = new Object[beforeWindowDataSize];
+        onAfterWindowData = new Object[onAfterWindowDataSize];
+        outputData = new Object[outputDataSize];
     }
 
-    public StreamEvent() {
-        data = new Object[0];
+    public Object[] getBeforeWindowData() {
+        return beforeWindowData;
     }
 
-    public StreamEvent(int dataSize) {
-        this.data = new Object[dataSize];
+    public void setBeforeWindowData(Object[] beforeWindowData) {
+        this.beforeWindowData = beforeWindowData;
     }
 
+    public Object[] getOnAfterWindowData() {
+        return onAfterWindowData;
+    }
+
+    public void setOnAfterWindowData(Object[] onAfterWindowData) {
+        this.onAfterWindowData = onAfterWindowData;
+    }
 
     public long getTimestamp() {
         return timestamp;
-    }
-
-    public Object[] getData() {
-        return data;
-    }
-
-    public Object getData(int i) {
-        return data[i];
-    }
-
-    public boolean isExpired() {
-        return isExpired;
-    }
-
-    @Override
-    public String toString() {
-        return "StreamEvent{" +
-                "timestamp=" + timestamp +
-                ", data=" + Arrays.toString(data) +
-                ", isExpired=" + isExpired +
-                '}';
-    }
-
-    public void setData(Object[] data) {
-        this.data = data;
     }
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
-    public void setIsExpired(Boolean isExpired) {
+    public Object[] getOutputData() {
+        return outputData;
+    }
+
+    public void setOutputData(Object[] outputData) {
+        this.outputData = outputData;
+    }
+
+    public boolean isExpired() {
+        return isExpired;
+    }
+
+    public void setExpired(boolean isExpired) {
         this.isExpired = isExpired;
     }
 
-    public StreamEvent copyFrom(StreamEvent streamEvent) {
-        timestamp = streamEvent.timestamp;
-        System.arraycopy(streamEvent.data, 0, data, 0, data.length);
-        isExpired = streamEvent.isExpired;
-        return this;
+    public StreamEvent getNext() {
+        return next;
     }
 
-    public StreamEvent copyFrom(InnerStreamEvent innerStreamEventList) {
-        timestamp = innerStreamEventList.getTimestamp();
-        System.arraycopy(innerStreamEventList.getOutputData(), 0, data, 0, data.length);
-        isExpired = innerStreamEventList.isExpired();
-        return this;
+    public void setNext(StreamEvent next) {
+        this.next = next;
     }
 }
