@@ -19,11 +19,22 @@
 
 package org.wso2.siddhi.core.config;
 
+import java.util.concurrent.Executor;
+
 public class SiddhiContext {
 
-    private int defaultStreamBufferSize;
+    private int defaultEventBufferSize;
+    private Executor executorService;
 
-    public int getDefaultStreamBufferSize() {
-        return defaultStreamBufferSize;
+    public int getDefaultEventBufferSize() {
+        return defaultEventBufferSize;
+    }
+
+    public Executor getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(Executor executorService) {
+        this.executorService = executorService;
     }
 }

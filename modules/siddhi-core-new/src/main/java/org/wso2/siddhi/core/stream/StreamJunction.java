@@ -47,7 +47,6 @@ public class StreamJunction {
     private int bufferSize;
 
     private Disruptor<Event> disruptor;
-
     private RingBuffer<Event> ringBuffer;
 
     public StreamJunction(StreamDefinition streamDefinition, ExecutorService executorService, int defaultBufferSize) {
