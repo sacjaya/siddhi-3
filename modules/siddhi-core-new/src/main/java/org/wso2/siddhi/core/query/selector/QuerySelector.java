@@ -20,6 +20,8 @@
 package org.wso2.siddhi.core.query.selector;
 
 import org.wso2.siddhi.core.event.stream.StreamEvent;
+import org.wso2.siddhi.core.exception.QueryCreationException;
+import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
 import org.wso2.siddhi.core.query.processor.Processor;
 
 public class QuerySelector implements Processor {
@@ -42,10 +44,13 @@ public class QuerySelector implements Processor {
 
     @Override
     public void setToLast(Processor processor) {
+        if(!(processor instanceof OutputRateLimiter)){
+            throw new QueryCreationException("processor is not an instance of OutputRateLimiter");
+        }
         if (outputRateManager == null) {
             this.outputRateManager = processor;
         } else {
-            (this.outputRateManager).setToLast(processor);
+            throw new QueryCreationException("outputRateLimiter is already assigned");
         }
     }
 
