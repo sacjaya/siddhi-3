@@ -17,7 +17,6 @@
  */
 package org.wso2.siddhi.core.query.processor.filter;
 
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.executor.condition.ConditionExpressionExecutor;
 import org.wso2.siddhi.core.query.processor.Processor;
@@ -32,7 +31,7 @@ public class FilterProcessor implements Processor {
     }
 
     @Override
-    public void process(InnerStreamEvent event) {
+    public void process(StreamEvent event) {
         if (conditionExecutor.execute(event)) {
                 this.next.process(event);
         }

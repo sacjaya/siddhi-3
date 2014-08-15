@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.wso2.siddhi.core.stream.junciton;
 
 import junit.framework.Assert;
 import org.apache.log4j.Logger;

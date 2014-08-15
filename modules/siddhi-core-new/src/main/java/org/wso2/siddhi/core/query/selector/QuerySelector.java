@@ -18,7 +18,6 @@
 
 package org.wso2.siddhi.core.query.selector;
 
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.query.processor.Processor;
 
@@ -26,7 +25,7 @@ public class QuerySelector implements Processor {
     Processor outputRateManager;
 
     @Override
-    public void process(InnerStreamEvent event) {
+    public void process(StreamEvent event) {
         //TODO
     }
 

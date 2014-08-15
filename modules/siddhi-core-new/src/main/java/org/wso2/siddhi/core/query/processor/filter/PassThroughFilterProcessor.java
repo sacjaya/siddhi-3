@@ -18,7 +18,7 @@
 package org.wso2.siddhi.core.query.processor.filter;
 
 
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
 
 public class PassThroughFilterProcessor extends FilterProcessor {
 
@@ -26,7 +26,7 @@ public class PassThroughFilterProcessor extends FilterProcessor {
         super(null);
     }
 
-    public void process(InnerStreamEvent event) {
+    public void process(StreamEvent event) {
         next.process(event);
     }
 

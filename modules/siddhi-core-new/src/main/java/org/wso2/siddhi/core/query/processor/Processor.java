@@ -18,11 +18,11 @@
 
 package org.wso2.siddhi.core.query.processor;
 
-import org.wso2.siddhi.core.event.inner.InnerStreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
 
 public interface Processor {
 
-    public void process(InnerStreamEvent event);
+    public void process(StreamEvent event);
 
     /**
      * set next processor of the processor chain
