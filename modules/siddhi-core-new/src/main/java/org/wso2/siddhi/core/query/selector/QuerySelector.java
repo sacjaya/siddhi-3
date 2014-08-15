@@ -19,36 +19,90 @@
 
 package org.wso2.siddhi.core.query.selector;
 
+import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.exception.QueryCreationException;
+import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
 import org.wso2.siddhi.core.query.processor.Processor;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.execution.query.selection.Selector;
+
+import java.util.List;
+import java.util.Map;
 
 public class QuerySelector implements Processor {
-    Processor outputRateManager;
+    Processor outputRateLimiter;
 
-    @Override
-    public void process(StreamEvent event) {
+    private StreamDefinition outputStreamDefinition;
+    private Selector selector;
+    private int outputSize;
+    private Map<String, StreamDefinition> tempStreamDefinitionMap;
+    public boolean currentOn = false;
+    public boolean expiredOn = false;
+
+
+    //TODO: add attributeProcessorList,  aggregateAttributeProcessorList and the methods -processOutputAttributeGenerator,populateAttributeProcessorList
+
+    public QuerySelector(String outputStreamId, Selector selector,
+                         SiddhiContext siddhiContext, boolean currentOn, boolean expiredOn, Map<String, StreamDefinition> tempStreamDefinitionMap, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutors) {
+        this.currentOn = currentOn;
+        this.expiredOn = expiredOn;
+        this.selector = selector;
+        this.outputSize = selector.getSelectionList().size();
+        this.tempStreamDefinitionMap = tempStreamDefinitionMap;
+        this.outputStreamDefinition = new StreamDefinition();
+        this.outputStreamDefinition.setId(outputStreamId);
+
+        populateAttributeProcessorList();
+
+
+    }
+
+    private void populateAttributeProcessorList() {
         //TODO
     }
 
     @Override
+    public void process(StreamEvent streamEvent) {
+        //TODO:  for RemoveStreamEvents
+
+        Object[] data = new Object[streamEvent.getOutputData().length];      //Returns outData array from meta stream event
+        for (int i = 0; i < streamEvent.getOutputData().length; i++) {
+            data[i] = streamEvent.getOutputData()[i];
+        }
+
+        //TODO: populate data for complex attributes
+
+        StreamEvent event = new StreamEvent(streamEvent.getBeforeWindowData().length, streamEvent.getOnAfterWindowData().length, streamEvent.getOutputData().length);
+        event.setOutputData(data);
+        event.setTimestamp(streamEvent.getTimestamp());
+        ((OutputRateLimiter) outputRateLimiter).send(event.getTimestamp(), event, null);
+
+    }
+
+    public StreamDefinition getOutputStreamDefinition() {
+        return outputStreamDefinition;
+    }
+
+    @Override
     public Processor getNext() {
-        return outputRateManager;
+        return outputRateLimiter;
     }
 
     @Override
     public void setNext(Processor processor) {
-        this.outputRateManager = processor;
+        this.outputRateLimiter = processor;
     }
 
     @Override
     public void setToLast(Processor processor) {
-        if(!(processor instanceof OutputRateLimiter)){
+        if (!(processor instanceof OutputRateLimiter)) {
             throw new QueryCreationException("processor is not an instance of OutputRateLimiter");
         }
-        if (outputRateManager == null) {
-            this.outputRateManager = processor;
+        if (outputRateLimiter == null) {
+            this.outputRateLimiter = processor;
         } else {
             throw new QueryCreationException("outputRateLimiter is already assigned");
         }
