@@ -20,41 +20,31 @@
 package org.wso2.siddhi.core.query.selector;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.exception.QueryCreationException;
-import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
 import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 
-import java.util.List;
-import java.util.Map;
-
 public class QuerySelector implements Processor {
-    Processor outputRateLimiter;
 
-    private StreamDefinition outputStreamDefinition;
+
     private Selector selector;
+    private StreamDefinition outputStreamDefinition;
     private int outputSize;
-    private Map<String, StreamDefinition> tempStreamDefinitionMap;
-    public boolean currentOn = false;
-    public boolean expiredOn = false;
+    private boolean currentOn = false;
+    private boolean expiredOn = false;
+    private OutputRateLimiter outputRateLimiter;
 
 
     //TODO: add attributeProcessorList,  aggregateAttributeProcessorList and the methods -processOutputAttributeGenerator,populateAttributeProcessorList
 
-    public QuerySelector(String outputStreamId, Selector selector,
-                         SiddhiContext siddhiContext, boolean currentOn, boolean expiredOn, Map<String, StreamDefinition> tempStreamDefinitionMap, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutors) {
+    public QuerySelector(String outputStreamId, Selector selector, boolean currentOn, boolean expiredOn, SiddhiContext siddhiContext) {
         this.currentOn = currentOn;
         this.expiredOn = expiredOn;
         this.selector = selector;
         this.outputSize = selector.getSelectionList().size();
-        this.tempStreamDefinitionMap = tempStreamDefinitionMap;
-        this.outputStreamDefinition = new StreamDefinition();
-        this.outputStreamDefinition.setId(outputStreamId);
-
         populateAttributeProcessorList();
 
 
@@ -78,7 +68,7 @@ public class QuerySelector implements Processor {
         StreamEvent event = new StreamEvent(streamEvent.getBeforeWindowData().length, streamEvent.getOnAfterWindowData().length, streamEvent.getOutputData().length);
         event.setOutputData(data);
         event.setTimestamp(streamEvent.getTimestamp());
-        ((OutputRateLimiter) outputRateLimiter).send(event.getTimestamp(), event, null);
+        outputRateLimiter.send(event.getTimestamp(), event, null);
 
     }
 
@@ -93,19 +83,19 @@ public class QuerySelector implements Processor {
 
     @Override
     public void setNext(Processor processor) {
-        this.outputRateLimiter = processor;
-    }
-
-    @Override
-    public void setToLast(Processor processor) {
         if (!(processor instanceof OutputRateLimiter)) {
             throw new QueryCreationException("processor is not an instance of OutputRateLimiter");
         }
         if (outputRateLimiter == null) {
-            this.outputRateLimiter = processor;
+            this.outputRateLimiter = (OutputRateLimiter) processor;
         } else {
             throw new QueryCreationException("outputRateLimiter is already assigned");
         }
+    }
+
+    @Override
+    public void setToLast(Processor processor) {
+        setNext(processor);
     }
 
 }
