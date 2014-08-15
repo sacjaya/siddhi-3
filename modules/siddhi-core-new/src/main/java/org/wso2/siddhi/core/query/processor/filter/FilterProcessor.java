@@ -42,7 +42,7 @@ public class FilterProcessor implements Processor {
         if (next == null) {
             this.next = processor;
         } else {
-            (this.next).setNext(processor);
+            this.next.setNext(processor);
         }
     }
 
