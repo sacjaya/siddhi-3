@@ -18,9 +18,55 @@
 
 package org.wso2.siddhi.core.query.output.rateLimit;
 
+import org.wso2.siddhi.core.event.stream.StreamEvent;
+import org.wso2.siddhi.core.query.output.callback.OutputCallback;
+import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.query.processor.Processor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class OutputRateManager implements Processor {
+
+    protected List<QueryCallback> queryCallbacks = new ArrayList<QueryCallback>();
+    protected OutputCallback outputCallback = null;
+    private boolean hasCallBack = false;
+
+
+    public abstract void send(long timeStamp, StreamEvent currentEvent, StreamEvent expiredEvent);
+
+    protected void sendToCallBacks(long timeStamp, StreamEvent currentEvent, StreamEvent expiredEvent,
+                                   StreamEvent allEvent) {
+        if (outputCallback != null && allEvent != null) {
+            outputCallback.send(allEvent);
+        }
+        if (queryCallbacks.size() > 0) {
+            for (QueryCallback callback : queryCallbacks) {
+                callback.receiveStreamEvent(timeStamp, currentEvent, expiredEvent);
+            }
+        }
+    }
+
+
+    public void addQueryCallback(QueryCallback callback) {
+        queryCallbacks.add(callback);
+        hasCallBack = true;
+    }
+
+    public void setOutputCallback(OutputCallback outputCallback) {
+        this.outputCallback = outputCallback;
+        if (outputCallback != null) {
+            hasCallBack = true;
+        }
+    }
+
+    public OutputCallback getOutputCallback() {
+        return outputCallback;
+    }
+
+    public boolean hasCallBack() {
+        return hasCallBack;
+    }
 
 }
 
