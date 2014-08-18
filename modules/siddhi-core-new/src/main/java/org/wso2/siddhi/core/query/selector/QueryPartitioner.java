@@ -22,9 +22,8 @@ import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.partition.executor.ValuePartitionExecutor;
 import org.wso2.siddhi.core.query.creator.QueryCreator;
-import org.wso2.siddhi.core.query.creator.QueryPartComposite;
 import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
-import org.wso2.siddhi.core.stream.QueryStreamReceiver;
+import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
 import org.wso2.siddhi.query.api.execution.partition.Partition;
 import org.wso2.siddhi.query.api.execution.partition.PartitionType;
 import org.wso2.siddhi.query.api.execution.partition.ValuePartitionType;
@@ -40,7 +39,7 @@ public class QueryPartitioner {
 
     private final QueryCreator queryCreator;
     private List<List<PartitionExecutor>> partitionExecutors = new ArrayList<List<PartitionExecutor>>();
-    private ConcurrentHashMap<String, QueryStreamReceiver> partitionMap = new ConcurrentHashMap<String, QueryStreamReceiver>();
+    private ConcurrentHashMap<String, StreamRuntime> partitionMap = new ConcurrentHashMap<String, StreamRuntime>();
 
     public QueryPartitioner(Partition partition, QueryCreator queryCreator,
                             SiddhiContext siddhiContext) {
@@ -57,7 +56,8 @@ public class QueryPartitioner {
                     if (partitionType instanceof ValuePartitionType) {
                        if (partitionType.getStreamId().equals(((BasicSingleInputStream) inputStream).getStreamId())) {
                             try {
-                                executorList.add(new ValuePartitionExecutor(ExecutorParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(), siddhiContext, queryCreator.getTempStreamDefinitionMap(), null,null)));//TODO: handle null arguments
+                                executorList.add(new ValuePartitionExecutor(ExecutorParser.parseExpression(((ValuePartitionType) partitionType).getExpression(),
+                                        ((BasicSingleInputStream) inputStream).getStreamId(), siddhiContext, queryCreator.getTempStreamDefinitionMap(), null,null)));//TODO: handle null arguments
                             } catch (ValidatorException e) {
                                 //This will never happen
                             }
@@ -72,9 +72,9 @@ public class QueryPartitioner {
     }
 
 
-    public List<QueryStreamReceiver> getQueryStreamReceivers(OutputRateLimiter outputRateLimiter) {
-        QueryPartComposite queryPartComposite = queryCreator.constructQuery(outputRateLimiter);
-        return Arrays.asList(queryPartComposite.getHandlerProcessor()); //TODO: discuss and fix handlerProcessorList/processor
+    public StreamRuntime getQueryStreamRuntime(OutputRateLimiter outputRateLimiter) {
+        //TODO
+        return null;
     }
 
 
@@ -82,17 +82,17 @@ public class QueryPartitioner {
         return partitionExecutors;
     }
 
-    public QueryStreamReceiver cloneQueryStreamReceivers(String partitionKey, OutputRateLimiter outputRateLimiter) {
-        QueryStreamReceiver queryStreamReceiver = partitionMap.get(partitionKey);
-        if (queryStreamReceiver == null) {
-            queryStreamReceiver = cloneQueryStreamReceivers(outputRateLimiter);
-            partitionMap.put(partitionKey, queryStreamReceiver);
+    public StreamRuntime cloneStreamRuntime(String partitionKey, OutputRateLimiter outputRateLimiter) {
+        StreamRuntime streamRuntime = partitionMap.get(partitionKey);
+        if (streamRuntime == null) {
+//            streamRuntime = TODO:construct StreamRuntime;
+            partitionMap.put(partitionKey, streamRuntime);
         }
-        return queryStreamReceiver;
+        return streamRuntime;
     }
 
-    public QueryStreamReceiver cloneQueryStreamReceivers(OutputRateLimiter outputRateLimiter) {
-        return queryCreator.cloneHandlers(outputRateLimiter);
+    public StreamRuntime cloneStreamRuntime(OutputRateLimiter outputRateLimiter) {
+        return null;   //TODO:construct StreamRuntime;
 
     }
 
