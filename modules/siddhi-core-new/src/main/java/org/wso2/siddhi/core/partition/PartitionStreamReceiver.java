@@ -21,30 +21,43 @@ package org.wso2.siddhi.core.partition;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventConverter;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.query.QueryRuntime;
+import org.wso2.siddhi.core.query.selector.QueryPartitioner;
+import org.wso2.siddhi.core.stream.QueryStreamReceiver;
 import org.wso2.siddhi.core.stream.StreamJunction;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 
-public class PartitionStreamReceiver implements StreamJunction.Receiver{
+public class PartitionStreamReceiver implements StreamJunction.Receiver {
 
     private String streamId;
+    private StreamDefinition streamDefinition;
     private SiddhiContext siddhiContext;
     private PartitionRuntime partitionRuntime;
     private List<PartitionExecutor> partitionExecutors;
     private StreamEventConverter eventConverter;
-    private ConcurrentHashMap<String,StreamJunction> cachedStreamJunctionMap = new ConcurrentHashMap<String, StreamJunction>();
+    private ConcurrentHashMap<String, StreamJunction> cachedStreamJunctionMap = new ConcurrentHashMap<String, StreamJunction>();
+    private QueryPartitioner queryPartitioner;
 
-    public PartitionStreamReceiver(SiddhiContext siddhiContext, String streamId, int handlerId, List<PartitionExecutor> partitionExecutors, PartitionRuntime partitionRuntime) {
-        this.streamId = streamId;
+    public PartitionStreamReceiver(SiddhiContext siddhiContext, MetaStreamEvent metaStreamEvent, StreamDefinition streamDefinition,
+                                   QueryPartitioner queryPartitioner, List<PartitionExecutor> partitionExecutors,
+                                   PartitionRuntime partitionRuntime) {
+        this.streamDefinition = streamDefinition;
         this.partitionRuntime = partitionRuntime;
         this.partitionExecutors = partitionExecutors;
+        this.queryPartitioner = queryPartitioner;
         this.siddhiContext = siddhiContext;
+        streamId = streamDefinition.getId();
+        eventConverter = new StreamEventConverter(metaStreamEvent, streamDefinition);
     }
+
 
     @Override
     public String getStreamId() {
@@ -62,12 +75,11 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver{
 
     @Override
     public void receive(Event event, boolean endOfBatch) {
-          //TODO
-//        StreamEvent streamEvent = eventConverter.convertToStreamEvent(event);
-//        for (PartitionExecutor partitionExecutor : partitionExecutors) {
-//            String key = partitionExecutor.execute((streamEvent));
-//            send(key, streamEvent);
-//        }
+        StreamEvent streamEvent = eventConverter.convertToStreamEvent(event);
+        for (PartitionExecutor partitionExecutor : partitionExecutors) {
+            String key = partitionExecutor.execute((streamEvent));
+            send(key, streamEvent);
+        }
     }
 
     private void send(String key, StreamEvent event) {
@@ -75,16 +87,37 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver{
             return;
         }
         partitionRuntime.clone(key);
-        getStreamJunction(streamId+key).sendEvent(event);
+        getStreamJunction(streamId + key).sendEvent(event);
     }
 
-    private StreamJunction getStreamJunction(String streamJunctionName){
-        //TODO
-        return null;
+    private StreamJunction getStreamJunction(String streamJunctionName) {
+        StreamJunction streamJunction = cachedStreamJunctionMap.get(streamJunctionName);
+        if (streamJunction == null) {
+            streamJunction = new StreamJunction(streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
+            partitionRuntime.addStreamJunction(streamJunctionName, streamJunction);
+            cachedStreamJunctionMap.putIfAbsent(streamJunctionName, streamJunction);
+        }
+        return streamJunction;
     }
 
 
     public void addStreamJunction(String key, List<QueryRuntime> queryRuntimeList) {
-        //TODO
+        if (!partitionExecutors.isEmpty()) {
+            StreamJunction streamJunction = cachedStreamJunctionMap.get(streamId + key);
+            if (streamJunction == null) {
+                for (QueryRuntime queryRuntime : queryRuntimeList) {
+                    if (queryRuntime.getInputStreamId().get(0).equals(streamId)) {
+
+                        QueryStreamReceiver queryStreamReceiver = queryPartitioner.cloneQueryStreamReceivers(key, queryRuntime.getOutputRateManager());
+                        streamJunction = new StreamJunction(streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
+                        streamJunction.subscribe(queryStreamReceiver);
+                        partitionRuntime.addStreamJunction(streamId + key, streamJunction);
+                        cachedStreamJunctionMap.put(streamId + key, streamJunction);
+
+
+                    }
+                }
+            }
+        }
     }
 }

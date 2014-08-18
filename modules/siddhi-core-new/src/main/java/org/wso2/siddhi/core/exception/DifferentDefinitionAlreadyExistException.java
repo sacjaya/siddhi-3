@@ -16,22 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.wso2.siddhi.core.exception;
 
-package org.wso2.siddhi.core.partition;
+public class DifferentDefinitionAlreadyExistException extends RuntimeException {
 
-import org.wso2.siddhi.core.query.QueryRuntime;
-
-import java.util.List;
-
-public class PartitionInstanceRuntime {
-    private String key;
-    private List<QueryRuntime> queryRuntimeList;
-
-    public PartitionInstanceRuntime(String key,List<QueryRuntime> queryRuntimeList){
-        this.key =key;
-        this.queryRuntimeList = queryRuntimeList;
+    public DifferentDefinitionAlreadyExistException() {
+        super();
     }
 
+    public DifferentDefinitionAlreadyExistException(String message) {
+        super(message);
+    }
+
+    public DifferentDefinitionAlreadyExistException(String message,
+                                                    Throwable throwable) {
+        super(message, throwable);
+    }
+
+    public DifferentDefinitionAlreadyExistException(Throwable throwable) {
+        super(throwable);
+    }
 }
-
-

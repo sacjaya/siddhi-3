@@ -24,7 +24,9 @@ import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
+import org.wso2.siddhi.core.query.selector.QueryPartitioner;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
+import org.wso2.siddhi.core.stream.QueryStreamReceiver;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
 import org.wso2.siddhi.query.api.annotation.Element;
@@ -37,21 +39,24 @@ import org.wso2.siddhi.query.api.execution.query.input.stream.JoinInputStream;
 import org.wso2.siddhi.query.api.execution.query.input.stream.SingleInputStream;
 import org.wso2.siddhi.query.api.util.AnnotationHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutorService;
 
 public class QueryRuntime {
     private StreamRuntime streamRuntime;
     private QuerySelector querySelector;
     private OutputRateLimiter outputRateLimiter;
-
     private String queryId;
     private Query query;
     private SiddhiContext siddhiContext;
     private OutputCallback outputCallback;
     private StreamDefinition outputStreamDefinition;
+    private QueryPartitioner queryPartitioner;
     private boolean toLocalStream;
+    private QueryStreamReceiver queryStreamReceiver;
     private ConcurrentMap<String, StreamJunction> localStreamJunctionMap;
 
 
@@ -71,7 +76,14 @@ public class QueryRuntime {
         this.query = query;
         this.siddhiContext = siddhiContext;
 
+        this.query = query;
+        this.siddhiContext = siddhiContext;
+        //TODO: createStreamRuntime, outputRateLimiter
 
+
+    }
+
+    public QueryRuntime() {
 
     }
 
@@ -112,9 +124,38 @@ public class QueryRuntime {
         return false;
     }
 
-    public QueryRuntime clone() {
-        //TODO
-        return null;
+    public QueryRuntime clone(StreamDefinition streamDefinition, String key) {
+        QueryRuntime queryRuntime = new QueryRuntime();
+        queryRuntime.queryId = this.queryId + key;
+        queryRuntime.outputRateLimiter = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
+        queryRuntime.toLocalStream = this.toLocalStream;
+        queryRuntime.query = this.query;
+        queryRuntime.outputStreamDefinition = this.outputStreamDefinition;
+
+        if (!toLocalStream) {
+            queryRuntime.outputRateLimiter.setOutputCallback(outputCallback);
+            queryRuntime.outputCallback = this.outputCallback;
+
+        } else {
+            OutputCallback outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), key, localStreamJunctionMap, siddhiContext, outputStreamDefinition);
+            queryRuntime.outputRateLimiter.setOutputCallback(outputCallback);
+            queryRuntime.outputCallback = outputCallback;
+
+        }
+
+        if (this.isFromLocalStream()) {
+            QueryStreamReceiver queryStreamReceiver = queryPartitioner.cloneQueryStreamReceivers(queryRuntime.outputRateLimiter);
+            queryRuntime.queryStreamReceiver = queryStreamReceiver;
+
+                StreamJunction streamJunction = localStreamJunctionMap.get(streamDefinition.getId() + key);
+                if (streamJunction == null) {
+                    streamJunction = new StreamJunction(streamDefinition, (ExecutorService) siddhiContext.getExecutorService(),siddhiContext.getDefaultEventBufferSize());
+                    localStreamJunctionMap.putIfAbsent(streamDefinition.getId() + key, streamJunction);
+                }
+                streamJunction.subscribe(queryStreamReceiver);
+        }
+        return queryRuntime;
+
     }
 
 }

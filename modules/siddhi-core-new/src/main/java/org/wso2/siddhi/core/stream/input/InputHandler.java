@@ -17,21 +17,30 @@
  * under the License.
  */
 
-package org.wso2.siddhi.core.partition;
+package org.wso2.siddhi.core.stream.input;
 
-import org.wso2.siddhi.core.query.QueryRuntime;
+import org.wso2.siddhi.core.event.stream.StreamEvent;
 
-import java.util.List;
+public class InputHandler {
+    private String streamId;
 
-public class PartitionInstanceRuntime {
-    private String key;
-    private List<QueryRuntime> queryRuntimeList;
-
-    public PartitionInstanceRuntime(String key,List<QueryRuntime> queryRuntimeList){
-        this.key =key;
-        this.queryRuntimeList = queryRuntimeList;
+    public InputHandler(String streamId) {
+        this.streamId = streamId;
     }
 
+    //TODO: send methods
+
+    public void send(Object[] data) throws InterruptedException {
+    }
+
+    public void send(long timeStamp, Object[] data) throws InterruptedException {
+    }
+
+    public void send(StreamEvent event) throws InterruptedException {
+    }
+
+
+    public String getStreamId() {
+        return streamId;
+    }
 }
-
-
