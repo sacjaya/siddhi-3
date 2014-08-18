@@ -20,6 +20,14 @@ package org.wso2.siddhi.core.event;
 import org.junit.Assert;
 import org.junit.Test;
 import org.wso2.siddhi.core.event.stream.*;
+import org.wso2.siddhi.core.exception.OperationNotSupportedException;
+import org.wso2.siddhi.core.executor.ConstantExpressionExecutor;
+import org.wso2.siddhi.core.executor.ExpressionExecutor;
+import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
+import org.wso2.siddhi.core.executor.condition.AndConditionExpressionExecutor;
+import org.wso2.siddhi.core.executor.condition.compare.greater_than.GreaterThanCompareConditionExpressionExecutorIntInt;
+import org.wso2.siddhi.core.executor.condition.compare.less_than.LessThanCompareConditionExpressionExecutorFloatFloat;
+import org.wso2.siddhi.core.executor.math.add.AddExpressionExecutorFloat;
 import org.wso2.siddhi.core.query.selector.attribute.ComplexAttribute;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -87,5 +95,51 @@ public class EventTest {
         Assert.assertEquals(50, streamEvent.getBeforeWindowData()[0]);
         Assert.assertEquals(200, streamEvent.getOnAfterWindowData()[0]);
         Assert.assertEquals("WSO2", streamEvent.getOutputData()[0]);
+    }
+
+    @Test
+    public void testExpressionExecutors(){
+        StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
+
+        VariableExpressionExecutor priceVariableExpressionExecutor = new VariableExpressionExecutor("cseEventStream","price",streamDefinition,false);
+        ExpressionExecutor addExecutor = new AddExpressionExecutorFloat(new ConstantExpressionExecutor(10f, Attribute.Type.FLOAT),priceVariableExpressionExecutor);
+
+        StreamEvent event = new StreamEvent(0,0,3);
+        event.setOutputData(new Object[]{"WSO2", 10f, 5});
+
+        Assert.assertEquals("Result of adding should be 20.0", 20f, addExecutor.execute(event));
+    }
+
+    @Test
+    public void testConditionExpressionExecutors(){
+        StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
+
+        VariableExpressionExecutor priceVariableExpressionExecutor = new VariableExpressionExecutor("cseEventStream","price",streamDefinition,false);
+        VariableExpressionExecutor volumeVariableExpressionExecutor = new VariableExpressionExecutor("cseEventStream","volume",streamDefinition,false);
+        ExpressionExecutor compareLessThanExecutor = new LessThanCompareConditionExpressionExecutorFloatFloat(new ConstantExpressionExecutor(10f, Attribute.Type.FLOAT),priceVariableExpressionExecutor);
+        ExpressionExecutor compareGreaterThanExecutor = new GreaterThanCompareConditionExpressionExecutorIntInt(new ConstantExpressionExecutor(10, Attribute.Type.INT),volumeVariableExpressionExecutor);
+        ExpressionExecutor andExecutor = new AndConditionExpressionExecutor(compareLessThanExecutor,compareGreaterThanExecutor);
+
+        int count = 0;
+        for(int i=0; i<3 ; i++){
+            StreamEvent event = new StreamEvent(0,0,3);
+            event.setOutputData(new Object[]{"WSO2", i*11f, 5});
+            if((Boolean)andExecutor.execute(event)){
+                count ++;
+            }
+        }
+
+        Assert.assertEquals("Two events should pass through executor", 2, count);
+    }
+
+    @Test(expected = OperationNotSupportedException.class)
+    public void testConditionExpressionExecutorValidation(){
+        StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
+
+        VariableExpressionExecutor volumeVariableExpressionExecutor = new VariableExpressionExecutor("cseEventStream","volume",streamDefinition,false);
+        ConstantExpressionExecutor constantExpressionExecutor = new ConstantExpressionExecutor(10f, Attribute.Type.FLOAT);
+        ExpressionExecutor compareGreaterThanExecutor = new GreaterThanCompareConditionExpressionExecutorIntInt(new ConstantExpressionExecutor(10, Attribute.Type.INT),volumeVariableExpressionExecutor);
+        ExpressionExecutor andExecutor = new AndConditionExpressionExecutor(constantExpressionExecutor,compareGreaterThanExecutor);
+
     }
 }

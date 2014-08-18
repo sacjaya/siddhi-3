@@ -13,14 +13,21 @@
 package org.wso2.siddhi.core.executor.condition;
 
 import org.wso2.siddhi.core.event.stream.StreamEvent;
+import org.wso2.siddhi.core.exception.OperationNotSupportedException;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
+import org.wso2.siddhi.query.api.definition.Attribute;
 
 public class NotConditionExpressionExecutor extends ConditionExpressionExecutor {
 
     public ExpressionExecutor conditionExecutor;
 
     public NotConditionExpressionExecutor(ExpressionExecutor conditionExecutor) {
-        this.conditionExecutor = conditionExecutor;
+        if (conditionExecutor.getReturnType().equals(Attribute.Type.BOOL)) {
+            this.conditionExecutor = conditionExecutor;
+        } else {
+            throw new OperationNotSupportedException("Return type of condition executor " + conditionExecutor.toString() + " should be of type BOOL. " +
+                    "Actual Type: " + conditionExecutor.getReturnType().toString());
+        }
     }
 
     public Boolean execute(StreamEvent event) {
