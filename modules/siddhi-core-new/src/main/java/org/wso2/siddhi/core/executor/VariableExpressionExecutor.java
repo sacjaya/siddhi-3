@@ -28,7 +28,7 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
     private int[] position = new int[]{-1, -1};
 
 
-    public VariableExpressionExecutor(String streamIdOfVariable, String attributeName, StreamDefinition definition, boolean processInDefinition) {
+    public VariableExpressionExecutor(String streamIdOfVariable, String attributeName, StreamDefinition definition) {
         this.attributeName = attributeName;
         if (streamIdOfVariable != null) {
             streamReference = streamIdOfVariable;
