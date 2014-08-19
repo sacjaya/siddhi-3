@@ -19,7 +19,7 @@
 
 package org.wso2.siddhi.core.stream.input;
 
-import org.wso2.siddhi.core.event.stream.StreamEvent;
+import org.wso2.siddhi.core.event.Event;
 
 public class InputHandler {
     private String streamId;
@@ -28,7 +28,11 @@ public class InputHandler {
         this.streamId = streamId;
     }
 
-    //TODO: send methods
+    public String getStreamId() {
+        return streamId;
+    }
+
+    //TODO: implement send methods
 
     public void send(Object[] data) throws InterruptedException {
     }
@@ -36,11 +40,10 @@ public class InputHandler {
     public void send(long timeStamp, Object[] data) throws InterruptedException {
     }
 
-    public void send(StreamEvent event) throws InterruptedException {
+    public void send(Event event) throws InterruptedException {
     }
 
-
-    public String getStreamId() {
-        return streamId;
+    public void send(Event[] events) throws InterruptedException {
     }
+
 }
