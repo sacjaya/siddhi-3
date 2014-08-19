@@ -25,7 +25,7 @@ import java.util.List;
 
 
 /**
- * Class to hold mapping between StreamEvent
+ * Class to hold mapping between Event
  * and StreamEvent. This will be eventually
  * used to update variable positions on Variable executors
  */
