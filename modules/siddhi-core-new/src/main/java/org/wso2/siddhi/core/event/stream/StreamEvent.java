@@ -17,11 +17,13 @@
 */
 package org.wso2.siddhi.core.event.stream;
 
+import org.wso2.siddhi.core.event.ComplexEvent;
+
 /**
  * Standard processing event inside Siddhi. StreamEvent will be created
  * from StreamEvent before sending to relevant Queries.
  */
-public class StreamEvent {
+public class StreamEvent implements ComplexEvent{
 
     protected long timestamp = -1;
     protected Object[] outputData;              //Attributes to sent as output
@@ -82,5 +84,24 @@ public class StreamEvent {
 
     public void setNext(StreamEvent next) {
         this.next = next;
+    }
+
+    @Override
+    public Object getAttribute(int[] position){
+        StreamEvent streamEvent = this;
+        for(int i=0;i<position[0];i++){
+            streamEvent = streamEvent.getNext();
+        }
+        switch (position[1]){
+            case -1:
+                return streamEvent.getBeforeWindowData()[position[2]];
+            case 0:
+                return streamEvent.getOutputData()[position[2]];
+            case 1:
+                return streamEvent.getOnAfterWindowData()[position[2]];
+            default:
+                return null;
+        }
+
     }
 }

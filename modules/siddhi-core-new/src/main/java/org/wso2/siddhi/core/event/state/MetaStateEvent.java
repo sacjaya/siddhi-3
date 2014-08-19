@@ -17,33 +17,30 @@
  * under the License.
  */
 
-package org.wso2.siddhi.core.stream.input;
+package org.wso2.siddhi.core.event.state;
 
-import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 
-public class InputHandler {
-    private String streamId;
+public class MetaStateEvent {
+    private MetaStreamEvent[] metaStreamEvents;
+    private int eventCount = 0;
 
-    public InputHandler(String streamId) {
-        this.streamId = streamId;
+    public MetaStateEvent(int size){
+        metaStreamEvents = new MetaStreamEvent[size];
     }
 
-    public String getStreamId() {
-        return streamId;
+    public MetaStateEvent(MetaStreamEvent[] metaStreamEvents){
+        this.metaStreamEvents = metaStreamEvents;
+        eventCount = metaStreamEvents.length;
     }
 
-    //TODO: implement send methods
-
-    public void send(Object[] data) throws InterruptedException {
+    public MetaStreamEvent getMetaEvent(int position){
+        return metaStreamEvents[position];
     }
 
-    public void send(long timeStamp, Object[] data) throws InterruptedException {
-    }
-
-    public void send(Event event) throws InterruptedException {
-    }
-
-    public void send(Event[] events) throws InterruptedException {
+    public void addEvent(MetaStreamEvent metaStreamEvent){
+        metaStreamEvents[eventCount] = metaStreamEvent;
+        eventCount++;
     }
 
 }

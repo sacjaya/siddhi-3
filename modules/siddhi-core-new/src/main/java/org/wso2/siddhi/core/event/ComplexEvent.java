@@ -17,33 +17,10 @@
  * under the License.
  */
 
-package org.wso2.siddhi.core.stream.input;
+package org.wso2.siddhi.core.event;
 
-import org.wso2.siddhi.core.event.Event;
 
-public class InputHandler {
-    private String streamId;
+public interface ComplexEvent {
 
-    public InputHandler(String streamId) {
-        this.streamId = streamId;
-    }
-
-    public String getStreamId() {
-        return streamId;
-    }
-
-    //TODO: implement send methods
-
-    public void send(Object[] data) throws InterruptedException {
-    }
-
-    public void send(long timeStamp, Object[] data) throws InterruptedException {
-    }
-
-    public void send(Event event) throws InterruptedException {
-    }
-
-    public void send(Event[] events) throws InterruptedException {
-    }
-
+    Object getAttribute(int[] position);
 }
