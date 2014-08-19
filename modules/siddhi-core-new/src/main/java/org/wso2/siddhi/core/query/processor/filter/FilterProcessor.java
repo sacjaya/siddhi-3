@@ -19,9 +19,10 @@
 package org.wso2.siddhi.core.query.processor.filter;
 
 import org.wso2.siddhi.core.event.stream.StreamEvent;
+import org.wso2.siddhi.core.exception.OperationNotSupportedException;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
-import org.wso2.siddhi.core.executor.condition.ConditionExpressionExecutor;
 import org.wso2.siddhi.core.query.processor.Processor;
+import org.wso2.siddhi.query.api.definition.Attribute;
 
 
 public class FilterProcessor implements Processor {
@@ -29,8 +30,13 @@ public class FilterProcessor implements Processor {
     protected Processor next;
     private ExpressionExecutor conditionExecutor;
 
-    public FilterProcessor(ConditionExpressionExecutor conditionExecutor) {
-        this.conditionExecutor = conditionExecutor;
+    public FilterProcessor(ExpressionExecutor conditionExecutor) {
+        if(Attribute.Type.BOOL.equals(conditionExecutor.getReturnType())) {
+            this.conditionExecutor = conditionExecutor;
+        }else{
+            throw new OperationNotSupportedException("Return type of "+conditionExecutor.toString()+" should be of type BOOL. " +
+                    "Actual type: "+conditionExecutor.getReturnType().toString());
+        }
     }
 
     @Override
