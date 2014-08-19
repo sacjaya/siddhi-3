@@ -22,4 +22,5 @@ package org.wso2.siddhi.core.event;
 
 public interface ComplexEvent {
 
+    Object getAttribute(int[] position);
 }

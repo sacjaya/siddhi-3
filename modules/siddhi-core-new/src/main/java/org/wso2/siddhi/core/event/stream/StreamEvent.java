@@ -86,7 +86,22 @@ public class StreamEvent implements ComplexEvent{
         this.next = next;
     }
 
-    public Object getAttribute(int position){
-       return outputData[position];
+    @Override
+    public Object getAttribute(int[] position){
+        StreamEvent streamEvent = this;
+        for(int i=0;i<position[0];i++){
+            streamEvent = streamEvent.getNext();
+        }
+        switch (position[1]){
+            case -1:
+                return streamEvent.getBeforeWindowData()[position[2]];
+            case 0:
+                return streamEvent.getOutputData()[position[2]];
+            case 1:
+                return streamEvent.getOnAfterWindowData()[position[2]];
+            default:
+                return null;
+        }
+
     }
 }

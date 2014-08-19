@@ -53,11 +53,46 @@ public class StateEvent implements ComplexEvent{
         return next;
     }
 
-    public Object[] getAttributes(int[] positions){
-        Object[] attributes = new Object[streamEvents.length];
-        for(int i=0; i<positions.length;i++){
-            attributes[i] = streamEvents[i].getOutputData()[positions[i]];
+    /**
+     *
+     * @param position int array of 3 or 4 elements
+     * int array of 3 : position[0]-which element of the streamEvents array, position[1]-BeforeWindowData or OutputData or AfterWindowData,
+     *                  position[2]- which attribute
+     * int array of 4 : position[0]-which element of the streamEvents array, position[1]-which event of the event chain,
+     *                 position[3]- BeforeWindowData or OutputData or AfterWindowData, position[4]- which attribute
+     * @return
+     */
+    @Override
+    public Object getAttribute(int[] position){
+        StreamEvent streamEvent = streamEvents[position[0]];
+
+        if(position.length == 3){
+            switch (position[1]){
+                case -1:
+                    return streamEvent.getBeforeWindowData()[position[2]];
+                case 0:
+                    return streamEvent.getOutputData()[position[2]];
+                case 1:
+                    return streamEvent.getOnAfterWindowData()[position[2]];
+                default:
+                    return null;
+            }
         }
-        return attributes;
+
+        for(int i=0;i<position[1];i++){
+            streamEvent = streamEvent.getNext();
+        }
+        switch (position[2]){
+            case -1:
+                return streamEvent.getBeforeWindowData()[position[3]];
+            case 0:
+                return streamEvent.getOutputData()[position[3]];
+            case 1:
+                return streamEvent.getOnAfterWindowData()[position[3]];
+            default:
+                return null;
+        }
+
+
     }
 }
