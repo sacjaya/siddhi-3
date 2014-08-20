@@ -27,8 +27,9 @@ import org.wso2.siddhi.core.event.stream.StreamEventConverter;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.query.QueryRuntime;
 import org.wso2.siddhi.core.query.selector.QueryPartitioner;
-import org.wso2.siddhi.core.stream.QueryStreamReceiver;
 import org.wso2.siddhi.core.stream.StreamJunction;
+import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
+import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.List;
@@ -108,9 +109,9 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver {
                 for (QueryRuntime queryRuntime : queryRuntimeList) {
                     if (queryRuntime.getInputStreamId().get(0).equals(streamId)) {
 
-                        QueryStreamReceiver queryStreamReceiver = queryPartitioner.cloneQueryStreamReceivers(key, queryRuntime.getOutputRateManager());
+                        StreamRuntime streamRuntime = queryPartitioner.cloneStreamRuntime(key, queryRuntime.getOutputRateManager());
                         streamJunction = new StreamJunction(streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
-                        streamJunction.subscribe(queryStreamReceiver);
+                        streamJunction.subscribe(((SingleStreamRuntime)streamRuntime).getQueryStreamReceiver());
                         partitionRuntime.addStreamJunction(streamId + key, streamJunction);
                         cachedStreamJunctionMap.put(streamId + key, streamJunction);
 
