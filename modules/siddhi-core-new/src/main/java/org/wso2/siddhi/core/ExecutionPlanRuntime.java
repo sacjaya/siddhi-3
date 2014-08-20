@@ -82,12 +82,12 @@ public class ExecutionPlanRuntime {
         return queryRuntime.getQueryId();
     }
 
-    public void addCallback(StreamDefinition streamDefinition, StreamCallback streamCallback) {
-        streamCallback.setStreamId(streamDefinition.getId());
-        StreamJunction streamJunction = streamJunctionMap.get(streamDefinition.getId());
+    public void addCallback(String streamId, StreamCallback streamCallback) {
+        streamCallback.setStreamId(streamId);
+        StreamJunction streamJunction = streamJunctionMap.get(streamId);
         if (streamJunction == null) {
-            streamJunction = new StreamJunction(streamDefinition, (ExecutorService) siddhiContext.getExecutorService(),siddhiContext.getDefaultEventBufferSize());
-            streamJunctionMap.put(streamDefinition.getId(), streamJunction);
+            streamJunction = new StreamJunction((StreamDefinition) streamDefinitionMap.get(streamId), (ExecutorService) siddhiContext.getExecutorService(),siddhiContext.getDefaultEventBufferSize());
+            streamJunctionMap.put(streamId, streamJunction);
         }
         streamJunction.subscribe(streamCallback);
     }
