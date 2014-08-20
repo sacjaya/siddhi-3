@@ -1,64 +1,52 @@
 /*
-*  Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.wso2.siddhi.core.executor.condition;
 
 import org.wso2.siddhi.core.event.StreamEvent;
+import org.wso2.siddhi.core.exception.OperationNotSupportedException;
+import org.wso2.siddhi.core.executor.expression.ExpressionExecutor;
+import org.wso2.siddhi.query.api.definition.Attribute;
 
-public class AndConditionExecutor implements ConditionExecutor {
+public class AndConditionExecutor extends ConditionExecutor {
 
-    public ConditionExecutor leftConditionExecutor;
-    public ConditionExecutor rightConditionExecutor;
+    public ExpressionExecutor leftConditionExecutor;
+    public ExpressionExecutor rightConditionExecutor;
 
-    public AndConditionExecutor(ConditionExecutor leftConditionExecutor,
-                                ConditionExecutor rightConditionExecutor) {
-        this.leftConditionExecutor = leftConditionExecutor;
-        this.rightConditionExecutor = rightConditionExecutor;
-    }
+    public AndConditionExecutor(ExpressionExecutor leftConditionExecutor,
+                                ExpressionExecutor rightConditionExecutor) {
+        if (leftConditionExecutor.getReturnType().equals(Attribute.Type.BOOL)
+                && rightConditionExecutor.getReturnType().equals(Attribute.Type.BOOL)) {
 
-    public boolean execute(StreamEvent event) {
-        return leftConditionExecutor.execute(event) && rightConditionExecutor.execute(event);
-    }
-
-    @Override
-    public String constructFilterQuery(StreamEvent newEvent, int level) {
-        return constructQuery(newEvent, level);
-    }
-
-
-    public String constructQuery(StreamEvent newEvent, int level) {
-        String left, right;
-        left = leftConditionExecutor.constructFilterQuery(newEvent, 1);
-        right = rightConditionExecutor.constructFilterQuery(newEvent, 1);
-        if (left.equals("*") || right.equals("*")) {
-            return "*";
-        } else if (left.equals("*")) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("(").append(right).append(")");
-            return sb.toString();
-        } else if (right.equals("*")) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("(").append(left).append(")");
-            return sb.toString();
+            this.leftConditionExecutor = leftConditionExecutor;
+            this.rightConditionExecutor = rightConditionExecutor;
         } else {
-            StringBuilder sb = new StringBuilder();
-            sb.append("(").append(left).append(") and (").append(right).append(")");
-            return sb.toString();
+            if (!leftConditionExecutor.getReturnType().equals(Attribute.Type.BOOL)) {
+                throw new OperationNotSupportedException("Return type of condition executor " + leftConditionExecutor.toString() + " should be of type BOOL. " +
+                        "Actual Type: " + leftConditionExecutor.getReturnType().toString());
+            } else if (!rightConditionExecutor.getReturnType().equals(Attribute.Type.BOOL)) {
+                throw new OperationNotSupportedException("Return type of condition executor " + rightConditionExecutor.toString() + " should be of type BOOL. " +
+                        "Actual Type: " + rightConditionExecutor.getReturnType().toString());
+            } else {
+                throw new OperationNotSupportedException("Return type of condition executor " + leftConditionExecutor.toString() +
+                        " and condition executor" + rightConditionExecutor.toString() + "should be of type BOOL. Left executor: " +
+                        leftConditionExecutor.getReturnType().toString() + " Right executor: " + rightConditionExecutor.getReturnType().toString());
+            }
         }
+
+    }
+
+    public Boolean execute(StreamEvent event) {
+        return (Boolean) leftConditionExecutor.execute(event) && (Boolean) rightConditionExecutor.execute(event);
     }
 
 }
