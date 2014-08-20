@@ -20,30 +20,40 @@
 package org.wso2.siddhi.core.stream.input;
 
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.stream.StreamJunction;
 
 public class InputHandler {
     private String streamId;
+    private StreamJunction.Publisher publisher;
 
-    public InputHandler(String streamId) {
+
+    public InputHandler(String streamId,StreamJunction streamJunction) {
         this.streamId = streamId;
+        publisher = streamJunction.constructPublisher();
     }
 
     public String getStreamId() {
         return streamId;
     }
 
-    //TODO: implement send methods
-
     public void send(Object[] data) throws InterruptedException {
+        Event event = new Event(System.currentTimeMillis(), data);
+        publisher.send(event);
     }
 
     public void send(long timeStamp, Object[] data) throws InterruptedException {
+        Event event = new Event(timeStamp, data);
+        publisher.send(event);
     }
 
     public void send(Event event) throws InterruptedException {
+        publisher.send(event);
     }
 
     public void send(Event[] events) throws InterruptedException {
+        for (Event event:events){
+            send(event);
+        }
     }
 
 }
