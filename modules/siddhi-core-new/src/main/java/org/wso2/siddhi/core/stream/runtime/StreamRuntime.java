@@ -19,6 +19,9 @@
 
 package org.wso2.siddhi.core.stream.runtime;
 
+/**
+ * Interface for all StreamRuntime s.(Ex: JoinStreamRuntime, SingleStreamRuntime)
+ */
 public interface StreamRuntime {
 
 }
