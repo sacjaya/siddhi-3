@@ -75,6 +75,15 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver {
     }
 
     @Override
+    public void receive(Event event) {
+        StreamEvent streamEvent = eventConverter.convertToStreamEvent(event);
+        for (PartitionExecutor partitionExecutor : partitionExecutors) {
+            String key = partitionExecutor.execute((streamEvent));
+            send(key, streamEvent);
+        }
+    }
+
+    @Override
     public void receive(Event event, boolean endOfBatch) {
         StreamEvent streamEvent = eventConverter.convertToStreamEvent(event);
         for (PartitionExecutor partitionExecutor : partitionExecutors) {

@@ -79,6 +79,24 @@ public class StreamJunction {
 
     }
 
+    public void sendEvent(Event event) {
+
+        if (disruptor != null) {
+            long sequenceNo = ringBuffer.next();
+            try {
+                Event existingEvent = ringBuffer.get(sequenceNo);
+                existingEvent.copyFrom(event);
+            } finally {
+                ringBuffer.publish(sequenceNo);
+            }
+        } else {
+            for (Receiver receiver : receivers) {
+                receiver.receive(event);
+            }
+        }
+
+    }
+
     public synchronized void startProcessing() {
         if (receivers.size() > 0) {
 
@@ -148,6 +166,8 @@ public class StreamJunction {
 
         public void receive(StreamEvent streamEvent);
 
+        public void receive(Event event);
+
         public void receive(Event event, boolean endOfBatch);
     }
 
@@ -176,6 +196,12 @@ public class StreamJunction {
         public void send(StreamEvent streamEvent) {
             if (streamJunction != null) {
                 streamJunction.sendEvent(streamEvent);
+            }
+        }
+
+        public void send(Event event) {
+            if (streamJunction != null) {
+                streamJunction.sendEvent(event);
             }
         }
 

@@ -43,6 +43,11 @@ public abstract class StreamCallback implements StreamJunction.Receiver {
     }
 
     @Override
+    public void receive(Event event) {
+        receive(new Event[]{event});
+    }
+
+    @Override
     public void receive(Event event, boolean endOfBatch) {
         eventBuffer.add(event);
         if (endOfBatch) {
