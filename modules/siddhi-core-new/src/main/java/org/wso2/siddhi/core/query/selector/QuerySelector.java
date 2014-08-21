@@ -23,12 +23,14 @@ import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.state.MetaStateEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.exception.QueryCreationException;
+import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
 import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.util.parser.helper.ExpressionExecutorContainer;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 
+import java.util.List;
 import java.util.Map;
 
 public class QuerySelector implements Processor {
@@ -45,17 +47,17 @@ public class QuerySelector implements Processor {
     //TODO: add attributeProcessorList,  aggregateAttributeProcessorList and the methods -processOutputAttributeGenerator,populateAttributeProcessorList
 
     public QuerySelector(String outputStreamId, Selector selector, boolean currentOn, boolean expiredOn, SiddhiContext siddhiContext,
-                         Map<String, StreamDefinition> tempStreamDefinitionMap, MetaStateEvent metaStreamEvent, ExpressionExecutorContainer variableExpressionExecutors) {
+                         Map<String, StreamDefinition> tempStreamDefinitionMap, MetaStateEvent metaStreamEvent, List<VariableExpressionExecutor> executors) {
         this.currentOn = currentOn;
         this.expiredOn = expiredOn;
         this.selector = selector;
         this.outputSize = selector.getSelectionList().size();
-        populateAttributeProcessorList(metaStreamEvent, variableExpressionExecutors, tempStreamDefinitionMap);
+        populateAttributeProcessorList(metaStreamEvent, executors, tempStreamDefinitionMap);
 
 
     }
 
-    private void populateAttributeProcessorList(MetaStateEvent metaStateEvent, ExpressionExecutorContainer variableExpressionExecutors, Map<String, StreamDefinition> tempStreamDefinitionMap) {
+    private void populateAttributeProcessorList(MetaStateEvent metaStateEvent, List<VariableExpressionExecutor> executors, Map<String, StreamDefinition> tempStreamDefinitionMap) {
         //TODO: implement after adding AttributeProcessors
     }
 
