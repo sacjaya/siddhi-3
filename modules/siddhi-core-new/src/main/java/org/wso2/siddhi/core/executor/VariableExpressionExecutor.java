@@ -45,20 +45,9 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
 
     @Override
     public Object execute(StreamEvent event) {
-        switch (position[0]) {
-            case (SiddhiConstants.BEFORE_WINDOW_DATA_INDEX):
-                return event.getBeforeWindowData()[position[1]];
-            case (SiddhiConstants.AFTER_WINDOW_DATA_INDEX):
-                return event.getOnAfterWindowData()[position[1]];
-            case (SiddhiConstants.OUTPUT_DATA_INDEX):
-                return event.getOutputData()[position[1]];
-            case (-1):
-                return null; //TODO: exception?
-            default:
-                return null; //TODO: exception?
-        }
-
+        return event.getAttribute(position);
     }
+
 
     public Attribute.Type getReturnType() {
         return type;
