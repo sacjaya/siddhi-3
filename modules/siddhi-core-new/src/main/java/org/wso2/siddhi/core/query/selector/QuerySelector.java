@@ -20,6 +20,7 @@
 package org.wso2.siddhi.core.query.selector;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.event.ComplexMetaEvent;
 import org.wso2.siddhi.core.event.state.MetaStateEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.exception.QueryCreationException;
@@ -47,17 +48,17 @@ public class QuerySelector implements Processor {
     //TODO: add attributeProcessorList,  aggregateAttributeProcessorList and the methods -processOutputAttributeGenerator,populateAttributeProcessorList
 
     public QuerySelector(String outputStreamId, Selector selector, boolean currentOn, boolean expiredOn, SiddhiContext siddhiContext,
-                         Map<String, StreamDefinition> tempStreamDefinitionMap, MetaStateEvent metaStreamEvent, List<VariableExpressionExecutor> executors) {
+                         Map<String, StreamDefinition> tempStreamDefinitionMap, ComplexMetaEvent metaEvent, List<VariableExpressionExecutor> executors) {
         this.currentOn = currentOn;
         this.expiredOn = expiredOn;
         this.selector = selector;
         this.outputSize = selector.getSelectionList().size();
-        populateAttributeProcessorList(metaStreamEvent, executors, tempStreamDefinitionMap);
+        populateAttributeProcessorList(metaEvent, executors, tempStreamDefinitionMap);
 
 
     }
 
-    private void populateAttributeProcessorList(MetaStateEvent metaStateEvent, List<VariableExpressionExecutor> executors, Map<String, StreamDefinition> tempStreamDefinitionMap) {
+    private void populateAttributeProcessorList(ComplexMetaEvent metaStateEvent, List<VariableExpressionExecutor> executors, Map<String, StreamDefinition> tempStreamDefinitionMap) {
         //TODO: implement after adding AttributeProcessors
     }
 
