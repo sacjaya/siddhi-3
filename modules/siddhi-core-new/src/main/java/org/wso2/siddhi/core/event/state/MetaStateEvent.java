@@ -19,9 +19,11 @@
 
 package org.wso2.siddhi.core.event.state;
 
+import org.wso2.siddhi.core.event.ComplexMetaEvent;
 import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
+import org.wso2.siddhi.query.api.definition.Attribute;
 
-public class MetaStateEvent {
+public class MetaStateEvent implements ComplexMetaEvent{
     private MetaStreamEvent[] metaStreamEvents;
     private int eventCount = 0;
 
@@ -43,4 +45,8 @@ public class MetaStateEvent {
         eventCount++;
     }
 
+    @Override
+    public void addData(Attribute attribute) {
+        metaStreamEvents[eventCount-1].addData(attribute);
+    }
 }
