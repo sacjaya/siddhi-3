@@ -18,6 +18,7 @@
 package org.wso2.siddhi.core.event.stream;
 
 import org.wso2.siddhi.core.event.ComplexEvent;
+import org.wso2.siddhi.core.util.SiddhiConstants;
 
 /**
  * Standard processing event inside Siddhi. StreamEvent will be created
@@ -93,11 +94,11 @@ public class StreamEvent implements ComplexEvent{
             streamEvent = streamEvent.getNext();
         }
         switch (position[1]){
-            case -1:
+            case (SiddhiConstants.BEFORE_WINDOW_DATA_INDEX):
                 return streamEvent.getBeforeWindowData()[position[2]];
-            case 0:
+            case (SiddhiConstants.OUTPUT_DATA_INDEX):
                 return streamEvent.getOutputData()[position[2]];
-            case 1:
+            case (SiddhiConstants.AFTER_WINDOW_DATA_INDEX):
                 return streamEvent.getOnAfterWindowData()[position[2]];
             default:
                 return null;
