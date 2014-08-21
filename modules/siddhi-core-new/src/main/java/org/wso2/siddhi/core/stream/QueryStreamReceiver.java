@@ -53,6 +53,14 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
     }
 
     @Override
+    public void receive(Event event) {
+        StreamEvent streamEvent = eventConverter.convertToStreamEvent(event);
+        if (processorChain != null) {
+            processorChain.process(streamEvent);
+        }
+    }
+
+    @Override
     public void receive(Event event, boolean endOfBatch) {
 
         StreamEvent streamEvent = eventConverter.convertToStreamEvent(event);

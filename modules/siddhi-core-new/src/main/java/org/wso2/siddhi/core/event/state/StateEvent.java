@@ -21,6 +21,7 @@ package org.wso2.siddhi.core.event.state;
 
 import org.wso2.siddhi.core.event.ComplexEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
+import org.wso2.siddhi.core.util.SiddhiConstants;
 
 public class StateEvent implements ComplexEvent{
     private StreamEvent[] streamEvents;
@@ -83,11 +84,11 @@ public class StateEvent implements ComplexEvent{
             streamEvent = streamEvent.getNext();
         }
         switch (position[2]){
-            case -1:
+            case (SiddhiConstants.BEFORE_WINDOW_DATA_INDEX):
                 return streamEvent.getBeforeWindowData()[position[3]];
-            case 0:
+            case (SiddhiConstants.OUTPUT_DATA_INDEX):
                 return streamEvent.getOutputData()[position[3]];
-            case 1:
+            case (SiddhiConstants.AFTER_WINDOW_DATA_INDEX):
                 return streamEvent.getOnAfterWindowData()[position[3]];
             default:
                 return null;
