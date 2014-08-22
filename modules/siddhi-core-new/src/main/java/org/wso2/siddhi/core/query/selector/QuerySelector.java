@@ -20,19 +20,15 @@
 package org.wso2.siddhi.core.query.selector;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.event.ComplexMetaEvent;
-import org.wso2.siddhi.core.event.state.MetaStateEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.exception.QueryCreationException;
-import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
 import org.wso2.siddhi.core.query.processor.Processor;
-import org.wso2.siddhi.core.util.parser.helper.ExpressionExecutorContainer;
+import org.wso2.siddhi.core.query.selector.attribute.processor.AttributeProcessor;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
 
 public class QuerySelector implements Processor {
 
@@ -43,23 +39,16 @@ public class QuerySelector implements Processor {
     private boolean currentOn = false;
     private boolean expiredOn = false;
     private OutputRateLimiter outputRateLimiter;
+    private ArrayList<AttributeProcessor> attributeProcessorList;
 
 
-    //TODO: add attributeProcessorList,  aggregateAttributeProcessorList and the methods -processOutputAttributeGenerator,populateAttributeProcessorList
+    //TODO:aggregateAttributeProcessorList and the methods -processOutputAttributeGenerator
 
-    public QuerySelector(String outputStreamId, Selector selector, boolean currentOn, boolean expiredOn, SiddhiContext siddhiContext,
-                         Map<String, StreamDefinition> tempStreamDefinitionMap, ComplexMetaEvent metaEvent, List<VariableExpressionExecutor> executors) {
+    public QuerySelector(String outputStreamId, Selector selector, boolean currentOn, boolean expiredOn, SiddhiContext siddhiContext) {
         this.currentOn = currentOn;
         this.expiredOn = expiredOn;
         this.selector = selector;
         this.outputSize = selector.getSelectionList().size();
-        populateAttributeProcessorList(metaEvent, executors, tempStreamDefinitionMap);
-
-
-    }
-
-    private void populateAttributeProcessorList(ComplexMetaEvent metaStateEvent, List<VariableExpressionExecutor> executors, Map<String, StreamDefinition> tempStreamDefinitionMap) {
-        //TODO: implement after adding AttributeProcessors
     }
 
     @Override
@@ -105,5 +94,15 @@ public class QuerySelector implements Processor {
     public void setToLast(Processor processor) {
         setNext(processor);
     }
+
+
+    public ArrayList<AttributeProcessor> getAttributeProcessorList() {
+        return attributeProcessorList;
+    }
+
+    public void setAttributeProcessorList(ArrayList<AttributeProcessor> attributeProcessorList) {
+        this.attributeProcessorList = attributeProcessorList;
+    }
+
 
 }
