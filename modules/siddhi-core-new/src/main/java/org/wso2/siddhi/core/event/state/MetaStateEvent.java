@@ -47,6 +47,10 @@ public class MetaStateEvent implements ComplexMetaEvent{
 
     @Override
     public void addData(Attribute attribute) {
-        metaStreamEvents[eventCount-1].addData(attribute);
+        //TODO consider selector population
+    }
+
+    public int getEventCount() {
+        return eventCount;
     }
 }
