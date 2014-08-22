@@ -18,9 +18,9 @@
 
 package org.wso2.siddhi.core.query;
 
-import org.wso2.siddhi.core.partition.PartitionRuntime;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.exception.QueryCreationException;
+import org.wso2.siddhi.core.partition.PartitionRuntime;
 import org.wso2.siddhi.core.partition.PartitionStreamReceiver;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
@@ -32,7 +32,7 @@ import org.wso2.siddhi.core.stream.QueryStreamReceiver;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
 import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
-import org.wso2.siddhi.core.util.parser.QueryOutputParser;
+import org.wso2.siddhi.core.util.parser.OutputParser;
 import org.wso2.siddhi.query.api.annotation.Element;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -44,13 +44,13 @@ import org.wso2.siddhi.query.api.execution.query.input.stream.SingleInputStream;
 import org.wso2.siddhi.query.api.execution.query.output.stream.InsertIntoStream;
 import org.wso2.siddhi.query.api.util.AnnotationHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 
 public class QueryRuntime {
+
     private StreamRuntime streamRuntime;
     private OutputRateLimiter outputRateLimiter;
     private String queryId;
@@ -61,7 +61,7 @@ public class QueryRuntime {
     private QueryPartitioner queryPartitioner;
     private boolean toLocalStream;
     private ConcurrentMap<String, StreamJunction> localStreamJunctionMap;
-
+    private QuerySelector selector;
 
     public QueryRuntime(Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap, Partition partition, SiddhiContext siddhiContext, PartitionRuntime partitionRuntime) {
         try {
@@ -79,17 +79,17 @@ public class QueryRuntime {
         this.query = query;
         this.siddhiContext = siddhiContext;
 
-        outputRateLimiter = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
-        queryPartitioner = new QueryPartitioner(query.getInputStream(),partition,siddhiContext);
+        outputRateLimiter = OutputParser.constructOutputRateLimiter(query.getOutputRate());
+        queryPartitioner = new QueryPartitioner(query.getInputStream(), partition, siddhiContext);
         streamRuntime = queryPartitioner.getQueryStreamRuntime(outputRateLimiter);
 
         if (query.getOutputStream() instanceof InsertIntoStream && ((InsertIntoStream) query.getOutputStream()).isInnerStream()) {
             toLocalStream = true;
-            outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(),localStreamJunctionMap,outputStreamDefinition,siddhiContext);
+            outputCallback = OutputParser.constructOutputCallback(query.getOutputStream(), localStreamJunctionMap, outputStreamDefinition, siddhiContext);
             outputRateLimiter.setOutputCallback(outputCallback);
 
         } else {
-            outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), streamJunctionMap,outputStreamDefinition,siddhiContext);
+            outputCallback = OutputParser.constructOutputCallback(query.getOutputStream(), streamJunctionMap, outputStreamDefinition, siddhiContext);
             outputRateLimiter.setOutputCallback(outputCallback);
         }
 
@@ -105,7 +105,6 @@ public class QueryRuntime {
         }//TODO: else
 
     }
-
 
 
     public QueryRuntime() {
@@ -152,7 +151,7 @@ public class QueryRuntime {
     public QueryRuntime clone(StreamDefinition streamDefinition, String key) {
         QueryRuntime queryRuntime = new QueryRuntime();
         queryRuntime.queryId = this.queryId + key;
-        queryRuntime.outputRateLimiter = QueryOutputParser.constructOutputRateManager(query.getOutputRate());
+        queryRuntime.outputRateLimiter = OutputParser.constructOutputRateLimiter(query.getOutputRate());
         queryRuntime.toLocalStream = this.toLocalStream;
         queryRuntime.query = this.query;
         queryRuntime.outputStreamDefinition = this.outputStreamDefinition;
@@ -162,7 +161,7 @@ public class QueryRuntime {
             queryRuntime.outputCallback = this.outputCallback;
 
         } else {
-            OutputCallback outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(),key,localStreamJunctionMap,outputStreamDefinition,siddhiContext);
+            OutputCallback outputCallback = OutputParser.constructOutputCallback(query.getOutputStream(), key, localStreamJunctionMap, outputStreamDefinition, siddhiContext);
             queryRuntime.outputRateLimiter.setOutputCallback(outputCallback);
             queryRuntime.outputCallback = outputCallback;
 
@@ -171,15 +170,34 @@ public class QueryRuntime {
         if (this.isFromLocalStream()) {
             queryRuntime.streamRuntime = queryPartitioner.cloneStreamRuntime(queryRuntime.outputRateLimiter);
 
-                StreamJunction streamJunction = localStreamJunctionMap.get(streamDefinition.getId() + key);
-                if (streamJunction == null) {
-                    streamJunction = new StreamJunction(streamDefinition, (ExecutorService) siddhiContext.getExecutorService(),siddhiContext.getDefaultEventBufferSize());
-                    localStreamJunctionMap.putIfAbsent(streamDefinition.getId() + key, streamJunction);
-                }
-                streamJunction.subscribe(((SingleStreamRuntime)(queryRuntime.streamRuntime)).getQueryStreamReceiver());
+            StreamJunction streamJunction = localStreamJunctionMap.get(streamDefinition.getId() + key);
+            if (streamJunction == null) {
+                streamJunction = new StreamJunction(streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
+                localStreamJunctionMap.putIfAbsent(streamDefinition.getId() + key, streamJunction);
+            }
+            streamJunction.subscribe(((SingleStreamRuntime) (queryRuntime.streamRuntime)).getQueryStreamReceiver());
         }
         return queryRuntime;
 
     }
 
+    public void setStreamRuntime(StreamRuntime streamRuntime) {
+        this.streamRuntime = streamRuntime;
+    }
+
+    public void setQuery(Query query) {
+        this.query = query;
+    }
+
+    public void setSiddhiContext(SiddhiContext siddhiContext) {
+        this.siddhiContext = siddhiContext;
+    }
+
+    public void setOutputRateLimiter(OutputRateLimiter outputRateLimiter) {
+        this.outputRateLimiter = outputRateLimiter;
+    }
+
+    public void setSelector(QuerySelector selector) {
+        this.selector = selector;
+    }
 }
