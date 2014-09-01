@@ -39,6 +39,10 @@ public class StreamEvent implements ComplexEvent{
         outputData = new Object[outputDataSize];
     }
 
+    public StreamEvent() {
+        //Do nothing
+    }
+
     public Object[] getBeforeWindowData() {
         return beforeWindowData;
     }
