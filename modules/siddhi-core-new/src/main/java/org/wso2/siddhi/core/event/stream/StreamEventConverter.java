@@ -32,10 +32,8 @@ import java.util.List;
 public class StreamEventConverter {
 
     private ArrayList<ConverterElement> converterElements;       //List to hold information needed for conversion
+    private StreamEventPool streamEventPool;
 
-    private int beforeWindowDataSize;
-    private int onAfterWindowDataSize;
-    private int outputDataSize;
 
     /**
      * Creation and initialization of EventConverter. This will create
@@ -45,9 +43,13 @@ public class StreamEventConverter {
      * @param defaultDefinition
      */
     public StreamEventConverter(MetaStreamEvent metaStreamEvent, StreamDefinition defaultDefinition) {
-        this.beforeWindowDataSize = metaStreamEvent.getBeforeWindowData().size();
-        this.onAfterWindowDataSize = metaStreamEvent.getAfterWindowData().size();
-        this.outputDataSize = metaStreamEvent.getOutputData().size();
+        int beforeWindowDataSize = metaStreamEvent.getBeforeWindowData().size();
+        int onAfterWindowDataSize = metaStreamEvent.getAfterWindowData().size();
+        int outputDataSize = metaStreamEvent.getOutputData().size();
+
+        StreamEventFactory eventFactory = new StreamEventFactory(beforeWindowDataSize, onAfterWindowDataSize, outputDataSize);
+        int defaultPoolSize = 5;
+        streamEventPool = new StreamEventPool(eventFactory, defaultPoolSize);
 
         int size = metaStreamEvent.getBeforeWindowData().size() + metaStreamEvent.getAfterWindowData().size() + metaStreamEvent.getOutputData().size();
         converterElements = new ArrayList<ConverterElement>(size);
@@ -88,9 +90,7 @@ public class StreamEventConverter {
      * @return StreamEvent
      */
     public StreamEvent convertToInnerStreamEvent(Object[] data, boolean isExpected, long timestamp) {
-
-        StreamEvent streamEvent = new StreamEvent(beforeWindowDataSize, onAfterWindowDataSize, outputDataSize);  //todo get from pool
-
+        StreamEvent streamEvent = streamEventPool.borrowEvent();
         for (ConverterElement converterElement : converterElements) {
             if (converterElement.getToPosition()[0] == SiddhiConstants.BEFORE_WINDOW_DATA_INDEX) {
                 streamEvent.getBeforeWindowData()[converterElement.getToPosition()[1]] = data[converterElement.getFromPosition()];
