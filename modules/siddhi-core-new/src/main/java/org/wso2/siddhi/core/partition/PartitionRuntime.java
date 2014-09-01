@@ -88,7 +88,7 @@ public class PartitionRuntime {
 
     private QueryRuntime addQuery(Query query) {
 
-        QueryRuntime metaQueryRuntime = new QueryRuntime(query, streamDefinitionMap, streamJunctionMap, partition, siddhiContext, this);
+        QueryRuntime metaQueryRuntime = null; //TODO: new QueryRuntime(query, streamDefinitionMap, streamJunctionMap, partition, siddhiContext, this);
         metaQueryRuntimeMap.put(metaQueryRuntime.getQueryId(), metaQueryRuntime);
         OutputCallback outputCallback = metaQueryRuntime.getOutputCallback();
         if (metaQueryRuntime.isToLocalStream()) {
