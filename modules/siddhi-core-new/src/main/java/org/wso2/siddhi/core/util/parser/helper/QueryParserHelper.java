@@ -26,7 +26,6 @@ import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
 import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
 import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
 import org.wso2.siddhi.core.util.SiddhiConstants;
-import org.wso2.siddhi.core.util.converter.EventConverter;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
 import java.util.List;
@@ -103,7 +102,7 @@ public class QueryParserHelper {
         int index = 0;
         if (runtime instanceof SingleStreamRuntime) {
 
-            StreamEventConverter converter = new StreamEventConverter(metaStateEvent,null);
+            StreamEventConverter converter = new StreamEventConverter(metaStateEvent.getMetaEvent(index));
             ((SingleStreamRuntime) runtime).getQueryStreamReceiver().setEventConverter(converter);
         } else {
             //TODO JoinStreamRuntime/PatternStreamRuntime

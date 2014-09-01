@@ -40,9 +40,9 @@ public class StreamEventConverter {
      * relevant infrastructure for event conversion.
      *
      * @param metaStreamEvent
-     * @param defaultDefinition
      */
-    public StreamEventConverter(MetaStreamEvent metaStreamEvent, StreamDefinition defaultDefinition) {
+    public StreamEventConverter(MetaStreamEvent metaStreamEvent) {
+        StreamDefinition defaultDefinition = (StreamDefinition) metaStreamEvent.getDefinition();
         int beforeWindowDataSize = metaStreamEvent.getBeforeWindowData().size();
         int onAfterWindowDataSize = metaStreamEvent.getAfterWindowData().size();
         int outputDataSize = metaStreamEvent.getOutputData().size();
