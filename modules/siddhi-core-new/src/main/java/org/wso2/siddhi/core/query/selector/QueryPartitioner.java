@@ -25,41 +25,38 @@ import org.wso2.siddhi.core.partition.executor.ValuePartitionExecutor;
 import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
 import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
 import org.wso2.siddhi.core.util.parser.ExpressionParser;
-import org.wso2.siddhi.query.api.annotation.Annotation;
-import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.partition.Partition;
 import org.wso2.siddhi.query.api.execution.partition.PartitionType;
 import org.wso2.siddhi.query.api.execution.partition.ValuePartitionType;
 import org.wso2.siddhi.query.api.execution.query.input.stream.BasicSingleInputStream;
 import org.wso2.siddhi.query.api.execution.query.input.stream.InputStream;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class QueryPartitioner {
 
 
     private List<List<PartitionExecutor>> partitionExecutors = new ArrayList<List<PartitionExecutor>>();
 
-    public QueryPartitioner(InputStream inputStream,Partition partition,SiddhiContext siddhiContext) {
+    public QueryPartitioner(InputStream inputStream, Partition partition, SiddhiContext siddhiContext) {
 
         if (partition != null) {
 
-            if(inputStream instanceof BasicSingleInputStream){
+            if (inputStream instanceof BasicSingleInputStream) {
                 ArrayList<PartitionExecutor> executorList = new ArrayList<PartitionExecutor>();
                 partitionExecutors.add(executorList);
                 for (PartitionType partitionType : partition.getPartitionTypeMap().values()) {
                     if (partitionType instanceof ValuePartitionType) {
-                       if (partitionType.getStreamId().equals(((BasicSingleInputStream) inputStream).getStreamId())) {
-                           try {
-                               executorList.add(new ValuePartitionExecutor(ExpressionParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(), siddhiContext, null, null, null)));//TODO: add correct streamDefinition map as 4th parameter
-                           } catch (ValidatorException e) {
-                               //This will never happen
-                           }
-                       }
+                        if (partitionType.getStreamId().equals(((BasicSingleInputStream) inputStream).getStreamId())) {
+                            try {
+                                executorList.add(new ValuePartitionExecutor(ExpressionParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(), siddhiContext, null, null, null)));//TODO: add correct streamDefinition map as 4th parameter
+                            } catch (ValidatorException e) {
+                                //This will never happen
+                            }
+                        }
                     } else {
-                          //TODO: range partitioning
+                        //TODO: range partitioning
                     }
                 }
             }

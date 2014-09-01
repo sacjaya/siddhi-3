@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.event.state.MetaStateEvent;
 import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 import org.wso2.siddhi.core.executor.ConstantExpressionExecutor;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
@@ -46,7 +47,8 @@ import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
 import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
-import org.wso2.siddhi.core.util.parser.QueryOutputParser;
+import org.wso2.siddhi.core.util.parser.OutputParser;
+import org.wso2.siddhi.core.util.parser.SelectorParser;
 import org.wso2.siddhi.query.api.annotation.Annotation;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
@@ -96,7 +98,7 @@ public class QueryTestCase {
         ExecutionPlanRuntime executionPlanRuntime = new ExecutionPlanRuntime(siddhiContext);
         executionPlanRuntime.defineStream(streamA);
 
-        QueryRuntime queryRuntime = new QueryRuntime(query,executionPlanRuntime.getStreamDefinitionMap(),executionPlanRuntime.getStreamJunctions(),null,siddhiContext,null);
+        QueryRuntime queryRuntime = new QueryRuntime(query, executionPlanRuntime.getStreamDefinitionMap(), executionPlanRuntime.getStreamJunctions(), null, siddhiContext, null);
 
         executionPlanRuntime.addQueryRuntime(queryRuntime);
 
@@ -104,26 +106,28 @@ public class QueryTestCase {
         metaStreamEvent.intializeOutData();
         metaStreamEvent.addData(new Attribute("symbol", Attribute.Type.STRING));
         metaStreamEvent.addData(new Attribute("price", Attribute.Type.INT));
+        metaStreamEvent.setDefinition(streamA);
+        MetaStateEvent metaStateEvent = new MetaStateEvent(1);
+        metaStateEvent.addEvent(metaStreamEvent);
 
-        QueryStreamReceiver queryStreamReceiver = new QueryStreamReceiver(metaStreamEvent,streamA);
+        QueryStreamReceiver queryStreamReceiver = new QueryStreamReceiver(metaStreamEvent, streamA);
         List<VariableExpressionExecutor> variableExpressionExecutorList = new LinkedList<VariableExpressionExecutor>();
 
-        Map<String,StreamDefinition> tempStreamDefinitionMap = new ConcurrentHashMap<String, StreamDefinition>();
-        tempStreamDefinitionMap.put("streamA",streamA);
-
-        QuerySelector querySelector = new QuerySelector("StockQuote",query.getSelector(),false,false,siddhiContext,tempStreamDefinitionMap,metaStreamEvent,variableExpressionExecutorList);
+        Map<String, StreamDefinition> tempStreamDefinitionMap = new ConcurrentHashMap<String, StreamDefinition>();
+        tempStreamDefinitionMap.put("streamA", streamA);
+        QuerySelector querySelector = SelectorParser.parse(query.getSelector(), query.getOutputStream(), siddhiContext, metaStateEvent, variableExpressionExecutorList);
         OutputRateLimiter outputRateLimiter = queryRuntime.getOutputRateManager();
         querySelector.setNext(outputRateLimiter);
-        StreamRuntime streamRuntime = new SingleStreamRuntime(queryStreamReceiver,querySelector);
+        StreamRuntime streamRuntime = new SingleStreamRuntime(queryStreamReceiver, querySelector);
 
 
-        OutputCallback outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), executionPlanRuntime.getStreamJunctions(),
+        OutputCallback outputCallback = OutputParser.constructOutputCallback(query.getOutputStream(), executionPlanRuntime.getStreamJunctions(),
                 new StreamDefinition("StockQuote").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT), siddhiContext);
         outputRateLimiter.setOutputCallback(outputCallback);
 
         executionPlanRuntime.getStreamJunctions().get(queryStreamReceiver.getStreamId()).subscribe(queryStreamReceiver);
 
-        executionPlanRuntime.addCallback("query1", new QueryCallback(query,"query1",2,siddhiContext) {
+        executionPlanRuntime.addCallback("query1", new QueryCallback(query, "query1", 2, siddhiContext) {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 Assert.assertTrue("IBM".equals(inEvents[0].getData(0)) || "WSO2".equals(inEvents[0].getData(0)));
@@ -132,10 +136,10 @@ public class QueryTestCase {
             }
 
         });
-        InputHandler inputHandler = executionPlanRuntime.getInputHandler("streamA") ;
+        InputHandler inputHandler = executionPlanRuntime.getInputHandler("streamA");
         inputHandler.send(new Object[]{"IBM", 100});
-        inputHandler.send(new Object[]{"WSO2",100});
-        Assert.assertEquals(2,count);
+        inputHandler.send(new Object[]{"WSO2", 100});
+        Assert.assertEquals(2, count);
         Assert.assertTrue(eventArrived);
     }
 
@@ -150,8 +154,8 @@ public class QueryTestCase {
         Query query = new Query();
         query.from(InputStream.stream("streamA").
                 filter(Expression.compare(Expression.value(70),
-                        Compare.Operator.GREATER_THAN,
-                        Expression.variable("price"))
+                                Compare.Operator.GREATER_THAN,
+                                Expression.variable("price"))
                 ));
         query.annotation(Annotation.annotation("info").element("name", "query1"));
         query.select(
@@ -164,7 +168,7 @@ public class QueryTestCase {
         ExecutionPlanRuntime executionPlanRuntime = new ExecutionPlanRuntime(siddhiContext);
         executionPlanRuntime.defineStream(streamA);
 
-        QueryRuntime queryRuntime = new QueryRuntime(query,executionPlanRuntime.getStreamDefinitionMap(),executionPlanRuntime.getStreamJunctions(),null,siddhiContext,null);
+        QueryRuntime queryRuntime = new QueryRuntime(query, executionPlanRuntime.getStreamDefinitionMap(), executionPlanRuntime.getStreamJunctions(), null, siddhiContext, null);
 
         executionPlanRuntime.addQueryRuntime(queryRuntime);
 
@@ -172,37 +176,40 @@ public class QueryTestCase {
         metaStreamEvent.intializeOutData();
         metaStreamEvent.addData(new Attribute("symbol", Attribute.Type.STRING));
         metaStreamEvent.addData(new Attribute("price", Attribute.Type.INT));
+        metaStreamEvent.setDefinition(streamA);
+        MetaStateEvent metaStateEvent = new MetaStateEvent(1);
+        metaStateEvent.addEvent(metaStreamEvent);
 
-        Map<String,StreamDefinition> tempStreamDefinitionMap = new ConcurrentHashMap<String, StreamDefinition>();
-        tempStreamDefinitionMap.put("streamA",streamA);
+        Map<String, StreamDefinition> tempStreamDefinitionMap = new ConcurrentHashMap<String, StreamDefinition>();
+        tempStreamDefinitionMap.put("streamA", streamA);
 
         ExpressionExecutor leftExpressionExecutor = new ConstantExpressionExecutor(70, Attribute.Type.INT);
-        VariableExpressionExecutor rightExpressionExecutor = new VariableExpressionExecutor("streamA","price",streamA);
+        VariableExpressionExecutor rightExpressionExecutor = new VariableExpressionExecutor("streamA", "price", streamA);
 
-        rightExpressionExecutor.setPosition(new int[]{-1,-1,2,1});
+        rightExpressionExecutor.setPosition(new int[]{-1, -1, 2, 1});
 
-        ExpressionExecutor conditionExecutor = new GreaterThanCompareConditionExpressionExecutorIntInt(leftExpressionExecutor,rightExpressionExecutor);
+        ExpressionExecutor conditionExecutor = new GreaterThanCompareConditionExpressionExecutorIntInt(leftExpressionExecutor, rightExpressionExecutor);
         FilterProcessor filterProcessor = new FilterProcessor(conditionExecutor);
 
-        QueryStreamReceiver queryStreamReceiver = new QueryStreamReceiver(metaStreamEvent,streamA);
+        QueryStreamReceiver queryStreamReceiver = new QueryStreamReceiver(metaStreamEvent, streamA);
         List<VariableExpressionExecutor> variableExpressionExecutorList = new LinkedList<VariableExpressionExecutor>();
-        QuerySelector querySelector = new QuerySelector("StockQuote",query.getSelector(),false,false,siddhiContext,tempStreamDefinitionMap,metaStreamEvent,variableExpressionExecutorList);
+        QuerySelector querySelector = SelectorParser.parse(query.getSelector(), query.getOutputStream(), siddhiContext, metaStateEvent, variableExpressionExecutorList);
 
         OutputRateLimiter outputRateLimiter = queryRuntime.getOutputRateManager();
 
         filterProcessor.setNext(querySelector);
         querySelector.setNext(outputRateLimiter);
 
-        StreamRuntime streamRuntime = new SingleStreamRuntime(queryStreamReceiver,filterProcessor);
+        StreamRuntime streamRuntime = new SingleStreamRuntime(queryStreamReceiver, filterProcessor);
 
 
-        OutputCallback outputCallback = QueryOutputParser.constructOutputCallback(query.getOutputStream(), executionPlanRuntime.getStreamJunctions(),
+        OutputCallback outputCallback = OutputParser.constructOutputCallback(query.getOutputStream(), executionPlanRuntime.getStreamJunctions(),
                 new StreamDefinition("StockQuote").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT), siddhiContext);
         outputRateLimiter.setOutputCallback(outputCallback);
 
         executionPlanRuntime.getStreamJunctions().get(queryStreamReceiver.getStreamId()).subscribe(queryStreamReceiver);
 
-        executionPlanRuntime.addCallback("query1", new QueryCallback(query,"query1",2,siddhiContext) {
+        executionPlanRuntime.addCallback("query1", new QueryCallback(query, "query1", 2, siddhiContext) {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 Assert.assertTrue("IBM".equals(inEvents[0].getData(0)) || "WSO2".equals(inEvents[0].getData(0)));
@@ -211,10 +218,10 @@ public class QueryTestCase {
             }
 
         });
-        InputHandler inputHandler = executionPlanRuntime.getInputHandler("streamA") ;
+        InputHandler inputHandler = executionPlanRuntime.getInputHandler("streamA");
         inputHandler.send(new Object[]{"IBM", 10});
-        inputHandler.send(new Object[]{"WSO2",100});
-        Assert.assertEquals(1,count);
+        inputHandler.send(new Object[]{"WSO2", 100});
+        Assert.assertEquals(1, count);
         Assert.assertTrue(eventArrived);
     }
 
@@ -228,8 +235,6 @@ public class QueryTestCase {
 
         Partition partition = Partition.partition().
                 with("streamA", Expression.variable("symbol"));
-
-
 
 
         Query query = new Query();
@@ -246,9 +251,9 @@ public class QueryTestCase {
         executionPlanRuntime.defineStream(streamA);
 
 
-        PartitionRuntime partitionRuntime = new PartitionRuntime(executionPlanRuntime,partition,executionPlanRuntime.getStreamDefinitionMap(),executionPlanRuntime.getStreamJunctions(),siddhiContext);
+        PartitionRuntime partitionRuntime = new PartitionRuntime(executionPlanRuntime, partition, executionPlanRuntime.getStreamDefinitionMap(), executionPlanRuntime.getStreamJunctions(), siddhiContext);
 
-        QueryRuntime queryRuntime = new QueryRuntime(query,executionPlanRuntime.getStreamDefinitionMap(),executionPlanRuntime.getStreamJunctions(),partition,siddhiContext,partitionRuntime);
+        QueryRuntime queryRuntime = new QueryRuntime(query, executionPlanRuntime.getStreamDefinitionMap(), executionPlanRuntime.getStreamJunctions(), partition, siddhiContext, partitionRuntime);
 
         executionPlanRuntime.addQueryRuntime(queryRuntime);
 
@@ -258,25 +263,25 @@ public class QueryTestCase {
         metaStreamEvent.addData(new Attribute("price", Attribute.Type.INT));
 
 
-        QueryPartitioner queryPartitioner = new QueryPartitioner(query.getInputStream(),partition,siddhiContext);
+        QueryPartitioner queryPartitioner = new QueryPartitioner(query.getInputStream(), partition, siddhiContext);
         List<PartitionExecutor> partitionExecutors = new ArrayList<PartitionExecutor>();
 
-        VariableExpressionExecutor expressionExecutor = new VariableExpressionExecutor("streamA","symbol",streamA);
-        expressionExecutor.setPosition(new int[]{-1,-1,2,0});
+        VariableExpressionExecutor expressionExecutor = new VariableExpressionExecutor("streamA", "symbol", streamA);
+        expressionExecutor.setPosition(new int[]{-1, -1, 2, 0});
 
         partitionExecutors.add(new ValuePartitionExecutor(expressionExecutor));
-        partitionRuntime.addPartitionReceiver(new PartitionStreamReceiver(siddhiContext, metaStreamEvent, streamA, queryPartitioner, partitionExecutors, partitionRuntime)) ;
+        partitionRuntime.addPartitionReceiver(new PartitionStreamReceiver(siddhiContext, metaStreamEvent, streamA, queryPartitioner, partitionExecutors, partitionRuntime));
 
 
-        InputHandler inputHandler = executionPlanRuntime.getInputHandler("streamA") ;
+        InputHandler inputHandler = executionPlanRuntime.getInputHandler("streamA");
         Assert.assertNull(partitionRuntime.getLocalStreamJunctionMap().get("streamAIBM"));
         inputHandler.send(new Object[]{"IBM", 100});
         StreamJunction streamJunctionIBM = partitionRuntime.getLocalStreamJunctionMap().get("streamAIBM");
         Assert.assertNotNull(streamJunctionIBM);
-        inputHandler.send(new Object[]{"WSO2",100});
+        inputHandler.send(new Object[]{"WSO2", 100});
         Assert.assertNotNull(partitionRuntime.getLocalStreamJunctionMap().get("streamAWSO2"));
         inputHandler.send(new Object[]{"IBM", 200});
-        Assert.assertEquals(streamJunctionIBM,partitionRuntime.getLocalStreamJunctionMap().get("streamAIBM"));
+        Assert.assertEquals(streamJunctionIBM, partitionRuntime.getLocalStreamJunctionMap().get("streamAIBM"));
 
     }
 

@@ -97,7 +97,7 @@ public class StreamEvent implements ComplexEvent{
     @Override
     public Object getAttribute(int[] position){
         StreamEvent streamEvent = this;
-        switch (position[2]){
+        switch (position[2]) {
             case (SiddhiConstants.BEFORE_WINDOW_DATA_INDEX):
                 return streamEvent.getBeforeWindowData()[position[3]];
             case (SiddhiConstants.OUTPUT_DATA_INDEX):

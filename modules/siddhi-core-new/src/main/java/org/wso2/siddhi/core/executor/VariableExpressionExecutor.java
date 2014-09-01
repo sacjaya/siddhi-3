@@ -25,8 +25,8 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
     int innerStreamPosition = -1;  //Simple Event (Default)
     String attributeName;
     String streamReference;
-    private int[] position = new int[]{-1, -1,-1,-1};
-
+    private int[] position = new int[]{-1, -1, -1, -1};
+    //TODO discuss positioning
 
     public VariableExpressionExecutor(String streamIdOfVariable, String attributeName, StreamDefinition definition) {
         this.attributeName = attributeName;
@@ -37,14 +37,14 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
         if (definition != null) {
             type = definition.getAttributeType(attributeName);
             attributePosition = definition.getAttributePosition(attributeName);
-            position[0] = SiddhiConstants.OUTPUT_DATA_INDEX;
-            position[1] = attributePosition;
+            position[2] = SiddhiConstants.OUTPUT_DATA_INDEX;
+            position[3] = attributePosition;
             attribute = new Attribute(attributeName, type);
         }
     }
 
     @Override
-    public Object execute(StreamEvent event) {
+    public Object execute(StreamEvent event) {      //TODO handle state events
         return event.getAttribute(position);
     }
 
@@ -66,7 +66,12 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
     }
 
     public void setPosition(int[] position) {
-        this.position = position;
+        if (position.length == 2) {
+            this.position[2] = position[0];
+            this.position[3] = position[1];
+        } else if (position.length == 4) {
+            this.position = position;
+        }
     }
 
 

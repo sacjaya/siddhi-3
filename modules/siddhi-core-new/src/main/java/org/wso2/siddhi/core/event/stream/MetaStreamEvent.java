@@ -21,7 +21,6 @@ import org.wso2.siddhi.core.event.ComplexMetaEvent;
 import org.wso2.siddhi.core.query.selector.attribute.ComplexAttribute;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class MetaStreamEvent implements ComplexMetaEvent{
     private List<Attribute> beforeWindowData = new ArrayList<Attribute>();
     private List<Attribute> afterWindowData = null;
     private List<Attribute> outputData = null;
-    private AbstractDefinition definition;
+    private AbstractDefinition definition;      //check Abstract/Stream Definition
     private String referenceId;
 
     public List<Attribute> getBeforeWindowData() {

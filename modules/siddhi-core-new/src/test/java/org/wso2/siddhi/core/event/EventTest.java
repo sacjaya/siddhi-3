@@ -19,6 +19,7 @@ package org.wso2.siddhi.core.event;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.stream.*;
 import org.wso2.siddhi.core.exception.OperationNotSupportedException;
 import org.wso2.siddhi.core.executor.ConstantExpressionExecutor;
@@ -28,9 +29,21 @@ import org.wso2.siddhi.core.executor.condition.AndConditionExpressionExecutor;
 import org.wso2.siddhi.core.executor.condition.compare.greater_than.GreaterThanCompareConditionExpressionExecutorIntInt;
 import org.wso2.siddhi.core.executor.condition.compare.less_than.LessThanCompareConditionExpressionExecutorFloatFloat;
 import org.wso2.siddhi.core.executor.math.add.AddExpressionExecutorFloat;
+import org.wso2.siddhi.core.query.QueryRuntime;
 import org.wso2.siddhi.core.query.selector.attribute.ComplexAttribute;
+import org.wso2.siddhi.core.util.parser.QueryParser;
+import org.wso2.siddhi.query.api.annotation.Annotation;
+import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.execution.query.input.stream.InputStream;
+import org.wso2.siddhi.query.api.execution.query.selection.Selector;
+import org.wso2.siddhi.query.api.expression.Expression;
+import org.wso2.siddhi.query.api.expression.condition.Compare;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EventTest {
 
@@ -101,7 +114,7 @@ public class EventTest {
     public void testExpressionExecutors(){
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
 
-        VariableExpressionExecutor priceVariableExpressionExecutor = new VariableExpressionExecutor("cseEventStream","price",streamDefinition,false);
+        VariableExpressionExecutor priceVariableExpressionExecutor = new VariableExpressionExecutor("cseEventStream", "price", streamDefinition);
         ExpressionExecutor addExecutor = new AddExpressionExecutorFloat(new ConstantExpressionExecutor(10f, Attribute.Type.FLOAT),priceVariableExpressionExecutor);
 
         StreamEvent event = new StreamEvent(0,0,3);
@@ -114,8 +127,8 @@ public class EventTest {
     public void testConditionExpressionExecutors(){
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
 
-        VariableExpressionExecutor priceVariableExpressionExecutor = new VariableExpressionExecutor("cseEventStream","price",streamDefinition,false);
-        VariableExpressionExecutor volumeVariableExpressionExecutor = new VariableExpressionExecutor("cseEventStream","volume",streamDefinition,false);
+        VariableExpressionExecutor priceVariableExpressionExecutor = new VariableExpressionExecutor("cseEventStream", "price", streamDefinition);
+        VariableExpressionExecutor volumeVariableExpressionExecutor = new VariableExpressionExecutor("cseEventStream", "volume", streamDefinition);
         ExpressionExecutor compareLessThanExecutor = new LessThanCompareConditionExpressionExecutorFloatFloat(new ConstantExpressionExecutor(10f, Attribute.Type.FLOAT),priceVariableExpressionExecutor);
         ExpressionExecutor compareGreaterThanExecutor = new GreaterThanCompareConditionExpressionExecutorIntInt(new ConstantExpressionExecutor(10, Attribute.Type.INT),volumeVariableExpressionExecutor);
         ExpressionExecutor andExecutor = new AndConditionExpressionExecutor(compareLessThanExecutor,compareGreaterThanExecutor);
@@ -136,10 +149,25 @@ public class EventTest {
     public void testConditionExpressionExecutorValidation(){
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
 
-        VariableExpressionExecutor volumeVariableExpressionExecutor = new VariableExpressionExecutor("cseEventStream","volume",streamDefinition,false);
+        VariableExpressionExecutor volumeVariableExpressionExecutor = new VariableExpressionExecutor("cseEventStream", "volume", streamDefinition);
         ConstantExpressionExecutor constantExpressionExecutor = new ConstantExpressionExecutor(10f, Attribute.Type.FLOAT);
         ExpressionExecutor compareGreaterThanExecutor = new GreaterThanCompareConditionExpressionExecutorIntInt(new ConstantExpressionExecutor(10, Attribute.Type.INT),volumeVariableExpressionExecutor);
         ExpressionExecutor andExecutor = new AndConditionExpressionExecutor(constantExpressionExecutor,compareGreaterThanExecutor);
+    }
 
+    @Test
+    public void testQueryParser() {
+        StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
+        StreamDefinition outStreamDefinition = StreamDefinition.id("outputStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT);
+        Query query = new Query();
+        query.annotation(Annotation.annotation("info").element("name", "query1"));
+        query.from(InputStream.stream("cseEventStream").filter(Expression.compare(Expression.variable("volume"), Compare.Operator.NOT_EQUAL, Expression.value(50))));
+        query.select(Selector.selector().select("symbol", Expression.variable("symbol")).select("price", Expression.variable("price")));
+        query.insertInto("outputStream");
+        Map<String, AbstractDefinition> definitionMap = new HashMap<String, AbstractDefinition>();
+        definitionMap.put("cseEventStream", streamDefinition);
+        definitionMap.put("outputStream", outStreamDefinition);
+        SiddhiContext context = new SiddhiContext();
+        QueryRuntime runtime = QueryParser.parse(query, context, definitionMap);
     }
 }
