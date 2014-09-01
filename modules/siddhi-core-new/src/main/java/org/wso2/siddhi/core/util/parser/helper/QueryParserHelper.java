@@ -16,14 +16,29 @@ package org.wso2.siddhi.core.util.parser.helper;
 import org.wso2.siddhi.core.event.state.MetaStateEvent;
 import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
+import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
+import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
 import org.wso2.siddhi.core.util.SiddhiConstants;
+import org.wso2.siddhi.core.util.converter.EventConverter;
 import org.wso2.siddhi.query.api.definition.Attribute;
 
 import java.util.List;
 
-public class MetaStreamEventHelper {
+/**
+ * Utility class for queryParser to help with QueryRuntime
+ * generation.
+ */
+public class QueryParserHelper {
 
-    public static void updateVariablePosition(MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutorList, int[] position) {
+    /**
+     * Method to clean/refactor MetaStreamEvent and update
+     * VariableExpressionExecutors accordingly.
+     *
+     * @param metaStreamEvent
+     * @param variableExpressionExecutorList
+     * @param position
+     */
+    private static void updateVariablePosition(MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutorList, int[] position) {
         //Position[array ID, index] : Array ID -> outData = 2; afterWindowData = 1; beforeWindowData = 0;
         refactorMetaStreamEvent(metaStreamEvent);       //can remove this and call separately so that we can stop calling repeatedly in partition creation. But then we can't enforce refactoring.
         for (VariableExpressionExecutor variableExpressionExecutor : variableExpressionExecutorList) {
@@ -41,7 +56,12 @@ public class MetaStreamEventHelper {
 
     }
 
-    public synchronized static void refactorMetaStreamEvent(MetaStreamEvent metaStreamEvent) {
+    /**
+     * Helper method to clean/refactor MetaStreamEvent
+     *
+     * @param metaStreamEvent
+     */
+    private synchronized static void refactorMetaStreamEvent(MetaStreamEvent metaStreamEvent) {
         for (Attribute attribute : metaStreamEvent.getOutputData()) {
             if (metaStreamEvent.getBeforeWindowData().contains(attribute)) {
                 metaStreamEvent.getBeforeWindowData().remove(attribute);
@@ -57,12 +77,28 @@ public class MetaStreamEventHelper {
         }
     }
 
+    /**
+     * Method to clean/refactor MetaStateEvent and update
+     * VariableExpressionExecutors accordingly.
+     * @param metaStateEvent
+     * @param executors
+     */
     public static void updateVariablePosition(MetaStateEvent metaStateEvent, List<VariableExpressionExecutor> executors) {
         if (metaStateEvent.getEventCount() == 1) {
             updateVariablePosition(metaStateEvent.getMetaEvent(0), executors, new int[]{-1, -1});  //position??
         } else {
 
             //TODO implement
+        }
+    }
+
+    public static void addEventConverters(StreamRuntime runtime, MetaStateEvent metaStateEvent) {
+        int index = 0;
+        if (runtime instanceof SingleStreamRuntime) {
+            EventConverter converter = new EventConverter(metaStateEvent.getMetaEvent(index));
+            ((SingleStreamRuntime) runtime).setEventConverter(converter);
+        } else {
+            //TODO JoinStreamRuntime/PatternStreamRuntime
         }
     }
 }
