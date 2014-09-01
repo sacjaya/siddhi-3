@@ -89,20 +89,21 @@ public class StreamEvent implements ComplexEvent{
 
     /**
      *
-     * @param position int array of 2 elements
-     *                 position[0]-BeforeWindowData or OutputData or AfterWindowData, position[2]- which attribute
+     * @param position int array of 4 elements
+     *                 position[0] and position[1] are discarded
+     *                 position[2]-BeforeWindowData or OutputData or AfterWindowData, position[3]- which attribute
      * @return
      */
     @Override
     public Object getAttribute(int[] position){
         StreamEvent streamEvent = this;
-        switch (position[0]){
+        switch (position[2]){
             case (SiddhiConstants.BEFORE_WINDOW_DATA_INDEX):
-                return streamEvent.getBeforeWindowData()[position[1]];
+                return streamEvent.getBeforeWindowData()[position[3]];
             case (SiddhiConstants.OUTPUT_DATA_INDEX):
-                return streamEvent.getOutputData()[position[1]];
+                return streamEvent.getOutputData()[position[3]];
             case (SiddhiConstants.AFTER_WINDOW_DATA_INDEX):
-                return streamEvent.getOnAfterWindowData()[position[1]];
+                return streamEvent.getOnAfterWindowData()[position[3]];
             default:
                 return null;
         }

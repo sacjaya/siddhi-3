@@ -60,13 +60,11 @@ public class PartitionRuntime {
     private ConcurrentMap<String,PartitionInstanceRuntime> partitionInstanceRuntimeMap = new ConcurrentHashMap<String, PartitionInstanceRuntime>();
     private List<PartitionStreamReceiver> partitionStreamReceivers = new ArrayList<PartitionStreamReceiver>();
     private Partition partition;
-    private ConcurrentMap<String, InputHandler> inputHandlerMap = new ConcurrentHashMap<String, InputHandler>();
     private ExecutionPlanRuntime executionPlanRuntime;
 
     public PartitionRuntime(ExecutionPlanRuntime executionPlanRuntime, Partition partition,
                             ConcurrentMap<String, AbstractDefinition> streamDefinitionMap,
-                            ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, InputHandler> inputHandlerMap,
-                            SiddhiContext siddhiContext) {
+                            ConcurrentMap<String, StreamJunction> streamJunctionMap,SiddhiContext siddhiContext) {
 
         try {
             Element element = AnnotationHelper.getAnnotationElement("info", "name", partition.getAnnotations());
@@ -81,7 +79,6 @@ public class PartitionRuntime {
         }
         this.streamDefinitionMap = streamDefinitionMap;
         this.streamJunctionMap = streamJunctionMap;
-        this.inputHandlerMap = inputHandlerMap;
         this.partition = partition;
         this.executionPlanRuntime = executionPlanRuntime;
         this.siddhiContext = siddhiContext;

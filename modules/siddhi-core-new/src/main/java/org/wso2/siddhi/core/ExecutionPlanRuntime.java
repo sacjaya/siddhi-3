@@ -34,6 +34,7 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.partition.Partition;
 import org.wso2.siddhi.query.api.execution.query.Query;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -68,7 +69,7 @@ public class ExecutionPlanRuntime {
     }
 
     public void addPartition(Partition partition) {
-        PartitionRuntime partitionRuntime = new PartitionRuntime(this,partition, streamDefinitionMap,streamJunctionMap,inputHandlerMap,siddhiContext);
+        PartitionRuntime partitionRuntime = new PartitionRuntime(this,partition, streamDefinitionMap,streamJunctionMap,siddhiContext);
         partitionMap.put(partitionRuntime.getPartitionId(), partitionRuntime);
     }
 
@@ -102,6 +103,19 @@ public class ExecutionPlanRuntime {
 
     public InputHandler getInputHandler(String streamId) {
         return inputHandlerMap.get(streamId);
+    }
+
+    public void addQueryRuntime(QueryRuntime queryRuntime){
+        queryProcessorMap.put(queryRuntime.getQueryId(),queryRuntime);
+
+    }
+
+    public ConcurrentMap<String,StreamJunction> getStreamJunctions(){
+        return streamJunctionMap;
+    }
+
+    public ConcurrentMap<String,AbstractDefinition> getStreamDefinitionMap(){
+        return streamDefinitionMap;
     }
 
 }
