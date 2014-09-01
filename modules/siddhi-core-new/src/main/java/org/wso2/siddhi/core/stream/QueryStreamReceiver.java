@@ -24,6 +24,7 @@ import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventConverter;
 import org.wso2.siddhi.core.query.processor.Processor;
+import org.wso2.siddhi.core.util.converter.EventConverter;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 public class QueryStreamReceiver implements StreamJunction.Receiver {
@@ -36,7 +37,6 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
 
     public QueryStreamReceiver(MetaStreamEvent metaStreamEvent, StreamDefinition streamDefinition) {
         this.streamId = streamDefinition.getId();
-        eventConverter = new StreamEventConverter(metaStreamEvent, streamDefinition);
     }
 
     @Override
@@ -94,5 +94,9 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
 
     public void setProcessorChain(Processor processorChain) {
         this.processorChain = processorChain;
+    }
+
+    public void setEventConverter(StreamEventConverter eventConverter){
+        this.eventConverter = eventConverter;
     }
 }

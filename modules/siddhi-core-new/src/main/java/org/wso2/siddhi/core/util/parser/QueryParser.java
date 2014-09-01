@@ -24,6 +24,7 @@ import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.QueryRuntime;
 import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
+import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
 import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
 import org.wso2.siddhi.core.util.parser.helper.QueryParserHelper;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
@@ -41,8 +42,15 @@ public class QueryParser {
         StreamRuntime streamRuntime = InputStreamParser.parse(query.getInputStream(), context, definitionMap, metaStateEvent, executors);
         QuerySelector selector = SelectorParser.parse(query.getSelector(), query.getOutputStream(), context, metaStateEvent, executors);
         OutputRateLimiter outputRateLimiter = OutputParser.constructOutputRateLimiter(query.getOutputRate());
+
+
+        if(((SingleStreamRuntime)streamRuntime).getProcessorChain() == null){
+            ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver().setProcessorChain(selector);
+        }
+
         QueryParserHelper.updateVariablePosition(metaStateEvent, executors);
         QueryParserHelper.addEventConverters(streamRuntime, metaStateEvent);
+
 
         QueryRuntime queryRuntime = new QueryRuntime();
         queryRuntime.setQuery(query);
@@ -53,6 +61,5 @@ public class QueryParser {
 
         return queryRuntime;
     }
-
 
 }
