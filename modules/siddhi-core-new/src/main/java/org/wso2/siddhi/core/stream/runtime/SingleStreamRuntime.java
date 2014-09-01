@@ -21,13 +21,11 @@ package org.wso2.siddhi.core.stream.runtime;
 
 import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.stream.QueryStreamReceiver;
-import org.wso2.siddhi.core.util.converter.EventConverter;
 
 public class SingleStreamRuntime implements StreamRuntime{
 
     private Processor processorChain;
     private QueryStreamReceiver queryStreamReceiver;
-    private EventConverter eventConverter;
 
     public SingleStreamRuntime(QueryStreamReceiver queryStreamReceiver, Processor processorChain) {
         this.queryStreamReceiver = queryStreamReceiver;
@@ -43,7 +41,4 @@ public class SingleStreamRuntime implements StreamRuntime{
         return queryStreamReceiver;
     }
 
-    public void setEventConverter(EventConverter converter) {
-        this.eventConverter = converter;
-    }
 }

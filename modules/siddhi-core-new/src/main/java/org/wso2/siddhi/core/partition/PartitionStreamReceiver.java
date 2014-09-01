@@ -56,7 +56,7 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver {
         this.queryPartitioner = queryPartitioner;
         this.siddhiContext = siddhiContext;
         streamId = streamDefinition.getId();
-        eventConverter = new StreamEventConverter(metaStreamEvent, streamDefinition);
+        eventConverter = new StreamEventConverter(metaStreamEvent);
     }
 
 

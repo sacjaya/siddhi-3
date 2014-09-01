@@ -24,7 +24,6 @@ import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventConverter;
 import org.wso2.siddhi.core.query.processor.Processor;
-import org.wso2.siddhi.core.util.converter.EventConverter;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 public class QueryStreamReceiver implements StreamJunction.Receiver {
