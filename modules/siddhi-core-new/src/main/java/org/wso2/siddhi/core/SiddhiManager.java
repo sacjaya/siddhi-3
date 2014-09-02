@@ -20,11 +20,16 @@
 package org.wso2.siddhi.core;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.util.parser.ExecutionPlanParser;
+import org.wso2.siddhi.core.util.validate.QueryValidator;
 import org.wso2.siddhi.query.api.ExecutionPlan;
+import org.wso2.siddhi.query.api.execution.ExecutionElement;
+import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.compiler.exception.SiddhiParserException;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 
 public class SiddhiManager {
@@ -41,7 +46,12 @@ public class SiddhiManager {
      * @return
      * @throws org.wso2.siddhi.query.compiler.exception.SiddhiParserException
      */
-    public ExecutionPlanRuntime addExecutionPlan(ExecutionPlan executionPlan) throws SiddhiParserException {
+    public ExecutionPlanRuntime addExecutionPlan(ExecutionPlan executionPlan) throws SiddhiParserException, ValidatorException {
+        for (ExecutionElement element : executionPlan.getExecutionElementList()) {
+            if (element instanceof Query) {
+                QueryValidator.validate((Query) element, executionPlan.getStreamDefinitionMap());
+            }//TODO add partition validation
+        }
         ExecutionPlanRuntime executionPlanRuntime = ExecutionPlanParser.parse(executionPlan);
         executionPlanRuntimeMap.put(executionPlan.getName(), executionPlanRuntime);
         return executionPlanRuntime;
