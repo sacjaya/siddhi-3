@@ -26,6 +26,7 @@ import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.query.selector.attribute.processor.AttributeProcessor;
 import org.wso2.siddhi.core.query.selector.attribute.processor.PassThroughAttributeProcessor;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.output.stream.OutputStream;
 import org.wso2.siddhi.query.api.execution.query.selection.OutputAttribute;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
@@ -62,13 +63,14 @@ public class SelectorParser {
 
     private static ArrayList<AttributeProcessor> getAttributeProcessors(Selector selector, SiddhiContext siddhiContext, MetaStateEvent metaStateEvent, List<VariableExpressionExecutor> executors) {
         ArrayList<AttributeProcessor> attributeProcessorList = new ArrayList<AttributeProcessor>();
+        StreamDefinition temp = new StreamDefinition(null);
         for (OutputAttribute outputAttribute : selector.getSelectionList()) {
             try {
-
                 if (outputAttribute.getExpression() instanceof Constant) {
                     PassThroughAttributeProcessor attributeGenerator = new PassThroughAttributeProcessor(ExpressionParser.parseExpression(outputAttribute.getExpression(),
                             null, siddhiContext, null, metaStateEvent, executors));
                     attributeProcessorList.add(attributeGenerator);
+                    temp.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
                 } else if (outputAttribute.getExpression() instanceof AttributeFunction) {
                     //TODO implement
                     throw new OperationNotSupportedException("Attribute Functions are not supported");
@@ -77,13 +79,15 @@ public class SelectorParser {
                     if (metaStateEvent.getEventCount() == 1) {  //meta stream event
                         attributeGenerator = new PassThroughAttributeProcessor(ExpressionParser.parseExpression(outputAttribute.getExpression(),
                                 null, siddhiContext, null, metaStateEvent.getMetaEvent(0), executors));
+                        temp.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
                     } else {
                         attributeGenerator = new PassThroughAttributeProcessor(ExpressionParser.parseExpression(outputAttribute.getExpression(),
                                 null, siddhiContext, null, metaStateEvent, executors));
+                        temp.attribute(outputAttribute.getRename(), attributeGenerator.getOutputType());
                     }
                     attributeProcessorList.add(attributeGenerator);
                 }
-
+                metaStateEvent.setOutputDefinition(temp);
             } catch (ValidatorException e) {
                 //this will never happen as this is already validated
             }

@@ -22,10 +22,12 @@ package org.wso2.siddhi.core.event.state;
 import org.wso2.siddhi.core.event.ComplexMetaEvent;
 import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 import org.wso2.siddhi.query.api.definition.Attribute;
+import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 public class MetaStateEvent implements ComplexMetaEvent{
     private MetaStreamEvent[] metaStreamEvents;
     private int eventCount = 0;
+    private StreamDefinition OutputStreamDefinition;
 
     public MetaStateEvent(int size){
         metaStreamEvents = new MetaStreamEvent[size];
@@ -52,5 +54,13 @@ public class MetaStateEvent implements ComplexMetaEvent{
 
     public int getEventCount() {
         return eventCount;
+    }
+
+    public void setOutputDefinition(StreamDefinition definition) {
+        this.OutputStreamDefinition = definition;
+    }
+
+    public StreamDefinition getOutputStreamDefinition() {
+        return OutputStreamDefinition;
     }
 }
