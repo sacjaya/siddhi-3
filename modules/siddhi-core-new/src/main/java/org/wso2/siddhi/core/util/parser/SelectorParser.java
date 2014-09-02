@@ -57,13 +57,13 @@ public class SelectorParser {
             expiredOn = true;
         }
         QuerySelector querySelector = new QuerySelector(id, selector, currentOn, expiredOn, context);
-        querySelector.setAttributeProcessorList(getAttributeProcessors(selector, context, metaStateEvent, executors));
+        querySelector.setAttributeProcessorList(getAttributeProcessors(selector, outStream,context, metaStateEvent, executors));
         return querySelector;
     }
 
-    private static ArrayList<AttributeProcessor> getAttributeProcessors(Selector selector, SiddhiContext siddhiContext, MetaStateEvent metaStateEvent, List<VariableExpressionExecutor> executors) {
+    private static ArrayList<AttributeProcessor> getAttributeProcessors(Selector selector, OutputStream outStream, SiddhiContext siddhiContext, MetaStateEvent metaStateEvent, List<VariableExpressionExecutor> executors) {
         ArrayList<AttributeProcessor> attributeProcessorList = new ArrayList<AttributeProcessor>();
-        StreamDefinition temp = new StreamDefinition(null);
+        StreamDefinition temp = new StreamDefinition(outStream.getId());
         for (OutputAttribute outputAttribute : selector.getSelectionList()) {
             try {
                 if (outputAttribute.getExpression() instanceof Constant) {

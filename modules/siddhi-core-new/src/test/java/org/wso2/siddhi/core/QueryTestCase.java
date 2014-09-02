@@ -277,7 +277,7 @@ public class QueryTestCase {
         expressionExecutor.setPosition(new int[]{-1, -1, 2, 0});
 
         partitionExecutors.add(new ValuePartitionExecutor(expressionExecutor));
-        PartitionStreamReceiver partitionStreamReceiver = new PartitionStreamReceiver(siddhiContext, metaStreamEvent, streamA, queryPartitioner, partitionExecutors, partitionRuntime);
+        PartitionStreamReceiver partitionStreamReceiver = new PartitionStreamReceiver(siddhiContext, metaStreamEvent, streamA,  partitionExecutors, partitionRuntime);
         partitionRuntime.addPartitionReceiver(partitionStreamReceiver);
 
 

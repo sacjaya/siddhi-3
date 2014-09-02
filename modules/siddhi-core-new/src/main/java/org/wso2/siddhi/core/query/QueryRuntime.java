@@ -36,6 +36,7 @@ import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
 import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
 import org.wso2.siddhi.core.util.parser.InputStreamParser;
 import org.wso2.siddhi.core.util.parser.OutputParser;
+import org.wso2.siddhi.core.util.parser.QueryParser;
 import org.wso2.siddhi.core.util.parser.SelectorParser;
 import org.wso2.siddhi.core.util.parser.helper.QueryParserHelper;
 import org.wso2.siddhi.query.api.annotation.Element;
@@ -71,16 +72,13 @@ public class QueryRuntime {
     private ConcurrentMap<String, StreamJunction> localStreamJunctionMap;
     private ConcurrentMap<String, AbstractDefinition> localStreamDefinitionMap;
     private QuerySelector selector;
-    private Map<String, AbstractDefinition> definitionMap;
+    private ConcurrentMap<String, AbstractDefinition> definitionMap;
     private MetaStateEvent metaStateEvent;
 
     public void update(PartitionRuntime partitionRuntime, ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap) {
         setId();
 
         if (partitionRuntime != null) {
-            //TODO remove
-//            outputStreamDefinition = StreamDefinition.id(query.getOutputStream().getId()).attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.FLOAT).attribute("volume", Attribute.Type.INT);
-
             localStreamDefinitionMap = partitionRuntime.getLocalStreamDefinitionMap();
             localStreamJunctionMap = partitionRuntime.getLocalStreamJunctionMap();
         }
@@ -165,29 +163,28 @@ public class QueryRuntime {
     }
 
     public QueryRuntime clone(StreamDefinition streamDefinition, String key) {
-        QueryRuntime queryRuntime = new QueryRuntime();
+        QueryRuntime queryRuntime;
+
+        if (query.getInputStream() instanceof BasicSingleInputStream && ((BasicSingleInputStream) query.getInputStream()).isInnerStream()) {
+            queryRuntime = QueryParser.parse(query,siddhiContext,localStreamDefinitionMap);
+        } else {
+            queryRuntime = QueryParser.parse(query,siddhiContext,definitionMap);
+        }
         queryRuntime.queryId = this.queryId + key;
-        queryRuntime.outputRateLimiter = OutputParser.constructOutputRateLimiter(query.getOutputRate());
         queryRuntime.toLocalStream = this.toLocalStream;
-        queryRuntime.query = this.query;
         queryRuntime.outputStreamDefinition = this.outputStreamDefinition;
         queryRuntime.definitionMap = this.definitionMap;
 
         if (!toLocalStream) {
             queryRuntime.outputRateLimiter.setOutputCallback(outputCallback);
             queryRuntime.outputCallback = this.outputCallback;
-
         } else {
             OutputCallback outputCallback = OutputParser.constructOutputCallback(query.getOutputStream(), key, localStreamJunctionMap, outputStreamDefinition, siddhiContext);
             queryRuntime.outputRateLimiter.setOutputCallback(outputCallback);
             queryRuntime.outputCallback = outputCallback;
-
         }
 
-        queryRuntime.streamRuntime = cloneStreamRuntime(queryRuntime.outputRateLimiter);
-
         if (this.isFromLocalStream()) {
-
             StreamJunction streamJunction = localStreamJunctionMap.get(streamDefinition.getId() + key);
             if (streamJunction == null) {
                 streamJunction = new StreamJunction(streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
@@ -199,33 +196,6 @@ public class QueryRuntime {
         return queryRuntime;
 
     }
-
-
-    public StreamRuntime cloneStreamRuntime(OutputRateLimiter outputRateLimiter) {
-        MetaStateEvent metaStateEvent = new MetaStateEvent(query.getInputStream().getStreamIds().size()); //TODO:Consider MetaStreamEvent[]
-        List<VariableExpressionExecutor> executors = new ArrayList<VariableExpressionExecutor>();
-        StreamRuntime streamRuntime;
-        if (query.getInputStream() instanceof BasicSingleInputStream && ((BasicSingleInputStream) query.getInputStream()).isInnerStream()) {
-            streamRuntime = InputStreamParser.parse(query.getInputStream(), siddhiContext, localStreamDefinitionMap, metaStateEvent, executors);
-        } else {
-            streamRuntime = InputStreamParser.parse(query.getInputStream(), siddhiContext, definitionMap, metaStateEvent, executors);
-        }
-        QuerySelector selector = SelectorParser.parse(query.getSelector(), query.getOutputStream(), siddhiContext, metaStateEvent, executors);
-
-
-        selector.setNext(outputRateLimiter);
-        if (((SingleStreamRuntime) streamRuntime).getProcessorChain() == null) {
-            ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver().setProcessorChain(selector);
-        } else {
-            ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver().getProcessorChain().setNext(selector);
-        }
-
-        QueryParserHelper.updateVariablePosition(metaStateEvent, executors);
-        QueryParserHelper.addEventConverters(streamRuntime, metaStateEvent);
-
-        return streamRuntime;
-    }
-
 
     public void setStreamRuntime(StreamRuntime streamRuntime) {
         this.streamRuntime = streamRuntime;
@@ -252,11 +222,12 @@ public class QueryRuntime {
         return streamRuntime;
     }
 
-    public void setDefinitionMap(Map<String, AbstractDefinition> definitionMap) {
+    public void setDefinitionMap(ConcurrentMap<String, AbstractDefinition> definitionMap) {
         this.definitionMap = definitionMap;
     }
 
     public void setMetaStateEvent(MetaStateEvent metaStateEvent) {
+        outputStreamDefinition = metaStateEvent.getOutputStreamDefinition();
         this.metaStateEvent = metaStateEvent;
     }
 
