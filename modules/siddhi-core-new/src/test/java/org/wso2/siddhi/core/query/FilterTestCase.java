@@ -17,26 +17,30 @@
 * under the License.
 */
 
-package org.wso2.siddhi.core;
+package org.wso2.siddhi.core.query;
 
 import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.junit.Before;
-import org.junit.Test;import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.core.exception.ValidatorException;
+import org.junit.Test;
+import org.wso2.siddhi.core.ExecutionPlanRuntime;
+import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
+import org.wso2.siddhi.core.util.parser.ExecutionPlanParser;
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.annotation.Annotation;
 import org.wso2.siddhi.query.api.definition.Attribute;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.api.execution.query.input.stream.InputStream;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 import org.wso2.siddhi.query.api.expression.Expression;
-import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.expression.condition.Compare;
 
-public class PassThroughTestCase {
-    static final Logger log = Logger.getLogger(PassThroughTestCase.class);
+public class FilterTestCase {
+    static final Logger log = Logger.getLogger(FilterTestCase.class);
     private int count;
     private boolean eventArrived;
 
@@ -47,16 +51,20 @@ public class PassThroughTestCase {
     }
 
 
+
     @Test
-    public void PassThroughTest() throws InterruptedException, ValidatorException {
-        log.info("pass through test");
-        SiddhiManager siddhiManager = new SiddhiManager();
+    public void FilterTest() throws InterruptedException {
+        log.info("filter test");
+        SiddhiContext siddhiContext = new SiddhiContext();
 
         StreamDefinition streamA = new StreamDefinition("streamA").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.INT).
                 annotation(Annotation.annotation("config").element("async", "true"));
 
         Query query = new Query();
-        query.from(InputStream.stream("streamA"));
+        query.from(InputStream.stream("streamA"). filter(Expression.compare(Expression.value(70),
+                Compare.Operator.GREATER_THAN,
+                Expression.variable("price"))
+        ));
         query.annotation(Annotation.annotation("info").element("name", "query1"));
         query.select(
                 Selector.selector().
@@ -69,10 +77,10 @@ public class PassThroughTestCase {
         ExecutionPlan executionPlan = new ExecutionPlan("ep1");
         executionPlan.defineStream(streamA);
         executionPlan.addQuery(query);
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.addExecutionPlan(executionPlan);
+        ExecutionPlanRuntime executionPlanRuntime = ExecutionPlanParser.parse(executionPlan);
 
 
-        executionPlanRuntime.addCallback("query1", new QueryCallback(query, "query1", 2, siddhiManager.getSiddhiContext()) {
+        executionPlanRuntime.addCallback("query1", new QueryCallback(query, "query1", 2, siddhiContext) {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 Assert.assertTrue("IBM".equals(inEvents[0].getData(0)) || "WSO2".equals(inEvents[0].getData(0)));
@@ -82,9 +90,9 @@ public class PassThroughTestCase {
 
         });
         InputHandler inputHandler = executionPlanRuntime.getInputHandler("streamA");
-        inputHandler.send(new Object[]{"IBM", 100});
-        inputHandler.send(new Object[]{"WSO2", 100});
-        Assert.assertEquals(2, count);
+        inputHandler.send(new Object[]{"IBM", 700});
+        inputHandler.send(new Object[]{"WSO2", 60});
+        Assert.assertEquals(1, count);
         Assert.assertTrue(eventArrived);
     }
 

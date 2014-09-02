@@ -17,12 +17,14 @@
  * under the License.
  */
 
-package org.wso2.siddhi.core;
+package org.wso2.siddhi.core.query;
 
 import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.wso2.siddhi.core.ExecutionPlanRuntime;
+import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.stream.input.InputHandler;

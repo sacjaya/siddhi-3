@@ -17,12 +17,13 @@
  * under the License.
  */
 
-package org.wso2.siddhi.core;
+package org.wso2.siddhi.core.query;
 
 import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.state.MetaStateEvent;
@@ -36,7 +37,6 @@ import org.wso2.siddhi.core.partition.PartitionRuntime;
 import org.wso2.siddhi.core.partition.PartitionStreamReceiver;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.partition.executor.ValuePartitionExecutor;
-import org.wso2.siddhi.core.query.QueryRuntime;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
