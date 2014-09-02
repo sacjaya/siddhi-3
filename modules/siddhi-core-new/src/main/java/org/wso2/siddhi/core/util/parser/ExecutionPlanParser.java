@@ -39,7 +39,7 @@ public class ExecutionPlanParser {
         for (ExecutionElement executionElement : executionPlan.getExecutionElementList()) {
             if (executionElement instanceof Query) {
                 QueryRuntime queryRuntime = QueryParser.parse((Query) executionElement, siddhiContext, executionPlanRuntime.getStreamDefinitionMap());
-                queryRuntime.update(executionPlanRuntime.getStreamJunctions());
+                queryRuntime.update(null,executionPlanRuntime.getStreamJunctions(),executionPlanRuntime.getStreamDefinitionMap());
                 executionPlanRuntime.addQuery(queryRuntime);
             } else {
                 PartitionRuntime partitionRuntime = PartitionParser.parse(executionPlanRuntime,(Partition) executionElement, siddhiContext, executionPlanRuntime.getStreamDefinitionMap());

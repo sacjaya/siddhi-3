@@ -36,11 +36,11 @@ import java.util.Map;
 
 public class QueryParser {
 
-    public static QueryRuntime parse(Query query, SiddhiContext context, Map<String, AbstractDefinition> definitionMap) {
+    public static QueryRuntime parse(Query query, SiddhiContext siddhiContext, Map<String, AbstractDefinition> definitionMap) {
         MetaStateEvent metaStateEvent = new MetaStateEvent(query.getInputStream().getStreamIds().size()); //TODO:Consider MetaStreamEvent[]
         List<VariableExpressionExecutor> executors = new ArrayList<VariableExpressionExecutor>();
-        StreamRuntime streamRuntime = InputStreamParser.parse(query.getInputStream(), context, definitionMap, metaStateEvent, executors);
-        QuerySelector selector = SelectorParser.parse(query.getSelector(), query.getOutputStream(), context, metaStateEvent, executors);
+        StreamRuntime streamRuntime = InputStreamParser.parse(query.getInputStream(), siddhiContext, definitionMap, metaStateEvent, executors);
+        QuerySelector selector = SelectorParser.parse(query.getSelector(), query.getOutputStream(), siddhiContext, metaStateEvent, executors);
         OutputRateLimiter outputRateLimiter = OutputParser.constructOutputRateLimiter(query.getOutputRate());
 
         if(((SingleStreamRuntime)streamRuntime).getProcessorChain() == null){
@@ -54,7 +54,7 @@ public class QueryParser {
 
         QueryRuntime queryRuntime = new QueryRuntime();
         queryRuntime.setQuery(query);
-        queryRuntime.setSiddhiContext(context);
+        queryRuntime.setSiddhiContext(siddhiContext);
         queryRuntime.setStreamRuntime(streamRuntime);
         queryRuntime.setSelector(selector);
         queryRuntime.setOutputRateLimiter(outputRateLimiter);
