@@ -89,7 +89,7 @@ public class PartitionRuntime {
             }
         } else {
             if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
-//                executionPlanRuntime.defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
+                executionPlanRuntime.defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
             }
         }
         return metaQueryRuntime;
@@ -114,14 +114,14 @@ public class PartitionRuntime {
             CopyOnWriteArrayList<QueryRuntime> partitionedQueryRuntimeList = new CopyOnWriteArrayList<QueryRuntime>();
 
             for (QueryRuntime queryRuntime : metaQueryRuntimeMap.values()) {
+                String queryId = queryRuntime.getInputStreamId().get(0);
                 if (queryRuntime.isFromLocalStream()) {
-                    queryRuntimeList.add(queryRuntime.clone((StreamDefinition) localStreamDefinitionMap.get(queryRuntime.getInputStreamId().get(0)), key));
+                    queryRuntimeList.add(queryRuntime.clone((StreamDefinition) localStreamDefinitionMap.get(queryId), key));
                 } else {
-                    QueryRuntime qRuntime = queryRuntime.clone(null, key);
+                    QueryRuntime qRuntime = queryRuntime.clone((StreamDefinition) executionPlanRuntime.getStreamDefinitionMap().get(queryId), key);
                     queryRuntimeList.add(qRuntime);
                     partitionedQueryRuntimeList.add(qRuntime);
                 }
-
             }
             partitionedQueryRuntimeMap.put(key, partitionedQueryRuntimeList);
             addPartitionInstance(key, new PartitionInstanceRuntime(key, queryRuntimeList));

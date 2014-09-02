@@ -27,6 +27,7 @@ import org.wso2.siddhi.core.query.selector.QueryPartitioner;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.execution.partition.Partition;
 import org.wso2.siddhi.query.api.execution.query.Query;
+import org.wso2.siddhi.query.api.execution.query.input.stream.BasicSingleInputStream;
 
 import java.util.concurrent.ConcurrentMap;
 
@@ -35,7 +36,13 @@ public class PartitionParser {
         PartitionRuntime partitionRuntime = new PartitionRuntime(executionPlanRuntime,partition,siddhiContext);
 
         for(Query query:partition.getQueryList()){
-            QueryRuntime queryRuntime = QueryParser.parse(query, siddhiContext, streamDefinitionMap);
+
+            QueryRuntime queryRuntime;
+            if(query.getInputStream() instanceof BasicSingleInputStream && ((BasicSingleInputStream) query.getInputStream()).isInnerStream()){
+                queryRuntime = QueryParser.parse(query, siddhiContext, partitionRuntime.getLocalStreamDefinitionMap());
+            } else {
+                queryRuntime = QueryParser.parse(query, siddhiContext, streamDefinitionMap);
+            }
             queryRuntime.setDefinitionMap(streamDefinitionMap);
             queryRuntime.setQueryPartitioner(new QueryPartitioner(query.getInputStream(),partition, queryRuntime.getMetaStateEvent().getMetaEvent(0), siddhiContext));
             partitionRuntime.addQuery(queryRuntime);

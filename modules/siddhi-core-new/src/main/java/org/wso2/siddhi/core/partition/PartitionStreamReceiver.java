@@ -45,15 +45,13 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver {
     private List<PartitionExecutor> partitionExecutors;
     private StreamEventConverter eventConverter;
     private ConcurrentHashMap<String, StreamJunction> cachedStreamJunctionMap = new ConcurrentHashMap<String, StreamJunction>();
-    private QueryPartitioner queryPartitioner;
 
     public PartitionStreamReceiver(SiddhiContext siddhiContext, MetaStreamEvent metaStreamEvent, StreamDefinition streamDefinition,
-                                   QueryPartitioner queryPartitioner, List<PartitionExecutor> partitionExecutors,
+                                    List<PartitionExecutor> partitionExecutors,
                                    PartitionRuntime partitionRuntime) {
         this.streamDefinition = streamDefinition;
         this.partitionRuntime = partitionRuntime;
         this.partitionExecutors = partitionExecutors;
-        this.queryPartitioner = queryPartitioner;
         this.siddhiContext = siddhiContext;
         streamId = streamDefinition.getId();
         eventConverter = new StreamEventConverter(metaStreamEvent);
