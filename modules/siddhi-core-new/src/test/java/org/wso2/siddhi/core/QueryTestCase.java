@@ -256,7 +256,7 @@ public class QueryTestCase {
         executionPlanRuntime.defineStream(streamA);
 
 
-        PartitionRuntime partitionRuntime = new PartitionRuntime(executionPlanRuntime, partition, executionPlanRuntime.getStreamDefinitionMap(), executionPlanRuntime.getStreamJunctions(), siddhiContext);
+        PartitionRuntime partitionRuntime = new PartitionRuntime(executionPlanRuntime, partition, siddhiContext);
 
         QueryRuntime queryRuntime = QueryParser.parse(query,siddhiContext,executionPlanRuntime.getStreamDefinitionMap());
         queryRuntime.setQueryId("query1");
@@ -270,7 +270,7 @@ public class QueryTestCase {
         metaStreamEvent.setDefinition(streamA);
 
 
-        QueryPartitioner queryPartitioner = new QueryPartitioner(query.getInputStream(), partition, siddhiContext);
+        QueryPartitioner queryPartitioner = new QueryPartitioner(query.getInputStream(), partition,metaStreamEvent, siddhiContext);
         List<PartitionExecutor> partitionExecutors = new ArrayList<PartitionExecutor>();
 
         VariableExpressionExecutor expressionExecutor = new VariableExpressionExecutor("streamA", "symbol", streamA);
