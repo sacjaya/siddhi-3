@@ -115,7 +115,7 @@ public class PartitionRuntime {
 
             for (QueryRuntime queryRuntime : metaQueryRuntimeMap.values()) {
                 if (queryRuntime.isFromLocalStream()) {
-                    queryRuntimeList.add(queryRuntime.clone((StreamDefinition) localStreamDefinitionMap.get(queryRuntime.getInputStreamId()), key));
+                    queryRuntimeList.add(queryRuntime.clone((StreamDefinition) localStreamDefinitionMap.get(queryRuntime.getInputStreamId().get(0)), key));
                 } else {
                     QueryRuntime qRuntime = queryRuntime.clone(null, key);
                     queryRuntimeList.add(qRuntime);
