@@ -19,11 +19,11 @@
 package org.wso2.siddhi.core.query.selector;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 import org.wso2.siddhi.core.exception.ValidatorException;
+import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.partition.executor.ValuePartitionExecutor;
-import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
-import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
 import org.wso2.siddhi.core.util.parser.ExpressionParser;
 import org.wso2.siddhi.query.api.execution.partition.Partition;
 import org.wso2.siddhi.query.api.execution.partition.PartitionType;
@@ -36,21 +36,18 @@ import java.util.List;
 
 public class QueryPartitioner {
 
-
     private List<List<PartitionExecutor>> partitionExecutors = new ArrayList<List<PartitionExecutor>>();
 
-    public QueryPartitioner(InputStream inputStream, Partition partition, SiddhiContext siddhiContext) {
-
+    public QueryPartitioner(InputStream inputStream, Partition partition, MetaStreamEvent metaStreamEvent, SiddhiContext siddhiContext) {
         if (partition != null) {
-
-            if (inputStream instanceof BasicSingleInputStream) {
+           if (inputStream instanceof BasicSingleInputStream) {
                 ArrayList<PartitionExecutor> executorList = new ArrayList<PartitionExecutor>();
                 partitionExecutors.add(executorList);
                 for (PartitionType partitionType : partition.getPartitionTypeMap().values()) {
                     if (partitionType instanceof ValuePartitionType) {
                         if (partitionType.getStreamId().equals(((BasicSingleInputStream) inputStream).getStreamId())) {
                             try {
-                                executorList.add(new ValuePartitionExecutor(ExpressionParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(), siddhiContext, null, null, null)));//TODO: add correct streamDefinition map as 4th parameter
+                                executorList.add(new ValuePartitionExecutor(ExpressionParser.parseExpression(((ValuePartitionType) partitionType).getExpression(), ((BasicSingleInputStream) inputStream).getStreamId(), siddhiContext, null, metaStreamEvent, new ArrayList<VariableExpressionExecutor>())));//TODO: add correct streamDefinition map as 4th parameter
                             } catch (ValidatorException e) {
                                 //This will never happen
                             }
@@ -64,20 +61,10 @@ public class QueryPartitioner {
         }
     }
 
-
-    public StreamRuntime getQueryStreamRuntime(OutputRateLimiter outputRateLimiter) {
-        //TODO  :construct StreamRuntime
-        return null;
-    }
-
-
     public List<List<PartitionExecutor>> getPartitionExecutors() {
         return partitionExecutors;
     }
 
-    public StreamRuntime cloneStreamRuntime(OutputRateLimiter outputRateLimiter) {
-        return null;   //TODO:construct StreamRuntime
 
-    }
 
 }

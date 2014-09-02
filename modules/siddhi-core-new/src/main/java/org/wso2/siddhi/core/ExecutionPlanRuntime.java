@@ -31,8 +31,6 @@ import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.execution.partition.Partition;
-import org.wso2.siddhi.query.api.execution.query.Query;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -67,13 +65,11 @@ public class ExecutionPlanRuntime {
 
     }
 
-    public void addPartition(Partition partition) {
-        PartitionRuntime partitionRuntime = new PartitionRuntime(this, partition, streamDefinitionMap, streamJunctionMap, siddhiContext);
+    public void addPartition(PartitionRuntime partitionRuntime) {
         partitionMap.put(partitionRuntime.getPartitionId(), partitionRuntime);
     }
 
-    public String addQuery(Query query) {
-        QueryRuntime queryRuntime = new QueryRuntime(query, streamDefinitionMap, streamJunctionMap, null, siddhiContext, null);
+    public String addQuery(QueryRuntime queryRuntime) {
         queryProcessorMap.put(queryRuntime.getQueryId(), queryRuntime);
         OutputCallback outputCallback = queryRuntime.getOutputCallback();
         if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {

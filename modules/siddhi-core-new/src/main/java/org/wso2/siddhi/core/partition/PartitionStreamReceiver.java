@@ -118,7 +118,7 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver {
                 for (QueryRuntime queryRuntime : queryRuntimeList) {
                     if (queryRuntime.getInputStreamId().get(0).equals(streamId)) {
 
-                        StreamRuntime streamRuntime = queryPartitioner.cloneStreamRuntime(queryRuntime.getOutputRateManager());
+                        StreamRuntime streamRuntime = queryRuntime.getStreamRuntime();
                         streamJunction = new StreamJunction(streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
                         streamJunction.subscribe(((SingleStreamRuntime)streamRuntime).getQueryStreamReceiver());
                         partitionRuntime.addStreamJunction(streamId + key, streamJunction);

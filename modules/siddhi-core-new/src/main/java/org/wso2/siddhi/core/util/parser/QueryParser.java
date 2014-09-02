@@ -58,8 +58,10 @@ public class QueryParser {
         queryRuntime.setStreamRuntime(streamRuntime);
         queryRuntime.setSelector(selector);
         queryRuntime.setOutputRateLimiter(outputRateLimiter);
+        queryRuntime.setMetaStateEvent(metaStateEvent);
 
         return queryRuntime;
     }
+
 
 }

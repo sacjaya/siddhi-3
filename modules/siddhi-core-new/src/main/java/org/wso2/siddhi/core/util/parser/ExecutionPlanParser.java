@@ -20,31 +20,15 @@ package org.wso2.siddhi.core.util.parser;
 
 import org.wso2.siddhi.core.ExecutionPlanRuntime;
 import org.wso2.siddhi.core.config.SiddhiContext;
-import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.partition.PartitionRuntime;
-import org.wso2.siddhi.core.partition.PartitionStreamReceiver;
-import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.query.QueryRuntime;
-import org.wso2.siddhi.core.query.selector.QueryPartitioner;
-import org.wso2.siddhi.core.stream.QueryStreamReceiver;
-import org.wso2.siddhi.core.stream.StreamJunction;
-import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
 import org.wso2.siddhi.query.api.ExecutionPlan;
-import org.wso2.siddhi.query.api.annotation.Element;
-import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.exception.DuplicateAnnotationException;
 import org.wso2.siddhi.query.api.execution.ExecutionElement;
 import org.wso2.siddhi.query.api.execution.partition.Partition;
 import org.wso2.siddhi.query.api.execution.query.Query;
-import org.wso2.siddhi.query.api.execution.query.input.stream.SingleInputStream;
-import org.wso2.siddhi.query.api.execution.query.output.stream.InsertIntoStream;
-import org.wso2.siddhi.query.api.util.AnnotationHelper;
 
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
 
 public class ExecutionPlanParser {
 
@@ -58,7 +42,8 @@ public class ExecutionPlanParser {
                 queryRuntime.update(executionPlanRuntime.getStreamJunctions());
                 executionPlanRuntime.addQuery(queryRuntime);
             } else {
-                executionPlanRuntime.addPartition((Partition) executionElement);
+                PartitionRuntime partitionRuntime = PartitionParser.parse(executionPlanRuntime,(Partition) executionElement, siddhiContext, executionPlanRuntime.getStreamDefinitionMap());
+                executionPlanRuntime.addPartition(partitionRuntime);
             }
         }
         return executionPlanRuntime;

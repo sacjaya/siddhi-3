@@ -19,7 +19,9 @@
 package org.wso2.siddhi.core.query;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.event.state.MetaStateEvent;
 import org.wso2.siddhi.core.exception.QueryCreationException;
+import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
 import org.wso2.siddhi.core.partition.PartitionRuntime;
 import org.wso2.siddhi.core.partition.PartitionStreamReceiver;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
@@ -32,19 +34,23 @@ import org.wso2.siddhi.core.stream.QueryStreamReceiver;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
 import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
+import org.wso2.siddhi.core.util.parser.InputStreamParser;
 import org.wso2.siddhi.core.util.parser.OutputParser;
+import org.wso2.siddhi.core.util.parser.SelectorParser;
+import org.wso2.siddhi.core.util.parser.helper.QueryParserHelper;
 import org.wso2.siddhi.query.api.annotation.Element;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.exception.DuplicateAnnotationException;
-import org.wso2.siddhi.query.api.execution.partition.Partition;
 import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.api.execution.query.input.stream.JoinInputStream;
 import org.wso2.siddhi.query.api.execution.query.input.stream.SingleInputStream;
 import org.wso2.siddhi.query.api.execution.query.output.stream.InsertIntoStream;
 import org.wso2.siddhi.query.api.util.AnnotationHelper;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -62,56 +68,10 @@ public class QueryRuntime {
     private boolean toLocalStream;
     private ConcurrentMap<String, StreamJunction> localStreamJunctionMap;
     private QuerySelector selector;
+    private Map<String, AbstractDefinition> definitionMap;
+    private MetaStateEvent metaStateEvent;
 
-//    public QueryRuntime(Query query, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap, ConcurrentMap<String, StreamJunction> streamJunctionMap, Partition partition, SiddhiContext siddhiContext, PartitionRuntime partitionRuntime) {
-//        try {
-//            Element element = AnnotationHelper.getAnnotationElement("info", "name", query.getAnnotations());
-//            if (element != null) {
-//                this.queryId = element.getValue();
-//
-//            }
-//        } catch (DuplicateAnnotationException e) {
-//            throw new QueryCreationException(e.getMessage() + " for the same Query " + query.toString());
-//        }
-//        if (queryId == null) {
-//            this.queryId = UUID.randomUUID().toString();
-//        }
-//        this.query = query;
-//        this.siddhiContext = siddhiContext;
-//
-//        outputRateLimiter = OutputParser.constructOutputRateLimiter(query.getOutputRate());
-//        queryPartitioner = new QueryPartitioner(query.getInputStream(), partition, siddhiContext);
-//        streamRuntime = queryPartitioner.getQueryStreamRuntime(outputRateLimiter);
-//
-//        if (query.getOutputStream() instanceof InsertIntoStream && ((InsertIntoStream) query.getOutputStream()).isInnerStream()) {
-//            toLocalStream = true;
-//            outputCallback = OutputParser.constructOutputCallback(query.getOutputStream(), localStreamJunctionMap, outputStreamDefinition, siddhiContext);
-//            outputRateLimiter.setOutputCallback(outputCallback);
-//
-//        } else {
-//            outputCallback = OutputParser.constructOutputCallback(query.getOutputStream(), streamJunctionMap, outputStreamDefinition, siddhiContext);
-//            outputRateLimiter.setOutputCallback(outputCallback);
-//        }
-//
-//        if (streamRuntime instanceof SingleStreamRuntime) {
-//            if (partitionRuntime == null) {
-//                QueryStreamReceiver queryStreamReceiver = ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver();
-//                streamJunctionMap.get(queryStreamReceiver.getStreamId()).subscribe(queryStreamReceiver);
-//
-//            } else if (!((SingleInputStream) query.getInputStream()).isInnerStream()) {
-//                List<List<PartitionExecutor>> partitionExecutors = queryPartitioner.getPartitionExecutors();
-//                partitionRuntime.addPartitionReceiver(new PartitionStreamReceiver(siddhiContext, null, null, queryPartitioner, partitionExecutors.get(0), partitionRuntime)); //TODO handle null
-//            }
-//        }//TODO: else
-//
-//    }
-
-
-    public QueryRuntime() {
-
-    }
-
-    public void update(Partition partition,PartitionRuntime partitionRuntime, ConcurrentMap<String, StreamJunction> streamJunctionMap){
+    public void update(PartitionRuntime partitionRuntime, ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap){
         try {
             Element element = AnnotationHelper.getAnnotationElement("info", "name", query.getAnnotations());
             if (element != null) {
@@ -125,7 +85,6 @@ public class QueryRuntime {
             queryId = UUID.randomUUID().toString();
         }
 
-        queryPartitioner = new QueryPartitioner(query.getInputStream(), partition, siddhiContext);
 
         if (query.getOutputStream() instanceof InsertIntoStream && ((InsertIntoStream) query.getOutputStream()).isInnerStream()) {
             toLocalStream = true;
@@ -144,7 +103,7 @@ public class QueryRuntime {
 
             } else if (!((SingleInputStream) query.getInputStream()).isInnerStream()) {
                 List<List<PartitionExecutor>> partitionExecutors = queryPartitioner.getPartitionExecutors();
-                partitionRuntime.addPartitionReceiver(new PartitionStreamReceiver(siddhiContext, null, null, queryPartitioner, partitionExecutors.get(0), partitionRuntime)); //TODO handle null
+                partitionRuntime.addPartitionReceiver(new PartitionStreamReceiver(siddhiContext,metaStateEvent.getMetaEvent(0) , (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) query.getInputStream()).getStreamId()), queryPartitioner, partitionExecutors.get(0), partitionRuntime)); //TODO handle null
             }
         }//TODO: else
 
@@ -232,6 +191,7 @@ public class QueryRuntime {
         queryRuntime.toLocalStream = this.toLocalStream;
         queryRuntime.query = this.query;
         queryRuntime.outputStreamDefinition = this.outputStreamDefinition;
+        queryRuntime.definitionMap = this.definitionMap;
 
         if (!toLocalStream) {
             queryRuntime.outputRateLimiter.setOutputCallback(outputCallback);
@@ -244,8 +204,9 @@ public class QueryRuntime {
 
         }
 
+        queryRuntime.streamRuntime = cloneStreamRuntime(queryRuntime.outputRateLimiter);
+
         if (this.isFromLocalStream()) {
-            queryRuntime.streamRuntime = queryPartitioner.cloneStreamRuntime(queryRuntime.outputRateLimiter);
 
             StreamJunction streamJunction = localStreamJunctionMap.get(streamDefinition.getId() + key);
             if (streamJunction == null) {
@@ -254,9 +215,33 @@ public class QueryRuntime {
             }
             streamJunction.subscribe(((SingleStreamRuntime) (queryRuntime.streamRuntime)).getQueryStreamReceiver());
         }
+
         return queryRuntime;
 
     }
+
+
+    public StreamRuntime cloneStreamRuntime(OutputRateLimiter outputRateLimiter) {
+        MetaStateEvent metaStateEvent = new MetaStateEvent(query.getInputStream().getStreamIds().size()); //TODO:Consider MetaStreamEvent[]
+        List<VariableExpressionExecutor> executors = new ArrayList<VariableExpressionExecutor>();
+        StreamRuntime streamRuntime = InputStreamParser.parse(query.getInputStream(), siddhiContext, definitionMap, metaStateEvent, executors);
+        QuerySelector selector = SelectorParser.parse(query.getSelector(), query.getOutputStream(), siddhiContext, metaStateEvent, executors);
+
+
+        selector.setNext(outputRateLimiter);
+        if(((SingleStreamRuntime)streamRuntime).getProcessorChain() == null){
+            ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver().setProcessorChain(selector);
+        } else {
+            ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver().getProcessorChain().setNext(selector);
+        }
+
+        QueryParserHelper.updateVariablePosition(metaStateEvent, executors);
+        QueryParserHelper.addEventConverters(streamRuntime, metaStateEvent);
+
+        return streamRuntime;
+    }
+
+
 
     public void setStreamRuntime(StreamRuntime streamRuntime) {
         this.streamRuntime = streamRuntime;
@@ -281,5 +266,21 @@ public class QueryRuntime {
 
     public StreamRuntime getStreamRuntime() {
         return streamRuntime;
+    }
+
+    public void setDefinitionMap(Map<String,AbstractDefinition> definitionMap){
+        this.definitionMap = definitionMap;
+    }
+    
+    public void setMetaStateEvent(MetaStateEvent metaStateEvent){
+        this.metaStateEvent = metaStateEvent;
+    }
+
+    public void setQueryPartitioner(QueryPartitioner queryPartitioner){
+        this.queryPartitioner = queryPartitioner;
+    }
+
+    public MetaStateEvent getMetaStateEvent() {
+        return metaStateEvent;
     }
 }

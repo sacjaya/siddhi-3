@@ -34,7 +34,6 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.definition.TableDefinition;
 import org.wso2.siddhi.query.api.exception.DuplicateAnnotationException;
 import org.wso2.siddhi.query.api.execution.partition.Partition;
-import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.api.util.AnnotationHelper;
 
 import java.util.ArrayList;
@@ -58,13 +57,10 @@ public class PartitionRuntime {
     private ConcurrentMap<String, QueryRuntime> metaQueryRuntimeMap = new ConcurrentHashMap<String, QueryRuntime>();
     private ConcurrentMap<String, PartitionInstanceRuntime> partitionInstanceRuntimeMap = new ConcurrentHashMap<String, PartitionInstanceRuntime>();
     private List<PartitionStreamReceiver> partitionStreamReceivers = new ArrayList<PartitionStreamReceiver>();
-    private Partition partition;
     private ExecutionPlanRuntime executionPlanRuntime;
 
-    public PartitionRuntime(ExecutionPlanRuntime executionPlanRuntime, Partition partition,
-                            ConcurrentMap<String, AbstractDefinition> streamDefinitionMap,
-                            ConcurrentMap<String, StreamJunction> streamJunctionMap, SiddhiContext siddhiContext) {
 
+    public PartitionRuntime(ExecutionPlanRuntime executionPlanRuntime, Partition partition, SiddhiContext siddhiContext) {
         try {
             Element element = AnnotationHelper.getAnnotationElement("info", "name", partition.getAnnotations());
             if (element != null) {
@@ -76,19 +72,15 @@ public class PartitionRuntime {
         if (partitionId == null) {
             this.partitionId = UUID.randomUUID().toString();
         }
-        this.streamDefinitionMap = streamDefinitionMap;
-        this.streamJunctionMap = streamJunctionMap;
-        this.partition = partition;
+        this.streamDefinitionMap = executionPlanRuntime.getStreamDefinitionMap();
+        this.streamJunctionMap = executionPlanRuntime.getStreamJunctions();
         this.executionPlanRuntime = executionPlanRuntime;
         this.siddhiContext = siddhiContext;
-        for (Query query : partition.getQueryList()) {
-            addQuery(query);
-        }
     }
 
-    private QueryRuntime addQuery(Query query) {
+    public QueryRuntime addQuery(QueryRuntime metaQueryRuntime) {
 
-        QueryRuntime metaQueryRuntime = null; //TODO: new QueryRuntime(query, streamDefinitionMap, streamJunctionMap, partition, siddhiContext, this);
+        metaQueryRuntime.update(this,streamJunctionMap,streamDefinitionMap);
         metaQueryRuntimeMap.put(metaQueryRuntime.getQueryId(), metaQueryRuntime);
         OutputCallback outputCallback = metaQueryRuntime.getOutputCallback();
         if (metaQueryRuntime.isToLocalStream()) {
@@ -97,19 +89,16 @@ public class PartitionRuntime {
             }
         } else {
             if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
-                executionPlanRuntime.defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
+//                executionPlanRuntime.defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
             }
-
         }
         return metaQueryRuntime;
     }
 
     /**
-     * clone all the queries of the partition for a given partition key
-     *
-     * @param key
-     * @return
-     */
+    * clone all the queries of the partition for a given partition key
+    * @param key
+    */
     public void clone(String key) {
         PartitionInstanceRuntime partitionInstance = this.getPartitionInstanceRuntime(key);
         if (partitionInstance == null) {
