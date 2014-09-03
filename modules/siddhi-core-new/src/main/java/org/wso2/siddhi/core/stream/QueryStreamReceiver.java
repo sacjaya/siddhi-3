@@ -85,7 +85,11 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
     private void process(boolean endOfBatch, StreamEvent streamEvent) {
         if (streamEventBuffer == null) {
             if (endOfBatch) {
-                processorChain.process(streamEvent);
+                if (processorChain != null) {
+                    processorChain.process(streamEvent);
+                } else {
+                    next.process(streamEvent);
+                }
             } else {
                 streamEventBuffer = streamEvent;
                 lastStreamEventInBuffer = streamEvent;
@@ -93,7 +97,11 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
         } else {
             lastStreamEventInBuffer.setNext(streamEvent);
             if (endOfBatch) {
-                processorChain.process(streamEventBuffer);
+                if (processorChain != null) {
+                    processorChain.process(streamEvent);
+                } else {
+                    next.process(streamEvent);
+                }
                 streamEventBuffer = null;
                 lastStreamEventInBuffer = null;
             } else {

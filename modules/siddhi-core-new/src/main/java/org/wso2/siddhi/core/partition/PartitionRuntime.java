@@ -138,29 +138,25 @@ public class PartitionRuntime {
             List<QueryRuntime> partitionedQueryRuntimeList = new CopyOnWriteArrayList<QueryRuntime>();
 
             for (QueryRuntime queryRuntime : metaQueryRuntimeMap.values()) {
-                String queryId = queryRuntime.getInputStreamId().get(0);
+                String streamId = queryRuntime.getInputStreamId().get(0);
                 QueryRuntime clonedQueryRuntime;
-                StreamDefinition streamDefinition;
 
                 if (queryRuntime.isFromLocalStream()) {
-                    streamDefinition = (StreamDefinition) localStreamDefinitionMap.get(queryId);
                     clonedQueryRuntime = queryRuntime.clone(key,localStreamJunctionMap);
                     queryRuntimeList.add(clonedQueryRuntime);
+
+                    StreamJunction streamJunction = localStreamJunctionMap.get(streamId + key);
+                    if (streamJunction == null) {
+                        streamJunction = new StreamJunction(streamId+ key,(StreamDefinition) localStreamDefinitionMap.get(streamId), (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
+                        localStreamJunctionMap.put(streamId + key, streamJunction);
+                    }
+                    streamJunction.subscribe(((SingleStreamRuntime) (clonedQueryRuntime.getStreamRuntime())).getQueryStreamReceiver());
                 } else {
-                    streamDefinition =  (StreamDefinition) executionPlanRuntime.getStreamDefinitionMap().get(queryId);
-                    clonedQueryRuntime = queryRuntime.clone( key,localStreamJunctionMap);
+                    clonedQueryRuntime = queryRuntime.clone(key,localStreamJunctionMap);
                     queryRuntimeList.add(clonedQueryRuntime);
                     partitionedQueryRuntimeList.add(clonedQueryRuntime);
                 }
 
-                if (queryRuntime.isFromLocalStream()) {
-                    StreamJunction streamJunction = localStreamJunctionMap.get(queryId + key);
-                    if (streamJunction == null) {
-                        streamJunction = new StreamJunction(queryId+ key,streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
-                        localStreamJunctionMap.put(queryId + key, streamJunction);
-                    }
-                    streamJunction.subscribe(((SingleStreamRuntime) (clonedQueryRuntime.getStreamRuntime())).getQueryStreamReceiver());
-                }
             }
             partitionedQueryRuntimeMap.put(key, partitionedQueryRuntimeList);
             addPartitionInstance(key, new PartitionInstanceRuntime(key, queryRuntimeList));

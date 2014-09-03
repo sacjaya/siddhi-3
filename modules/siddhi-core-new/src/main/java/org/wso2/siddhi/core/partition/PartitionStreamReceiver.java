@@ -95,19 +95,8 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver {
             return;
         }
         partitionRuntime.clone(key);
-        getStreamJunction(streamId + key).sendEvent(event);
+        cachedStreamJunctionMap.get(streamId + key).sendEvent(event);
     }
-
-    private StreamJunction getStreamJunction(String streamJunctionName) {
-        StreamJunction streamJunction = cachedStreamJunctionMap.get(streamJunctionName);
-        if (streamJunction == null) {
-            streamJunction = new StreamJunction(streamJunctionName,streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
-            partitionRuntime.addStreamJunction(streamJunctionName, streamJunction);
-            cachedStreamJunctionMap.put(streamJunctionName, streamJunction);
-        }
-        return streamJunction;
-    }
-
 
     public void addStreamJunction(String key, List<QueryRuntime> queryRuntimeList) {
         if (!partitionExecutors.isEmpty()) {
