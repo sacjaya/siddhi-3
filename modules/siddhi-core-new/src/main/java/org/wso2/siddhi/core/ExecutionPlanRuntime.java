@@ -79,7 +79,7 @@ public class ExecutionPlanRuntime {
         if (streamRuntime instanceof SingleStreamRuntime) {
             QueryStreamReceiver queryStreamReceiver = ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver();
             streamJunctionMap.get(queryStreamReceiver.getStreamId()).subscribe(queryStreamReceiver);
-        }//TODO: else
+        }//TODO: for join
 
         OutputCallback outputCallback = OutputParser.constructOutputCallback(queryRuntime.getQuery().getOutputStream(), streamJunctionMap, queryRuntime.getOutputStreamDefinition(), siddhiContext);
         queryRuntime.setOutputCallback(outputCallback);

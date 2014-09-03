@@ -146,8 +146,6 @@ public abstract class QueryCallback {
 
         if (asyncEnabled != null && asyncEnabled || asyncEnabled == null) {
 
-            ProducerType producerType = ProducerType.SINGLE;
-
             disruptor = new Disruptor<EventHolder>(new EventHolderFactory(), siddhiContext.getDefaultEventBufferSize(),
                     siddhiContext.getExecutorService(), ProducerType.SINGLE, new SleepingWaitStrategy());
 

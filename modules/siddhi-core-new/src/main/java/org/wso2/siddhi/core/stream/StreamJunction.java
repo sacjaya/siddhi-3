@@ -23,10 +23,9 @@ import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.SleepingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.core.event.EventFactory;
+import org.wso2.siddhi.core.event.SiddhiEventFactory;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.util.SiddhiConstants;
@@ -131,7 +130,7 @@ public class StreamJunction {
                     producerType = ProducerType.MULTI;
                 }
 
-                disruptor = new Disruptor<Event>(new EventFactory(streamDefinition.getAttributeList().size()),
+                disruptor = new Disruptor<Event>(new SiddhiEventFactory(streamDefinition.getAttributeList().size()),
                         bufferSize, executorService, producerType, new SleepingWaitStrategy());
 
                 for (Receiver receiver : receivers) {
