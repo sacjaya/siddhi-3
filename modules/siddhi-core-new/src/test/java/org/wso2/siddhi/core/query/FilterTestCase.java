@@ -28,6 +28,7 @@ import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
+import org.wso2.siddhi.core.util.EventPrinter;
 import org.wso2.siddhi.core.util.parser.ExecutionPlanParser;
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.annotation.Annotation;
@@ -83,6 +84,7 @@ public class FilterTestCase {
         executionPlanRuntime.addCallback("query1", new QueryCallback(query, "query1", 2, siddhiContext) {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+                EventPrinter.print(timeStamp, inEvents, removeEvents);
                 Assert.assertTrue("IBM".equals(inEvents[0].getData(0)) || "WSO2".equals(inEvents[0].getData(0)));
                 count++;
                 eventArrived = true;
