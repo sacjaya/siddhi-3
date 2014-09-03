@@ -45,18 +45,33 @@ public class QueryParserHelper {
      * @param position
      */
     private static void updateVariablePosition(MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> variableExpressionExecutorList, int[] position) {
-        //Position[array ID, index] : Array ID -> outData = 2; afterWindowData = 1; beforeWindowData = 0;
+        //position[state event index, event chain index]
         refactorMetaStreamEvent(metaStreamEvent);       //can remove this and call separately so that we can stop calling repeatedly in partition creation. But then we can't enforce refactoring.
         for (VariableExpressionExecutor variableExpressionExecutor : variableExpressionExecutorList) {
             if (metaStreamEvent.getOutputData().contains(variableExpressionExecutor.getAttribute())) {
-                variableExpressionExecutor.setPosition(new int[]{SiddhiConstants.OUTPUT_DATA_INDEX, metaStreamEvent.getOutputData()
-                        .indexOf(variableExpressionExecutor.getAttribute())});
+                if (position[0] != -1 || position[1] != -1) {
+                    variableExpressionExecutor.setPosition(new int[]{position[0], position[1], SiddhiConstants.OUTPUT_DATA_INDEX, metaStreamEvent.getOutputData()
+                            .indexOf(variableExpressionExecutor.getAttribute())});
+                } else {
+                    variableExpressionExecutor.setPosition(new int[]{SiddhiConstants.OUTPUT_DATA_INDEX, metaStreamEvent.getOutputData()
+                            .indexOf(variableExpressionExecutor.getAttribute())});
+                }
             } else if (metaStreamEvent.getAfterWindowData().contains(variableExpressionExecutor.getAttribute())) {
-                variableExpressionExecutor.setPosition(new int[]{SiddhiConstants.AFTER_WINDOW_DATA_INDEX, metaStreamEvent
-                        .getAfterWindowData().indexOf(variableExpressionExecutor.getAttribute())});
+                if (position[0] != -1 || position[1] != -1) {
+                    variableExpressionExecutor.setPosition(new int[]{position[0], position[1], SiddhiConstants.AFTER_WINDOW_DATA_INDEX, metaStreamEvent
+                            .getAfterWindowData().indexOf(variableExpressionExecutor.getAttribute())});
+                } else {
+                    variableExpressionExecutor.setPosition(new int[]{SiddhiConstants.AFTER_WINDOW_DATA_INDEX, metaStreamEvent
+                            .getAfterWindowData().indexOf(variableExpressionExecutor.getAttribute())});
+                }
             } else if (metaStreamEvent.getBeforeWindowData().contains(variableExpressionExecutor.getAttribute())) {
-                variableExpressionExecutor.setPosition(new int[]{SiddhiConstants.BEFORE_WINDOW_DATA_INDEX, metaStreamEvent
-                        .getBeforeWindowData().indexOf(variableExpressionExecutor.getAttribute())});
+                if (position[0] != -1 || position[1] != -1) {
+                    variableExpressionExecutor.setPosition(new int[]{position[0], position[1], SiddhiConstants.BEFORE_WINDOW_DATA_INDEX, metaStreamEvent
+                            .getBeforeWindowData().indexOf(variableExpressionExecutor.getAttribute())});
+                } else {
+                    variableExpressionExecutor.setPosition(new int[]{SiddhiConstants.BEFORE_WINDOW_DATA_INDEX, metaStreamEvent
+                            .getBeforeWindowData().indexOf(variableExpressionExecutor.getAttribute())});
+                }
             }
         }
 
@@ -86,22 +101,22 @@ public class QueryParserHelper {
     /**
      * Method to clean/refactor MetaStateEvent and update
      * VariableExpressionExecutors accordingly.
+     *
      * @param metaStateEvent
      * @param executors
      */
     public static void updateVariablePosition(MetaStateEvent metaStateEvent, List<VariableExpressionExecutor> executors) {
         if (metaStateEvent.getEventCount() == 1) {
-            updateVariablePosition(metaStateEvent.getMetaEvent(0), executors, new int[]{-1, -1});  //position??
+            updateVariablePosition(metaStateEvent.getMetaEvent(0), executors, new int[]{-1, -1});  //int[] is used to deliver 0,1 indexes of the position array
         } else {
 
-            //TODO implement
+            //TODO handle stateEvent
         }
     }
 
     public static void addEventConverters(StreamRuntime runtime, MetaStateEvent metaStateEvent) {
         int index = 0;
         if (runtime instanceof SingleStreamRuntime) {
-
             StreamEventConverter converter = new StreamEventConverter(metaStateEvent.getMetaEvent(index));
             ((SingleStreamRuntime) runtime).getQueryStreamReceiver().setEventConverter(converter);
         } else {
