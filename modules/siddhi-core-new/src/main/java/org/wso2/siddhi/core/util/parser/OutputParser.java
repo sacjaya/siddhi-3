@@ -42,7 +42,7 @@ public class OutputParser {
         if (outStream instanceof InsertIntoStream) {
             StreamJunction outputStreamJunction = streamJunctionMap.get(id);
             if (outputStreamJunction == null) {
-                outputStreamJunction = new StreamJunction(outputStreamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
+                outputStreamJunction = new StreamJunction(id,outputStreamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
                 streamJunctionMap.putIfAbsent(id, outputStreamJunction);
             }
             return new InsertIntoStreamCallback(outputStreamJunction, outputStreamDefinition);
@@ -59,7 +59,7 @@ public class OutputParser {
         if (outStream instanceof InsertIntoStream) {
             StreamJunction outputStreamJunction = streamJunctionMap.get(id + key);
             if (outputStreamJunction == null) {
-                outputStreamJunction = new StreamJunction(outputStreamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
+                outputStreamJunction = new StreamJunction(id+key,outputStreamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
                 streamJunctionMap.putIfAbsent(id + key, outputStreamJunction);
             }
             return new InsertIntoStreamCallback(outputStreamJunction, outputStreamDefinition);
@@ -69,9 +69,9 @@ public class OutputParser {
         }
     }
 
-    public static OutputRateLimiter constructOutputRateLimiter(OutputRate outputRate) {
+    public static OutputRateLimiter constructOutputRateLimiter(String id, OutputRate outputRate) {
         if (outputRate == null) {
-            return new PassThroughOutputRateLimiter();
+            return new PassThroughOutputRateLimiter(id);
         }
         //TODO: else
         return null;

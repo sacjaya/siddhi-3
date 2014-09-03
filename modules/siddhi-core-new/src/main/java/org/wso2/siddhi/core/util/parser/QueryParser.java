@@ -41,7 +41,7 @@ public class QueryParser {
         List<VariableExpressionExecutor> executors = new ArrayList<VariableExpressionExecutor>();
         StreamRuntime streamRuntime = InputStreamParser.parse(query.getInputStream(), siddhiContext, definitionMap, metaStateEvent, executors);
         QuerySelector selector = SelectorParser.parse(query.getSelector(), query.getOutputStream(), siddhiContext, metaStateEvent, executors);
-        OutputRateLimiter outputRateLimiter = OutputParser.constructOutputRateLimiter(query.getOutputRate());
+        OutputRateLimiter outputRateLimiter = OutputParser.constructOutputRateLimiter(query.getOutputStream().getId(),query.getOutputRate());
 
         if (((SingleStreamRuntime) streamRuntime).getProcessorChain() == null) {
             ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver().setProcessorChain(selector);
@@ -59,6 +59,7 @@ public class QueryParser {
         queryRuntime.setSelector(selector);
         queryRuntime.setOutputRateLimiter(outputRateLimiter);
         queryRuntime.setMetaStateEvent(metaStateEvent);
+        queryRuntime.setId();
 
         return queryRuntime;
     }

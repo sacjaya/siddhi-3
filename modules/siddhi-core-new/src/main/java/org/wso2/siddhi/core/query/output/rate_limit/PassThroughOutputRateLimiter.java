@@ -18,14 +18,29 @@
 package org.wso2.siddhi.core.query.output.rate_limit;
 
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.query.processor.Processor;
 
 public class PassThroughOutputRateLimiter extends OutputRateLimiter {
+    static final Logger log = Logger.getLogger(PassThroughOutputRateLimiter.class);
+    String id;
+
+    public PassThroughOutputRateLimiter(String id) {
+        this.id = id;
+    }
+
+    public PassThroughOutputRateLimiter clone(String key){
+        return new PassThroughOutputRateLimiter(id+key);
+    }
 
 
     @Override
     public void send(long timeStamp, StreamEvent currentEvent, StreamEvent expiredEvent) {
+        if(log.isTraceEnabled()){
+            log.trace("event is sent through outputRateLimiter "+ id+ this);
+        }
         sendToCallBacks(timeStamp, currentEvent, expiredEvent, currentEvent != null ? currentEvent : expiredEvent);
     }
 
@@ -47,5 +62,10 @@ public class PassThroughOutputRateLimiter extends OutputRateLimiter {
     @Override
     public void setToLast(Processor processor) {
 
+    }
+
+    @Override
+    public Processor clone() {
+        return clone("");
     }
 }

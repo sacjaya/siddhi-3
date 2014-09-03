@@ -29,6 +29,7 @@ import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.exception.ValidatorException;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
+import org.wso2.siddhi.core.util.EventPrinter;
 import org.wso2.siddhi.query.api.ExecutionPlan;
 import org.wso2.siddhi.query.api.annotation.Annotation;
 import org.wso2.siddhi.query.api.definition.Attribute;
@@ -85,6 +86,7 @@ public class PartitionTestCase {
         executionPlanRuntime.addCallback("StockQuote", new StreamCallback() {
             @Override
             public void receive(Event[] events) {
+                EventPrinter.print(events);
                 Assert.assertTrue("IBM".equals(events[0].getData(0)) || "WSO2".equals(events[0].getData(0)));
                 count++;
                 eventArrived = true;

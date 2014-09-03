@@ -38,9 +38,19 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
         this.streamId = streamDefinition.getId();
     }
 
+    private QueryStreamReceiver(String id){
+        streamId = id;
+    }
+
     @Override
     public String getStreamId() {
         return streamId;
+    }
+
+    public QueryStreamReceiver clone(String key){
+        QueryStreamReceiver clonedQueryStreamReceiver = new QueryStreamReceiver(streamId+key);
+        clonedQueryStreamReceiver.setEventConverter(eventConverter);
+        return clonedQueryStreamReceiver;
     }
 
     @Override

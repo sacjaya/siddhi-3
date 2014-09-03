@@ -69,43 +69,11 @@ public class QueryRuntime {
     private StreamDefinition outputStreamDefinition;
     private QueryPartitioner queryPartitioner;
     private boolean toLocalStream;
-    private ConcurrentMap<String, StreamJunction> localStreamJunctionMap;
-    private ConcurrentMap<String, AbstractDefinition> localStreamDefinitionMap;
     private QuerySelector selector;
     private ConcurrentMap<String, AbstractDefinition> definitionMap;
     private MetaStateEvent metaStateEvent;
 
-    public void update(PartitionRuntime partitionRuntime, ConcurrentMap<String, StreamJunction> streamJunctionMap, ConcurrentMap<String, AbstractDefinition> streamDefinitionMap) {
-        setId();
-
-        if (partitionRuntime != null) {
-            localStreamDefinitionMap = partitionRuntime.getLocalStreamDefinitionMap();
-            localStreamJunctionMap = partitionRuntime.getLocalStreamJunctionMap();
-        }
-
-        if (query.getOutputStream() instanceof InsertIntoStream && ((InsertIntoStream) query.getOutputStream()).isInnerStream()) {
-            toLocalStream = true;
-            outputCallback = OutputParser.constructOutputCallback(query.getOutputStream(), localStreamJunctionMap, outputStreamDefinition, siddhiContext);
-            outputRateLimiter.setOutputCallback(outputCallback);
-        } else {
-            outputCallback = OutputParser.constructOutputCallback(query.getOutputStream(), streamJunctionMap, outputStreamDefinition, siddhiContext);
-            outputRateLimiter.setOutputCallback(outputCallback);
-        }
-
-        if (streamRuntime instanceof SingleStreamRuntime) {
-            if (partitionRuntime == null) {
-                QueryStreamReceiver queryStreamReceiver = ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver();
-                streamJunctionMap.get(queryStreamReceiver.getStreamId()).subscribe(queryStreamReceiver);
-
-            } else if (!((SingleInputStream) query.getInputStream()).isInnerStream()) {
-                List<List<PartitionExecutor>> partitionExecutors = queryPartitioner.getPartitionExecutors();
-                partitionRuntime.addPartitionReceiver(new PartitionStreamReceiver(siddhiContext, metaStateEvent.getMetaEvent(0), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) query.getInputStream()).getStreamId()),  partitionExecutors.get(0), partitionRuntime)); //TODO handle null
-            }
-        }//TODO: else
-
-    }
-
-    private void setId() {
+    public void setId() {
         try {
             Element element = AnnotationHelper.getAnnotationElement("info", "name", query.getAnnotations());
             if (element != null) {
@@ -162,18 +130,29 @@ public class QueryRuntime {
         return false;
     }
 
-    public QueryRuntime clone(StreamDefinition streamDefinition, String key) {
-        QueryRuntime queryRuntime;
+    public QueryRuntime clone(StreamDefinition streamDefinition, String key, ConcurrentMap<String, StreamJunction> localStreamJunctionMap) {
 
-        if (query.getInputStream() instanceof BasicSingleInputStream && ((BasicSingleInputStream) query.getInputStream()).isInnerStream()) {
-            queryRuntime = QueryParser.parse(query,siddhiContext,localStreamDefinitionMap);
+        StreamRuntime clonedStreamRuntime = this.streamRuntime.clone(key);
+        QuerySelector clonedSelector = this.selector.clone(key);
+        OutputRateLimiter clonedOutputRateLimiter = outputRateLimiter.clone(key);
+
+        if(((SingleStreamRuntime)clonedStreamRuntime).getProcessorChain() == null){
+            ((SingleStreamRuntime) clonedStreamRuntime).getQueryStreamReceiver().setProcessorChain(clonedSelector);
         } else {
-            queryRuntime = QueryParser.parse(query,siddhiContext,definitionMap);
+            ((SingleStreamRuntime) clonedStreamRuntime).getQueryStreamReceiver().getProcessorChain().setNext(clonedSelector);
         }
+
+        QueryRuntime queryRuntime = new QueryRuntime();
         queryRuntime.queryId = this.queryId + key;
-        queryRuntime.toLocalStream = this.toLocalStream;
+        queryRuntime.setQuery(query);
+        queryRuntime.setSiddhiContext(siddhiContext);
+        queryRuntime.setStreamRuntime(clonedStreamRuntime);
+        queryRuntime.setSelector(clonedSelector);
+        queryRuntime.setOutputRateLimiter(clonedOutputRateLimiter);
+        queryRuntime.setMetaStateEvent(this.metaStateEvent);
+        queryRuntime.setToLocalStream(toLocalStream);
+        queryRuntime.setDefinitionMap(definitionMap);
         queryRuntime.outputStreamDefinition = this.outputStreamDefinition;
-        queryRuntime.definitionMap = this.definitionMap;
 
         if (!toLocalStream) {
             queryRuntime.outputRateLimiter.setOutputCallback(outputCallback);
@@ -183,16 +162,6 @@ public class QueryRuntime {
             queryRuntime.outputRateLimiter.setOutputCallback(outputCallback);
             queryRuntime.outputCallback = outputCallback;
         }
-
-        if (this.isFromLocalStream()) {
-            StreamJunction streamJunction = localStreamJunctionMap.get(streamDefinition.getId() + key);
-            if (streamJunction == null) {
-                streamJunction = new StreamJunction(streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
-                localStreamJunctionMap.putIfAbsent(streamDefinition.getId() + key, streamJunction);
-            }
-            streamJunction.subscribe(((SingleStreamRuntime) (queryRuntime.streamRuntime)).getQueryStreamReceiver());
-        }
-
         return queryRuntime;
 
     }
@@ -237,5 +206,20 @@ public class QueryRuntime {
 
     public MetaStateEvent getMetaStateEvent() {
         return metaStateEvent;
+    }
+
+    public void setToLocalStream(boolean toLocalStream){
+        this.toLocalStream = toLocalStream;
+    }
+    public Query getQuery() {
+        return query;
+    }
+
+    public void setOutputCallback(OutputCallback outputCallback) {
+        this.outputCallback = outputCallback;
+    }
+
+    public QueryPartitioner getQueryPartitioner() {
+        return queryPartitioner;
     }
 }

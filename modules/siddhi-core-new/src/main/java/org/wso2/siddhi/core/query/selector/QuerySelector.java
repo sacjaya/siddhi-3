@@ -19,6 +19,8 @@
 
 package org.wso2.siddhi.core.query.selector;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.exception.QueryCreationException;
@@ -36,25 +38,33 @@ public class QuerySelector implements Processor {
     private Selector selector;
     private StreamDefinition outputStreamDefinition;
     private int outputSize;
+    private SiddhiContext siddhiContext;
     private boolean currentOn = false;
     private boolean expiredOn = false;
     private OutputRateLimiter outputRateLimiter;
     private ArrayList<AttributeProcessor> attributeProcessorList;
+    private String id;
+    static final Logger log = Logger.getLogger(QuerySelector.class);
+
 
 
     //TODO:aggregateAttributeProcessorList and the methods -processOutputAttributeGenerator
 
-    public QuerySelector(String outputStreamId, Selector selector, boolean currentOn, boolean expiredOn, SiddhiContext siddhiContext) {
+    public QuerySelector(String id, Selector selector, boolean currentOn, boolean expiredOn, SiddhiContext siddhiContext) {
+        this.id = id;
         this.currentOn = currentOn;
         this.expiredOn = expiredOn;
         this.selector = selector;
+        this.siddhiContext = siddhiContext;
         this.outputSize = selector.getSelectionList().size();
     }
 
     @Override
     public void process(StreamEvent streamEvent) {
         //TODO:  for RemoveStreamEvents
-
+        if(log.isTraceEnabled()){
+            log.trace("event is processed by selector "+ id+ this);
+        }
         Object[] data = new Object[streamEvent.getOutputData().length];      //Returns outData array from meta stream event
         for (int i = 0; i < streamEvent.getOutputData().length; i++) {
             data[i] = streamEvent.getOutputData()[i];
@@ -95,6 +105,11 @@ public class QuerySelector implements Processor {
         setNext(processor);
     }
 
+    @Override
+    public Processor clone() {
+        return clone("");
+    }
+
 
     public ArrayList<AttributeProcessor> getAttributeProcessorList() {
         return attributeProcessorList;
@@ -102,6 +117,12 @@ public class QuerySelector implements Processor {
 
     public void setAttributeProcessorList(ArrayList<AttributeProcessor> attributeProcessorList) {
         this.attributeProcessorList = attributeProcessorList;
+    }
+
+    public QuerySelector clone(String key){
+        QuerySelector clonedQuerySelector = new QuerySelector(id+key,selector,currentOn,expiredOn,siddhiContext);
+        clonedQuerySelector.attributeProcessorList =attributeProcessorList;
+        return clonedQuerySelector;
     }
 
 
