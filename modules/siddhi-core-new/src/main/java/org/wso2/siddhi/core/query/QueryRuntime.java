@@ -58,6 +58,17 @@ public class QueryRuntime {
     private ConcurrentMap<String, AbstractDefinition> definitionMap;
     private MetaStateEvent metaStateEvent;
 
+    public QueryRuntime(Query query,SiddhiContext siddhiContext,StreamRuntime streamRuntime,QuerySelector selector,OutputRateLimiter outputRateLimiter,MetaStateEvent metaStateEvent){
+        this.query = query;
+        this.siddhiContext = siddhiContext;
+        this.streamRuntime = streamRuntime;
+        this.selector = selector;
+        setOutputRateLimiter(outputRateLimiter);
+        setMetaStateEvent(metaStateEvent);
+        setId();
+        init();
+    }
+
     public void setId() {
         try {
             Element element = AnnotationHelper.getAnnotationElement("info", "name", query.getAnnotations());
@@ -72,10 +83,6 @@ public class QueryRuntime {
             queryId = UUID.randomUUID().toString();
         }
 
-    }
-
-    public OutputCallback getOutputCallback() {
-        return outputCallback;
     }
 
     public String getQueryId() {
@@ -121,18 +128,10 @@ public class QueryRuntime {
         QuerySelector clonedSelector = this.selector.clone(key);
         OutputRateLimiter clonedOutputRateLimiter = outputRateLimiter.clone(key);
 
-        QueryRuntime queryRuntime = new QueryRuntime();
+        QueryRuntime queryRuntime = new QueryRuntime(query,siddhiContext,clonedStreamRuntime,clonedSelector,clonedOutputRateLimiter,this.metaStateEvent);
         queryRuntime.queryId = this.queryId + key;
-        queryRuntime.setQuery(query);
-        queryRuntime.setSiddhiContext(siddhiContext);
-        queryRuntime.setStreamRuntime(clonedStreamRuntime);
-        queryRuntime.setSelector(clonedSelector);
-        queryRuntime.setOutputRateLimiter(clonedOutputRateLimiter);
-        queryRuntime.setMetaStateEvent(this.metaStateEvent);
         queryRuntime.setToLocalStream(toLocalStream);
         queryRuntime.setDefinitionMap(definitionMap);
-        queryRuntime.init();
-        queryRuntime.outputStreamDefinition = this.outputStreamDefinition;
 
         if (!toLocalStream) {
             queryRuntime.outputRateLimiter.setOutputCallback(outputCallback);
@@ -146,25 +145,9 @@ public class QueryRuntime {
 
     }
 
-    public void setStreamRuntime(StreamRuntime streamRuntime) {
-        this.streamRuntime = streamRuntime;
-    }
-
-    public void setQuery(Query query) {
-        this.query = query;
-    }
-
-    public void setSiddhiContext(SiddhiContext siddhiContext) {
-        this.siddhiContext = siddhiContext;
-    }
-
     public void setOutputRateLimiter(OutputRateLimiter outputRateLimiter) {
         this.outputRateLimiter = outputRateLimiter;
         selector.setNext(outputRateLimiter);
-    }
-
-    public void setSelector(QuerySelector selector) {
-        this.selector = selector;
     }
 
     public StreamRuntime getStreamRuntime() {

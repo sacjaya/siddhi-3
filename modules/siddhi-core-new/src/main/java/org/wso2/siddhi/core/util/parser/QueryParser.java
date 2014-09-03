@@ -45,17 +45,8 @@ public class QueryParser {
         QueryParserHelper.updateVariablePosition(metaStateEvent, executors);
         QueryParserHelper.addEventConverters(streamRuntime, metaStateEvent);
 
-        QueryRuntime queryRuntime = new QueryRuntime();
-        queryRuntime.setQuery(query);
-        queryRuntime.setSiddhiContext(siddhiContext);
-        queryRuntime.setStreamRuntime(streamRuntime);
-        queryRuntime.setSelector(selector);
-        queryRuntime.setOutputRateLimiter(outputRateLimiter);
-        queryRuntime.setMetaStateEvent(metaStateEvent);
-        queryRuntime.setId();
-        queryRuntime.init();
+        return new QueryRuntime(query,siddhiContext,streamRuntime,selector,outputRateLimiter,metaStateEvent);
 
-        return queryRuntime;
     }
 
 
