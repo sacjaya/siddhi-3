@@ -20,9 +20,7 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 public class VariableExpressionExecutor implements ExpressionExecutor {
     Attribute attribute;
     Attribute.Type type;
-    int streamPosition = -1;
     int attributePosition = -1;
-    int innerStreamPosition = -1;  //Simple Event (Default)
     String attributeName;
     String streamReference;
     private int[] position = new int[]{-1, -1, -1, -1};

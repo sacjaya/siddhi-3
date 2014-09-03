@@ -37,13 +37,13 @@ import java.util.Map;
 public class QueryParser {
 
     public static QueryRuntime parse(Query query, SiddhiContext siddhiContext, Map<String, AbstractDefinition> definitionMap) {
-        MetaStateEvent metaStateEvent = new MetaStateEvent(query.getInputStream().getStreamIds().size()); //TODO:Consider MetaStreamEvent[]
+        MetaStateEvent metaStateEvent = new MetaStateEvent(query.getInputStream().getStreamIds().size()); //MetaStateEvent for the query
         List<VariableExpressionExecutor> executors = new ArrayList<VariableExpressionExecutor>();
         StreamRuntime streamRuntime = InputStreamParser.parse(query.getInputStream(), siddhiContext, definitionMap, metaStateEvent, executors);
         QuerySelector selector = SelectorParser.parse(query.getSelector(), query.getOutputStream(), siddhiContext, metaStateEvent, executors);
         OutputRateLimiter outputRateLimiter = OutputParser.constructOutputRateLimiter(query.getOutputRate());
 
-        if(((SingleStreamRuntime)streamRuntime).getProcessorChain() == null){
+        if (((SingleStreamRuntime) streamRuntime).getProcessorChain() == null) {
             ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver().setProcessorChain(selector);
         } else {
             ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver().getProcessorChain().setNext(selector);

@@ -50,6 +50,14 @@ public class InputStreamParser {
         }
     }
 
+    /**
+     * Method to generate MetaStreamEvent reagent to the given input stream. Empty definition will be created and
+     * definition and reference is will be set accordingly in this method.
+     *
+     * @param inputStream
+     * @param definitionMap
+     * @return
+     */
     private static MetaStreamEvent generateMetaStreamEvent(InputStream inputStream, Map<String, AbstractDefinition> definitionMap) {
         MetaStreamEvent metaStreamEvent = new MetaStreamEvent();
         metaStreamEvent.setDefinition(definitionMap.get(((SingleInputStream) inputStream).getStreamId()));
