@@ -15,10 +15,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.siddhi.core.query.output.rate_limit;
+package org.wso2.siddhi.core.query.output.rateLimit;
 
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.query.processor.Processor;

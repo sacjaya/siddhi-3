@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.wso2.siddhi.core.query.output.rate_limit;
+package org.wso2.siddhi.core.query.output.rateLimit;
 
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
