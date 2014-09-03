@@ -49,7 +49,7 @@ public class EventTest {
 
     @Test
     public void testEventCreation() {
-        EventFactory eventFactory = new EventFactory(2);
+        SiddhiEventFactory eventFactory = new SiddhiEventFactory(2);
         Assert.assertEquals(2, eventFactory.newInstance().getData().length);
 
         StreamEventFactory streamEventFactory = new StreamEventFactory(2, 3, 4);
