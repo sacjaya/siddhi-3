@@ -136,12 +136,6 @@ public class QueryRuntime {
         QuerySelector clonedSelector = this.selector.clone(key);
         OutputRateLimiter clonedOutputRateLimiter = outputRateLimiter.clone(key);
 
-        if(((SingleStreamRuntime)clonedStreamRuntime).getProcessorChain() == null){
-            ((SingleStreamRuntime) clonedStreamRuntime).getQueryStreamReceiver().setProcessorChain(clonedSelector);
-        } else {
-            ((SingleStreamRuntime) clonedStreamRuntime).getQueryStreamReceiver().getProcessorChain().setNext(clonedSelector);
-        }
-
         QueryRuntime queryRuntime = new QueryRuntime();
         queryRuntime.queryId = this.queryId + key;
         queryRuntime.setQuery(query);
@@ -152,6 +146,7 @@ public class QueryRuntime {
         queryRuntime.setMetaStateEvent(this.metaStateEvent);
         queryRuntime.setToLocalStream(toLocalStream);
         queryRuntime.setDefinitionMap(definitionMap);
+        queryRuntime.init();
         queryRuntime.outputStreamDefinition = this.outputStreamDefinition;
 
         if (!toLocalStream) {
@@ -221,5 +216,14 @@ public class QueryRuntime {
 
     public QueryPartitioner getQueryPartitioner() {
         return queryPartitioner;
+    }
+
+    public void init() {
+        if (((SingleStreamRuntime) streamRuntime).getProcessorChain() == null) {
+            ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver().setNext(selector);
+        } else {
+            ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver().getProcessorChain().setNext(selector);
+        }
+
     }
 }

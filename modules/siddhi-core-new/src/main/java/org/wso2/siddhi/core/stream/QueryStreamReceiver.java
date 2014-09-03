@@ -25,6 +25,7 @@ import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventConverter;
 import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
+import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 
 public class QueryStreamReceiver implements StreamJunction.Receiver {
 
@@ -33,6 +34,8 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
     private StreamEvent streamEventBuffer;
     private StreamEvent lastStreamEventInBuffer;
     private Processor processorChain;
+    private Processor next;
+
 
     public QueryStreamReceiver(MetaStreamEvent metaStreamEvent, StreamDefinition streamDefinition) {
         this.streamId = streamDefinition.getId();
@@ -58,6 +61,8 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
         streamEvent = eventConverter.convertToStreamEvent(streamEvent);
         if (processorChain != null) {
             processorChain.process(streamEvent);
+        } else {
+            next.process(streamEvent);
         }
     }
 
@@ -66,6 +71,8 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
         StreamEvent streamEvent = eventConverter.convertToStreamEvent(event);
         if (processorChain != null) {
             processorChain.process(streamEvent);
+        } else {
+            next.process(streamEvent);
         }
     }
 
@@ -107,5 +114,9 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
 
     public void setEventConverter(StreamEventConverter eventConverter){
         this.eventConverter = eventConverter;
+    }
+
+    public void setNext(Processor next){
+        this.next = next;
     }
 }
