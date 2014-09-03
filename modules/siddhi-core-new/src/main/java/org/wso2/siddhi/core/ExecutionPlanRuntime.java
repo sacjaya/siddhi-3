@@ -26,9 +26,13 @@ import org.wso2.siddhi.core.query.QueryRuntime;
 import org.wso2.siddhi.core.query.output.callback.InsertIntoStreamCallback;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
+import org.wso2.siddhi.core.stream.QueryStreamReceiver;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
+import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
+import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
+import org.wso2.siddhi.core.util.parser.OutputParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
@@ -53,7 +57,7 @@ public class ExecutionPlanRuntime {
             streamDefinitionMap.put(streamDefinition.getId(), streamDefinition);
             StreamJunction streamJunction = streamJunctionMap.get(streamDefinition.getId());
             if (streamJunction == null) {
-                streamJunction = new StreamJunction(streamDefinition, (ExecutorService) siddhiContext.getExecutorService(),siddhiContext.getDefaultEventBufferSize());
+                streamJunction = new StreamJunction(streamDefinition.getId(),streamDefinition, (ExecutorService) siddhiContext.getExecutorService(),siddhiContext.getDefaultEventBufferSize());
                 streamJunctionMap.put(streamDefinition.getId(), streamJunction);
             }
             InputHandler inputHandler = new InputHandler(streamDefinition.getId(), streamJunction);
@@ -71,7 +75,15 @@ public class ExecutionPlanRuntime {
 
     public String addQuery(QueryRuntime queryRuntime) {
         queryProcessorMap.put(queryRuntime.getQueryId(), queryRuntime);
-        OutputCallback outputCallback = queryRuntime.getOutputCallback();
+        StreamRuntime streamRuntime = queryRuntime.getStreamRuntime();
+        if (streamRuntime instanceof SingleStreamRuntime) {
+            QueryStreamReceiver queryStreamReceiver = ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver();
+            streamJunctionMap.get(queryStreamReceiver.getStreamId()).subscribe(queryStreamReceiver);
+        }//TODO: else
+
+        OutputCallback outputCallback = OutputParser.constructOutputCallback(queryRuntime.getQuery().getOutputStream(), streamJunctionMap, queryRuntime.getOutputStreamDefinition(), siddhiContext);
+        queryRuntime.setOutputCallback(outputCallback);
+        queryRuntime.getOutputRateManager().setOutputCallback(outputCallback);
         if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
             defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
         }
@@ -82,7 +94,7 @@ public class ExecutionPlanRuntime {
         streamCallback.setStreamId(streamId);
         StreamJunction streamJunction = streamJunctionMap.get(streamId);
         if (streamJunction == null) {
-            streamJunction = new StreamJunction((StreamDefinition) streamDefinitionMap.get(streamId), (ExecutorService) siddhiContext.getExecutorService(),siddhiContext.getDefaultEventBufferSize());
+            streamJunction = new StreamJunction(streamId,(StreamDefinition) streamDefinitionMap.get(streamId), (ExecutorService) siddhiContext.getExecutorService(),siddhiContext.getDefaultEventBufferSize());
             streamJunctionMap.put(streamId, streamJunction);
         }
         streamJunction.subscribe(streamCallback);
