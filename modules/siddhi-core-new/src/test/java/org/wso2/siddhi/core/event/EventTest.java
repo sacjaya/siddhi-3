@@ -91,14 +91,15 @@ public class EventTest {
         metaStreamEvent.addData(volume);
         metaStreamEvent.intializeAfterWindowData();
         metaStreamEvent.addData(price);
-        metaStreamEvent.intializeOutData();
+        metaStreamEvent.intializeOutputData();
         metaStreamEvent.addData(symbol);
         metaStreamEvent.addData(avgPrice);
 
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.DOUBLE).attribute("volume", Attribute.Type.INT);
         Event event = new Event(System.currentTimeMillis(), new Object[]{"WSO2", 200, 50});
 
-        StreamEventConverter converter = new StreamEventConverter(metaStreamEvent, streamDefinition);
+        metaStreamEvent.setDefinition(streamDefinition);
+        StreamEventConverter converter = new StreamEventConverter(metaStreamEvent);
         StreamEvent streamEvent = converter.convertToStreamEvent(event);
 
         Assert.assertEquals(1, streamEvent.getBeforeWindowData().length);      //volume

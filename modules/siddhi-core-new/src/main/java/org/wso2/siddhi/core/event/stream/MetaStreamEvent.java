@@ -64,7 +64,7 @@ public class MetaStreamEvent implements ComplexMetaEvent{
         }
     }
 
-    public void intializeOutData() {
+    public void intializeOutputData() {
         if (afterWindowData == null) {
             afterWindowData = new ArrayList<Attribute>();
         }

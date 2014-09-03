@@ -39,9 +39,9 @@ public class InputStreamParser {
     public static StreamRuntime parse(InputStream inputStream, SiddhiContext context, Map<String, AbstractDefinition> definitionMap,
                                       MetaStateEvent metaStateEvent, List<VariableExpressionExecutor> executors) {
         if (inputStream instanceof BasicSingleInputStream || inputStream instanceof SingleInputStream) {
-            MetaStreamEvent metaStreamEvent = getMetaStreamEvent(inputStream, definitionMap);
+            MetaStreamEvent metaStreamEvent = generateMetaStreamEvent(inputStream, definitionMap);
             SingleStreamRuntime singleStreamRuntime = SingleInputStreamParser.parseInputStream((SingleInputStream) inputStream, context, metaStreamEvent, executors);
-            metaStreamEvent.intializeOutData();
+            metaStreamEvent.intializeOutputData();
             metaStateEvent.addEvent(metaStreamEvent);
             return singleStreamRuntime;
         } else {
@@ -50,7 +50,7 @@ public class InputStreamParser {
         }
     }
 
-    private static MetaStreamEvent getMetaStreamEvent(InputStream inputStream, Map<String, AbstractDefinition> definitionMap) {
+    private static MetaStreamEvent generateMetaStreamEvent(InputStream inputStream, Map<String, AbstractDefinition> definitionMap) {
         MetaStreamEvent metaStreamEvent = new MetaStreamEvent();
         metaStreamEvent.setDefinition(definitionMap.get(((SingleInputStream) inputStream).getStreamId()));
         if ((((SingleInputStream) inputStream).getStreamReferenceId() != null) && !(((SingleInputStream) inputStream).getStreamId()).equals(((SingleInputStream) inputStream).getStreamReferenceId())) { //if ref id is provided

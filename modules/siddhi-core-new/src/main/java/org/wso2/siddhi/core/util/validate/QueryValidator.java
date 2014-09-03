@@ -99,7 +99,6 @@ public class QueryValidator {
         StreamDefinition definition = relevantDefinitionMap.get(null);
         definition.setId(outputStream.getId());
         OutStreamValidator.validate(definitionMap, definition);
-        definitionMap.put(definition.getId(), definition);
     }
 
     /**

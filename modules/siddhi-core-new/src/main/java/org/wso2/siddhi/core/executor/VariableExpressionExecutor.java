@@ -26,7 +26,7 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
     String attributeName;
     String streamReference;
     private int[] position = new int[]{-1, -1, -1, -1};
-    //TODO discuss positioning
+    //Position[state event index, event chain index, array ID, index] : Array ID -> outData = 2; afterWindowData = 1; beforeWindowData = 0;
 
     public VariableExpressionExecutor(String streamIdOfVariable, String attributeName, StreamDefinition definition) {
         this.attributeName = attributeName;
@@ -65,6 +65,12 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
         return position;
     }
 
+    /**
+     * Method to set the position of variable to be executed. For stream events(simple queries) position can be an array
+     * of size 2 and for state events(join/pattern queries) position should be an array of size 4.
+     *
+     * @param position
+     */
     public void setPosition(int[] position) {
         if (position.length == 2) {
             this.position[2] = position[0];

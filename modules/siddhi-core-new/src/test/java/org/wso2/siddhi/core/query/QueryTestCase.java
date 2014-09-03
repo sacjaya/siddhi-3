@@ -105,7 +105,7 @@ public class QueryTestCase {
         executionPlanRuntime.addQueryRuntime(queryRuntime);
 
         MetaStreamEvent metaStreamEvent = new MetaStreamEvent();
-        metaStreamEvent.intializeOutData();
+        metaStreamEvent.intializeOutputData();
         metaStreamEvent.addData(new Attribute("symbol", Attribute.Type.STRING));
         metaStreamEvent.addData(new Attribute("price", Attribute.Type.INT));
         metaStreamEvent.setDefinition(streamA);
@@ -177,7 +177,7 @@ public class QueryTestCase {
         executionPlanRuntime.addQueryRuntime(queryRuntime);
 
         MetaStreamEvent metaStreamEvent = new MetaStreamEvent();
-        metaStreamEvent.intializeOutData();
+        metaStreamEvent.intializeOutputData();
         metaStreamEvent.addData(new Attribute("symbol", Attribute.Type.STRING));
         metaStreamEvent.addData(new Attribute("price", Attribute.Type.INT));
         metaStreamEvent.setDefinition(streamA);
@@ -264,7 +264,7 @@ public class QueryTestCase {
         executionPlanRuntime.addQueryRuntime(queryRuntime);
 
         MetaStreamEvent metaStreamEvent = new MetaStreamEvent();
-        metaStreamEvent.intializeOutData();
+        metaStreamEvent.intializeOutputData();
         metaStreamEvent.addData(new Attribute("symbol", Attribute.Type.STRING));
         metaStreamEvent.addData(new Attribute("price", Attribute.Type.INT));
         metaStreamEvent.setDefinition(streamA);
