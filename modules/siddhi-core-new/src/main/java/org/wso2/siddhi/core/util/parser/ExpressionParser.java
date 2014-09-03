@@ -821,7 +821,7 @@ public class ExpressionParser {
             if (attributeNameArray != null) {
                 for (String resultAttributeName : attributeNameArray) {           //iterate through attribute list
                     if (attributeName.equals(resultAttributeName)) {
-                        return new VariableExpressionExecutor(streamId, attributeName, streamDefinitionMap.get(streamId));
+                        return new VariableExpressionExecutor(attributeName, streamDefinitionMap.get(streamId));
                     }
                 }
                 throw new ValidatorException("Stream definition " + streamId + " does not contain an attribute named " + attributeName);
@@ -832,7 +832,7 @@ public class ExpressionParser {
             if (metaEvent instanceof MetaStreamEvent) {
                 MetaStreamEvent metaStreamEvent = (MetaStreamEvent) metaEvent;
                 metaEvent.addData(new Attribute(attributeName, metaStreamEvent.getDefinition().getAttributeType(attributeName)));
-                VariableExpressionExecutor variableExpressionExecutor = new VariableExpressionExecutor(streamId, attributeName, (StreamDefinition) (metaStreamEvent.getDefinition()));
+                VariableExpressionExecutor variableExpressionExecutor = new VariableExpressionExecutor(attributeName, (StreamDefinition) (metaStreamEvent.getDefinition()));
                 executorList.add(variableExpressionExecutor);
                 return variableExpressionExecutor;
             } else {

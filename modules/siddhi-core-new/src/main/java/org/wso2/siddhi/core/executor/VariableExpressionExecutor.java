@@ -21,23 +21,18 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
     Attribute attribute;
     Attribute.Type type;
     int attributePosition = -1;
-    String attributeName;
-    String streamReference;
     private int[] position = new int[]{-1, -1, -1, -1};
     //Position[state event index, event chain index, array ID, index] : Array ID -> outData = 2; afterWindowData = 1; beforeWindowData = 0;
 
-    public VariableExpressionExecutor(String streamIdOfVariable, String attributeName, StreamDefinition definition) {
-        this.attributeName = attributeName;
-        if (streamIdOfVariable != null) {
-            streamReference = streamIdOfVariable;
-        }
-
+    public VariableExpressionExecutor(String attributeName, StreamDefinition definition) {
         if (definition != null) {
             type = definition.getAttributeType(attributeName);
             attributePosition = definition.getAttributePosition(attributeName);
             position[2] = SiddhiConstants.OUTPUT_DATA_INDEX;
             position[3] = attributePosition;
             attribute = new Attribute(attributeName, type);
+        } else {
+            throw new IllegalArgumentException("Stream  Definition can not be null for Executor creation");
         }
     }
 
@@ -74,7 +69,7 @@ public class VariableExpressionExecutor implements ExpressionExecutor {
             this.position[2] = position[0];
             this.position[3] = position[1];
         } else if (position.length == 4) {
-            this.position = position;
+            this.position = position.clone();
         }
     }
 
