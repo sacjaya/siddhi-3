@@ -167,6 +167,7 @@ public class ExpressionParser {
                     return new MultiplyExpressionExecutorFloat(left, right);
                 case DOUBLE:
                     return new MultiplyExpressionExecutorDouble(left, right);
+                default: //Will not happen. Handled in parseArithmeticOperationResultType()
             }
         } else if (expression instanceof Add) {
             ExpressionExecutor left = parseExpression(((Add) expression).getLeftValue(), currentStreamReference, siddhiContext, streamDefinitionMap, metaEvent, executorList);
@@ -181,6 +182,7 @@ public class ExpressionParser {
                     return new AddExpressionExecutorFloat(left, right);
                 case DOUBLE:
                     return new AddExpressionExecutorDouble(left, right);
+                default: //Will not happen. Handled in parseArithmeticOperationResultType()
             }
         } else if (expression instanceof Subtract) {
             ExpressionExecutor left = parseExpression(((Subtract) expression).getLeftValue(), currentStreamReference, siddhiContext, streamDefinitionMap, metaEvent, executorList);
@@ -195,6 +197,7 @@ public class ExpressionParser {
                     return new SubtractExpressionExecutorFloat(left, right);
                 case DOUBLE:
                     return new SubtractExpressionExecutorDouble(left, right);
+                default: //Will not happen. Handled in parseArithmeticOperationResultType()
             }
         } else if (expression instanceof Mod) {
             ExpressionExecutor left = parseExpression(((Mod) expression).getLeftValue(), currentStreamReference, siddhiContext, streamDefinitionMap, metaEvent, executorList);
@@ -209,6 +212,7 @@ public class ExpressionParser {
                     return new ModExpressionExecutorFloat(left, right);
                 case DOUBLE:
                     return new ModExpressionExecutorDouble(left, right);
+                default: //Will not happen. Handled in parseArithmeticOperationResultType()
             }
         } else if (expression instanceof Divide) {
             ExpressionExecutor left = parseExpression(((Divide) expression).getLeftValue(), currentStreamReference, siddhiContext, streamDefinitionMap, metaEvent, executorList);
@@ -223,6 +227,7 @@ public class ExpressionParser {
                     return new DivideExpressionExecutorFloat(left, right);
                 case DOUBLE:
                     return new DivideExpressionExecutorDouble(left, right);
+                default: //Will not happen. Handled in parseArithmeticOperationResultType()
             }
 
         } else if (expression instanceof AttributeFunction) {
@@ -261,6 +266,8 @@ public class ExpressionParser {
                         return new GreaterThanCompareConditionExpressionExecutorIntDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
                         throw new OperationNotSupportedException("int cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("int cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case LONG:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -275,7 +282,9 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new GreaterThanCompareConditionExpressionExecutorLongDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("long cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("long cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case FLOAT:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -290,12 +299,14 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new GreaterThanCompareConditionExpressionExecutorFloatDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("float cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("float cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case DOUBLE:
                 switch (rightExpressionExecutor.getReturnType()) {
                     case STRING:
-                        throw new OperationNotSupportedException("float cannot be compared with string");
+                        throw new OperationNotSupportedException("double cannot be compared with string");
                     case INT:
                         return new GreaterThanCompareConditionExpressionExecutorDoubleInt(leftExpressionExecutor, rightExpressionExecutor);
                     case LONG:
@@ -305,12 +316,15 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new GreaterThanCompareConditionExpressionExecutorDoubleDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("double cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("double cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case BOOL:
                 throw new OperationNotSupportedException("bool cannot used in greater than comparisons");
+            default:
+                throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used in greater than comparisons");
         }
-        throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used in greater than comparisons");
     }
 
     /**
@@ -340,6 +354,8 @@ public class ExpressionParser {
                         return new GreaterThanEqualCompareConditionExpressionExecutorIntDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
                         throw new OperationNotSupportedException("int cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("int cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case LONG:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -354,7 +370,9 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new GreaterThanEqualCompareConditionExpressionExecutorLongDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("long cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("long cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case FLOAT:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -369,12 +387,14 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new GreaterThanEqualCompareConditionExpressionExecutorFloatDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("float cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("float cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case DOUBLE:
                 switch (rightExpressionExecutor.getReturnType()) {
                     case STRING:
-                        throw new OperationNotSupportedException("float cannot be compared with string");
+                        throw new OperationNotSupportedException("double cannot be compared with string");
                     case INT:
                         return new GreaterThanEqualCompareConditionExpressionExecutorDoubleInt(leftExpressionExecutor, rightExpressionExecutor);
                     case LONG:
@@ -384,12 +404,15 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new GreaterThanEqualCompareConditionExpressionExecutorDoubleDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("double cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("double cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case BOOL:
                 throw new OperationNotSupportedException("bool cannot used in greater than equal comparisons");
+            default:
+                throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used in greater than comparisons");
         }
-        throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used in greater than equal comparisons");
     }
 
     /**
@@ -419,6 +442,8 @@ public class ExpressionParser {
                         return new LessThanCompareConditionExpressionExecutorIntDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
                         throw new OperationNotSupportedException("int cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("int cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case LONG:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -433,7 +458,9 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new LessThanCompareConditionExpressionExecutorLongDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("long cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("long cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case FLOAT:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -448,12 +475,14 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new LessThanCompareConditionExpressionExecutorFloatDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("float cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("float cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case DOUBLE:
                 switch (rightExpressionExecutor.getReturnType()) {
                     case STRING:
-                        throw new OperationNotSupportedException("float cannot be compared with string");
+                        throw new OperationNotSupportedException("double cannot be compared with string");
                     case INT:
                         return new LessThanCompareConditionExpressionExecutorDoubleInt(leftExpressionExecutor, rightExpressionExecutor);
                     case LONG:
@@ -463,12 +492,15 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new LessThanCompareConditionExpressionExecutorDoubleDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("double cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("double cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case BOOL:
                 throw new OperationNotSupportedException("bool cannot used in less than comparisons");
+            default:
+                throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used in less than comparisons");
         }
-        throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used in less than comparisons");
     }
 
     /**
@@ -498,6 +530,8 @@ public class ExpressionParser {
                         return new LessThanEqualCompareConditionExpressionExecutorIntDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
                         throw new OperationNotSupportedException("int cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("int cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case LONG:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -512,7 +546,9 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new LessThanEqualCompareConditionExpressionExecutorLongDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("long cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("long cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case FLOAT:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -527,12 +563,14 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new LessThanEqualCompareConditionExpressionExecutorFloatDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("float cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("float cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case DOUBLE:
                 switch (rightExpressionExecutor.getReturnType()) {
                     case STRING:
-                        throw new OperationNotSupportedException("float cannot be compared with string");
+                        throw new OperationNotSupportedException("double cannot be compared with string");
                     case INT:
                         return new LessThanEqualCompareConditionExpressionExecutorDoubleInt(leftExpressionExecutor, rightExpressionExecutor);
                     case LONG:
@@ -542,12 +580,15 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new LessThanEqualCompareConditionExpressionExecutorDoubleDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("double cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("double cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case BOOL:
                 throw new OperationNotSupportedException("bool cannot used in less than equal comparisons");
+            default:
+                throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used in less than comparisons");
         }
-        throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used in less than equal comparisons");
     }
 
     /**
@@ -582,6 +623,8 @@ public class ExpressionParser {
                         return new EqualCompareConditionExpressionExecutorIntDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
                         throw new OperationNotSupportedException("int cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("int cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case LONG:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -596,7 +639,9 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new EqualCompareConditionExpressionExecutorLongDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("long cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("long cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case FLOAT:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -611,12 +656,14 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new EqualCompareConditionExpressionExecutorFloatDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("float cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("float cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case DOUBLE:
                 switch (rightExpressionExecutor.getReturnType()) {
                     case STRING:
-                        throw new OperationNotSupportedException("float cannot be compared with string");
+                        throw new OperationNotSupportedException("double cannot be compared with string");
                     case INT:
                         return new EqualCompareConditionExpressionExecutorDoubleInt(leftExpressionExecutor, rightExpressionExecutor);
                     case LONG:
@@ -626,7 +673,9 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new EqualCompareConditionExpressionExecutorDoubleDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("double cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("double cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case BOOL:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -635,8 +684,9 @@ public class ExpressionParser {
                     default:
                         throw new OperationNotSupportedException("bool cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
+            default:
+                throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used in equal comparisons");
         }
-        throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used  equal comparisons");
     }
 
     /**
@@ -671,6 +721,8 @@ public class ExpressionParser {
                         return new NotEqualCompareConditionExpressionExecutorIntDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
                         throw new OperationNotSupportedException("int cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("int cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case LONG:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -685,7 +737,9 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new NotEqualCompareConditionExpressionExecutorLongDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("long cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("long cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case FLOAT:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -700,12 +754,14 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new NotEqualCompareConditionExpressionExecutorFloatDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("float cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("float cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case DOUBLE:
                 switch (rightExpressionExecutor.getReturnType()) {
                     case STRING:
-                        throw new OperationNotSupportedException("float cannot be compared with string");
+                        throw new OperationNotSupportedException("double cannot be compared with string");
                     case INT:
                         return new NotEqualCompareConditionExpressionExecutorDoubleInt(leftExpressionExecutor, rightExpressionExecutor);
                     case LONG:
@@ -715,7 +771,9 @@ public class ExpressionParser {
                     case DOUBLE:
                         return new NotEqualCompareConditionExpressionExecutorDoubleDouble(leftExpressionExecutor, rightExpressionExecutor);
                     case BOOL:
-                        throw new OperationNotSupportedException("int cannot be compared with bool");
+                        throw new OperationNotSupportedException("double cannot be compared with bool");
+                    default:
+                        throw new OperationNotSupportedException("double cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
             case BOOL:
                 switch (rightExpressionExecutor.getReturnType()) {
@@ -724,8 +782,9 @@ public class ExpressionParser {
                     default:
                         throw new OperationNotSupportedException("bool cannot be compared with " + rightExpressionExecutor.getReturnType());
                 }
+            default:
+                throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used in not equal comparisons");
         }
-        throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used in not equal comparisons");
     }
 
     /**
@@ -745,8 +804,9 @@ public class ExpressionParser {
                     default:
                         throw new OperationNotSupportedException(rightExpressionExecutor.getReturnType() + " cannot be used in contains comparisons");
                 }
+            default:
+                throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used in contains comparisons");
         }
-        throw new OperationNotSupportedException(leftExpressionExecutor.getReturnType() + " cannot be used in contains comparisons");
     }
 
 
