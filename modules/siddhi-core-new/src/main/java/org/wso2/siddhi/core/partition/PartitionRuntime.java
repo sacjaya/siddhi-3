@@ -144,11 +144,11 @@ public class PartitionRuntime {
 
                 if (queryRuntime.isFromLocalStream()) {
                     streamDefinition = (StreamDefinition) localStreamDefinitionMap.get(queryId);
-                    clonedQueryRuntime = queryRuntime.clone(streamDefinition, key,localStreamJunctionMap);
+                    clonedQueryRuntime = queryRuntime.clone(key,localStreamJunctionMap);
                     queryRuntimeList.add(clonedQueryRuntime);
                 } else {
                     streamDefinition =  (StreamDefinition) executionPlanRuntime.getStreamDefinitionMap().get(queryId);
-                    clonedQueryRuntime = queryRuntime.clone(streamDefinition, key,localStreamJunctionMap);
+                    clonedQueryRuntime = queryRuntime.clone( key,localStreamJunctionMap);
                     queryRuntimeList.add(clonedQueryRuntime);
                     partitionedQueryRuntimeList.add(clonedQueryRuntime);
                 }

@@ -54,7 +54,7 @@ public class SingleInputStreamParser {
             //TODO passThroughFilterProcessor
             //processor = new PassThroughFilterProcessor();
         }
-        QueryStreamReceiver queryStreamReceiver = new QueryStreamReceiver(metaStreamEvent, (StreamDefinition) metaStreamEvent.getDefinition());
+        QueryStreamReceiver queryStreamReceiver = new QueryStreamReceiver((StreamDefinition) metaStreamEvent.getDefinition());
         SingleStreamRuntime singleStreamRuntime = new SingleStreamRuntime(queryStreamReceiver, processor);
         return singleStreamRuntime;
     }

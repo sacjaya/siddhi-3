@@ -20,12 +20,10 @@
 package org.wso2.siddhi.core.stream;
 
 import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventConverter;
 import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
-import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 
 public class QueryStreamReceiver implements StreamJunction.Receiver {
 
@@ -37,7 +35,7 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
     private Processor next;
 
 
-    public QueryStreamReceiver(MetaStreamEvent metaStreamEvent, StreamDefinition streamDefinition) {
+    public QueryStreamReceiver(StreamDefinition streamDefinition) {
         this.streamId = streamDefinition.getId();
     }
 
@@ -58,11 +56,11 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
 
     @Override
     public void receive(StreamEvent streamEvent) {
-        streamEvent = eventConverter.convertToStreamEvent(streamEvent);
+        StreamEvent convertedStreamEvent = eventConverter.convertToStreamEvent(streamEvent);
         if (processorChain != null) {
-            processorChain.process(streamEvent);
+            processorChain.process(convertedStreamEvent);
         } else {
-            next.process(streamEvent);
+            next.process(convertedStreamEvent);
         }
     }
 

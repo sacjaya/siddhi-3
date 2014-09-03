@@ -112,7 +112,7 @@ public class QueryTestCase {
         MetaStateEvent metaStateEvent = new MetaStateEvent(1);
         metaStateEvent.addEvent(metaStreamEvent);
 
-        QueryStreamReceiver queryStreamReceiver = new QueryStreamReceiver(metaStreamEvent, streamA);
+        QueryStreamReceiver queryStreamReceiver = new QueryStreamReceiver(streamA);
         queryStreamReceiver.setEventConverter(new StreamEventConverter(metaStreamEvent));
         List<VariableExpressionExecutor> variableExpressionExecutorList = new LinkedList<VariableExpressionExecutor>();
 
@@ -195,7 +195,7 @@ public class QueryTestCase {
         ExpressionExecutor conditionExecutor = new GreaterThanCompareConditionExpressionExecutorIntInt(leftExpressionExecutor, rightExpressionExecutor);
         FilterProcessor filterProcessor = new FilterProcessor(conditionExecutor);
 
-        QueryStreamReceiver queryStreamReceiver = new QueryStreamReceiver(metaStreamEvent, streamA);
+        QueryStreamReceiver queryStreamReceiver = new QueryStreamReceiver(streamA);
         queryStreamReceiver.setEventConverter(new StreamEventConverter(metaStreamEvent));
         List<VariableExpressionExecutor> variableExpressionExecutorList = new LinkedList<VariableExpressionExecutor>();
         QuerySelector querySelector = SelectorParser.parse(query.getSelector(), query.getOutputStream(), siddhiContext, metaStateEvent, variableExpressionExecutorList);

@@ -106,7 +106,7 @@ public class StreamJunction {
     }
 
     public synchronized void startProcessing() {
-        if (receivers.size() > 0) {
+        if (!receivers.isEmpty()) {
 
             Boolean asyncEnabled = null;
             try {

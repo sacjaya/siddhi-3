@@ -115,7 +115,7 @@ public class QueryRuntime {
         return false;
     }
 
-    public QueryRuntime clone(StreamDefinition streamDefinition, String key, ConcurrentMap<String, StreamJunction> localStreamJunctionMap) {
+    public QueryRuntime clone(String key, ConcurrentMap<String, StreamJunction> localStreamJunctionMap) {
 
         StreamRuntime clonedStreamRuntime = this.streamRuntime.clone(key);
         QuerySelector clonedSelector = this.selector.clone(key);
@@ -138,9 +138,9 @@ public class QueryRuntime {
             queryRuntime.outputRateLimiter.setOutputCallback(outputCallback);
             queryRuntime.outputCallback = this.outputCallback;
         } else {
-            OutputCallback outputCallback = OutputParser.constructOutputCallback(query.getOutputStream(), key, localStreamJunctionMap, outputStreamDefinition, siddhiContext);
-            queryRuntime.outputRateLimiter.setOutputCallback(outputCallback);
-            queryRuntime.outputCallback = outputCallback;
+            OutputCallback clonedQueryOutputCallback = OutputParser.constructOutputCallback(query.getOutputStream(), key, localStreamJunctionMap, outputStreamDefinition, siddhiContext);
+            queryRuntime.outputRateLimiter.setOutputCallback(clonedQueryOutputCallback);
+            queryRuntime.outputCallback = clonedQueryOutputCallback;
         }
         return queryRuntime;
 
