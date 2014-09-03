@@ -101,7 +101,7 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver {
     private StreamJunction getStreamJunction(String streamJunctionName) {
         StreamJunction streamJunction = cachedStreamJunctionMap.get(streamJunctionName);
         if (streamJunction == null) {
-            streamJunction = new StreamJunction(streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
+            streamJunction = new StreamJunction(streamJunctionName,streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
             partitionRuntime.addStreamJunction(streamJunctionName, streamJunction);
             cachedStreamJunctionMap.putIfAbsent(streamJunctionName, streamJunction);
         }
@@ -117,7 +117,7 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver {
                     if (queryRuntime.getInputStreamId().get(0).equals(streamId)) {
 
                         StreamRuntime streamRuntime = queryRuntime.getStreamRuntime();
-                        streamJunction = new StreamJunction(streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
+                        streamJunction = new StreamJunction(streamId + key,streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
                         streamJunction.subscribe(((SingleStreamRuntime)streamRuntime).getQueryStreamReceiver());
                         partitionRuntime.addStreamJunction(streamId + key, streamJunction);
                         cachedStreamJunctionMap.put(streamId + key, streamJunction);
