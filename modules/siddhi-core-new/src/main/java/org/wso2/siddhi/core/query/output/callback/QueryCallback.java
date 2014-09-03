@@ -35,6 +35,7 @@ import org.wso2.siddhi.query.api.execution.query.Query;
 import org.wso2.siddhi.query.api.util.AnnotationHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class QueryCallback {
 
@@ -42,8 +43,8 @@ public abstract class QueryCallback {
     private final int outputDataSize;
     private SiddhiContext siddhiContext;
     private Query query;
-    private ArrayList<Event> currentEventBuffer = new ArrayList<Event>();
-    private ArrayList<Event> expiredEventBuffer = new ArrayList<Event>();
+    private List<Event> currentEventBuffer = new ArrayList<Event>();
+    private List<Event> expiredEventBuffer = new ArrayList<Event>();
 
     private Disruptor<EventHolder> disruptor;
     private RingBuffer<EventHolder> ringBuffer;
@@ -103,14 +104,14 @@ public abstract class QueryCallback {
 
         bufferEvents(currentStreamEvent, currentEventBuffer);
 
-        if (currentEventBuffer.size() > 0) {
+        if (!currentEventBuffer.isEmpty()) {
             currentEvents = currentEventBuffer.toArray(new Event[currentEventBuffer.size()]);
             currentEventBuffer.clear();
         }
 
         bufferEvents(expiredStreamEvent, expiredEventBuffer);
 
-        if (expiredEventBuffer.size() > 0) {
+        if (!expiredEventBuffer.isEmpty()) {
             expiredEvents = expiredEventBuffer.toArray(new Event[expiredEventBuffer.size()]);
             expiredEventBuffer.clear();
         }
@@ -118,7 +119,7 @@ public abstract class QueryCallback {
         receive(timeStamp, currentEvents, expiredEvents);
     }
 
-    private void bufferEvents(StreamEvent streamEventList, ArrayList<Event> eventBuffer) {
+    private void bufferEvents(StreamEvent streamEventList,List<Event> eventBuffer) {
 
         StreamEvent processedEvent = streamEventList;
         while (processedEvent != null) {
