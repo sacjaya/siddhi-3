@@ -13,6 +13,7 @@
 package org.wso2.siddhi.core.executor.condition.compare.instance_of;
 
 
+import org.wso2.siddhi.core.exception.OperationNotSupportedException;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
 import org.wso2.siddhi.core.executor.condition.compare.CompareConditionExpressionExecutor;
 import org.wso2.siddhi.query.api.definition.Attribute;
@@ -40,7 +41,8 @@ public class InstanceOfCompareConditionExpressionExecutor extends CompareConditi
                 return left instanceof Double;
             case BOOL:
                 return left instanceof Boolean;
+            default:
+                throw new OperationNotSupportedException(type.name() + " Data type not supported in instance of compare conditioning");
         }
-        return false;
     }
 }

@@ -19,8 +19,8 @@ import org.wso2.siddhi.query.api.definition.Attribute;
 
 public class OrConditionExpressionExecutor extends ConditionExpressionExecutor {
 
-    public ExpressionExecutor leftConditionExecutor;
-    public ExpressionExecutor rightConditionExecutor;
+    protected ExpressionExecutor leftConditionExecutor;
+    protected ExpressionExecutor rightConditionExecutor;
 
     public OrConditionExpressionExecutor(ExpressionExecutor leftConditionExecutor,
                                          ExpressionExecutor rightConditionExecutor) {

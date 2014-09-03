@@ -17,8 +17,8 @@ import org.wso2.siddhi.core.executor.condition.ConditionExpressionExecutor;
 
 public abstract class LessThanCompareConditionExpressionExecutor extends ConditionExpressionExecutor {
 
-    public ExpressionExecutor leftExpressionExecutor;
-    public ExpressionExecutor rightExpressionExecutor;
+    protected ExpressionExecutor leftExpressionExecutor;
+    protected ExpressionExecutor rightExpressionExecutor;
 
     public LessThanCompareConditionExpressionExecutor(ExpressionExecutor leftExpressionExecutor,
                                                       ExpressionExecutor rightExpressionExecutor) {
