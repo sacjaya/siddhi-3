@@ -26,22 +26,20 @@ import org.wso2.siddhi.core.exception.QueryCreationException;
 import org.wso2.siddhi.core.query.output.rateLimit.OutputRateLimiter;
 import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.query.selector.attribute.processor.AttributeProcessor;
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class QuerySelector implements Processor {
 
 
     private Selector selector;
-    private StreamDefinition outputStreamDefinition;
     private int outputSize;
     private SiddhiContext siddhiContext;
     private boolean currentOn = false;
     private boolean expiredOn = false;
     private OutputRateLimiter outputRateLimiter;
-    private ArrayList<AttributeProcessor> attributeProcessorList;
+    private List<AttributeProcessor> attributeProcessorList;
     private String id;
     static final Logger log = Logger.getLogger(QuerySelector.class);
 
@@ -78,10 +76,6 @@ public class QuerySelector implements Processor {
 
     }
 
-    public StreamDefinition getOutputStreamDefinition() {
-        return outputStreamDefinition;
-    }
-
     @Override
     public Processor getNext() {
         return outputRateLimiter;
@@ -105,16 +99,16 @@ public class QuerySelector implements Processor {
     }
 
     @Override
-    public Processor clone() {
-        return clone("");
+    public Processor cloneProcessor() {
+        return null;
     }
 
 
-    public ArrayList<AttributeProcessor> getAttributeProcessorList() {
+    public List<AttributeProcessor> getAttributeProcessorList() {
         return attributeProcessorList;
     }
 
-    public void setAttributeProcessorList(ArrayList<AttributeProcessor> attributeProcessorList) {
+    public void setAttributeProcessorList(List<AttributeProcessor> attributeProcessorList) {
         this.attributeProcessorList = attributeProcessorList;
     }
 

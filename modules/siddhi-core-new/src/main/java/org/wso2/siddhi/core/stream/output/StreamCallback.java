@@ -22,11 +22,12 @@ import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.stream.StreamJunction;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class StreamCallback implements StreamJunction.Receiver {
 
     private String streamId;
-    private ArrayList<Event> eventBuffer = new ArrayList<Event>();
+    private List<Event> eventBuffer = new ArrayList<Event>();
 
     @Override
     public String getStreamId() {

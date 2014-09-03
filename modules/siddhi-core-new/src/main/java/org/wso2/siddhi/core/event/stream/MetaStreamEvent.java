@@ -83,7 +83,7 @@ public class MetaStreamEvent implements ComplexMetaEvent{
     @Override
     public void addData(Attribute attribute) {
         if (outputData != null) {
-            if (outputData.size() > 0 && outputData.get(outputData.size() - 1) instanceof ComplexAttribute) {
+            if (!outputData.isEmpty() && outputData.get(outputData.size() - 1) instanceof ComplexAttribute) {
                 if (!((ComplexAttribute) outputData.get(outputData.size() - 1)).isInitialized()) {   //if last element is a not initialized function attribute,
                     afterWindowData.add(attribute);                                             //then reserve that spot for result of function and
                 } else {                                                                        //allocate position for actual variable

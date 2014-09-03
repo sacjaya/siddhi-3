@@ -49,12 +49,12 @@ public class SingleStreamRuntime implements StreamRuntime{
         Processor clonedProcessorChain = null;
         if(processorChain != null){
             if(!(processorChain instanceof Selector || processorChain instanceof OutputRateLimiter)){
-                clonedProcessorChain =  processorChain.clone();
+                clonedProcessorChain =  processorChain.cloneProcessor();
             }
             Processor processor =  processorChain.getNext();
             while(processor != null){
                 if(!(processorChain instanceof Selector || processorChain instanceof OutputRateLimiter)){
-                         clonedProcessorChain.setToLast(processorChain.clone());
+                         clonedProcessorChain.setToLast(processorChain.cloneProcessor());
                 }
                 processor = processor.getNext();
             }

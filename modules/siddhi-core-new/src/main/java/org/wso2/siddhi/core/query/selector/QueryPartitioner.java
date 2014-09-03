@@ -41,7 +41,7 @@ public class QueryPartitioner {
     public QueryPartitioner(InputStream inputStream, Partition partition, MetaStreamEvent metaStreamEvent, SiddhiContext siddhiContext) {
         if (partition != null) {
            if (inputStream instanceof BasicSingleInputStream) {
-                ArrayList<PartitionExecutor> executorList = new ArrayList<PartitionExecutor>();
+                List<PartitionExecutor> executorList = new ArrayList<PartitionExecutor>();
                 partitionExecutors.add(executorList);
                 for (PartitionType partitionType : partition.getPartitionTypeMap().values()) {
                     if (partitionType instanceof ValuePartitionType) {

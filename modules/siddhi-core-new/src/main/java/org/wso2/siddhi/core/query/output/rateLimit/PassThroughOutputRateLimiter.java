@@ -64,7 +64,7 @@ public class PassThroughOutputRateLimiter extends OutputRateLimiter {
     }
 
     @Override
-    public Processor clone() {
-        return clone("");
+    public Processor cloneProcessor() {
+        return null;
     }
 }
