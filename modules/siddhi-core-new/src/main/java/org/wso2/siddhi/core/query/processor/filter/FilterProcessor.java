@@ -39,6 +39,10 @@ public class FilterProcessor implements Processor {
         }
     }
 
+    public FilterProcessor clone(){
+       return new FilterProcessor(conditionExecutor);
+    }
+
     @Override
     public void process(StreamEvent event) {
         if ((Boolean) conditionExecutor.execute(event)) {
@@ -64,5 +68,6 @@ public class FilterProcessor implements Processor {
             this.next.setNext(processor);
         }
     }
+
 
 }

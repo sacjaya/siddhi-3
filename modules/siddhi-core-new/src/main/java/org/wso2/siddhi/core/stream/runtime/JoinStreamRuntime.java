@@ -32,4 +32,9 @@ public class JoinStreamRuntime implements StreamRuntime {
     public List<SingleStreamRuntime> getSingleStreamRuntime(){
         return singleStreamRuntimeList;
     }
+
+    @Override
+    public StreamRuntime clone(String key) {
+        return null;  //TODO
+    }
 }

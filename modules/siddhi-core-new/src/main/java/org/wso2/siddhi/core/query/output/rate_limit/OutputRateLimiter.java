@@ -69,5 +69,8 @@ public abstract class OutputRateLimiter implements Processor {
         return hasCallBack;
     }
 
+    public abstract OutputRateLimiter clone(String key);
+
+    public abstract Processor clone();
 }
 

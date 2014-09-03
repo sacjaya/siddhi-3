@@ -24,4 +24,6 @@ package org.wso2.siddhi.core.stream.runtime;
  */
 public interface StreamRuntime {
 
+    public StreamRuntime clone(String key);
+
 }
