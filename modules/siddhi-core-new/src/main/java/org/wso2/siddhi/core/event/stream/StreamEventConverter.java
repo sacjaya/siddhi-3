@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class StreamEventConverter {
 
-    private ArrayList<ConverterElement> converterElements;       //List to hold information needed for conversion
+    private List<ConverterElement> converterElements;       //List to hold information needed for conversion
     private StreamEventPool streamEventPool;
 
 

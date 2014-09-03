@@ -19,7 +19,6 @@
 
 package org.wso2.siddhi.core.query.selector;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
@@ -30,7 +29,7 @@ import org.wso2.siddhi.core.query.selector.attribute.processor.AttributeProcesso
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class QuerySelector implements Processor {
 
@@ -42,7 +41,7 @@ public class QuerySelector implements Processor {
     private boolean currentOn = false;
     private boolean expiredOn = false;
     private OutputRateLimiter outputRateLimiter;
-    private ArrayList<AttributeProcessor> attributeProcessorList;
+    private List<AttributeProcessor> attributeProcessorList;
     private String id;
     static final Logger log = Logger.getLogger(QuerySelector.class);
 
@@ -111,11 +110,11 @@ public class QuerySelector implements Processor {
     }
 
 
-    public ArrayList<AttributeProcessor> getAttributeProcessorList() {
+    public List<AttributeProcessor> getAttributeProcessorList() {
         return attributeProcessorList;
     }
 
-    public void setAttributeProcessorList(ArrayList<AttributeProcessor> attributeProcessorList) {
+    public void setAttributeProcessorList(List<AttributeProcessor> attributeProcessorList) {
         this.attributeProcessorList = attributeProcessorList;
     }
 

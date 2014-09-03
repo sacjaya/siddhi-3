@@ -41,7 +41,7 @@ public class SingleInputStreamParser {
     public static SingleStreamRuntime parseInputStream(SingleInputStream inputStream, SiddhiContext context, MetaStreamEvent metaStreamEvent, List<VariableExpressionExecutor> executors) {
         Processor processor = null;
         int i = 0;
-        if (inputStream.getStreamHandlers().size() > 0) {
+        if (!inputStream.getStreamHandlers().isEmpty()) {
             for (StreamHandler handler : inputStream.getStreamHandlers()) {
                 if (i == 0) {
                     processor = generateProcessor(handler, context, metaStreamEvent, executors);
@@ -50,9 +50,6 @@ public class SingleInputStreamParser {
                     processor.setToLast(generateProcessor(handler, context, metaStreamEvent, executors));
                 }
             }
-        } else {
-            //TODO passThroughFilterProcessor
-            //processor = new PassThroughFilterProcessor();
         }
         QueryStreamReceiver queryStreamReceiver = new QueryStreamReceiver(metaStreamEvent, (StreamDefinition) metaStreamEvent.getDefinition());
         SingleStreamRuntime singleStreamRuntime = new SingleStreamRuntime(queryStreamReceiver, processor);

@@ -27,7 +27,7 @@ import org.wso2.siddhi.query.api.definition.StreamDefinition;
 public class MetaStateEvent implements ComplexMetaEvent{
     private MetaStreamEvent[] metaStreamEvents;
     private int eventCount = 0;
-    private StreamDefinition OutputStreamDefinition;
+    private StreamDefinition outputStreamDefinition;
 
     public MetaStateEvent(int size){
         metaStreamEvents = new MetaStreamEvent[size];
@@ -57,10 +57,10 @@ public class MetaStateEvent implements ComplexMetaEvent{
     }
 
     public void setOutputDefinition(StreamDefinition definition) {
-        this.OutputStreamDefinition = definition;
+        this.outputStreamDefinition = definition;
     }
 
     public StreamDefinition getOutputStreamDefinition() {
-        return OutputStreamDefinition;
+        return outputStreamDefinition;
     }
 }

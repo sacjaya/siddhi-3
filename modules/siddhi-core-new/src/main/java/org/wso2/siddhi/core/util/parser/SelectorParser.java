@@ -61,8 +61,8 @@ public class SelectorParser {
         return querySelector;
     }
 
-    private static ArrayList<AttributeProcessor> getAttributeProcessors(Selector selector, OutputStream outStream, SiddhiContext siddhiContext, MetaStateEvent metaStateEvent, List<VariableExpressionExecutor> executors) {
-        ArrayList<AttributeProcessor> attributeProcessorList = new ArrayList<AttributeProcessor>();
+    private static List<AttributeProcessor> getAttributeProcessors(Selector selector, OutputStream outStream, SiddhiContext siddhiContext, MetaStateEvent metaStateEvent, List<VariableExpressionExecutor> executors) {
+        List<AttributeProcessor> attributeProcessorList = new ArrayList<AttributeProcessor>();
         StreamDefinition temp = new StreamDefinition(outStream.getId());
         for (OutputAttribute outputAttribute : selector.getSelectionList()) {
             try {

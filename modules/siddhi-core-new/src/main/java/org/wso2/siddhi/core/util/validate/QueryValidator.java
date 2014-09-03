@@ -59,7 +59,6 @@ public class QueryValidator {
             InStreamValidator.validate(leftStream, definitionMap, tempDefinitionMap);
             InStreamValidator.validate(rightStream, definitionMap, tempDefinitionMap);
             if (((JoinInputStream) inputStream).getOnCompare() != null) {
-                //ValidatorUtil.validateCondition(((JoinInputStream) inputStream).getOnCompare(), tempDefinitionMap, null);
                 ExpressionParser.parseExpression(((JoinInputStream) inputStream).getOnCompare(), null, null, tempDefinitionMap, null, null);
             }
         } else if (inputStream instanceof StateInputStream) {

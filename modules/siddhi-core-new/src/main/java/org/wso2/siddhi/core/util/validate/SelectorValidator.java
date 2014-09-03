@@ -35,7 +35,7 @@ public class SelectorValidator {
      */
     public static void validate(Selector selector, Map<String, StreamDefinition> streamDefinitionMap) throws ValidatorException {
         StreamDefinition temp = new StreamDefinition();        //inferred stream
-        if (selector.getSelectionList().size() > 0) {
+        if (!selector.getSelectionList().isEmpty()) {
             for (OutputAttribute attribute : selector.getSelectionList()) {
                 ExpressionExecutor executor = ExpressionParser.parseExpression(attribute.getExpression(), null, null, streamDefinitionMap, null, null);//current stream reference and siddhi context is null
                 temp.attribute(attribute.getRename(), executor.getReturnType());
