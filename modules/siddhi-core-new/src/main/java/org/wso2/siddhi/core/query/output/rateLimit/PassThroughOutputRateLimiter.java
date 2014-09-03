@@ -23,8 +23,8 @@ import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.query.processor.Processor;
 
 public class PassThroughOutputRateLimiter extends OutputRateLimiter {
-    static final Logger log = Logger.getLogger(PassThroughOutputRateLimiter.class);
-    String id;
+    private static final Logger log = Logger.getLogger(PassThroughOutputRateLimiter.class);
+    private String id;
 
     public PassThroughOutputRateLimiter(String id) {
         this.id = id;
@@ -53,11 +53,19 @@ public class PassThroughOutputRateLimiter extends OutputRateLimiter {
         return null;
     }
 
+    /**
+     * this method will not be used as there is no processors after an outputRateLimiter
+     * @param processor
+     */
     @Override
     public void setNext(Processor processor) {
 
     }
 
+    /**
+     * this method will not be used as there is no processors after an outputRateLimiter
+     * @param processor
+     */
     @Override
     public void setToLast(Processor processor) {
 

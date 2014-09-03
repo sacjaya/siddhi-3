@@ -93,7 +93,10 @@ public class FilterTestCase {
         });
         InputHandler inputHandler = executionPlanRuntime.getInputHandler("streamA");
         inputHandler.send(new Object[]{"IBM", 700});
+        Thread.sleep(2000);
+        Assert.assertEquals(0, count);
         inputHandler.send(new Object[]{"WSO2", 60});
+        Thread.sleep(2000);
         Assert.assertEquals(1, count);
         Assert.assertTrue(eventArrived);
     }

@@ -42,7 +42,7 @@ public abstract class OutputRateLimiter implements Processor {
         if (outputCallback != null && allEvent != null) {
             outputCallback.send(allEvent);
         }
-        if (queryCallbacks.size() > 0) {
+        if (!queryCallbacks.isEmpty()) {
             for (QueryCallback callback : queryCallbacks) {
                 callback.receiveStreamEvent(timeStamp, currentEvent, expiredEvent);
             }
