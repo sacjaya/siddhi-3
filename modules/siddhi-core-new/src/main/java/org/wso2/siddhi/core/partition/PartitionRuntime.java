@@ -28,10 +28,8 @@ import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.query.QueryRuntime;
 import org.wso2.siddhi.core.query.output.callback.InsertIntoStreamCallback;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
-import org.wso2.siddhi.core.stream.QueryStreamReceiver;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
-import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
 import org.wso2.siddhi.core.util.parser.OutputParser;
 import org.wso2.siddhi.query.api.annotation.Element;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
@@ -56,7 +54,7 @@ public class PartitionRuntime {
 
 
     private String partitionId;
-    private ConcurrentMap<String, CopyOnWriteArrayList<QueryRuntime>> partitionedQueryRuntimeMap = new ConcurrentHashMap<String, CopyOnWriteArrayList<QueryRuntime>>();
+    private ConcurrentMap<String, List<QueryRuntime>> partitionedQueryRuntimeMap = new ConcurrentHashMap<String, List<QueryRuntime>>();
     private ConcurrentMap<String, StreamJunction> localStreamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains definition
     private ConcurrentMap<String, AbstractDefinition> localStreamDefinitionMap = new ConcurrentHashMap<String, AbstractDefinition>(); //contains stream definition
     private SiddhiContext siddhiContext;
@@ -113,12 +111,10 @@ public class PartitionRuntime {
     }
 
     private void addPartitionReceiver(QueryRuntime queryRuntime){
-        if (queryRuntime.getStreamRuntime() instanceof SingleStreamRuntime) {
-            Query query = queryRuntime.getQuery();
-            if (!((SingleInputStream) query.getInputStream()).isInnerStream()) {
+        Query query = queryRuntime.getQuery();
+        if (queryRuntime.getStreamRuntime() instanceof SingleStreamRuntime && !((SingleInputStream) query.getInputStream()).isInnerStream()) {
                 List<List<PartitionExecutor>> partitionExecutors = queryRuntime.getQueryPartitioner().getPartitionExecutors();
                 addPartitionReceiver(new PartitionStreamReceiver(siddhiContext, queryRuntime.getMetaStateEvent().getMetaEvent(0), (StreamDefinition) streamDefinitionMap.get(((SingleInputStream) query.getInputStream()).getStreamId()),  partitionExecutors.get(0), this));
-            }
         }//TODO: joins
 
     }
@@ -139,7 +135,7 @@ public class PartitionRuntime {
 
         if (partitionInstance == null) {
             List<QueryRuntime> queryRuntimeList = new ArrayList<QueryRuntime>();
-            CopyOnWriteArrayList<QueryRuntime> partitionedQueryRuntimeList = new CopyOnWriteArrayList<QueryRuntime>();
+            List<QueryRuntime> partitionedQueryRuntimeList = new CopyOnWriteArrayList<QueryRuntime>();
 
             for (QueryRuntime queryRuntime : metaQueryRuntimeMap.values()) {
                 String queryId = queryRuntime.getInputStreamId().get(0);

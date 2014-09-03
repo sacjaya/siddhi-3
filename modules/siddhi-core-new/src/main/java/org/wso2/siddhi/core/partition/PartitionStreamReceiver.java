@@ -26,13 +26,13 @@ import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventConverter;
 import org.wso2.siddhi.core.partition.executor.PartitionExecutor;
 import org.wso2.siddhi.core.query.QueryRuntime;
-import org.wso2.siddhi.core.query.selector.QueryPartitioner;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
 import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
@@ -44,7 +44,7 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver {
     private PartitionRuntime partitionRuntime;
     private List<PartitionExecutor> partitionExecutors;
     private StreamEventConverter eventConverter;
-    private ConcurrentHashMap<String, StreamJunction> cachedStreamJunctionMap = new ConcurrentHashMap<String, StreamJunction>();
+    private Map<String, StreamJunction> cachedStreamJunctionMap = new ConcurrentHashMap<String, StreamJunction>();
 
     public PartitionStreamReceiver(SiddhiContext siddhiContext, MetaStreamEvent metaStreamEvent, StreamDefinition streamDefinition,
                                     List<PartitionExecutor> partitionExecutors,
@@ -65,10 +65,10 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver {
 
     @Override
     public void receive(StreamEvent streamEvent) {
-        streamEvent = eventConverter.convertToStreamEvent(streamEvent);
+        StreamEvent convertedStreamEvent = eventConverter.convertToStreamEvent(streamEvent);
         for (PartitionExecutor partitionExecutor : partitionExecutors) {
-            String key = partitionExecutor.execute((streamEvent));
-            send(key, streamEvent);
+            String key = partitionExecutor.execute(convertedStreamEvent);
+            send(key, convertedStreamEvent);
         }
     }
 
@@ -76,7 +76,7 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver {
     public void receive(Event event) {
         StreamEvent streamEvent = eventConverter.convertToStreamEvent(event);
         for (PartitionExecutor partitionExecutor : partitionExecutors) {
-            String key = partitionExecutor.execute((streamEvent));
+            String key = partitionExecutor.execute(streamEvent);
             send(key, streamEvent);
         }
     }
@@ -85,7 +85,7 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver {
     public void receive(Event event, boolean endOfBatch) {
         StreamEvent streamEvent = eventConverter.convertToStreamEvent(event);
         for (PartitionExecutor partitionExecutor : partitionExecutors) {
-            String key = partitionExecutor.execute((streamEvent));
+            String key = partitionExecutor.execute(streamEvent);
             send(key, streamEvent);
         }
     }
