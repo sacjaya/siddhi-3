@@ -103,7 +103,7 @@ public class PartitionStreamReceiver implements StreamJunction.Receiver {
         if (streamJunction == null) {
             streamJunction = new StreamJunction(streamJunctionName,streamDefinition, (ExecutorService) siddhiContext.getExecutorService(), siddhiContext.getDefaultEventBufferSize());
             partitionRuntime.addStreamJunction(streamJunctionName, streamJunction);
-            cachedStreamJunctionMap.putIfAbsent(streamJunctionName, streamJunction);
+            cachedStreamJunctionMap.put(streamJunctionName, streamJunction);
         }
         return streamJunction;
     }
