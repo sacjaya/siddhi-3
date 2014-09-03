@@ -133,7 +133,7 @@ public class StreamEventConverter {
         }
 
         public void setToPosition(int[] toPosition) {
-            this.toPosition = toPosition;
+            this.toPosition = toPosition.clone();
         }
 
         public int getFromPosition() {

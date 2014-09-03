@@ -48,7 +48,7 @@ public class StreamEvent implements ComplexEvent{
     }
 
     public void setBeforeWindowData(Object[] beforeWindowData) {
-        this.beforeWindowData = beforeWindowData;
+        this.beforeWindowData = beforeWindowData.clone();
     }
 
     public Object[] getOnAfterWindowData() {
@@ -56,7 +56,7 @@ public class StreamEvent implements ComplexEvent{
     }
 
     public void setOnAfterWindowData(Object[] onAfterWindowData) {
-        this.onAfterWindowData = onAfterWindowData;
+        this.onAfterWindowData = onAfterWindowData.clone();
     }
 
     public long getTimestamp() {
@@ -72,7 +72,7 @@ public class StreamEvent implements ComplexEvent{
     }
 
     public void setOutputData(Object[] outputData) {
-        this.outputData = outputData;
+        this.outputData = outputData.clone();
     }
 
     public boolean isExpired() {

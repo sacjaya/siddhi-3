@@ -30,7 +30,7 @@ public class Event {
 
     public Event(long timestamp, Object[] data) {
         this.timestamp = timestamp;
-        this.data = data;
+        this.data = data.clone();
     }
 
     public Event() {
@@ -54,7 +54,7 @@ public class Event {
     }
 
     public void setData(Object[] data) {
-        this.data = data;
+        this.data = data.clone();
     }
 
     public Object getData(int i) {

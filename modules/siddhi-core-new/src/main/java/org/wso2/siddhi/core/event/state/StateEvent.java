@@ -33,7 +33,7 @@ public class StateEvent implements ComplexEvent{
     }
 
     public StateEvent(StreamEvent[] streamEvents){
-        this.streamEvents = streamEvents;
+        this.streamEvents = streamEvents.clone();
         eventCount = streamEvents.length;
     }
 

@@ -34,7 +34,7 @@ public class MetaStateEvent implements ComplexMetaEvent{
     }
 
     public MetaStateEvent(MetaStreamEvent[] metaStreamEvents){
-        this.metaStreamEvents = metaStreamEvents;
+        this.metaStreamEvents = metaStreamEvents.clone();
         eventCount = metaStreamEvents.length;
     }
 
