@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.wso2.siddhi.core.query.output.rate_limit;
+package org.wso2.siddhi.core.query.output.rateLimit;
 
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.query.output.callback.OutputCallback;
@@ -42,7 +42,7 @@ public abstract class OutputRateLimiter implements Processor {
         if (outputCallback != null && allEvent != null) {
             outputCallback.send(allEvent);
         }
-        if (queryCallbacks.size() > 0) {
+        if (!queryCallbacks.isEmpty()) {
             for (QueryCallback callback : queryCallbacks) {
                 callback.receiveStreamEvent(timeStamp, currentEvent, expiredEvent);
             }
@@ -71,6 +71,6 @@ public abstract class OutputRateLimiter implements Processor {
 
     public abstract OutputRateLimiter clone(String key);
 
-    public abstract Processor clone();
+    public abstract Processor cloneProcessor();
 }
 

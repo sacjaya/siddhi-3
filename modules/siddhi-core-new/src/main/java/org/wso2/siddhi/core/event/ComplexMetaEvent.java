@@ -1,4 +1,4 @@
-package org.wso2.siddhi.core.event;/*
+/*
  * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org)
  * All Rights Reserved.
  *
@@ -16,6 +16,7 @@ package org.wso2.siddhi.core.event;/*
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.wso2.siddhi.core.event;
 
 import org.wso2.siddhi.query.api.definition.Attribute;
 

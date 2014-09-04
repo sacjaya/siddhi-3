@@ -39,14 +39,14 @@ public class SiddhiManager {
     public SiddhiManager() {
         siddhiContext = new SiddhiContext();
     }
+
     /**
      * add stream definitions, partitions and queries of an execution plan
-     *
      * @param executionPlan
      * @return
-     * @throws org.wso2.siddhi.query.compiler.exception.SiddhiParserException
+     * @throws ValidatorException
      */
-    public ExecutionPlanRuntime addExecutionPlan(ExecutionPlan executionPlan) throws SiddhiParserException, ValidatorException {
+    public ExecutionPlanRuntime addExecutionPlan(ExecutionPlan executionPlan) throws ValidatorException {
         for (ExecutionElement element : executionPlan.getExecutionElementList()) {
             if (element instanceof Query) {
                 QueryValidator.validate((Query) element, executionPlan.getStreamDefinitionMap());

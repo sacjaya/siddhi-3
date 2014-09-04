@@ -23,12 +23,6 @@ import java.util.Arrays;
 
 public class EventPrinter {
 
-//    public static String convertToString(ComplexEvent complexEvent) {
-//        return "";
-//    }
-    //    public static void print(ComplexEvent complexEvent) {
-//        System.out.println(convertToString(complexEvent));
-//    }
     public static void print(Event[] events) {
         System.out.println(Arrays.deepToString(events));
     }

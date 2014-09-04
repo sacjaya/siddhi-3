@@ -1,7 +1,7 @@
 /*
+ * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org)
+ * All Rights Reserved.
  *
- *  * Copyright (c) 2005 - 2014, WSO2 Inc. (http://www.wso2.org)
- *  * All Rights Reserved.
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
@@ -97,6 +97,7 @@ public class PartitionTestCase {
         inputHandler.send(new Object[]{"IBM", 700});
         inputHandler.send(new Object[]{"WSO2", 60});
         inputHandler.send(new Object[]{"WSO2", 60});
+        Thread.sleep(1000);
         Assert.assertEquals(3, count);
         Assert.assertTrue(eventArrived);
     }
@@ -539,10 +540,11 @@ public class PartitionTestCase {
         inputHandler3.send(new Object[]{"KLM", 75.6f, 100});
         inputHandler3.send(new Object[]{"ABC", 75.6f, 100});
 
-        Thread.sleep(3000);
+        Thread.sleep(8000);
 
 
         Assert.assertEquals(16, count);
+        Thread.sleep(1000);
         Assert.assertEquals(8, stockStreamEventCount);
 
     }

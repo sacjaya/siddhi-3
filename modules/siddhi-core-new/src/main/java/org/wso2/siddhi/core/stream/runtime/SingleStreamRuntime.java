@@ -19,9 +19,8 @@
 
 package org.wso2.siddhi.core.stream.runtime;
 
-import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
+import org.wso2.siddhi.core.query.output.rateLimit.OutputRateLimiter;
 import org.wso2.siddhi.core.query.processor.Processor;
-import org.wso2.siddhi.core.query.processor.filter.FilterProcessor;
 import org.wso2.siddhi.core.stream.QueryStreamReceiver;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 
@@ -50,12 +49,12 @@ public class SingleStreamRuntime implements StreamRuntime{
         Processor clonedProcessorChain = null;
         if(processorChain != null){
             if(!(processorChain instanceof Selector || processorChain instanceof OutputRateLimiter)){
-                clonedProcessorChain =  processorChain.clone();
+                clonedProcessorChain =  processorChain.cloneProcessor();
             }
             Processor processor =  processorChain.getNext();
             while(processor != null){
                 if(!(processorChain instanceof Selector || processorChain instanceof OutputRateLimiter)){
-                         clonedProcessorChain.setToLast(processorChain.clone());
+                         clonedProcessorChain.setToLast(processorChain.cloneProcessor());
                 }
                 processor = processor.getNext();
             }

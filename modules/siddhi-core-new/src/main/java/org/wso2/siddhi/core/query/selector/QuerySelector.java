@@ -23,10 +23,9 @@ import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.exception.QueryCreationException;
-import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
+import org.wso2.siddhi.core.query.output.rateLimit.OutputRateLimiter;
 import org.wso2.siddhi.core.query.processor.Processor;
 import org.wso2.siddhi.core.query.selector.attribute.processor.AttributeProcessor;
-import org.wso2.siddhi.query.api.definition.StreamDefinition;
 import org.wso2.siddhi.query.api.execution.query.selection.Selector;
 
 import java.util.List;
@@ -35,7 +34,6 @@ public class QuerySelector implements Processor {
 
 
     private Selector selector;
-    private StreamDefinition outputStreamDefinition;
     private int outputSize;
     private SiddhiContext siddhiContext;
     private boolean currentOn = false;
@@ -78,10 +76,6 @@ public class QuerySelector implements Processor {
 
     }
 
-    public StreamDefinition getOutputStreamDefinition() {
-        return outputStreamDefinition;
-    }
-
     @Override
     public Processor getNext() {
         return outputRateLimiter;
@@ -105,8 +99,8 @@ public class QuerySelector implements Processor {
     }
 
     @Override
-    public Processor clone() {
-        return clone("");
+    public Processor cloneProcessor() {
+        return null;
     }
 
 

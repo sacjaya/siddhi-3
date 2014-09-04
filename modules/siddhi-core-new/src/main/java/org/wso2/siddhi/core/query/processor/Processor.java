@@ -36,6 +36,6 @@ public interface Processor {
      */
     public void setToLast(Processor processor);
 
-    public Processor clone();
+    public Processor cloneProcessor();
 
 }

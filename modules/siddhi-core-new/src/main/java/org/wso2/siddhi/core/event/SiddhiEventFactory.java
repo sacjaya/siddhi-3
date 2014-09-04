@@ -17,11 +17,11 @@
 */
 package org.wso2.siddhi.core.event;
 
-public class EventFactory implements com.lmax.disruptor.EventFactory<Event> {
+public class SiddhiEventFactory implements com.lmax.disruptor.EventFactory<Event> {
 
     private int dataSize;
 
-    public EventFactory(int dataSize) {
+    public SiddhiEventFactory(int dataSize) {
         this.dataSize = dataSize;
     }
 

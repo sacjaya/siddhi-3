@@ -39,7 +39,7 @@ public class FilterProcessor implements Processor {
         }
     }
 
-    public FilterProcessor clone(){
+    public FilterProcessor cloneProcessor(){
        return new FilterProcessor(conditionExecutor);
     }
 

@@ -15,17 +15,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.siddhi.core.query.output.rate_limit;
+package org.wso2.siddhi.core.query.output.rateLimit;
 
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.query.processor.Processor;
 
 public class PassThroughOutputRateLimiter extends OutputRateLimiter {
-    static final Logger log = Logger.getLogger(PassThroughOutputRateLimiter.class);
-    String id;
+    private static final Logger log = Logger.getLogger(PassThroughOutputRateLimiter.class);
+    private String id;
 
     public PassThroughOutputRateLimiter(String id) {
         this.id = id;
@@ -46,7 +45,7 @@ public class PassThroughOutputRateLimiter extends OutputRateLimiter {
 
     @Override
     public void process(StreamEvent event) {
-
+        /* this method will not be used since no processing is done by rateLimiters*/
     }
 
     @Override
@@ -56,16 +55,16 @@ public class PassThroughOutputRateLimiter extends OutputRateLimiter {
 
     @Override
     public void setNext(Processor processor) {
-
+        /*this method will not be used as there is no processors after an outputRateLimiter*/
     }
 
     @Override
     public void setToLast(Processor processor) {
-
+        /*this method will not be used as there is no processors after an outputRateLimiter*/
     }
 
     @Override
-    public Processor clone() {
-        return clone("");
+    public Processor cloneProcessor() {
+        return null;
     }
 }

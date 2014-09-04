@@ -22,9 +22,8 @@ import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.state.MetaStateEvent;
 import org.wso2.siddhi.core.executor.VariableExpressionExecutor;
 import org.wso2.siddhi.core.query.QueryRuntime;
-import org.wso2.siddhi.core.query.output.rate_limit.OutputRateLimiter;
+import org.wso2.siddhi.core.query.output.rateLimit.OutputRateLimiter;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
-import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
 import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
 import org.wso2.siddhi.core.util.parser.helper.QueryParserHelper;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
@@ -43,25 +42,11 @@ public class QueryParser {
         QuerySelector selector = SelectorParser.parse(query.getSelector(), query.getOutputStream(), siddhiContext, metaStateEvent, executors);
         OutputRateLimiter outputRateLimiter = OutputParser.constructOutputRateLimiter(query.getOutputStream().getId(),query.getOutputRate());
 
-        if (((SingleStreamRuntime) streamRuntime).getProcessorChain() == null) {
-            ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver().setProcessorChain(selector);
-        } else {
-            ((SingleStreamRuntime) streamRuntime).getQueryStreamReceiver().getProcessorChain().setNext(selector);
-        }
-
         QueryParserHelper.updateVariablePosition(metaStateEvent, executors);
         QueryParserHelper.addEventConverters(streamRuntime, metaStateEvent);
 
-        QueryRuntime queryRuntime = new QueryRuntime();
-        queryRuntime.setQuery(query);
-        queryRuntime.setSiddhiContext(siddhiContext);
-        queryRuntime.setStreamRuntime(streamRuntime);
-        queryRuntime.setSelector(selector);
-        queryRuntime.setOutputRateLimiter(outputRateLimiter);
-        queryRuntime.setMetaStateEvent(metaStateEvent);
-        queryRuntime.setId();
+        return new QueryRuntime(query,siddhiContext,streamRuntime,selector,outputRateLimiter,metaStateEvent);
 
-        return queryRuntime;
     }
 
 

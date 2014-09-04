@@ -20,7 +20,6 @@
 package org.wso2.siddhi.core.stream;
 
 import org.wso2.siddhi.core.event.Event;
-import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventConverter;
 import org.wso2.siddhi.core.query.processor.Processor;
@@ -33,8 +32,10 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
     private StreamEvent streamEventBuffer;
     private StreamEvent lastStreamEventInBuffer;
     private Processor processorChain;
+    private Processor next;
 
-    public QueryStreamReceiver(MetaStreamEvent metaStreamEvent, StreamDefinition streamDefinition) {
+
+    public QueryStreamReceiver(StreamDefinition streamDefinition) {
         this.streamId = streamDefinition.getId();
     }
 
@@ -55,9 +56,11 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
 
     @Override
     public void receive(StreamEvent streamEvent) {
-        streamEvent = eventConverter.convertToStreamEvent(streamEvent);
+        StreamEvent convertedStreamEvent = eventConverter.convertToStreamEvent(streamEvent);
         if (processorChain != null) {
-            processorChain.process(streamEvent);
+            processorChain.process(convertedStreamEvent);
+        } else {
+            next.process(convertedStreamEvent);
         }
     }
 
@@ -66,6 +69,8 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
         StreamEvent streamEvent = eventConverter.convertToStreamEvent(event);
         if (processorChain != null) {
             processorChain.process(streamEvent);
+        } else {
+            next.process(streamEvent);
         }
     }
 
@@ -80,7 +85,11 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
     private void process(boolean endOfBatch, StreamEvent streamEvent) {
         if (streamEventBuffer == null) {
             if (endOfBatch) {
-                processorChain.process(streamEvent);
+                if (processorChain != null) {
+                    processorChain.process(streamEvent);
+                } else {
+                    next.process(streamEvent);
+                }
             } else {
                 streamEventBuffer = streamEvent;
                 lastStreamEventInBuffer = streamEvent;
@@ -88,7 +97,11 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
         } else {
             lastStreamEventInBuffer.setNext(streamEvent);
             if (endOfBatch) {
-                processorChain.process(streamEventBuffer);
+                if (processorChain != null) {
+                    processorChain.process(streamEvent);
+                } else {
+                    next.process(streamEvent);
+                }
                 streamEventBuffer = null;
                 lastStreamEventInBuffer = null;
             } else {
@@ -107,5 +120,9 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
 
     public void setEventConverter(StreamEventConverter eventConverter){
         this.eventConverter = eventConverter;
+    }
+
+    public void setNext(Processor next){
+        this.next = next;
     }
 }
