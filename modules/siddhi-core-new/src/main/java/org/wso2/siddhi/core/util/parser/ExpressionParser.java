@@ -130,10 +130,6 @@ public class ExpressionParser {
                 return parseContainsCompare(
                         parseExpression(((Compare) expression).getLeftExpression(), currentStreamReference, siddhiContext, streamDefinitionMap, metaEvent, executorList),
                         parseExpression(((Compare) expression).getRightExpression(), currentStreamReference, siddhiContext, streamDefinitionMap, metaEvent, executorList));
-            } else if (((Compare) expression).getOperator() == Compare.Operator.INSTANCE_OF) {
-                return parseInstanceOfCompare(
-                        parseExpression(((Compare) expression).getLeftExpression(), currentStreamReference, siddhiContext, streamDefinitionMap, metaEvent, executorList),
-                        parseExpression(((Compare) expression).getRightExpression(), currentStreamReference, siddhiContext, streamDefinitionMap, metaEvent, executorList));
             }
 
         } else if (expression instanceof Constant) {
@@ -809,24 +805,6 @@ public class ExpressionParser {
         }
     }
 
-
-    /**
-     * Create instance of Compare Condition Expression Executor.
-     *
-     * @param leftExpressionExecutor
-     * @param rightExpressionExecutor
-     * @return
-     */
-    private static ConditionExpressionExecutor parseInstanceOfCompare(
-            ExpressionExecutor leftExpressionExecutor, ExpressionExecutor rightExpressionExecutor) {
-
-        switch (rightExpressionExecutor.getReturnType()) {
-            //TODO remove?
-//            case TYPE:
-//                return new InstanceOfCompareConditionExecutor(leftExpressionExecutor, rightExpressionExecutor);
-        }
-        throw new OperationNotSupportedException(rightExpressionExecutor.getReturnType() + " cannot be used in right hand side of the instanceof comparisons");
-    }
 
     /**
      * Parse and validate the given Siddhi variable and return a VariableExpressionExecutor
